@@ -271,6 +271,14 @@ def test_locked_retry_allows_exact_maximum_attempts(tmp_path):
     }
 
 
+def test_locked_execution_snapshot_requires_a_terminal_result_for_every_job(tmp_path):
+    intent = _intent(job_id="6" * 64, phase="PHASE_2")
+    jobs, ledger = _locked_attempt_tree(tmp_path, [(intent, None)])
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_INTENT"):
+        run_records_module.verify_locked_execution([_locked_job(intent)], jobs, ledger)
+
+
 @pytest.mark.parametrize("mutation", ["omit", "add", "duplicate"])
 def test_locked_job_set_rejects_omission_addition_or_duplication(tmp_path, mutation):
     first = _intent(job_id="1" * 64, phase="PHASE_2")

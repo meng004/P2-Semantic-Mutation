@@ -676,6 +676,27 @@ def test_authority_lock_rejects_raw_origin_userinfo_without_echoing_value():
 
 
 @pytest.mark.parametrize(
+    ("field", "secret"),
+    [
+        ("api_token", "TOP_SECRET_COMPOSITE_KEY"),
+        ("task_id", "Authorization: Bearer TOP_SECRET_BEARER"),
+        ("task_id", "https://audit-user:TOP_SECRET_USERINFO@example.invalid/repo"),
+        ("task_id", "https://TOP_SECRET_USERINFO@example.invalid/repo"),
+    ],
+)
+def test_authority_lock_rejects_composite_keys_and_credential_shaped_values(
+    field, secret
+):
+    lock = _authority_lock()
+    lock[field] = secret
+
+    with pytest.raises(EvidenceError, match="E_CREDENTIAL_METADATA") as caught:
+        evidence_module.validate_authority_lock(lock)
+
+    assert secret not in str(caught.value)
+
+
+@pytest.mark.parametrize(
     "mutation",
     [
         "preflight-identity",
@@ -1156,6 +1177,17 @@ def _authority_freeze_fixture(tmp_path: Path) -> tuple[Path, dict, dict[str, Pat
     adapter_root = controller / "registries/adapters"
     adapter_root.mkdir(parents=True)
     adapter_registry = _adapter_registry(adapter_root)
+    adapter_prefix = adapter_root.relative_to(controller)
+    for row in adapter_registry["adapters"]:
+        row["implementation_path"] = (
+            adapter_prefix / row["implementation_path"]
+        ).as_posix()
+    adapter_body = {
+        key: value
+        for key, value in adapter_registry.items()
+        if key != "artifact_sha256"
+    }
+    adapter_registry["artifact_sha256"] = canonical_sha256(adapter_body)
     adapter_registry_path = adapter_root / "registry.json"
     write_canonical_json(adapter_registry_path, adapter_registry, exclusive=True)
 
@@ -1165,6 +1197,24 @@ def _authority_freeze_fixture(tmp_path: Path) -> tuple[Path, dict, dict[str, Pat
         generator_root,
         dirs_exist_ok=True,
         ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+    )
+    generator_registry_path = generator_root / "registry.json"
+    generator_registry = json.loads(
+        generator_registry_path.read_text(encoding="utf-8")
+    )
+    generator_prefix = generator_root.relative_to(controller)
+    for row in generator_registry["generators"]:
+        row["implementation_path"] = (
+            generator_prefix / row["implementation_path"]
+        ).as_posix()
+    generator_body = {
+        key: value
+        for key, value in generator_registry.items()
+        if key != "artifact_sha256"
+    }
+    generator_registry["artifact_sha256"] = canonical_sha256(generator_body)
+    write_canonical_json(
+        generator_registry_path, generator_registry, exclusive=False
     )
 
     governing_paths: dict[str, str] = {}
@@ -1305,9 +1355,9 @@ def _authority_freeze_fixture(tmp_path: Path) -> tuple[Path, dict, dict[str, Pat
     protocol_hashes.update(
         {
             "adapter_registry_sha256": canonical_sha256(adapter_registry),
-            "input_generator_registry_sha256": hashlib.sha256(
-                (generator_root / "registry.json").read_bytes()
-            ).hexdigest(),
+            "input_generator_registry_sha256": canonical_sha256(
+                generator_registry
+            ),
         }
     )
     protocol = protocol_root / "protocol.json"
@@ -1374,9 +1424,9 @@ def _authority_freeze_fixture(tmp_path: Path) -> tuple[Path, dict, dict[str, Pat
         "protocol_artifact_paths": protocol_paths,
         "registry_artifact_paths": {
             "adapter_registry": adapter_registry_path.relative_to(controller).as_posix(),
-            "input_generator_registry": (
-                generator_root / "registry.json"
-            ).relative_to(controller).as_posix(),
+            "input_generator_registry": generator_registry_path.relative_to(
+                controller
+            ).as_posix(),
         },
     }
     return controller, inputs, governing_files
@@ -1395,6 +1445,37 @@ def test_authority_determinism_freezes_real_bytes_and_derived_inventory(tmp_path
     )
     assert first["jobs"]
     assert SECRET_ORIGIN.encode() not in canonical_json_bytes(first)
+
+
+def test_freeze_accepts_nested_registries_with_controller_root_relative_implementations(
+    tmp_path,
+):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    registry_fields = (
+        ("adapter_registry", "adapters"),
+        ("input_generator_registry", "generators"),
+    )
+    registries: dict[str, dict] = {}
+    for field, rows_field in registry_fields:
+        relative = inputs["registry_artifact_paths"][field]
+        path = controller / relative
+        registry = json.loads(path.read_text(encoding="utf-8"))
+        assert all(
+            row["implementation_path"].startswith("registries/")
+            for row in registry[rows_field]
+        )
+        registries[field] = registry
+
+    lock = evidence_module.build_authority_lock(controller, inputs)
+
+    assert lock["registries"] == {
+        "adapter_registry_sha256": canonical_sha256(
+            registries["adapter_registry"]
+        ),
+        "input_generator_registry_sha256": canonical_sha256(
+            registries["input_generator_registry"]
+        ),
+    }
 
 
 @pytest.mark.parametrize(
@@ -1451,6 +1532,23 @@ def test_freeze_authority_inputs_reject_exact_schema_and_direct_intent_fields(
         evidence_module.build_authority_lock(tmp_path / "unused", candidate)
 
 
+def test_authority_inputs_rejects_composite_credential_metadata_before_schema():
+    candidate = {
+        "schema_version": "P3_V3_AUTHORITY_INPUTS_V1",
+        "task_id": "fixture",
+        "subjects": [],
+        "governing_material_paths": {},
+        "protocol_artifact_paths": {},
+        "registry_artifact_paths": {},
+        "api_token": "TOP_SECRET_INPUT_TOKEN",
+    }
+
+    with pytest.raises(EvidenceError, match="E_CREDENTIAL_METADATA") as caught:
+        evidence_module.validate_authority_inputs(candidate)
+
+    assert "TOP_SECRET_INPUT_TOKEN" not in str(caught.value)
+
+
 def test_freeze_zero_execution_allows_only_fixed_git_and_verified_in_process(
     tmp_path, monkeypatch
 ):
@@ -1461,7 +1559,7 @@ def test_freeze_zero_execution_allows_only_fixed_git_and_verified_in_process(
 
     def fixed_git_only(argv, *args, **kwargs):
         assert argv[0] == "git"
-        query = tuple(argv[3:])
+        query = _fixed_git_query(argv)
         if query == ("rev-parse", "HEAD"):
             result = real_run(argv, *args, **kwargs)
             captured_commits.append(result.stdout.decode("ascii").strip())
@@ -1514,7 +1612,7 @@ def test_freeze_authority_fails_closed_on_git_checkout_anomalies(
         real_run = subprocess.run
 
         def faulty_git(argv, *args, **kwargs):
-            if tuple(argv[3:]) == ("rev-parse", "HEAD"):
+            if _fixed_git_query(argv) == ("rev-parse", "HEAD"):
                 if failure == "nonzero":
                     return subprocess.CompletedProcess(argv, 1, b"", b"failure")
                 if failure == "stderr":
@@ -1548,6 +1646,76 @@ def test_fixed_git_stage_inventory_reports_exact_live_blob_and_mode(tmp_path):
     }
 
 
+def test_fixed_git_queries_apply_deterministic_execution_sanitizers(
+    tmp_path, monkeypatch
+):
+    controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
+    real_run = subprocess.run
+    invocations: list[tuple[list[str], dict]] = []
+
+    def capture(argv, *args, **kwargs):
+        invocations.append((list(argv), dict(kwargs)))
+        return real_run(argv, *args, **kwargs)
+
+    monkeypatch.setattr(evidence_module.subprocess, "run", capture)
+
+    evidence_module._run_fixed_git_queries(controller)
+
+    assert len(invocations) == 5
+    for argv, kwargs in invocations:
+        joined = "\0".join(argv)
+        assert "core.fsmonitor=false" in joined
+        assert "core.hooksPath=" in joined
+        assert "core.pager=cat" in joined
+        assert "credential.helper=" in joined
+        assert kwargs["env"]["GIT_CONFIG_NOSYSTEM"] == "1"
+        assert kwargs["env"]["GIT_OPTIONAL_LOCKS"] == "0"
+        assert kwargs["env"]["GIT_TERMINAL_PROMPT"] == "0"
+        assert kwargs["env"]["GIT_PAGER"] == "cat"
+
+
+def test_fixed_git_queries_reject_repository_include_config(tmp_path):
+    controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
+    included = tmp_path / "outside-authority.config"
+    included.write_text("[user]\n\tname = Included Authority\n", encoding="utf-8")
+    _run_git(controller, "config", "include.path", str(included))
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
+        evidence_module._run_fixed_git_queries(controller)
+
+
+@pytest.mark.parametrize("indirection", ["gitdir_file", "objects_symlink"])
+def test_fixed_git_queries_reject_out_of_root_git_metadata(tmp_path, indirection):
+    controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
+    metadata = tmp_path / "outside-controller-git-metadata"
+    if indirection == "gitdir_file":
+        (controller / ".git").rename(metadata)
+        (controller / ".git").write_text(
+            f"gitdir: {metadata.as_posix()}\n", encoding="utf-8"
+        )
+    else:
+        (controller / ".git/objects").rename(metadata)
+        (controller / ".git/objects").symlink_to(metadata, target_is_directory=True)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
+        evidence_module._run_fixed_git_queries(controller)
+
+
+def test_fixed_git_queries_do_not_execute_repository_fsmonitor(tmp_path):
+    controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
+    marker = tmp_path / "fsmonitor-executed"
+    fsmonitor = tmp_path / "fsmonitor-hook"
+    fsmonitor.write_text(
+        f"#!/bin/sh\n: > {marker.as_posix()}\nexit 0\n", encoding="utf-8"
+    )
+    fsmonitor.chmod(fsmonitor.stat().st_mode | stat.S_IXUSR)
+    _run_git(controller, "config", "core.fsmonitor", str(fsmonitor))
+
+    evidence_module._run_fixed_git_queries(controller)
+
+    assert not marker.exists()
+
+
 def test_fixed_git_tree_query_stays_bound_to_commit_captured_first(
     tmp_path, monkeypatch
 ):
@@ -1565,7 +1733,7 @@ def test_fixed_git_tree_query_stays_bound_to_commit_captured_first(
     def switch_head_after_first_query(argv, *args, **kwargs):
         nonlocal switched
         result = real_run(argv, *args, **kwargs)
-        if tuple(argv[3:]) == ("rev-parse", "HEAD") and not switched:
+        if _fixed_git_query(argv) == ("rev-parse", "HEAD") and not switched:
             switched = True
             real_run(
                 ["git", "-C", str(controller), "checkout", "--detach", second_commit],
@@ -1625,7 +1793,7 @@ def test_fixed_git_stage_inventory_rejects_nonregular_or_malformed_rows(
     real_run = subprocess.run
 
     def malformed_stage(argv, *args, **kwargs):
-        if tuple(argv[3:]) == ("ls-files", "--stage", "-z"):
+        if _fixed_git_query(argv) == ("ls-files", "--stage", "-z"):
             return subprocess.CompletedProcess(argv, 0, record, b"")
         return real_run(argv, *args, **kwargs)
 
@@ -1646,7 +1814,7 @@ def test_freeze_rejects_tracked_live_byte_drift_after_clean_status(
     def drift_after_inventory(argv, *args, **kwargs):
         nonlocal drifted
         result = real_run(argv, *args, **kwargs)
-        if tuple(argv[3:]) == ("ls-files", "--stage", "-z") and not drifted:
+        if _fixed_git_query(argv) == ("ls-files", "--stage", "-z") and not drifted:
             drifted = True
             tracked_path.write_text("CONTROLLER = 'drifted'\n", encoding="utf-8")
         return result
@@ -1656,6 +1824,42 @@ def test_freeze_rejects_tracked_live_byte_drift_after_clean_status(
     with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
         evidence_module.build_authority_lock(controller, inputs)
     assert drifted
+
+
+def test_checkout_captures_each_tracked_file_once_for_all_authority_derivations(
+    tmp_path, monkeypatch
+):
+    controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
+    real_reader = evidence_module.read_regular_file_snapshot
+    reads: dict[str, int] = {}
+
+    def counting_reader(path, context):
+        relative = Path(path).relative_to(controller).as_posix()
+        if not relative.startswith(".git/"):
+            reads[relative] = reads.get(relative, 0) + 1
+        return real_reader(path, context)
+
+    monkeypatch.setattr(
+        evidence_module, "read_regular_file_snapshot", counting_reader
+    )
+
+    _repository, manifest, tracked, snapshot = evidence_module._checkout_authority(
+        controller,
+        evidence_module._CONTROLLER_ROLE_ROOTS,
+        "controller-source",
+    )
+
+    assert set(reads) == set(tracked)
+    assert all(count == 1 for count in reads.values())
+    assert [row["relative_path"] for row in manifest["files"]] == [
+        path
+        for path in tracked
+        if any(
+            path == root or path.startswith(f"{root}/")
+            for root in evidence_module._CONTROLLER_ROLE_ROOTS
+        )
+    ]
+    assert [entry.relative_path for entry in snapshot.entries] == list(tracked)
 
 
 def test_freeze_rejects_staged_tree_drift_after_clean_status(
@@ -1670,7 +1874,7 @@ def test_freeze_rejects_staged_tree_drift_after_clean_status(
     def stage_drift_after_status(argv, *args, **kwargs):
         nonlocal drifted
         result = real_run(argv, *args, **kwargs)
-        if tuple(argv[3:]) == ("status", "--porcelain=v1") and not drifted:
+        if _fixed_git_query(argv) == ("status", "--porcelain=v1") and not drifted:
             drifted = True
             tracked_path.write_text("CONTROLLER = 'staged-drift'\n", encoding="utf-8")
             real_run(
@@ -1711,7 +1915,7 @@ def test_authority_determinism_coordinated_registry_drift_changes_objects(tmp_pa
         for row in adapter_registry["adapters"]
         if row["adapter_id"] == "CMAKE_CTEST_V1"
     )
-    unused_source = adapter_registry_path.parent / unused["implementation_path"]
+    unused_source = controller / unused["implementation_path"]
     unused_source.write_text("# coordinated registry drift\n", encoding="utf-8")
     unused["source_sha256"] = hashlib.sha256(unused_source.read_bytes()).hexdigest()
     adapter_body = {
@@ -1834,7 +2038,7 @@ def test_real_preparation_role_drift_changes_derived_intent_and_locked_job(
             for row in registry["adapters"]
             if row["adapter_id"] == "PYTHON_PEP517_V1"
         )
-        implementation = registry_path.parent / selected["implementation_path"]
+        implementation = controller / selected["implementation_path"]
         implementation.write_text(
             implementation.read_text(encoding="utf-8")
             + "\n# selected registry drift\n",
@@ -1868,7 +2072,7 @@ def test_real_preparation_role_drift_changes_derived_intent_and_locked_job(
             for row in registry["generators"]
             if row["generator_id"] == "JSON_SCHEMA_DRAFT2020_12_V1"
         )
-        implementation = registry_path.parent / selected["implementation_path"]
+        implementation = controller / selected["implementation_path"]
         implementation.write_text(
             implementation.read_text(encoding="utf-8").replace(
                 'b"P3-INPUT-STREAM-v1"', 'b"P3-INPUT-STREAM-v2"'
@@ -1945,7 +2149,7 @@ def test_freeze_authority_rejects_ignored_untracked_authority_bytes(
             for row in registry["adapters"]
             if row["adapter_id"] == "CMAKE_CTEST_V1"
         )
-        untracked = registry_path.parent / unused["implementation_path"]
+        untracked = controller / unused["implementation_path"]
         _run_git(
             controller,
             "rm",
@@ -1976,7 +2180,7 @@ def test_freeze_authority_executes_generator_snapshot_not_replaced_path(
         for row in registry["generators"]
         if row["generator_id"] == "JSON_SCHEMA_DRAFT2020_12_V1"
     )
-    source = registry_path.parent / entry["implementation_path"]
+    source = controller / entry["implementation_path"]
 
     def replace_after_validation(registry, source_snapshot):
         validated = real_validate(registry, source_snapshot)
@@ -2234,7 +2438,7 @@ def test_freeze_cli_captures_verified_implementation_output_and_fails_closed(
         for row in registry["adapters"]
         if row["adapter_id"] == "PYTHON_PEP517_V1"
     )
-    implementation = registry_path.parent / selected["implementation_path"]
+    implementation = controller / selected["implementation_path"]
     implementation.write_text(
         implementation.read_text(encoding="utf-8").replace(
             "from __future__ import annotations\n",
@@ -2367,6 +2571,13 @@ def _run_git(root: Path, *argv: str) -> str:
         check=True,
         text=True,
     ).stdout.strip()
+
+
+def _fixed_git_query(argv: list[str]) -> tuple[str, ...]:
+    for index, item in enumerate(argv):
+        if item in {"rev-parse", "status", "remote", "ls-files"}:
+            return tuple(argv[index:])
+    raise AssertionError("fixed Git query subcommand is absent")
 
 
 def _secret_preflight_fixture(tmp_path: Path) -> tuple[Path, dict]:
@@ -3617,6 +3828,22 @@ def test_evidence_index_rejects_noncanonical_bytes(tmp_path):
     assert not result.stdout
 
 
+def test_evidence_index_rejects_composite_credential_metadata_before_schema(
+    tmp_path,
+):
+    body = _empty_evidence_index_body(tmp_path)
+    body["access_token"] = "TOP_SECRET_INDEX_TOKEN"
+    index_path = tmp_path / "evidence-index.json"
+    _write_evidence_index(index_path, body)
+
+    result = _run_evidence_index(index_path)
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_CREDENTIAL_METADATA"
+    assert "TOP_SECRET_INDEX_TOKEN" not in result.stderr
+    assert not result.stdout
+
+
 def test_indexed_file_hash_and_canonical_parse_share_one_immutable_read(
     tmp_path, monkeypatch
 ):
@@ -4056,6 +4283,72 @@ def test_evidence_index_reconstructs_a_complete_phase_zero_set(tmp_path):
         "recorded_real_scientific_terminal_count": 0,
         "claims_status": "blocked",
     }
+
+
+def test_phase_receipt_cannot_close_a_prefix_or_subset_of_locked_phase_jobs(
+    tmp_path,
+):
+    from p3_v3.run_records import (
+        close_phase,
+        create_intent,
+        reconstruct_attempt_events,
+        write_result,
+    )
+
+    index_path = _complete_phase_zero_evidence_index(tmp_path)
+    index = json.loads(index_path.read_text(encoding="utf-8"))
+    first_intent_path = next((tmp_path / index["job_root"]).rglob("intent.json"))
+    first_intent = json.loads(first_intent_path.read_text(encoding="utf-8"))
+    first_result = json.loads(
+        first_intent_path.with_name("result.json").read_text(encoding="utf-8")
+    )
+    second_job_id = "f" * 64
+    second_intent = {**first_intent, "job_id": second_job_id}
+    second_result = {**first_result, "job_id": second_job_id}
+    second_attempt = tmp_path / f"jobs/PHASE_0/{second_job_id}/1"
+    create_intent(second_attempt, second_intent)
+    write_result(second_attempt, second_result)
+
+    events = reconstruct_attempt_events(tmp_path / index["job_root"])
+    ledger_path = tmp_path / index["ledger"]["path"]
+    ledger_path.write_bytes(b"".join(canonical_json_bytes(event) for event in events))
+    index["ledger"]["sha256"] = hashlib.sha256(ledger_path.read_bytes()).hexdigest()
+
+    receipt_entry = index["phase_receipts"][0]
+    expected_path = tmp_path / receipt_entry["expected_jobs"]["path"]
+    expected_path.write_bytes(canonical_json_bytes([first_intent["job_id"]]))
+    receipt_entry["expected_jobs"]["sha256"] = hashlib.sha256(
+        expected_path.read_bytes()
+    ).hexdigest()
+    prefix_ledger = tmp_path / "phase-0-prefix-ledger.jsonl"
+    prefix_ledger.write_bytes(
+        b"".join(canonical_json_bytes(event) for event in events[:2])
+    )
+    output_path = tmp_path / receipt_entry["output_manifest"]["path"]
+    output = json.loads(output_path.read_text(encoding="utf-8"))
+    receipt = close_phase(
+        "PHASE_0",
+        index["protocol"]["sha256"],
+        [first_intent["job_id"]],
+        prefix_ledger,
+        output["artifact_sha256"],
+    )
+    prefix_ledger.unlink()
+    receipt_path = tmp_path / receipt_entry["receipt"]["path"]
+    receipt_path.write_bytes(canonical_json_bytes(receipt))
+    receipt_entry["receipt"]["sha256"] = hashlib.sha256(
+        receipt_path.read_bytes()
+    ).hexdigest()
+    _refresh_external_authority_jobs(tmp_path, index)
+    body = {key: value for key, value in index.items() if key != "artifact_sha256"}
+    index["artifact_sha256"] = canonical_sha256(body)
+    index_path.write_bytes(canonical_json_bytes(index))
+
+    result = _run_evidence_index(index_path)
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_PHASE_RECEIPT"
+    assert not result.stdout
 
 
 @pytest.mark.parametrize("mutation", ["file_symlink", "parent_symlink", "fifo"])

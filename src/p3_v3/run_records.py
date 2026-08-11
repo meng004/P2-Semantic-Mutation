@@ -831,6 +831,12 @@ def _verify_validated_locked_execution_snapshot(
             )
         latest[intent["job_id"]] = record
 
+    if any(latest[job_id]["result"] is None for job_id in by_job):
+        raise EvidenceError(
+            "E_AUTHORITY_INTENT",
+            "every locked job must have a terminal result in its final attempt",
+        )
+
     try:
         expected_ledger = b"".join(canonical_json_bytes(event) for event in events)
         if ledger_raw != expected_ledger:

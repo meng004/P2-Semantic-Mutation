@@ -181,8 +181,14 @@ The controller role roots are fixed in production to `src/p3_v3`,
 `scripts/p3_v3`, and `requirements-frozen.txt`; every subject uses its
 complete tracked checkout. Fixed, local, non-network Git queries during freeze
 derive normalized repository identity, commit, tree, and the complete
-tracked-file set. Recursive filesystem enumeration must equal the selected Git
-tracked set, so untracked or omitted execution bytes fail rather than disappear.
+tracked-file set. Those five queries run with a minimal deterministic environment
+and command-level configuration that disables fsmonitor, hooks, pagers,
+credential helpers, interactive prompting, replacement refs, network protocols,
+and optional locks. Local includes and out-of-root Git metadata indirection fail
+before any query. The fixed-HEAD stage inventory is the only tracked-file list;
+each listed file is opened once through an anchored descriptor, and that one
+immutable `(bytes, mode)` capture supplies Git binding, the manifest, and every
+derived input. There is no second live source read.
 Only normalized host/path identity enters the lock; raw remote transport and
 userinfo never do.
 The lock's `preflight.environment_policy_sha256` must equal
@@ -237,6 +243,16 @@ the exact P12-access enums are `FORBIDDEN`, `PERMITTED`, and `REQUIRED`.
 access is `PERMITTED` or `REQUIRED`.
 `recorded_real_scientific_terminal_count` counts reconstructed terminal jobs
 whose locked execution class is `REAL_SCIENTIFIC`.
+Every locked job must have a result in its final recorded attempt before a final
+execution snapshot is valid. Every indexed phase receipt consumes all
+reconstructed events for its phase and its expected-job inventory is derived
+exactly from the Authority Lock jobs for that phase; neither an index-selected
+subset nor a receipt-selected ledger prefix can close a phase.
+
+Registry `implementation_path` is always a safe logical path relative to the
+controller root, regardless of the registry artifact's own directory. Freeze,
+installed-controller verification, and evidence reconstruction use that same
+meaning, including for registries nested below the controller root.
 
 The freezer's internal `PreparedAuthority` is an exact validated value, not a
 serialized caller input. It contains:
@@ -343,6 +359,10 @@ event, compares every locked stable field, rebuilds the receipt, and raises
 `E_AUTHORITY_ORIGIN` on divergence. Raw origin URL, transport, userinfo, and
 credential bytes are absent by construction. Local self-hashes preserve package
 closure but never replace comparison with the external lock.
+Credential scanning is applied before exact-schema projection to Authority
+Inputs, Authority Lock, and Evidence Index metadata. It rejects exact and
+composite credential keys plus credential-shaped string values such as Bearer
+authorization and URI userinfo, without scanning `SourceSnapshot` source text.
 `event_sha256` and the receipt artifact hash are computed from their respective
 exact objects with only that object's own hash field removed.
 Each sorted `capability_results[]` row has exact keys
@@ -770,9 +790,13 @@ Tests must prove:
   snapshot must match its fixed-HEAD Git blob SHA-1 and regular-file mode before
   the same explicit immutable `(relative_path, mode, sha256, content)` values feed
   manifest, adapter discovery, frame, scale, workload, common-input, and site
-  derivation without temporary materialization or later source-root reads. Nonzero exit, dirty status,
-  malformed output, credential-bearing normalized identity, live/fixed-HEAD byte
-  drift, or filesystem/Git inventory divergence fails before output;
+  derivation without temporary materialization or later source-root reads. Every
+  query carries the deterministic environment and command-level safeguards
+  specified above; repository fsmonitor/hook/helper/pager configuration cannot
+  spawn a child, local includes and out-of-root metadata fail before queries,
+  and no sixth subprocess is permitted. Nonzero exit, dirty status, malformed
+  output, credential-bearing normalized identity, or live/fixed-HEAD byte/mode
+  drift fails before output;
 - source-hash-verified deterministic adapters may run only through the reviewed
   in-process registry interface;
 - raw Git origin/userinfo is normalized in memory and absent from output;
@@ -1152,3 +1176,28 @@ cursor_vm: not_authorized
 
 Do not produce a Cursor VM launch packet or scientific-execution authorization
 in this plan.
+
+### Task 6 Repair D: Final operational closure
+
+The final operational audit identified five fail-closed gaps, repaired together
+under RED/GREEN tests:
+
+- final execution snapshots require a result for every locked job's final
+  attempt, and phase receipts consume the complete phase event set with the
+  Authority Lock's exact phase job inventory;
+- the five freezer Git subprocesses use deterministic environment and
+  command-level safeguards, reject includes/out-of-root metadata, and remain the
+  only subprocesses at that boundary;
+- registry implementation paths have one controller-root-relative meaning in
+  freeze and verification, with nested registries covered positively;
+- composite credential keys and Bearer/userinfo-shaped metadata values fail at
+  the Authority Inputs, lock, and index boundaries while source snapshots remain
+  outside metadata scanning; and
+- each tracked checkout file is captured once through the anchored reader, with
+  one immutable snapshot supplying fixed-HEAD verification, manifests, and all
+  derived authority inputs.
+
+The repair changes no Authority Lock, Authority Inputs, Evidence Index, receipt,
+or result schema fields. It strengthens derivation, path interpretation, and
+verification only. Scientific execution, P12 access, claim upgrades, network,
+push, PR, and merge remain unauthorized.

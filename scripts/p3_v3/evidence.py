@@ -161,6 +161,11 @@ _GIT_OBJECT_RE = re.compile(r"[0-9a-f]{40}")
 _CREDENTIAL_FIELD_NAMES = frozenset(
     {"authorization", "credential", "password", "token"}
 )
+_SAFE_CREDENTIAL_POLICY_FIELDS = frozenset({"forbidden_credential_fields"})
+_BEARER_VALUE_RE = re.compile(r"(?i)(?:^|[\s:])bearer[ \t]+[^\s]+")
+_USERINFO_VALUE_RE = re.compile(
+    r"(?i)\b[a-z][a-z0-9+.-]*://[^/\s@]+@"
+)
 _EXECUTION_CLASSES = frozenset(
     {"SYNTHETIC_INFRASTRUCTURE", "NON_SCIENTIFIC_CONTROL", "REAL_SCIENTIFIC"}
 )
@@ -395,14 +400,30 @@ def _validate_repository_identity(value: str, field: str) -> str:
 def _reject_credential_metadata(value: Any) -> None:
     if isinstance(value, Mapping):
         for key, nested in value.items():
-            if isinstance(key, str) and key.casefold() in _CREDENTIAL_FIELD_NAMES:
-                raise EvidenceError(
-                    "E_CREDENTIAL_METADATA", "credential-bearing metadata field is forbidden"
+            if isinstance(key, str):
+                expanded = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", key)
+                components = frozenset(
+                    re.findall(r"[a-z0-9]+", expanded.casefold())
                 )
+                if (
+                    key.casefold() not in _SAFE_CREDENTIAL_POLICY_FIELDS
+                    and components & _CREDENTIAL_FIELD_NAMES
+                ):
+                    raise EvidenceError(
+                        "E_CREDENTIAL_METADATA",
+                        "credential-bearing metadata field is forbidden",
+                    )
             _reject_credential_metadata(nested)
     elif isinstance(value, list):
         for nested in value:
             _reject_credential_metadata(nested)
+    elif isinstance(value, str) and (
+        _BEARER_VALUE_RE.search(value) is not None
+        or _USERINFO_VALUE_RE.search(value) is not None
+    ):
+        raise EvidenceError(
+            "E_CREDENTIAL_METADATA", "credential-shaped metadata value is forbidden"
+        )
 
 
 def _lstat_directory_components(root: Path) -> Path:
@@ -471,27 +492,6 @@ def _capture_declared_source_snapshot(
                 content=raw,
             )
         )
-    return SourceSnapshot(entries=tuple(entries))
-
-
-def _scope_source_snapshot(snapshot: SourceSnapshot, parent: Path) -> SourceSnapshot:
-    prefix = "" if parent == Path(".") else parent.as_posix().rstrip("/") + "/"
-    entries = []
-    for entry in snapshot.entries:
-        if not entry.relative_path.startswith(prefix):
-            continue
-        relative = entry.relative_path[len(prefix) :]
-        if not relative:
-            continue
-        entries.append(
-            SourceSnapshotEntry(
-                relative_path=relative,
-                mode=entry.mode,
-                sha256=entry.sha256,
-                content=entry.content,
-            )
-        )
-    entries.sort(key=lambda entry: entry.relative_path.encode("utf-8"))
     return SourceSnapshot(entries=tuple(entries))
 
 
@@ -841,6 +841,7 @@ def validate_authority_inputs(
 ) -> dict[str, Any]:
     """Validate the non-authoritative, exact-schema freezer declaration."""
 
+    _reject_credential_metadata(authority_inputs)
     try:
         snapshot = json.loads(canonical_json_bytes(authority_inputs).decode("utf-8"))
         value = validate_exact_object(
@@ -911,15 +912,110 @@ def validate_authority_inputs(
     return value
 
 
+def _validated_local_git_metadata(root: Path) -> Path:
+    metadata = root / ".git"
+    try:
+        metadata_info = metadata.lstat()
+        if stat.S_ISLNK(metadata_info.st_mode) or not stat.S_ISDIR(
+            metadata_info.st_mode
+        ):
+            raise EvidenceError(
+                "E_AUTHORITY_GIT", "Git metadata must be an in-root directory"
+            )
+        metadata.resolve(strict=True).relative_to(root.resolve(strict=True))
+        for current, directory_names, file_names in os.walk(
+            metadata, followlinks=False
+        ):
+            for name in [*directory_names, *file_names]:
+                candidate = Path(current) / name
+                candidate_info = candidate.lstat()
+                if stat.S_ISLNK(candidate_info.st_mode) or not (
+                    stat.S_ISDIR(candidate_info.st_mode)
+                    or stat.S_ISREG(candidate_info.st_mode)
+                ):
+                    raise EvidenceError(
+                        "E_AUTHORITY_GIT", "Git metadata contains an unsafe node"
+                    )
+        for forbidden in (
+            metadata / "commondir",
+            metadata / "objects/info/alternates",
+        ):
+            try:
+                forbidden.lstat()
+            except FileNotFoundError:
+                continue
+            raise EvidenceError(
+                "E_AUTHORITY_GIT", "external Git metadata indirection is forbidden"
+            )
+
+        for config in (metadata / "config", metadata / "config.worktree"):
+            try:
+                config_info = config.lstat()
+            except FileNotFoundError:
+                continue
+            if stat.S_ISLNK(config_info.st_mode) or not stat.S_ISREG(
+                config_info.st_mode
+            ):
+                raise EvidenceError(
+                    "E_AUTHORITY_GIT", "Git configuration metadata is unsafe"
+                )
+            raw, _mode = read_regular_file_snapshot(config, "local Git configuration")
+            if re.search(
+                rb"(?im)^\s*\[\s*include(?:if\b[^]]*)?\s*]", raw
+            ) is not None:
+                raise EvidenceError(
+                    "E_AUTHORITY_GIT", "Git configuration includes are forbidden"
+                )
+    except EvidenceError:
+        raise
+    except (OSError, ValueError) as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_GIT", "Git metadata boundary is unavailable"
+        ) from exc
+    return metadata
+
+
 def _run_fixed_git_queries(root: Path) -> dict[str, Any]:
+    metadata = _validated_local_git_metadata(root)
     outputs: dict[tuple[str, ...], bytes] = {}
+    fixed_config = (
+        "core.fsmonitor=false",
+        f"core.hooksPath={os.devnull}",
+        "core.pager=cat",
+        "credential.helper=",
+        "credential.interactive=never",
+        "core.useReplaceRefs=false",
+        "protocol.allow=never",
+        "status.showUntrackedFiles=all",
+    )
+    fixed_config_argv = [
+        item
+        for setting in fixed_config
+        for item in ("-c", setting)
+    ]
+    git_env = {
+        "PATH": os.environ.get("PATH", os.defpath),
+        "LANG": "C",
+        "LC_ALL": "C",
+        "TMPDIR": os.environ.get("TMPDIR", "/tmp"),
+        "GIT_ATTR_NOSYSTEM": "1",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": os.devnull,
+        "GIT_DIR": str(metadata),
+        "GIT_WORK_TREE": str(root),
+        "GIT_OPTIONAL_LOCKS": "0",
+        "GIT_TERMINAL_PROMPT": "0",
+        "GIT_PAGER": "cat",
+        "PAGER": "cat",
+    }
 
     def run_query(query: tuple[str, ...]) -> bytes:
         try:
             result = subprocess.run(
-                ["git", "-C", str(root), *query],
+                ["git", "-C", str(root), *fixed_config_argv, *query],
                 capture_output=True,
                 check=False,
+                env=git_env,
             )
         except (OSError, ValueError) as exc:
             raise EvidenceError(
@@ -1167,7 +1263,6 @@ def _checkout_authority(
 ]:
     safe_root = _lstat_directory_components(root)
     git = _run_fixed_git_queries(safe_root)
-    observed_manifest = build_tracked_source_manifest(safe_root, role_roots, role)
     captured = _read_git_tracked_snapshot(safe_root, git["tracked_entries"])
     if role == "controller-source":
         tracked = [
@@ -1178,10 +1273,6 @@ def _checkout_authority(
     else:
         tracked = git["tracked"]
     manifest = _manifest_from_git_snapshot(captured, tracked, role)
-    if canonical_json_bytes(observed_manifest) != canonical_json_bytes(manifest):
-        raise EvidenceError(
-            "E_AUTHORITY_GIT", "filesystem and fixed-HEAD tracked snapshot differ"
-        )
     snapshot = _snapshot_from_captured_files(captured)
     return (
         {
@@ -1209,11 +1300,11 @@ def _require_tracked_paths(
 def _registered_implementation_paths(
     registry_relative_path: str, entries: Any
 ) -> list[str]:
+    safe_relative_path(registry_relative_path)
     if type(entries) is not list:
         raise EvidenceError(
             "E_AUTHORITY_GIT", "registry implementation declarations are malformed"
         )
-    parent = Path(registry_relative_path).parent
     paths = []
     for entry in entries:
         if not isinstance(entry, Mapping) or type(entry.get("implementation_path")) is not str:
@@ -1221,9 +1312,7 @@ def _registered_implementation_paths(
                 "E_AUTHORITY_GIT", "registry implementation declaration is malformed"
             )
         implementation = safe_relative_path(entry.get("implementation_path"))
-        combined = (parent / implementation.as_posix()).as_posix()
-        safe_relative_path(combined)
-        paths.append(combined)
+        paths.append(implementation.as_posix())
     return paths
 
 
@@ -1606,11 +1695,11 @@ def prepare_authority(
     )
     adapter_registry = validate_adapter_registry(
         adapter_artifact,
-        _scope_source_snapshot(controller_snapshot, Path(adapter_relative).parent),
+        controller_snapshot,
     )
     generator_registry = validate_input_generator_registry(
         generator_artifact,
-        _scope_source_snapshot(controller_snapshot, Path(generator_relative).parent),
+        controller_snapshot,
     )
     registry_artifacts = {
         "adapter_registry_sha256": adapter_artifact,
@@ -3188,6 +3277,7 @@ def _load_evidence_index(
         raise EvidenceError(
             "E_NONCANONICAL_JSON", "evidence index bytes are noncanonical"
         )
+    _reject_credential_metadata(parsed)
     value = validate_exact_object(parsed, _INDEX_SCHEMA, "evidence_index")
     index_sha256 = hashlib.sha256(raw).hexdigest()
     if value["schema_version"] != "P3_V3_EVIDENCE_INDEX_V3":
@@ -3889,20 +3979,28 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
             common_consumer_intents.setdefault(
                 intent["evaluation_input_id"], []
             ).append(intent)
+    locked_phase_jobs: dict[str, list[str]] = {}
+    for locked_job in validated_lock["jobs"]:
+        locked_phase_jobs.setdefault(locked_job["phase"], []).append(
+            locked_job["job_id"]
+        )
     for entry in material["receipts"]:
         receipt = entry["receipt"]
         if receipt.get("protocol_sha256") != protocol_sha256:
             raise EvidenceError(
                 "E_PROTOCOL_BINDING", "phase receipt is bound to another protocol"
             )
-        event_count = receipt.get("ledger_event_count")
         phase_events = [event for event in events if event["phase"] == entry["phase"]]
-        if type(event_count) is not int or not 0 <= event_count <= len(phase_events):
-            raise EvidenceError("E_PHASE_RECEIPT", "receipt ledger prefix is invalid")
+        expected_jobs = locked_phase_jobs.get(entry["phase"], [])
+        if entry["expected_jobs"] != expected_jobs:
+            raise EvidenceError(
+                "E_PHASE_RECEIPT",
+                "indexed expected jobs differ from the locked phase inventory",
+            )
         verify_phase_receipt(
             receipt,
-            phase_events[:event_count],
-            entry["expected_jobs"],
+            phase_events,
+            expected_jobs,
             entry["output_manifest"],
         )
         if receipt["phase_id"] != entry["phase"]:
