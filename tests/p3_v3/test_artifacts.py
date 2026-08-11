@@ -271,12 +271,23 @@ def test_authority_lock_reader_rejects_file_symlink(tmp_path):
         artifacts_module.read_canonical_regular_json(link, "authority lock")
 
 
-def test_authority_lock_reader_rejects_special_node_without_opening_it(tmp_path):
+def test_authority_lock_reader_rejects_special_node_without_opening_it(
+    tmp_path, monkeypatch
+):
     fifo = tmp_path / "lock.fifo"
     os.mkfifo(fifo)
+    open_calls = 0
+
+    def unexpected_open(*_args, **_kwargs):
+        nonlocal open_calls
+        open_calls += 1
+        raise AssertionError("special authority node must be rejected before open")
+
+    monkeypatch.setattr(artifacts_module.os, "open", unexpected_open)
 
     with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_PATH"):
         artifacts_module.read_canonical_regular_json(fifo, "authority lock")
+    assert open_calls == 0
 
 
 def test_authority_lock_reader_rejects_noncanonical_bytes(tmp_path):

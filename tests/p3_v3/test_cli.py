@@ -377,6 +377,10 @@ def test_subject_manifest_includes_complete_root_and_excludes_git(tmp_path):
         "vendor/dependency.py",
     ]
     assert all(set(row) == {"relative_path", "mode", "sha256"} for row in manifest["files"])
+    subject_row = next(
+        row for row in manifest["files"] if row["relative_path"] == "subject.py"
+    )
+    assert subject_row["sha256"] == hashlib.sha256(source.read_bytes()).hexdigest()
 
 
 def test_subject_manifest_rejects_root_git_file(tmp_path):
