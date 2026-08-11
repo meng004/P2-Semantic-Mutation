@@ -4747,18 +4747,16 @@ def test_no_execution_verifier_uses_only_installed_reviewed_registries(
         counts["reviewed_executor"] += 1
         return original_executor(operation)
 
-    def adapter_loader(absolute, adapter_id, source_bytes):
-        bucket = "evidence_loader" if absolute.is_relative_to(tmp_path) else "installed_loader"
-        counts[bucket] += 1
-        return original_adapter_loader(absolute, adapter_id, source_bytes)
+    def adapter_loader(logical_filename, adapter_id, source_bytes):
+        assert type(logical_filename) is str
+        assert not Path(logical_filename).is_absolute()
+        counts["installed_loader"] += 1
+        return original_adapter_loader(logical_filename, adapter_id, source_bytes)
 
     def generator_loader(snapshot, generator_id):
-        bucket = (
-            "evidence_loader"
-            if snapshot.absolute_path.is_relative_to(tmp_path)
-            else "installed_loader"
-        )
-        counts[bucket] += 1
+        assert type(snapshot.logical_filename) is str
+        assert not Path(snapshot.logical_filename).is_absolute()
+        counts["installed_loader"] += 1
         return original_generator_loader(snapshot, generator_id)
 
     monkeypatch.setattr(subprocess, "run", process_attempt)

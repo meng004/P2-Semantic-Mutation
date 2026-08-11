@@ -784,14 +784,13 @@ def _validate_locked_jobs(
     return jobs
 
 
-def _verify_locked_execution_snapshot(
-    locked_jobs: Sequence[Mapping[str, Any]],
+def _verify_validated_locked_execution_snapshot(
+    jobs: list[dict[str, Any]],
     job_root: Path,
     ledger_raw: bytes,
 ) -> VerifiedExecutionSnapshot:
     """Capture and verify the one execution state shared by all consumers."""
 
-    jobs = _validate_locked_jobs(locked_jobs)
     if type(ledger_raw) is not bytes:
         raise EvidenceError("E_AUTHORITY_INTENT", "ledger snapshot must be exact bytes")
     try:
@@ -876,6 +875,17 @@ def _verify_locked_execution_snapshot(
     )
 
 
+def _verify_locked_execution_snapshot(
+    locked_jobs: Sequence[Mapping[str, Any]],
+    job_root: Path,
+    ledger_raw: bytes,
+) -> VerifiedExecutionSnapshot:
+    """Validate external jobs, then capture their exact execution snapshot."""
+
+    jobs = _validate_locked_jobs(locked_jobs)
+    return _verify_validated_locked_execution_snapshot(jobs, job_root, ledger_raw)
+
+
 def verify_locked_execution(
     locked_jobs: Sequence[Mapping[str, Any]],
     job_root: Path,
@@ -883,14 +893,15 @@ def verify_locked_execution(
 ) -> dict[str, Any]:
     """Compatibility wrapper returning only the two observational counts."""
 
+    jobs = _validate_locked_jobs(locked_jobs)
     try:
         ledger_raw = read_canonical_regular_bytes(Path(ledger_path), "attempt ledger")
     except EvidenceError as exc:
         raise EvidenceError(
             "E_AUTHORITY_INTENT", "ledger differs from complete attempt records"
         ) from exc
-    return _verify_locked_execution_snapshot(
-        locked_jobs, Path(job_root), ledger_raw
+    return _verify_validated_locked_execution_snapshot(
+        jobs, Path(job_root), ledger_raw
     ).completion_counts()
 
 

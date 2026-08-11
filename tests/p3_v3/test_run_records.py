@@ -432,6 +432,31 @@ def test_locked_execution_safe_reads_each_attempt_file_and_ledger_once(
     }
 
 
+def test_locked_execution_rejects_invalid_jobs_before_reading_missing_ledger(
+    tmp_path, monkeypatch
+):
+    ledger_reads = 0
+
+    def forbidden_ledger_read(*_args, **_kwargs):
+        nonlocal ledger_reads
+        ledger_reads += 1
+        raise EvidenceError("E_SENTINEL", "ledger must not be read")
+
+    monkeypatch.setattr(
+        run_records_module,
+        "read_canonical_regular_bytes",
+        forbidden_ledger_read,
+    )
+
+    with pytest.raises(EvidenceError) as exc_info:
+        run_records_module.verify_locked_execution(
+            [{}], tmp_path / "missing-jobs", tmp_path / "missing-ledger.jsonl"
+        )
+
+    assert exc_info.value.code == "E_AUTHORITY_JOB_SET"
+    assert ledger_reads == 0
+
+
 def test_profile_trace_result_requires_dedicated_role_type_digest_and_identity(tmp_path):
     trace = [{"sequence": 1, "module": "builtins", "symbol": "abs"}]
     trace_sha256 = canonical_sha256(trace)

@@ -49,7 +49,7 @@ _TECHNIQUES = set(_TECHNIQUE_ORDER)
 
 @dataclass(frozen=True)
 class _VerifiedImplementationSnapshot:
-    absolute_path: Path
+    logical_filename: str
     source_sha256: str
     source_bytes: bytes
 
@@ -1658,7 +1658,7 @@ def _implementation_snapshot(
         code = "E_ADAPTER_SOURCE_HASH" if kind == "adapter" else "E_GENERATOR_SOURCE_HASH"
         raise EvidenceError(code, f"{kind} source hash differs: {implementation_id}")
     return _VerifiedImplementationSnapshot(
-        absolute_path=Path(relative.as_posix()),
+        logical_filename=relative.as_posix(),
         source_sha256=digest,
         source_bytes=source_bytes,
     )
@@ -1680,7 +1680,7 @@ def _path_implementation_snapshot(
         code = "E_ADAPTER_SOURCE_HASH" if kind == "adapter" else "E_GENERATOR_SOURCE_HASH"
         raise EvidenceError(code, f"{kind} source hash differs: {implementation_id}")
     return _VerifiedImplementationSnapshot(
-        absolute_path=absolute,
+        logical_filename=relative.as_posix(),
         source_sha256=digest,
         source_bytes=source_bytes,
     )
@@ -1700,7 +1700,26 @@ def _validated_snapshot_map(
         implementation_id = entry[id_field]
         snapshot = raw.get(implementation_id)
         if (
-            not isinstance(snapshot, _VerifiedImplementationSnapshot)
+            type(snapshot) is not _VerifiedImplementationSnapshot
+            or type(snapshot.logical_filename) is not str
+            or type(snapshot.source_sha256) is not str
+            or type(snapshot.source_bytes) is not bytes
+        ):
+            raise EvidenceError(code, "verified implementation snapshot differs")
+        try:
+            logical_filename = safe_relative_path(
+                snapshot.logical_filename
+            ).as_posix()
+            validate_sha256(
+                snapshot.source_sha256,
+                f"verified implementation {implementation_id} digest",
+            )
+        except EvidenceError as exc:
+            raise EvidenceError(
+                code, "verified implementation snapshot differs"
+            ) from exc
+        if (
+            logical_filename != entry["implementation_path"]
             or snapshot.source_sha256 != entry["source_sha256"]
             or hashlib.sha256(snapshot.source_bytes).hexdigest()
             != snapshot.source_sha256
@@ -1740,7 +1759,12 @@ def _consume_verified_registry(
     return {
         **validated,
         "_implementation_snapshots": {
-            entry[id_field]: snapshots[entry[id_field]] for entry in entries
+            entry[id_field]: _VerifiedImplementationSnapshot(
+                logical_filename=entry["implementation_path"],
+                source_sha256=snapshots[entry[id_field]].source_sha256,
+                source_bytes=bytes(memoryview(snapshots[entry[id_field]].source_bytes)),
+            )
+            for entry in entries
         },
     }
 
@@ -1908,18 +1932,18 @@ def _execute_verified_python(operation: Callable[[], Any]) -> Any:
 
 
 def _load_adapter_discover(
-    absolute: Path, adapter_id: str, source_bytes: bytes
+    logical_filename: str, adapter_id: str, source_bytes: bytes
 ) -> Callable[..., Any]:
     module_name = f"_p3_v3_adapter_{adapter_id.lower()}_{uuid.uuid4().hex}"
     spec = importlib.util.spec_from_loader(
-        module_name, loader=None, origin=str(absolute)
+        module_name, loader=None, origin=logical_filename
     )
     if spec is None:
         raise EvidenceError("E_ADAPTER_LOAD", f"unable to load adapter: {adapter_id}")
     module = importlib.util.module_from_spec(spec)
-    module.__file__ = str(absolute)
+    module.__file__ = logical_filename
     try:
-        exec(compile(source_bytes, str(absolute), "exec"), module.__dict__)
+        exec(compile(source_bytes, logical_filename, "exec"), module.__dict__)
     except Exception as exc:
         raise EvidenceError("E_ADAPTER_LOAD", f"unable to load adapter: {adapter_id}") from exc
     discover = getattr(module, "discover", None)
@@ -2120,7 +2144,7 @@ def run_adapter_discovery(
 
     def invoke_adapter() -> Any:
         discover = _load_adapter_discover(
-            snapshot.absolute_path, adapter_id, snapshot.source_bytes
+            snapshot.logical_filename, adapter_id, snapshot.source_bytes
         )
         return discover(source_snapshot, dict(build_descriptor))
 
@@ -3262,13 +3286,13 @@ def _load_input_generator_callable(
 ) -> Callable[[bytes, int], Mapping[str, Any]]:
     namespace = {
         "__name__": f"p3_v3_input_generator_{generator_id.lower()}",
-        "__file__": str(snapshot.absolute_path),
+        "__file__": snapshot.logical_filename,
     }
     try:
         exec(
             compile(
                 snapshot.source_bytes,
-                str(snapshot.absolute_path),
+                snapshot.logical_filename,
                 "exec",
             ),
             namespace,

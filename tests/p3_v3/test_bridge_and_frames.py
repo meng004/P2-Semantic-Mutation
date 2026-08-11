@@ -1649,6 +1649,80 @@ def test_verified_registry_consumer_revalidates_in_memory_snapshot_digest(tmp_pa
         frames_module._consume_verified_registry(verified, registry_kind="adapter")
 
 
+@pytest.mark.parametrize("registry_kind", ["adapter", "input_generator"])
+def test_verified_registry_consumer_drops_trapping_caller_absolute_path(
+    tmp_path, registry_kind
+):
+    class Trap:
+        def __str__(self):
+            raise AssertionError("caller path object must not be stringified")
+
+        def __fspath__(self):
+            raise AssertionError("caller path object must not be path-converted")
+
+    if registry_kind == "adapter":
+        implementation_root = tmp_path / "implementations"
+        source_root = tmp_path / "source"
+        source_root.mkdir()
+        verified = validate_adapter_registry(
+            _adapter_registry(implementation_root),
+            _source_snapshot(implementation_root),
+        )
+        snapshot_id = "PYTHON_PEP517_V1"
+    else:
+        verified = validate_input_generator_registry(
+            _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
+        )
+        snapshot_id = "TEXT_IO_SCHEMA_V1"
+    snapshot = verified["_implementation_snapshots"][snapshot_id]
+    object.__setattr__(snapshot, "absolute_path", Trap())
+
+    consumed = frames_module._consume_verified_registry(
+        verified, registry_kind=registry_kind
+    )
+
+    if registry_kind == "adapter":
+        descriptor = _write_adapter_project(source_root, "python.json")
+        discovery = run_adapter_discovery(
+            _source_snapshot(source_root), descriptor, consumed, snapshot_id
+        )
+        assert discovery["discovery_status"] == "EXECUTABLE"
+    else:
+        generate = frames_module._load_input_generator_callable(
+            consumed["_implementation_snapshots"][snapshot_id], snapshot_id
+        )
+        assert callable(generate)
+
+
+@pytest.mark.parametrize("registry_kind", ["adapter", "input_generator"])
+@pytest.mark.parametrize("field", ["source_bytes", "source_sha256", "logical_filename"])
+@pytest.mark.parametrize("invalid_factory", [list, dict])
+def test_verified_registry_consumer_rejects_nonexact_snapshot_field_types(
+    tmp_path, registry_kind, field, invalid_factory
+):
+    if registry_kind == "adapter":
+        verified = validate_adapter_registry(
+            _adapter_registry(tmp_path), _source_snapshot(tmp_path)
+        )
+        snapshot_id = "PYTHON_PEP517_V1"
+        expected_code = "E_ADAPTER_REGISTRY"
+    else:
+        verified = validate_input_generator_registry(
+            _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
+        )
+        snapshot_id = "TEXT_IO_SCHEMA_V1"
+        expected_code = "E_GENERATOR_REGISTRY"
+    snapshot = verified["_implementation_snapshots"][snapshot_id]
+    object.__setattr__(snapshot, field, invalid_factory())
+
+    with pytest.raises(EvidenceError) as exc_info:
+        frames_module._consume_verified_registry(
+            verified, registry_kind=registry_kind
+        )
+
+    assert exc_info.value.code == expected_code
+
+
 @pytest.mark.parametrize("registry_kind", ["contract"])
 @pytest.mark.parametrize("replacement", ["symlink", "bytes"])
 def test_registry_snapshot_safe_read_fails_closed_on_post_lstat_replacement(
