@@ -1,16 +1,21 @@
 from __future__ import annotations
 
 import copy
+import concurrent.futures
 import hashlib
 import inspect
 import json
 import shutil
+import socket
 import subprocess
+import sys
+import threading
 from dataclasses import dataclass
 from pathlib import Path
 
 import pytest
 
+import p3_v3.artifacts as artifacts_module
 import p3_v3.bridge_and_frames as frames_module
 from p3_v3.artifacts import EvidenceError, canonical_sha256, file_sha256
 from p3_v3.bridge_and_frames import (
@@ -1526,7 +1531,7 @@ def test_pinned_adapter_executes_and_normalizes_discovery(
     )
 
 
-def test_adapter_bytes_are_reverified_immediately_before_execution(tmp_path):
+def test_adapter_execution_consumes_validated_snapshot_without_path_reopen(tmp_path):
     implementation_root = tmp_path / "implementations"
     source_root = tmp_path / "source"
     source_root.mkdir()
@@ -1536,8 +1541,174 @@ def test_adapter_bytes_are_reverified_immediately_before_execution(tmp_path):
     descriptor = _write_adapter_project(source_root, "python.json")
     implementation = implementation_root / "adapters/python_pep517_v1.py"
     implementation.write_text("raise RuntimeError('changed bytes executed')\n", encoding="utf-8")
-    with pytest.raises(EvidenceError, match="E_ADAPTER_SOURCE_HASH"):
-        run_adapter_discovery(source_root, descriptor, registry, "PYTHON_PEP517_V1")
+
+    discovery = run_adapter_discovery(
+        source_root, descriptor, registry, "PYTHON_PEP517_V1"
+    )
+
+    assert discovery["discovery_status"] == "EXECUTABLE"
+
+
+@pytest.mark.parametrize("registry_kind", ["adapter", "generator", "contract"])
+@pytest.mark.parametrize("replacement", ["symlink", "bytes"])
+def test_registry_snapshot_safe_read_fails_closed_on_post_lstat_replacement(
+    tmp_path, monkeypatch, registry_kind, replacement
+):
+    if registry_kind == "adapter":
+        registry = _adapter_registry(tmp_path)
+        entry = next(
+            row
+            for row in registry["adapters"]
+            if row["adapter_id"] == "CMAKE_CTEST_V1"
+        )
+        validate = validate_adapter_registry
+    elif registry_kind == "generator":
+        shutil.copytree(GENERATOR_FIXTURE_ROOT, tmp_path, dirs_exist_ok=True)
+        registry = _load_generator_registry()
+        entry = next(
+            row
+            for row in registry["generators"]
+            if row["generator_id"] == "TEXT_IO_SCHEMA_V1"
+        )
+        validate = validate_input_generator_registry
+    else:
+        registry = _contract_generator_registry(tmp_path)
+        entry = registry["generators"][1]
+        validate = validate_contract_generator_registry
+    implementation = tmp_path / entry["implementation_path"]
+    replacement_path = tmp_path / "replacement.py"
+    replacement_path.write_bytes(implementation.read_bytes())
+    real_lstat = artifacts_module._lstat_regular_path
+
+    def replace_after_lstat(path, context):
+        verified = real_lstat(path, context)
+        if Path(path) == implementation:
+            implementation.unlink()
+            if replacement == "symlink":
+                implementation.symlink_to(replacement_path)
+            else:
+                implementation.write_bytes(b"# replacement bytes\n")
+        return verified
+
+    monkeypatch.setattr(artifacts_module, "_lstat_regular_path", replace_after_lstat)
+
+    with pytest.raises(
+        EvidenceError,
+        match="E_(AUTHORITY_LOCK_PATH|ADAPTER_SOURCE_HASH|GENERATOR_SOURCE_HASH)",
+    ):
+        validate(registry, tmp_path)
+
+
+@pytest.mark.parametrize(
+    "effect",
+    ["stdout", "stderr", "socket", "dns", "create_connection"],
+)
+def test_verified_adapter_execution_rejects_output_and_network_side_effects(
+    tmp_path, monkeypatch, capsys, effect
+):
+    implementation_root = tmp_path / "implementations"
+    source_root = tmp_path / "source"
+    source_root.mkdir()
+    registry = _adapter_registry(implementation_root)
+    descriptor = _write_adapter_project(source_root, "python.json")
+    implementation = implementation_root / "adapters/python_pep517_v1.py"
+    fixture_result = {
+        "adapter_id": "PYTHON_PEP517_V1",
+        "ecosystem": "python",
+        "source_files": ["src/demo_pkg/api.py"],
+        "declarations": [],
+        "public_schemas": [],
+        "sites": [],
+    }
+    actions = {
+        "stdout": "print('adapter stdout leak')",
+        "stderr": "print('adapter stderr leak', file=sys.stderr)",
+        "socket": "socket.socket()",
+        "dns": "socket.getaddrinfo('example.invalid', 80)",
+        "create_connection": "socket.create_connection(('example.invalid', 80))",
+    }
+    implementation.write_text(
+        "import socket\n"
+        "import sys\n"
+        "def discover(source_root, build_descriptor):\n"
+        f"    {actions[effect]}\n"
+        f"    return {fixture_result!r}\n",
+        encoding="utf-8",
+    )
+    registry = _rehash_adapter_registry(
+        registry, implementation_root, "PYTHON_PEP517_V1"
+    )
+    validated = validate_adapter_registry(registry, implementation_root)
+
+    def forbid_real_network(*_args, **_kwargs):
+        raise AssertionError("test must not perform real network access")
+
+    if effect in {"socket", "dns", "create_connection"}:
+        attribute = effect if effect != "dns" else "getaddrinfo"
+        monkeypatch.setattr(socket, attribute, forbid_real_network)
+
+    with pytest.raises(
+        EvidenceError, match="E_VERIFIED_EXECUTION_(OUTPUT|NETWORK)"
+    ):
+        run_adapter_discovery(
+            source_root, descriptor, validated, "PYTHON_PEP517_V1"
+        )
+
+    assert capsys.readouterr() == ("", "")
+
+
+def test_verified_execution_context_serializes_and_restores_process_state(
+    tmp_path, monkeypatch, capsys
+):
+    executions = []
+    for name, noisy in (("clean", False), ("noisy", True)):
+        root = tmp_path / name
+        implementation_root = root / "implementations"
+        source_root = root / "source"
+        source_root.mkdir(parents=True)
+        registry = _adapter_registry(implementation_root)
+        descriptor = _write_adapter_project(source_root, "python.json")
+        if noisy:
+            implementation = implementation_root / "adapters/python_pep517_v1.py"
+            implementation.write_text(
+                implementation.read_text(encoding="utf-8").replace(
+                    "from __future__ import annotations\n",
+                    "from __future__ import annotations\n\n"
+                    "print('concurrent adapter leak')\n",
+                ),
+                encoding="utf-8",
+            )
+            registry = _rehash_adapter_registry(
+                registry, implementation_root, "PYTHON_PEP517_V1"
+            )
+        executions.append(
+            (
+                source_root,
+                descriptor,
+                validate_adapter_registry(registry, implementation_root),
+            )
+        )
+
+    rendezvous = threading.Barrier(2)
+    monkeypatch.setattr(sys, "dont_write_bytecode", False)
+
+    def execute(arguments):
+        rendezvous.wait(timeout=10)
+        try:
+            discovery = run_adapter_discovery(
+                *arguments, "PYTHON_PEP517_V1"
+            )
+            return discovery["discovery_status"]
+        except EvidenceError as exc:
+            return exc.code
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        outcomes = list(executor.map(execute, executions))
+
+    assert outcomes == ["EXECUTABLE", "E_VERIFIED_EXECUTION_OUTPUT"]
+    assert sys.dont_write_bytecode is False
+    assert capsys.readouterr() == ("", "")
+    assert not list(tmp_path.rglob("__pycache__"))
 
 
 def test_adapter_registry_is_revalidated_at_execution_boundary(tmp_path):
@@ -2705,6 +2876,85 @@ def test_input_generator_registry_rejects_source_hash_mismatch(tmp_path):
         validate_input_generator_registry(mutated, tmp_path)
 
 
+def test_generator_execution_consumes_validated_snapshot_without_path_reopen(
+    tmp_path,
+):
+    shutil.copytree(GENERATOR_FIXTURE_ROOT, tmp_path, dirs_exist_ok=True)
+    registry = validate_input_generator_registry(_load_generator_registry(), tmp_path)
+    selected = next(
+        row
+        for row in registry["generators"]
+        if row["generator_id"] == "NUMERIC_ARRAY_DOMAIN_V1"
+    )
+    (tmp_path / selected["implementation_path"]).write_text(
+        "raise RuntimeError('changed generator bytes executed')\n", encoding="utf-8"
+    )
+    frame = _public_frame_with_schemas(
+        [
+            _public_schema(
+                "NUMERIC_ARRAY_DOMAIN_V1", {"domain": "numeric", "shape": [2]}
+            )
+        ]
+    )
+
+    inventory = build_common_inputs(_source_record(), frame, registry)
+
+    assert {row["status"] for row in inventory["rows"]} == {
+        "COMMON_INPUT_EXECUTABLE"
+    }
+
+
+@pytest.mark.parametrize("effect", ["stdout", "socket"])
+def test_verified_generator_execution_rejects_output_and_network_side_effects(
+    tmp_path, monkeypatch, capsys, effect
+):
+    shutil.copytree(GENERATOR_FIXTURE_ROOT, tmp_path, dirs_exist_ok=True)
+    registry = _load_generator_registry()
+    selected = next(
+        row
+        for row in registry["generators"]
+        if row["generator_id"] == "NUMERIC_ARRAY_DOMAIN_V1"
+    )
+    implementation = tmp_path / selected["implementation_path"]
+    source = implementation.read_text(encoding="utf-8").replace(
+        "import hashlib\n", "import hashlib\nimport socket\n"
+    )
+    action = (
+        "    print('generator stdout leak')\n"
+        if effect == "stdout"
+        else "    socket.create_connection(('example.invalid', 80))\n"
+    )
+    source = source.replace(
+        "def generate(schema_bytes: bytes, seed: int) -> dict[str, Any]:\n",
+        "def generate(schema_bytes: bytes, seed: int) -> dict[str, Any]:\n" + action,
+    )
+    implementation.write_text(source, encoding="utf-8")
+    selected["source_sha256"] = hashlib.sha256(implementation.read_bytes()).hexdigest()
+    body = {key: value for key, value in registry.items() if key != "artifact_sha256"}
+    registry = {**body, "artifact_sha256": canonical_sha256(body)}
+    validated = validate_input_generator_registry(registry, tmp_path)
+    frame = _public_frame_with_schemas(
+        [
+            _public_schema(
+                "NUMERIC_ARRAY_DOMAIN_V1", {"domain": "numeric", "shape": [2]}
+            )
+        ]
+    )
+
+    def forbid_real_network(*_args, **_kwargs):
+        raise AssertionError("test must not perform real network access")
+
+    if effect == "socket":
+        monkeypatch.setattr(socket, "create_connection", forbid_real_network)
+
+    with pytest.raises(
+        EvidenceError, match="E_VERIFIED_EXECUTION_(OUTPUT|NETWORK)"
+    ):
+        build_common_inputs(_source_record(), frame, validated)
+
+    assert capsys.readouterr() == ("", "")
+
+
 def test_build_common_inputs_ordinals_seeds_dedupe_and_round_robin():
     registry = validate_input_generator_registry(
         _load_generator_registry(), GENERATOR_FIXTURE_ROOT
@@ -3147,6 +3397,58 @@ def test_contract_generator_registry_binds_exact_five_e_contract_ids(tmp_path):
         absolute = tmp_path / item["implementation_path"]
         assert file_sha256(absolute) == item["source_sha256"]
         assert item["schema_kind"] == item["generator_id"]
+
+
+def test_contract_generator_execution_consumes_snapshot_without_path_reopen(
+    tmp_path,
+):
+    registry = validate_contract_generator_registry(
+        _contract_generator_registry(tmp_path), tmp_path
+    )
+    generator_id = E_CONTRACT_GENERATOR_IDS[0]
+    selected = next(
+        row for row in registry["generators"] if row["generator_id"] == generator_id
+    )
+    (tmp_path / selected["implementation_path"]).write_text(
+        "raise RuntimeError('changed contract generator bytes executed')\n",
+        encoding="utf-8",
+    )
+    slot = close_slot(_slot(), _canonical_sites(), lambda site: site["symbol"] == "f")
+    contract = _frozen_contract(generator_id, {"domain": "fixture"})
+
+    inventory = build_contract_inputs(slot, contract, registry)
+
+    assert {row["status"] for row in inventory["rows"]} == {
+        "CONTRACT_INPUT_GENERATED"
+    }
+
+
+def test_verified_contract_generator_rejects_python_output(tmp_path, capsys):
+    registry = _contract_generator_registry(tmp_path)
+    generator_id = E_CONTRACT_GENERATOR_IDS[0]
+    selected = next(
+        row for row in registry["generators"] if row["generator_id"] == generator_id
+    )
+    implementation = tmp_path / selected["implementation_path"]
+    implementation.write_text(
+        implementation.read_text(encoding="utf-8").replace(
+            "from __future__ import annotations\n",
+            "from __future__ import annotations\n\n"
+            "print('contract generator output leak')\n",
+        ),
+        encoding="utf-8",
+    )
+    selected["source_sha256"] = hashlib.sha256(implementation.read_bytes()).hexdigest()
+    body = {key: value for key, value in registry.items() if key != "artifact_sha256"}
+    registry = {**body, "artifact_sha256": canonical_sha256(body)}
+    validated = validate_contract_generator_registry(registry, tmp_path)
+    slot = close_slot(_slot(), _canonical_sites(), lambda site: site["symbol"] == "f")
+    contract = _frozen_contract(generator_id, {"domain": "fixture"})
+
+    with pytest.raises(EvidenceError, match="E_VERIFIED_EXECUTION_OUTPUT"):
+        build_contract_inputs(slot, contract, validated)
+
+    assert capsys.readouterr() == ("", "")
 
 
 def test_close_slot_two_paths_not_applicable_or_site_frozen():

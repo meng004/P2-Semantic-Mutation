@@ -5,11 +5,17 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import inspect
+import io
 import json
 import re
+import socket
 import subprocess
+import sys
+import threading
 import uuid
 from collections.abc import Callable, Mapping, Sequence
+from contextlib import redirect_stderr, redirect_stdout
+from dataclasses import dataclass
 from decimal import Decimal
 from fractions import Fraction
 from pathlib import Path
@@ -20,6 +26,7 @@ from .artifacts import (
     canonical_json_bytes,
     canonical_sha256,
     file_sha256,
+    read_canonical_regular_bytes,
     safe_relative_path,
     validate_exact_object,
     validate_sha256,
@@ -38,6 +45,27 @@ _TECHNIQUE_ORDER = (
 )
 _SCALES = set(_SCALE_ORDER)
 _TECHNIQUES = set(_TECHNIQUE_ORDER)
+
+
+@dataclass(frozen=True)
+class _VerifiedImplementationSnapshot:
+    absolute_path: Path
+    source_sha256: str
+    source_bytes: bytes
+
+
+_VERIFIED_EXECUTION_LOCK = threading.RLock()
+_BLOCKED_SOCKET_ATTRIBUTES = (
+    "create_connection",
+    "getaddrinfo",
+    "getfqdn",
+    "gethostbyaddr",
+    "gethostbyname",
+    "gethostbyname_ex",
+    "getnameinfo",
+    "socket",
+    "socketpair",
+)
 
 PROFILING_BUDGETS = {"S": 10, "M": 15, "L": 20}
 BEHAVIOR_CATEGORY_ORDER = [
@@ -1497,8 +1525,8 @@ def verify_reveal(
         raise EvidenceError("E_REVEAL_SOURCE", "normalized source differs")
 
 
-def validate_adapter_registry(
-    registry: Mapping[str, Any], implementation_root: str | Path
+def _validate_adapter_registry_structure(
+    registry: Mapping[str, Any],
 ) -> dict[str, Any]:
     value = validate_exact_object(dict(registry), _ADAPTER_REGISTRY_SCHEMA, "adapter_registry")
     if value["schema_version"] != "p3-adapter-registry-v1":
@@ -1509,7 +1537,6 @@ def validate_adapter_registry(
     adapters = value["adapters"]
     if not isinstance(adapters, list) or len(adapters) != len(CONFIRMATORY_ADAPTERS):
         raise EvidenceError("E_ADAPTER_ALLOWLIST", "adapter registry must list confirmatory adapters exactly")
-    root = Path(implementation_root).resolve()
     seen: set[str] = set()
     normalized: list[dict[str, Any]] = []
     for index, candidate in enumerate(adapters):
@@ -1522,16 +1549,8 @@ def validate_adapter_registry(
         seen.add(adapter_id)
         if entry["ecosystem"] != _ADAPTER_ECOSYSTEMS[adapter_id]:
             raise EvidenceError("E_ADAPTER_ECOSYSTEM", f"ecosystem differs for {adapter_id}")
-        relative = safe_relative_path(entry["implementation_path"])
+        safe_relative_path(entry["implementation_path"])
         validate_sha256(entry["source_sha256"], f"adapters[{index}].source_sha256")
-        absolute = _verified_regular_file(
-            root, relative.as_posix(), "E_ADAPTER_SOURCE"
-        )
-        if file_sha256(absolute) != entry["source_sha256"]:
-            raise EvidenceError(
-                "E_ADAPTER_SOURCE_HASH",
-                f"adapter source hash differs: {adapter_id}",
-            )
         normalized.append(entry)
     if seen != CONFIRMATORY_ADAPTERS:
         raise EvidenceError("E_ADAPTER_ALLOWLIST", "confirmatory adapter set differs")
@@ -1539,7 +1558,71 @@ def validate_adapter_registry(
         "schema_version": value["schema_version"],
         "adapters": normalized,
         "artifact_sha256": value["artifact_sha256"],
+    }
+
+
+def _implementation_snapshot(
+    root: Path,
+    entry: Mapping[str, Any],
+    implementation_id: str,
+    kind: str,
+) -> _VerifiedImplementationSnapshot:
+    relative = safe_relative_path(entry["implementation_path"])
+    absolute = root / relative.as_posix()
+    source_bytes = read_canonical_regular_bytes(
+        absolute, f"{kind} implementation {implementation_id}"
+    )
+    digest = hashlib.sha256(source_bytes).hexdigest()
+    if digest != entry["source_sha256"]:
+        code = "E_ADAPTER_SOURCE_HASH" if kind == "adapter" else "E_GENERATOR_SOURCE_HASH"
+        raise EvidenceError(code, f"{kind} source hash differs: {implementation_id}")
+    return _VerifiedImplementationSnapshot(
+        absolute_path=absolute,
+        source_sha256=digest,
+        source_bytes=source_bytes,
+    )
+
+
+def _validated_snapshot_map(
+    registry: Mapping[str, Any],
+    entries: Sequence[Mapping[str, Any]],
+    id_field: str,
+    code: str,
+) -> Mapping[str, _VerifiedImplementationSnapshot]:
+    raw = registry.get("_implementation_snapshots")
+    expected_ids = {entry[id_field] for entry in entries}
+    if not isinstance(raw, Mapping) or set(raw) != expected_ids:
+        raise EvidenceError(code, "verified implementation snapshots are absent")
+    for entry in entries:
+        implementation_id = entry[id_field]
+        snapshot = raw.get(implementation_id)
+        if (
+            not isinstance(snapshot, _VerifiedImplementationSnapshot)
+            or snapshot.source_sha256 != entry["source_sha256"]
+            or hashlib.sha256(snapshot.source_bytes).hexdigest()
+            != snapshot.source_sha256
+        ):
+            raise EvidenceError(code, "verified implementation snapshot differs")
+    return raw
+
+
+def validate_adapter_registry(
+    registry: Mapping[str, Any], implementation_root: str | Path
+) -> dict[str, Any]:
+    value = _validate_adapter_registry_structure(registry)
+    root = Path(implementation_root)
+    if not root.is_absolute():
+        root = Path.cwd() / root
+    snapshots = {
+        entry["adapter_id"]: _implementation_snapshot(
+            root, entry, entry["adapter_id"], "adapter"
+        )
+        for entry in value["adapters"]
+    }
+    return {
+        **value,
         "_implementation_root": str(root),
+        "_implementation_snapshots": snapshots,
     }
 
 
@@ -1657,6 +1740,55 @@ def _reject_caller_discovery(value: Mapping[str, Any]) -> None:
             "E_ADAPTER_AUTHORITY",
             f"build descriptor contains caller-controlled discovery fields: {forbidden}",
         )
+
+
+def _execute_verified_python(operation: Callable[[], Any]) -> Any:
+    stdout = io.StringIO()
+    stderr = io.StringIO()
+    network_attempts: list[str] = []
+
+    def block_network(*_args: Any, **_kwargs: Any) -> None:
+        network_attempts.append("blocked")
+        raise OSError("verified implementation network access is forbidden")
+
+    with _VERIFIED_EXECUTION_LOCK:
+        originals = {
+            name: getattr(socket, name) for name in _BLOCKED_SOCKET_ATTRIBUTES
+        }
+        previous_dont_write_bytecode = sys.dont_write_bytecode
+        result: Any = None
+        failure: BaseException | None = None
+        try:
+            for name in _BLOCKED_SOCKET_ATTRIBUTES:
+                setattr(socket, name, block_network)
+            sys.dont_write_bytecode = True
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                try:
+                    result = operation()
+                except BaseException as exc:  # noqa: BLE001 - restore before propagation
+                    failure = exc
+        finally:
+            sys.dont_write_bytecode = previous_dont_write_bytecode
+            for name, original in originals.items():
+                setattr(socket, name, original)
+
+    if network_attempts:
+        raise EvidenceError(
+            "E_VERIFIED_EXECUTION_NETWORK",
+            "verified implementation attempted network access",
+        )
+    if stdout.getvalue() or stderr.getvalue():
+        raise EvidenceError(
+            "E_VERIFIED_EXECUTION_OUTPUT",
+            "verified implementation emitted Python output",
+        )
+    if failure is not None:
+        if isinstance(failure, Exception):
+            raise failure
+        raise EvidenceError(
+            "E_VERIFIED_EXECUTION", "verified implementation aborted execution"
+        ) from failure
+    return result
 
 
 def _load_adapter_discover(
@@ -1823,19 +1955,18 @@ def run_adapter_discovery(
     if not isinstance(build_descriptor, Mapping):
         raise EvidenceError("E_BUILD_DESCRIPTOR", "build_descriptor must be an object")
     _reject_caller_discovery(build_descriptor)
-    if not isinstance(registry, Mapping) or "_implementation_root" not in registry:
+    if not isinstance(registry, Mapping):
         raise EvidenceError("E_ADAPTER_REGISTRY", "adapter registry is not verified")
-    implementation_root = registry["_implementation_root"]
-    if not isinstance(implementation_root, str):
-        raise EvidenceError(
-            "E_ADAPTER_REGISTRY", "verified implementation root is invalid"
-        )
     public_registry = {
         key: registry.get(key)
         for key in ("schema_version", "adapters", "artifact_sha256")
     }
-    verified_registry = validate_adapter_registry(
-        public_registry, implementation_root
+    verified_registry = _validate_adapter_registry_structure(public_registry)
+    snapshots = _validated_snapshot_map(
+        registry,
+        verified_registry["adapters"],
+        "adapter_id",
+        "E_ADAPTER_REGISTRY",
     )
     root = Path(source_root).resolve()
     if not root.is_dir():
@@ -1871,25 +2002,16 @@ def run_adapter_discovery(
     entry = entries.get(adapter_id)
     if entry is None:
         raise EvidenceError("E_ADAPTER_UNREGISTERED", f"adapter is not registered: {adapter_id}")
-    implementation_root = Path(verified_registry["_implementation_root"])
-    absolute = _verified_regular_file(
-        implementation_root,
-        entry["implementation_path"],
-        "E_ADAPTER_SOURCE",
-    )
-    try:
-        implementation_bytes = absolute.read_bytes()
-    except OSError as exc:
-        raise EvidenceError(
-            "E_ADAPTER_SOURCE", f"unable to read adapter: {adapter_id}"
-        ) from exc
-    if hashlib.sha256(implementation_bytes).hexdigest() != entry["source_sha256"]:
-        raise EvidenceError(
-            "E_ADAPTER_SOURCE_HASH", f"adapter source hash differs: {adapter_id}"
+    snapshot = snapshots[adapter_id]
+
+    def invoke_adapter() -> Any:
+        discover = _load_adapter_discover(
+            snapshot.absolute_path, adapter_id, snapshot.source_bytes
         )
-    discover = _load_adapter_discover(absolute, adapter_id, implementation_bytes)
+        return discover(root, dict(build_descriptor))
+
     try:
-        raw_result = discover(root, dict(build_descriptor))
+        raw_result = _execute_verified_python(invoke_adapter)
     except EvidenceError:
         raise
     except Exception as exc:
@@ -2978,8 +3100,8 @@ def _reject_forbidden_generator_inputs(value: Any, context: str) -> None:
             _reject_forbidden_generator_inputs(item, f"{context}[{index}]")
 
 
-def validate_input_generator_registry(
-    registry: Mapping[str, Any], source_root: str | Path
+def _validate_input_generator_registry_structure(
+    registry: Mapping[str, Any],
 ) -> dict[str, Any]:
     value = validate_exact_object(
         dict(registry), _GENERATOR_REGISTRY_SCHEMA, "input_generator_registry"
@@ -2997,7 +3119,6 @@ def validate_input_generator_registry(
             "E_GENERATOR_ALLOWLIST",
             "input generator registry must list the five E_COMMON generators exactly",
         )
-    root = Path(source_root)
     seen: set[str] = set()
     normalized: list[dict[str, Any]] = []
     for index, candidate in enumerate(generators):
@@ -3027,19 +3148,8 @@ def validate_input_generator_registry(
                 "E_GENERATOR_OUTPUT_SCHEMA",
                 f"output_schema.generator_id differs for {generator_id}",
             )
-        relative = safe_relative_path(entry["implementation_path"])
+        safe_relative_path(entry["implementation_path"])
         validate_sha256(entry["source_sha256"], f"generators[{index}].source_sha256")
-        absolute = root / relative.as_posix()
-        if not absolute.is_file() or absolute.is_symlink():
-            raise EvidenceError(
-                "E_GENERATOR_SOURCE",
-                f"generator implementation missing: {entry['implementation_path']}",
-            )
-        if file_sha256(absolute) != entry["source_sha256"]:
-            raise EvidenceError(
-                "E_GENERATOR_SOURCE_HASH",
-                f"generator source hash differs: {generator_id}",
-            )
         normalized.append(entry)
     if seen != _E_COMMON_GENERATOR_ID_SET:
         raise EvidenceError("E_GENERATOR_ALLOWLIST", "E_COMMON generator set differs")
@@ -3047,18 +3157,50 @@ def validate_input_generator_registry(
         "schema_version": value["schema_version"],
         "generators": normalized,
         "artifact_sha256": value["artifact_sha256"],
-        "_source_root": str(root.resolve()),
     }
 
 
-def _load_generator_callable(absolute: Path, generator_id: str) -> Callable[[bytes, int], Mapping[str, Any]]:
-    module_name = f"p3_v3_input_generator_{generator_id.lower()}"
-    spec = importlib.util.spec_from_file_location(module_name, absolute)
-    if spec is None or spec.loader is None:
-        raise EvidenceError("E_GENERATOR_LOAD", f"unable to load generator: {generator_id}")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    generate = getattr(module, "generate", None)
+def validate_input_generator_registry(
+    registry: Mapping[str, Any], source_root: str | Path
+) -> dict[str, Any]:
+    value = _validate_input_generator_registry_structure(registry)
+    root = Path(source_root)
+    if not root.is_absolute():
+        root = Path.cwd() / root
+    snapshots = {
+        entry["generator_id"]: _implementation_snapshot(
+            root, entry, entry["generator_id"], "generator"
+        )
+        for entry in value["generators"]
+    }
+    return {
+        **value,
+        "_source_root": str(root),
+        "_implementation_snapshots": snapshots,
+    }
+
+
+def _load_input_generator_callable(
+    snapshot: _VerifiedImplementationSnapshot, generator_id: str
+) -> Callable[[bytes, int], Mapping[str, Any]]:
+    namespace = {
+        "__name__": f"p3_v3_input_generator_{generator_id.lower()}",
+        "__file__": str(snapshot.absolute_path),
+    }
+    try:
+        exec(
+            compile(
+                snapshot.source_bytes,
+                str(snapshot.absolute_path),
+                "exec",
+            ),
+            namespace,
+        )
+    except Exception as exc:
+        raise EvidenceError(
+            "E_GENERATOR_LOAD", f"unable to load generator: {generator_id}"
+        ) from exc
+    generate = namespace.get("generate")
     if not callable(generate):
         raise EvidenceError("E_GENERATOR_LOAD", f"generator lacks generate(): {generator_id}")
     return generate
@@ -3182,19 +3324,34 @@ def build_common_inputs(
     if not isinstance(public_frame, Mapping):
         raise EvidenceError("E_FRAME", "public behavior frame must be an object")
     registry_source_root = registry.get("_source_root") if isinstance(registry, Mapping) else None
+    implementation_snapshots = (
+        registry.get("_implementation_snapshots")
+        if isinstance(registry, Mapping)
+        else None
+    )
     registry_body = {
         key: value
         for key, value in dict(registry).items()
-        if key != "_source_root"
+        if key not in {"_source_root", "_implementation_snapshots"}
     }
-    validated_registry = validate_exact_object(
-        registry_body, _GENERATOR_REGISTRY_SCHEMA, "input_generator_registry"
+    validated_registry = _validate_input_generator_registry_structure(
+        registry_body
     )
     if {
         entry["generator_id"] for entry in validated_registry["generators"]
     } != _E_COMMON_GENERATOR_ID_SET:
         raise EvidenceError("E_GENERATOR_ALLOWLIST", "input generator registry is incomplete")
-    validated_registry = {**validated_registry, "_source_root": registry_source_root}
+    validated_registry = {
+        **validated_registry,
+        "_source_root": registry_source_root,
+        "_implementation_snapshots": implementation_snapshots,
+    }
+    snapshots = _validated_snapshot_map(
+        validated_registry,
+        validated_registry["generators"],
+        "generator_id",
+        "E_GENERATOR_REGISTRY",
+    )
     source_id = _controlled_subject_source_id(source)
     frame_source_id = public_frame.get("controlled_subject_source_id")
     if frame_source_id != source_id:
@@ -3256,13 +3413,10 @@ def build_common_inputs(
                 }
             )
     else:
-        source_root = validated_registry.get("_source_root")
-        if not isinstance(source_root, (str, Path)):
-            raise EvidenceError(
-                "E_GENERATOR_SOURCE",
-                "input generator registry must come from validate_input_generator_registry",
-            )
         callables: dict[str, Callable[[bytes, int], Mapping[str, Any]]] = {}
+        selected_generator_ids = {
+            item["generator"]["generator_id"] for item in eligible
+        }
         for entry in validated_registry["generators"]:
             generator_id = entry["generator_id"]
             if generator_id not in _E_COMMON_GENERATOR_ID_SET:
@@ -3270,9 +3424,13 @@ def build_common_inputs(
                     "E_GENERATOR_ALLOWLIST",
                     f"unregistered generator dispatch: {generator_id}",
                 )
-            relative = safe_relative_path(entry["implementation_path"])
-            absolute = Path(source_root) / relative.as_posix()
-            callables[generator_id] = _load_generator_callable(absolute, generator_id)
+            if generator_id in selected_generator_ids:
+                snapshot = snapshots[generator_id]
+                callables[generator_id] = _execute_verified_python(
+                    lambda snapshot=snapshot, generator_id=generator_id: (
+                        _load_input_generator_callable(snapshot, generator_id)
+                    )
+                )
 
         for ordinal in range(1, E_COMMON_COUNT + 1):
             seed = _common_input_seed(source_id, ordinal)
@@ -3282,7 +3440,11 @@ def build_common_inputs(
             failure_code = generator_entry["failure_code"]
             generate = callables[generator_id]
             try:
-                result = generate(schema["canonical_schema_bytes"], seed)
+                result = _execute_verified_python(
+                    lambda: generate(schema["canonical_schema_bytes"], seed)
+                )
+            except EvidenceError:
+                raise
             except Exception:  # noqa: BLE001 - generator failures occupy the ordinal
                 result = {"failure_code": failure_code}
             if not isinstance(result, Mapping):
@@ -3549,7 +3711,7 @@ def rebuild_indexed_subject(
             {
                 key: value
                 for key, value in indexed["adapter_registry"].items()
-                if key != "_implementation_root"
+                if key not in {"_implementation_root", "_implementation_snapshots"}
             },
             indexed["adapter_root"],
         )
@@ -3557,7 +3719,7 @@ def rebuild_indexed_subject(
             {
                 key: value
                 for key, value in indexed["input_generator_registry"].items()
-                if key != "_source_root"
+                if key not in {"_source_root", "_implementation_snapshots"}
             },
             indexed["input_generator_root"],
         )
@@ -3669,8 +3831,8 @@ def validate_common_inputs_on_fixed_source(
     return {**body, "artifact_sha256": canonical_sha256(body)}
 
 
-def validate_contract_generator_registry(
-    registry: Mapping[str, Any], source_root: str | Path
+def _validate_contract_generator_registry_structure(
+    registry: Mapping[str, Any],
 ) -> dict[str, Any]:
     value = validate_exact_object(
         dict(registry), _GENERATOR_REGISTRY_SCHEMA, "contract_generator_registry"
@@ -3691,7 +3853,6 @@ def validate_contract_generator_registry(
             "E_GENERATOR_ALLOWLIST",
             "contract generator registry must list the five E_CONTRACT generators exactly",
         )
-    root = Path(source_root)
     seen: set[str] = set()
     normalized: list[dict[str, Any]] = []
     for index, candidate in enumerate(generators):
@@ -3722,19 +3883,8 @@ def validate_contract_generator_registry(
                 "E_GENERATOR_OUTPUT_SCHEMA",
                 f"output_schema.generator_id differs for {generator_id}",
             )
-        relative = safe_relative_path(entry["implementation_path"])
+        safe_relative_path(entry["implementation_path"])
         validate_sha256(entry["source_sha256"], f"generators[{index}].source_sha256")
-        absolute = root / relative.as_posix()
-        if not absolute.is_file() or absolute.is_symlink():
-            raise EvidenceError(
-                "E_GENERATOR_SOURCE",
-                f"generator implementation missing: {entry['implementation_path']}",
-            )
-        if file_sha256(absolute) != entry["source_sha256"]:
-            raise EvidenceError(
-                "E_GENERATOR_SOURCE_HASH",
-                f"generator source hash differs: {generator_id}",
-            )
         normalized.append(entry)
     if seen != _E_CONTRACT_GENERATOR_ID_SET:
         raise EvidenceError("E_GENERATOR_ALLOWLIST", "E_CONTRACT generator set differs")
@@ -3742,7 +3892,26 @@ def validate_contract_generator_registry(
         "schema_version": value["schema_version"],
         "generators": normalized,
         "artifact_sha256": value["artifact_sha256"],
-        "_source_root": str(root.resolve()),
+    }
+
+
+def validate_contract_generator_registry(
+    registry: Mapping[str, Any], source_root: str | Path
+) -> dict[str, Any]:
+    value = _validate_contract_generator_registry_structure(registry)
+    root = Path(source_root)
+    if not root.is_absolute():
+        root = Path.cwd() / root
+    snapshots = {
+        entry["generator_id"]: _implementation_snapshot(
+            root, entry, entry["generator_id"], "generator"
+        )
+        for entry in value["generators"]
+    }
+    return {
+        **value,
+        "_source_root": str(root),
+        "_implementation_snapshots": snapshots,
     }
 
 
@@ -3846,11 +4015,18 @@ def build_contract_inputs(
         )
     _reject_forbidden_generator_inputs(frozen, "contract")
     registry_source_root = registry.get("_source_root") if isinstance(registry, Mapping) else None
+    implementation_snapshots = (
+        registry.get("_implementation_snapshots")
+        if isinstance(registry, Mapping)
+        else None
+    )
     registry_body = {
-        key: value for key, value in dict(registry).items() if key != "_source_root"
+        key: value
+        for key, value in dict(registry).items()
+        if key not in {"_source_root", "_implementation_snapshots"}
     }
-    validated_registry = validate_exact_object(
-        registry_body, _GENERATOR_REGISTRY_SCHEMA, "contract_generator_registry"
+    validated_registry = _validate_contract_generator_registry_structure(
+        registry_body
     )
     if {
         entry["generator_id"] for entry in validated_registry["generators"]
@@ -3858,7 +4034,17 @@ def build_contract_inputs(
         raise EvidenceError(
             "E_GENERATOR_ALLOWLIST", "contract generator registry is incomplete"
         )
-    validated_registry = {**validated_registry, "_source_root": registry_source_root}
+    validated_registry = {
+        **validated_registry,
+        "_source_root": registry_source_root,
+        "_implementation_snapshots": implementation_snapshots,
+    }
+    snapshots = _validated_snapshot_map(
+        validated_registry,
+        validated_registry["generators"],
+        "generator_id",
+        "E_GENERATOR_REGISTRY",
+    )
     generator_id = frozen["generator_id"]
     domain = frozen["domain"]
     domain_sha256 = canonical_sha256(domain)
@@ -3896,25 +4082,24 @@ def build_contract_inputs(
                 }
             )
     else:
-        source_root = validated_registry.get("_source_root")
-        if not isinstance(source_root, (str, Path)):
-            raise EvidenceError(
-                "E_GENERATOR_SOURCE",
-                "contract generator registry must come from validate_contract_generator_registry",
-            )
         kind_to_generator = {
             entry["generator_id"]: entry for entry in validated_registry["generators"]
         }
         generator_entry = kind_to_generator[generator_id]
-        relative = safe_relative_path(generator_entry["implementation_path"])
-        absolute = Path(source_root) / relative.as_posix()
-        generate = _load_generator_callable(absolute, generator_id)
+        snapshot = snapshots[generator_id]
+        generate = _execute_verified_python(
+            lambda: _load_input_generator_callable(snapshot, generator_id)
+        )
         domain_bytes = canonical_json_bytes(domain)
         failure_code = generator_entry["failure_code"]
         for ordinal in range(E_CONTRACT_COUNT):
             seed = _contract_input_seed(subject_id, slot_id, ordinal)
             try:
-                result = generate(domain_bytes, seed)
+                result = _execute_verified_python(
+                    lambda: generate(domain_bytes, seed)
+                )
+            except EvidenceError:
+                raise
             except Exception:  # noqa: BLE001 - generator failures occupy the ordinal
                 result = {"failure_code": failure_code}
             if not isinstance(result, Mapping):

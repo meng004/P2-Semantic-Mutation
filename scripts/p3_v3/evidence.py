@@ -19,7 +19,6 @@ from urllib.parse import unquote, urlsplit
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-import p3_v3.bridge_and_frames as bridge_frames_module  # noqa: E402
 from p3_v3.artifacts import (  # noqa: E402
     EvidenceError,
     canonical_json_bytes,
@@ -807,43 +806,6 @@ def _registered_implementation_paths(
     return paths
 
 
-def _verified_generator_loader(
-    expected_sources: Mapping[tuple[str, str], str],
-):
-    def load(absolute: Path, generator_id: str):
-        expected = expected_sources.get((str(absolute), generator_id))
-        if expected is None:
-            raise EvidenceError(
-                "E_GENERATOR_SOURCE", "generator is absent from verified authority"
-            )
-        source_bytes = read_canonical_regular_bytes(
-            absolute, f"input generator {generator_id}"
-        )
-        if hashlib.sha256(source_bytes).hexdigest() != expected:
-            raise EvidenceError(
-                "E_GENERATOR_SOURCE_HASH",
-                f"generator source hash differs: {generator_id}",
-            )
-        namespace = {
-            "__name__": f"_p3_v3_generator_{generator_id.casefold()}",
-            "__file__": str(absolute),
-        }
-        try:
-            exec(compile(source_bytes, str(absolute), "exec"), namespace)
-        except Exception as exc:
-            raise EvidenceError(
-                "E_GENERATOR_LOAD", f"unable to load generator: {generator_id}"
-            ) from exc
-        generate = namespace.get("generate")
-        if not callable(generate):
-            raise EvidenceError(
-                "E_GENERATOR_LOAD", f"generator lacks generate(): {generator_id}"
-            )
-        return generate
-
-    return load
-
-
 def _raw_authority_envelope(
     controller_root: Path, relative_path: str, role: str
 ) -> tuple[dict[str, Any], str]:
@@ -1230,44 +1192,22 @@ def prepare_authority(
             ],
             "build_descriptor_sha256": canonical_sha256(build_descriptor),
         }
-        previous_dont_write_bytecode = sys.dont_write_bytecode
-        sys.dont_write_bytecode = True
-        try:
-            adapter_discovery = run_adapter_discovery(
-                subject_root,
-                build_descriptor,
-                adapter_registry,
-                subject_input["adapter_id"],
-            )
-            public_behavior_frame = build_public_behavior_frame(
-                source_record, adapter_discovery
-            )
-            scale = derive_source_scale(subject_root, adapter_discovery)
-            profiling_workload = select_profiling_workload(
-                public_behavior_frame, scale["scale_class"]
-            )
-            expected_generator_sources = {
-                (
-                    str(
-                        Path(generator_registry["_source_root"])
-                        / entry["implementation_path"]
-                    ),
-                    entry["generator_id"],
-                ): entry["source_sha256"]
-                for entry in generator_registry["generators"]
-            }
-            original_generator_loader = bridge_frames_module._load_generator_callable
-            bridge_frames_module._load_generator_callable = _verified_generator_loader(
-                expected_generator_sources
-            )
-            try:
-                common_inputs = build_common_inputs(
-                    source_record, public_behavior_frame, generator_registry
-                )
-            finally:
-                bridge_frames_module._load_generator_callable = original_generator_loader
-        finally:
-            sys.dont_write_bytecode = previous_dont_write_bytecode
+        adapter_discovery = run_adapter_discovery(
+            subject_root,
+            build_descriptor,
+            adapter_registry,
+            subject_input["adapter_id"],
+        )
+        public_behavior_frame = build_public_behavior_frame(
+            source_record, adapter_discovery
+        )
+        scale = derive_source_scale(subject_root, adapter_discovery)
+        profiling_workload = select_profiling_workload(
+            public_behavior_frame, scale["scale_class"]
+        )
+        common_inputs = build_common_inputs(
+            source_record, public_behavior_frame, generator_registry
+        )
         authority_row = {
             "subject_id": subject_input["subject_id"],
             "repository_role": subject_input["repository_role"],

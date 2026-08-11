@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import copy
+import concurrent.futures
 import hashlib
 import json
 import os
 import shutil
 import stat
 import subprocess
+import sys
+import threading
 from pathlib import Path
 
 import pytest
@@ -1511,7 +1514,7 @@ def test_freeze_authority_rejects_ignored_untracked_authority_bytes(
         evidence_module.build_authority_lock(controller, inputs)
 
 
-def test_freeze_authority_never_executes_generator_replaced_after_hash_check(
+def test_freeze_authority_executes_generator_snapshot_not_replaced_path(
     tmp_path, monkeypatch
 ):
     controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
@@ -1540,10 +1543,62 @@ def test_freeze_authority_never_executes_generator_replaced_after_hash_check(
         "validate_input_generator_registry",
         replace_after_validation,
     )
-    with pytest.raises(EvidenceError):
-        evidence_module.build_authority_lock(controller, inputs)
+    lock = evidence_module.build_authority_lock(controller, inputs)
 
+    assert lock["jobs"]
     assert not marker.exists()
+
+
+def test_concurrent_freezes_do_not_cross_snapshots_leak_state_or_write_pyc(
+    tmp_path, monkeypatch, capsys
+):
+    first_root = tmp_path / "first"
+    second_root = tmp_path / "second"
+    first_root.mkdir()
+    second_root.mkdir()
+    first_controller, first_inputs, _ = _authority_freeze_fixture(first_root)
+    second_controller, second_inputs, _ = _authority_freeze_fixture(second_root)
+    real_build_common_inputs = evidence_module.build_common_inputs
+    rendezvous = threading.Barrier(2)
+    first_complete = threading.Event()
+    first_generator_root = str(
+        first_controller / "registries/input_generators"
+    )
+
+    def synchronized_common_inputs(source_record, public_frame, registry):
+        rendezvous.wait(timeout=10)
+        if registry["_source_root"] != first_generator_root:
+            assert first_complete.wait(timeout=10)
+        return real_build_common_inputs(source_record, public_frame, registry)
+
+    monkeypatch.setattr(
+        evidence_module, "build_common_inputs", synchronized_common_inputs
+    )
+    monkeypatch.setattr(sys, "dont_write_bytecode", False)
+
+    def freeze_first():
+        try:
+            return evidence_module.build_authority_lock(
+                first_controller, first_inputs
+            )
+        finally:
+            first_complete.set()
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        first_future = executor.submit(freeze_first)
+        second_future = executor.submit(
+            evidence_module.build_authority_lock,
+            second_controller,
+            second_inputs,
+        )
+        first_lock = first_future.result(timeout=20)
+        second_lock = second_future.result(timeout=20)
+
+    assert first_lock["jobs"] and second_lock["jobs"]
+    assert sys.dont_write_bytecode is False
+    assert capsys.readouterr() == ("", "")
+    assert not list(first_controller.rglob("__pycache__"))
+    assert not list(second_controller.rglob("__pycache__"))
 
 
 def test_freeze_authority_relative_subject_root_uses_inputs_parent(
@@ -1628,6 +1683,8 @@ def test_freeze_authority_refuses_overwrite_and_cli_stdout_is_thin(tmp_path):
     )
 
     assert result.returncode == 0
+    assert result.stdout == canonical_json_bytes(json.loads(result.stdout)).decode()
+    assert result.stderr == ""
     assert set(json.loads(result.stdout)) == {
         "authority_lock_sha256",
         "controller_manifest_sha256",
@@ -1654,6 +1711,74 @@ def test_freeze_authority_refuses_overwrite_and_cli_stdout_is_thin(tmp_path):
     assert repeated.returncode == 2
     assert json.loads(repeated.stderr)["code"] == "E_EXISTS"
     assert output.read_bytes() == original
+
+
+def test_freeze_cli_captures_verified_implementation_output_and_fails_closed(
+    tmp_path,
+):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    registry_path = controller / inputs["registry_artifact_paths"][
+        "adapter_registry"
+    ]
+    registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    selected = next(
+        row
+        for row in registry["adapters"]
+        if row["adapter_id"] == "PYTHON_PEP517_V1"
+    )
+    implementation = registry_path.parent / selected["implementation_path"]
+    implementation.write_text(
+        implementation.read_text(encoding="utf-8").replace(
+            "from __future__ import annotations\n",
+            "from __future__ import annotations\n\n"
+            "print('forbidden adapter output')\n",
+        ),
+        encoding="utf-8",
+    )
+    selected["source_sha256"] = hashlib.sha256(implementation.read_bytes()).hexdigest()
+    registry_body = {
+        key: value for key, value in registry.items() if key != "artifact_sha256"
+    }
+    registry["artifact_sha256"] = canonical_sha256(registry_body)
+    write_canonical_json(registry_path, registry, exclusive=False)
+    protocol_path = controller / inputs["protocol_artifact_paths"]["protocol"]
+    protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+    protocol["adapter_registry_sha256"] = canonical_sha256(registry)
+    protocol_body = {
+        key: value for key, value in protocol.items() if key != "artifact_sha256"
+    }
+    protocol["artifact_sha256"] = canonical_sha256(protocol_body)
+    write_canonical_json(protocol_path, protocol, exclusive=False)
+    _run_git(controller, "add", ".")
+    _run_git(controller, "commit", "-m", "verified adapter output fixture")
+    authority_inputs = tmp_path / "authority-inputs.json"
+    output = tmp_path / "authority-lock.json"
+    write_canonical_json(authority_inputs, inputs, exclusive=True)
+
+    result = subprocess.run(
+        [
+            "python3",
+            str(CLI),
+            "freeze-authority-lock",
+            "--controller-root",
+            str(controller),
+            "--authority-inputs",
+            str(authority_inputs),
+            "--output",
+            str(output),
+        ],
+        capture_output=True,
+        check=False,
+        text=True,
+        env={**_env(), "PYTHONDONTWRITEBYTECODE": "1"},
+    )
+
+    assert result.returncode == 2
+    assert result.stdout == ""
+    assert result.stderr == canonical_json_bytes(
+        {"status": "FAIL", "code": "E_VERIFIED_EXECUTION_OUTPUT"}
+    ).decode()
+    assert not output.exists()
 
 
 def test_load_authority_lock_accepts_matching_canonical_bytes(tmp_path):
