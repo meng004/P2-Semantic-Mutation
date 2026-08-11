@@ -1691,27 +1691,30 @@ def _validated_snapshot_map(
     entries: Sequence[Mapping[str, Any]],
     id_field: str,
     code: str,
-) -> Mapping[str, _VerifiedImplementationSnapshot]:
+) -> dict[str, _VerifiedImplementationSnapshot]:
     raw = registry.get("_implementation_snapshots")
     expected_ids = {entry[id_field] for entry in entries}
     if not isinstance(raw, Mapping) or set(raw) != expected_ids:
         raise EvidenceError(code, "verified implementation snapshots are absent")
+    captured: dict[str, _VerifiedImplementationSnapshot] = {}
     for entry in entries:
         implementation_id = entry[id_field]
         snapshot = raw.get(implementation_id)
+        if type(snapshot) is not _VerifiedImplementationSnapshot:
+            raise EvidenceError(code, "verified implementation snapshot differs")
+        logical_filename = snapshot.logical_filename
+        source_sha256 = snapshot.source_sha256
+        source_bytes = snapshot.source_bytes
         if (
-            type(snapshot) is not _VerifiedImplementationSnapshot
-            or type(snapshot.logical_filename) is not str
-            or type(snapshot.source_sha256) is not str
-            or type(snapshot.source_bytes) is not bytes
+            type(logical_filename) is not str
+            or type(source_sha256) is not str
+            or type(source_bytes) is not bytes
         ):
             raise EvidenceError(code, "verified implementation snapshot differs")
         try:
-            logical_filename = safe_relative_path(
-                snapshot.logical_filename
-            ).as_posix()
+            logical_filename = safe_relative_path(logical_filename).as_posix()
             validate_sha256(
-                snapshot.source_sha256,
+                source_sha256,
                 f"verified implementation {implementation_id} digest",
             )
         except EvidenceError as exc:
@@ -1720,12 +1723,16 @@ def _validated_snapshot_map(
             ) from exc
         if (
             logical_filename != entry["implementation_path"]
-            or snapshot.source_sha256 != entry["source_sha256"]
-            or hashlib.sha256(snapshot.source_bytes).hexdigest()
-            != snapshot.source_sha256
+            or source_sha256 != entry["source_sha256"]
+            or hashlib.sha256(source_bytes).hexdigest() != source_sha256
         ):
             raise EvidenceError(code, "verified implementation snapshot differs")
-    return raw
+        captured[implementation_id] = _VerifiedImplementationSnapshot(
+            logical_filename=logical_filename,
+            source_sha256=source_sha256,
+            source_bytes=bytes(memoryview(source_bytes)),
+        )
+    return captured
 
 
 def _consume_verified_registry(
@@ -1758,14 +1765,7 @@ def _consume_verified_registry(
     snapshots = _validated_snapshot_map(registry, entries, id_field, code)
     return {
         **validated,
-        "_implementation_snapshots": {
-            entry[id_field]: _VerifiedImplementationSnapshot(
-                logical_filename=entry["implementation_path"],
-                source_sha256=snapshots[entry[id_field]].source_sha256,
-                source_bytes=bytes(memoryview(snapshots[entry[id_field]].source_bytes)),
-            )
-            for entry in entries
-        },
+        "_implementation_snapshots": snapshots,
     }
 
 

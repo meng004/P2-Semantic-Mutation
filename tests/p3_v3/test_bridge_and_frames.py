@@ -11,6 +11,7 @@ import stat
 import subprocess
 import sys
 import threading
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -1647,6 +1648,50 @@ def test_verified_registry_consumer_revalidates_in_memory_snapshot_digest(tmp_pa
 
     with pytest.raises(EvidenceError, match="E_ADAPTER_REGISTRY"):
         frames_module._consume_verified_registry(verified, registry_kind="adapter")
+
+
+def test_verified_registry_consumer_captures_snapshot_from_single_mapping_get(tmp_path):
+    class FlippingSnapshotMap(Mapping):
+        def __init__(self, snapshots, snapshot_id, forged):
+            self.snapshots = snapshots
+            self.snapshot_id = snapshot_id
+            self.forged = forged
+            self.get_calls = 0
+            self.item_reads = 0
+
+        def __iter__(self):
+            return iter(self.snapshots)
+
+        def __len__(self):
+            return len(self.snapshots)
+
+        def get(self, key, default=None):
+            self.get_calls += 1
+            return self.snapshots.get(key, default)
+
+        def __getitem__(self, key):
+            self.item_reads += 1
+            return self.forged if key == self.snapshot_id else self.snapshots[key]
+
+    verified = validate_adapter_registry(
+        _adapter_registry(tmp_path), _source_snapshot(tmp_path)
+    )
+    snapshot_id = "PYTHON_PEP517_V1"
+    genuine_snapshots = verified["_implementation_snapshots"]
+    genuine = genuine_snapshots[snapshot_id]
+    forged = copy.copy(genuine)
+    object.__setattr__(forged, "source_bytes", b"raise RuntimeError('forged')\n")
+    flipping = FlippingSnapshotMap(genuine_snapshots, snapshot_id, forged)
+    verified["_implementation_snapshots"] = flipping
+
+    consumed = frames_module._consume_verified_registry(
+        verified, registry_kind="adapter"
+    )
+
+    captured = consumed["_implementation_snapshots"][snapshot_id]
+    assert captured.source_bytes == genuine.source_bytes
+    assert flipping.get_calls == len(genuine_snapshots)
+    assert flipping.item_reads == 0
 
 
 @pytest.mark.parametrize("registry_kind", ["adapter", "input_generator"])
