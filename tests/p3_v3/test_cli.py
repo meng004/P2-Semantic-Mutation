@@ -373,6 +373,28 @@ def test_subject_manifest_includes_complete_root_and_excludes_git(tmp_path):
     assert all(set(row) == {"relative_path", "mode", "sha256"} for row in manifest["files"])
 
 
+def test_subject_manifest_rejects_root_git_file(tmp_path):
+    (tmp_path / "subject.py").write_text("subject = True\n", encoding="utf-8")
+    (tmp_path / ".git").write_text("gitdir: elsewhere\n", encoding="utf-8")
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_MANIFEST"):
+        evidence_module.build_tracked_source_manifest(
+            tmp_path, ["."], "subject-source"
+        )
+
+
+def test_subject_manifest_rejects_nested_git_directory(tmp_path):
+    (tmp_path / "subject.py").write_text("subject = True\n", encoding="utf-8")
+    nested_git = tmp_path / "vendor/.git"
+    nested_git.mkdir(parents=True)
+    (nested_git / "config").write_text("metadata\n", encoding="utf-8")
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_MANIFEST"):
+        evidence_module.build_tracked_source_manifest(
+            tmp_path, ["."], "subject-source"
+        )
+
+
 def test_subject_manifest_rejects_selective_file_roots(tmp_path):
     (tmp_path / "subject.py").write_text("subject = True\n", encoding="utf-8")
     (tmp_path / "omitted.py").write_text("omitted = True\n", encoding="utf-8")
@@ -661,6 +683,15 @@ def test_load_authority_lock_rejects_changed_bytes_before_parsing_fields(tmp_pat
 def test_load_authority_lock_rejects_matching_noncanonical_bytes(tmp_path):
     path = tmp_path / "authority-lock.json"
     raw = json.dumps(_authority_lock(), sort_keys=True, indent=2).encode("utf-8") + b"\n"
+    path.write_bytes(raw)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_SCHEMA"):
+        evidence_module.load_authority_lock(path, hashlib.sha256(raw).hexdigest())
+
+
+def test_load_authority_lock_normalizes_matching_digest_lone_surrogate(tmp_path):
+    path = tmp_path / "authority-lock.json"
+    raw = b'{"bad":"\\ud800"}\n'
     path.write_bytes(raw)
 
     with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_SCHEMA"):

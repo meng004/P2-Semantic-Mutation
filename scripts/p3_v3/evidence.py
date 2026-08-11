@@ -353,10 +353,14 @@ def build_tracked_source_manifest(
         if stat.S_ISLNK(info.st_mode):
             raise EvidenceError("E_AUTHORITY_MANIFEST", "manifest contains a symlink")
         if relative.name == ".git":
-            if stat.S_ISDIR(info.st_mode) or stat.S_ISREG(info.st_mode):
+            if (
+                role == "subject-source"
+                and relative == Path(".git")
+                and stat.S_ISDIR(info.st_mode)
+            ):
                 return
             raise EvidenceError(
-                "E_AUTHORITY_MANIFEST", "manifest .git node is not ordinary"
+                "E_AUTHORITY_MANIFEST", "manifest contains forbidden .git metadata"
             )
         if any(part in _TRANSIENT_SOURCE_NAMES for part in relative.parts):
             raise EvidenceError(

@@ -34,9 +34,9 @@ def canonical_json_bytes(value: Any) -> bytes:
             ensure_ascii=False,
             allow_nan=False,
         )
-    except (TypeError, ValueError) as exc:
+        return text.encode("utf-8") + b"\n"
+    except (TypeError, ValueError, UnicodeEncodeError) as exc:
         raise EvidenceError("E_CANONICAL_JSON", str(exc)) from exc
-    return text.encode("utf-8") + b"\n"
 
 
 def canonical_sha256(value: Any) -> str:
@@ -106,6 +106,13 @@ def _fsync_directory(directory: Path) -> None:
         os.close(fd)
 
 
+def _discard_temporary(path: Path) -> None:
+    try:
+        path.unlink(missing_ok=True)
+    except OSError:
+        pass
+
+
 def write_canonical_json(path: str | Path, value: Any, *, exclusive: bool) -> None:
     """Durably create or atomically replace one canonical JSON file."""
 
@@ -141,7 +148,7 @@ def write_canonical_json(path: str | Path, value: Any, *, exclusive: bool) -> No
                 except OSError:
                     pass
             if temporary is not None:
-                temporary.unlink(missing_ok=True)
+                _discard_temporary(temporary)
             raise
         except BaseException as exc:
             if fd is not None:
@@ -150,7 +157,7 @@ def write_canonical_json(path: str | Path, value: Any, *, exclusive: bool) -> No
                 except OSError:
                     pass
             if temporary is not None:
-                temporary.unlink(missing_ok=True)
+                _discard_temporary(temporary)
             raise EvidenceError(
                 "E_ARTIFACT_WRITE", f"unable to create artifact: {target}"
             ) from exc
@@ -244,11 +251,17 @@ def read_canonical_regular_json(path: Path, context: str) -> dict[str, Any]:
             raw.decode("utf-8"),
             parse_constant=lambda token: (_ for _ in ()).throw(ValueError(token)),
         )
-    except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
+        is_canonical = isinstance(value, dict) and canonical_json_bytes(value) == raw
+    except (
+        UnicodeDecodeError,
+        json.JSONDecodeError,
+        ValueError,
+        EvidenceError,
+    ) as exc:
         raise EvidenceError(
             "E_AUTHORITY_LOCK_SCHEMA", f"{context} is not canonical JSON"
         ) from exc
-    if not isinstance(value, dict) or canonical_json_bytes(value) != raw:
+    if not is_canonical:
         raise EvidenceError(
             "E_AUTHORITY_LOCK_SCHEMA", f"{context} is not a canonical JSON object"
         )

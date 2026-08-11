@@ -95,6 +95,45 @@ def test_exclusive_write_existing_target_leaves_no_temporary(tmp_path):
     assert list(tmp_path.iterdir()) == [path]
 
 
+def test_exclusive_write_preserves_exists_error_when_temporary_cleanup_fails(
+    tmp_path, monkeypatch
+):
+    path = tmp_path / "artifact.json"
+    path.write_bytes(b"original\n")
+
+    def fail_unlink(_path, *, missing_ok=False):
+        raise OSError("injected cleanup failure")
+
+    monkeypatch.setattr(artifacts_module.Path, "unlink", fail_unlink)
+
+    with pytest.raises(EvidenceError) as caught:
+        write_canonical_json(path, {"replacement": True}, exclusive=True)
+
+    assert caught.value.code == "E_EXISTS"
+    assert path.read_bytes() == b"original\n"
+
+
+def test_exclusive_write_preserves_write_error_when_temporary_cleanup_fails(
+    tmp_path, monkeypatch
+):
+    path = tmp_path / "artifact.json"
+
+    def fail_link(_source, _target):
+        raise OSError("injected link failure")
+
+    def fail_unlink(_path, *, missing_ok=False):
+        raise OSError("injected cleanup failure")
+
+    monkeypatch.setattr(artifacts_module.os, "link", fail_link)
+    monkeypatch.setattr(artifacts_module.Path, "unlink", fail_unlink)
+
+    with pytest.raises(EvidenceError) as caught:
+        write_canonical_json(path, {"payload": True}, exclusive=True)
+
+    assert caught.value.code == "E_ARTIFACT_WRITE"
+    assert not path.exists()
+
+
 def test_exclusive_write_directory_fsync_failure_keeps_published_target(
     tmp_path, monkeypatch
 ):
@@ -159,6 +198,14 @@ def test_authority_lock_reader_rejects_special_node_without_opening_it(tmp_path)
 def test_authority_lock_reader_rejects_noncanonical_bytes(tmp_path):
     path = tmp_path / "lock.json"
     path.write_bytes(b'{"schema_version": "P3_V3_AUTHORITY_LOCK_V1"}\n')
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_SCHEMA"):
+        artifacts_module.read_canonical_regular_json(path, "authority lock")
+
+
+def test_authority_lock_reader_normalizes_escaped_lone_surrogate(tmp_path):
+    path = tmp_path / "lock.json"
+    path.write_bytes(b'{"bad":"\\ud800"}\n')
 
     with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_SCHEMA"):
         artifacts_module.read_canonical_regular_json(path, "authority lock")
