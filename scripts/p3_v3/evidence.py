@@ -2827,9 +2827,27 @@ def _load_evidence_index(
     authority_lock_path: Path,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     source = Path(index_path)
-    value = validate_exact_object(
-        read_canonical_json(source), _INDEX_SCHEMA, "evidence_index"
-    )
+    try:
+        raw = read_canonical_regular_bytes(source, "evidence index")
+    except EvidenceError as exc:
+        if exc.code == "E_AUTHORITY_LOCK_PATH":
+            raise EvidenceError(
+                "E_INDEX_PATH", "declared evidence index path is unsafe"
+            ) from exc
+        raise
+    try:
+        parsed = json.loads(
+            raw.decode("utf-8"),
+            parse_constant=lambda token: (_ for _ in ()).throw(ValueError(token)),
+        )
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
+        raise EvidenceError("E_JSON", "invalid evidence index JSON") from exc
+    if canonical_json_bytes(parsed) != raw:
+        raise EvidenceError(
+            "E_NONCANONICAL_JSON", "evidence index bytes are noncanonical"
+        )
+    value = validate_exact_object(parsed, _INDEX_SCHEMA, "evidence_index")
+    index_sha256 = hashlib.sha256(raw).hexdigest()
     if value["schema_version"] != "P3_V3_EVIDENCE_INDEX_V3":
         raise EvidenceError("E_INDEX_SCHEMA", "evidence index schema version differs")
     body = {key: item for key, item in value.items() if key != "artifact_sha256"}
@@ -3302,6 +3320,7 @@ def _load_evidence_index(
         raise EvidenceError("E_INDEX_COVERAGE", "P12 coverage is incomplete")
     return value, {
         "root": root,
+        "evidence_index_sha256": index_sha256,
         "controller_manifest": controller_manifest,
         "controller_source": controller_root,
         "subject_sources": subject_sources,
@@ -3767,7 +3786,7 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
     return {
         "status": "PASS",
         "authority_lock_sha256": args.authority_lock_sha256,
-        "evidence_index_sha256": file_sha256(args.index),
+        "evidence_index_sha256": material["evidence_index_sha256"],
         "subject_count": len(validated_lock["subjects"]),
         "authorized_real_p12_job_count": completion[
             "authorized_real_p12_job_count"

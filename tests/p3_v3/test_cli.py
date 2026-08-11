@@ -3114,8 +3114,14 @@ def _empty_evidence_index_body(tmp_path: Path) -> dict:
     return body
 
 
-def _run_evidence_index(index_path: Path) -> subprocess.CompletedProcess:
-    lock_path = index_path.parent / "authority-lock.json"
+def _run_evidence_index(
+    index_path: Path,
+    *,
+    lock_path: Path | None = None,
+    timeout: float | None = None,
+) -> subprocess.CompletedProcess:
+    if lock_path is None:
+        lock_path = index_path.parent / "authority-lock.json"
     expected_lock_sha256 = hashlib.sha256(lock_path.read_bytes()).hexdigest()
     return subprocess.run(
         [
@@ -3133,6 +3139,7 @@ def _run_evidence_index(index_path: Path) -> subprocess.CompletedProcess:
         check=False,
         text=True,
         env=_env(),
+        timeout=timeout,
     )
 
 
@@ -3595,6 +3602,42 @@ def test_evidence_index_reconstructs_a_complete_phase_zero_set(tmp_path):
         "recorded_real_scientific_terminal_count": 0,
         "claims_status": "blocked",
     }
+
+
+@pytest.mark.parametrize("mutation", ["file_symlink", "parent_symlink", "fifo"])
+def test_evidence_index_rejects_unsafe_declared_index_path_without_leaking(
+    tmp_path, mutation
+):
+    secret = "TOP_SECRET_DECLARED_INDEX"
+    real_root = tmp_path / "real-root"
+    real_root.mkdir()
+    real_index = _complete_phase_zero_evidence_index(real_root)
+    lock_path = real_root / "authority-lock.json"
+
+    if mutation == "file_symlink":
+        symlink_target = tmp_path / f"{secret}-target.json"
+        real_index.rename(symlink_target)
+        real_index.symlink_to(symlink_target)
+        declared_index = real_index
+    elif mutation == "parent_symlink":
+        declared_root = tmp_path / f"{secret}-parent"
+        declared_root.symlink_to(real_root, target_is_directory=True)
+        declared_index = declared_root / real_index.name
+    else:
+        real_index.unlink()
+        os.mkfifo(real_index)
+        declared_index = real_index
+
+    result = _run_evidence_index(
+        declared_index,
+        lock_path=lock_path,
+        timeout=2,
+    )
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_INDEX_PATH"
+    assert not result.stdout
+    assert secret not in result.stderr
 
 
 def test_coordinated_reseal_cannot_replace_external_authority_digest(tmp_path):
