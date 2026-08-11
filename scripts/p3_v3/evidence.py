@@ -984,7 +984,10 @@ def _reject_executable_filter_config(raw: bytes) -> None:
                 in_filter_section = False
                 continue
             section = line[1:closing].strip().split(None, 1)[0]
-            in_filter_section = section.lower() == b"filter"
+            normalized_section = section.lower()
+            in_filter_section = normalized_section == b"filter" or (
+                normalized_section.startswith(b"filter.")
+            )
             continue
         if in_filter_section and re.match(
             rb"(?i)^(?:clean|process)(?:\s|=|$)", line

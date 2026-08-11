@@ -1740,8 +1740,9 @@ def test_fixed_git_queries_reject_repository_include_config(tmp_path):
 
 
 @pytest.mark.parametrize("driver", ["clean", "process"])
+@pytest.mark.parametrize("section_style", ["modern", "legacy"])
 def test_fixed_git_queries_reject_executable_filter_before_first_query(
-    tmp_path, monkeypatch, driver
+    tmp_path, monkeypatch, driver, section_style
 ):
     controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
     attributes = controller / ".gitattributes"
@@ -1758,12 +1759,22 @@ def test_fixed_git_queries_reject_executable_filter_before_first_query(
         encoding="utf-8",
     )
     executable_filter.chmod(executable_filter.stat().st_mode | stat.S_IXUSR)
-    _run_git(controller, "config", f"filter.audit.{driver}", str(executable_filter))
-    invocations: list[list[str]] = []
+    if section_style == "modern":
+        _run_git(
+            controller, "config", f"filter.audit.{driver}", str(executable_filter)
+        )
+    else:
+        local_config = controller / ".git/config"
+        local_config.write_text(
+            local_config.read_text(encoding="utf-8")
+            + f"\n[filter.audit]\n\t{driver} = {executable_filter.as_posix()}\n",
+            encoding="utf-8",
+        )
+    invocations: list[tuple[str, ...]] = []
     real_run = subprocess.run
 
     def capture(argv, *args, **kwargs):
-        invocations.append(list(argv))
+        invocations.append(_fixed_git_query(argv))
         return real_run(argv, *args, **kwargs)
 
     monkeypatch.setattr(evidence_module.subprocess, "run", capture)
@@ -1773,8 +1784,7 @@ def test_fixed_git_queries_reject_executable_filter_before_first_query(
     except EvidenceError as exc:
         caught = exc
 
-    assert not marker.exists()
-    assert invocations == []
+    assert (invocations, marker.exists()) == ([], False)
     assert caught is not None
     assert caught.code == "E_AUTHORITY_GIT"
 

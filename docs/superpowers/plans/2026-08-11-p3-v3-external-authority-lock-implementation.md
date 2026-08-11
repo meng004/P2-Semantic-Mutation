@@ -1217,8 +1217,9 @@ any artifact schema:
   `/usr/bin/git`, never caller `PATH`; the five subprocesses receive a literal
   minimal environment with pagers disabled rather than executable pager names.
 - The safe local `.git/config` and `.git/config.worktree` bytes are inspected
-  before the first subprocess. Any `filter` section defining `clean` or
-  `process` fails closed, and the status query explicitly includes
+  before the first subprocess. Modern `[filter "name"]` and legacy
+  `[filter.name]` sections defining `clean` or `process` both fail closed, and
+  the status query explicitly includes
   `--ignore-submodules=all`. The query count remains exactly five and neither
   filter nor submodule configuration may produce a child process.
 - Credential-metadata component scanning covers `key` and `secret`, including
