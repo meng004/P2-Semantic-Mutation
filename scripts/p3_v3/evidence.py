@@ -173,7 +173,7 @@ _NON_CREDENTIAL_KEY_FIELDS = frozenset(
         "schema_selection_key",
     }
 )
-_BEARER_VALUE_RE = re.compile(r"(?i)(?<![A-Za-z0-9])bearer[ \t]+[^\s]+")
+_BEARER_VALUE_RE = re.compile(r"(?i)(?<![^\W_])bearer[ \t]+[^\s]+")
 _USERINFO_VALUE_RE = re.compile(
     r"(?i)\b[a-z][a-z0-9+.-]*://[^/\s@]+@"
 )

@@ -708,10 +708,25 @@ def test_authority_lock_rejects_composite_keys_and_credential_shaped_values(
         ("prefix Bearer TOKEN_AFTER_SPACE", True),
         ("Authorization:Bearer TOKEN_AFTER_COLON", True),
         ("Authorization=Bearer TOKEN_AFTER_EQUALS", True),
+        ("_Bearer TOKEN_AFTER_UNDERSCORE", True),
         ("nonbearer BENIGN_VALUE", False),
         ("icebearer BENIGN_VALUE", False),
+        ("éBearer BENIGN_VALUE", False),
+        ("中Bearer BENIGN_VALUE", False),
+        ("９Bearer BENIGN_VALUE", False),
     ],
-    ids=["start", "space", "colon", "equals", "nonbearer", "icebearer"],
+    ids=[
+        "start",
+        "space",
+        "colon",
+        "equals",
+        "underscore",
+        "nonbearer",
+        "icebearer",
+        "latin_unicode_letter",
+        "cjk_letter",
+        "fullwidth_digit",
+    ],
 )
 def test_bearer_metadata_requires_a_non_alphanumeric_left_boundary(value, rejected):
     lock = _authority_lock()

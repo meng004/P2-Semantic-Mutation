@@ -1319,9 +1319,10 @@ scientific plan without changing any scientific result:
   exactly `RQ1, RQ2, RQ3, RQ4`; reordered, duplicate, and contradictory duplicate
   headings fail with `E_CLAIM_SET` instead of being normalized by sorting or set
   conversion.
-- Bearer-shaped metadata requires a non-alphanumeric left boundary. Start,
-  whitespace, colon, and equals forms remain forbidden, while words such as
-  `nonbearer` and `icebearer` are not credential-shaped values.
+- Bearer-shaped metadata requires a Unicode-aware non-alphanumeric left
+  boundary. Start, whitespace, colon, equals, and underscore forms remain
+  forbidden, while `nonbearer`, `icebearer`, `éBearer`, `中Bearer`, and
+  `９Bearer` are not credential-shaped values.
 - The exact Authority Lock `claim_policy` keys are
   `claim_ceiling_sha256, required_status, rq_ids`.
 - Fully resealed RQ/claim mutations update the lock RQ IDs and all changed
