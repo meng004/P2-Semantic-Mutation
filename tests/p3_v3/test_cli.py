@@ -3599,6 +3599,30 @@ def test_coordinated_reseal_terminal_intent_relabel_fails_locked_intent(tmp_path
     assert json.loads(result.stderr)["code"] == "E_AUTHORITY_INTENT"
 
 
+def test_locked_intent_failure_precedes_malformed_claim_reconstruction(tmp_path):
+    index_path = _complete_phase_zero_evidence_index(tmp_path)
+    index = json.loads(index_path.read_text(encoding="utf-8"))
+    intent_path = next((tmp_path / "jobs/PHASE_0").rglob("intent.json"))
+    intent = json.loads(intent_path.read_text(encoding="utf-8"))
+    intent["object_id"] = "lock-mismatched-intent"
+    intent_path.write_bytes(canonical_json_bytes(intent))
+    _refresh_attempt_evidence(tmp_path, index)
+
+    claims_path = tmp_path / index["claims"]["path"]
+    claims = json.loads(claims_path.read_text(encoding="utf-8"))
+    claims["claims"][0]["status"] = "released"
+    claims_path.write_bytes(canonical_json_bytes(claims))
+    index["claims"] = _indexed_reference(tmp_path, claims_path)
+    index_body = {key: item for key, item in index.items() if key != "artifact_sha256"}
+    index["artifact_sha256"] = canonical_sha256(index_body)
+    index_path.write_bytes(canonical_json_bytes(index))
+
+    result = _run_evidence_index(index_path)
+
+    assert result.returncode == 2
+    assert json.loads(result.stderr)["code"] == "E_AUTHORITY_INTENT"
+
+
 @pytest.mark.parametrize("target", ["origin_receipt", "preflight_event"])
 def test_authority_origin_rejects_package_local_reseal(tmp_path, target):
     index_path = _complete_phase_zero_evidence_index(tmp_path)
@@ -3807,6 +3831,82 @@ def test_authority_manifest_rejects_installed_drift_through_production_dispatch(
 
     with pytest.raises(EvidenceError) as exc_info:
         evidence_module.dispatch(args)
+
+    assert exc_info.value.code == "E_AUTHORITY_MANIFEST"
+    assert calls == {"adapter": 0, "generator": 0}
+
+
+def test_authority_manifest_rejects_registry_implementation_under_evidence_root(
+    tmp_path, tmp_path_factory, monkeypatch
+):
+    _complete_phase_zero_evidence_index(tmp_path)
+    installed_root = _copy_installed_controller(
+        tmp_path_factory.mktemp("nested-evidence-controller")
+    )
+    evidence_root = installed_root / "nested-evidence"
+    evidence_root.mkdir()
+    nested_implementation = evidence_root / "adapter.py"
+    nested_implementation.write_text(
+        "def discover(_root):\n    return {}\n", encoding="utf-8"
+    )
+    monkeypatch.setattr(
+        evidence_module,
+        "__file__",
+        str(installed_root / "scripts/p3_v3/evidence.py"),
+    )
+    lock = json.loads((tmp_path / "authority-lock.json").read_text(encoding="utf-8"))
+    manifest = json.loads(
+        (tmp_path / "controller-source-manifest.json").read_text(encoding="utf-8")
+    )
+    adapter_registry = json.loads(
+        (tmp_path / "authority-adapters/registry.json").read_text(encoding="utf-8")
+    )
+    generator_registry = json.loads(
+        (tmp_path / "authority-generators/registry.json").read_text(encoding="utf-8")
+    )
+    adapter_registry["adapters"][0]["implementation_path"] = (
+        nested_implementation.relative_to(installed_root).as_posix()
+    )
+    adapter_registry["adapters"][0]["source_sha256"] = hashlib.sha256(
+        nested_implementation.read_bytes()
+    ).hexdigest()
+    adapter_body = {
+        key: value
+        for key, value in adapter_registry.items()
+        if key != "artifact_sha256"
+    }
+    adapter_registry["artifact_sha256"] = canonical_sha256(adapter_body)
+    lock["registries"]["adapter_registry_sha256"] = canonical_sha256(
+        adapter_registry
+    )
+
+    calls = {"adapter": 0, "generator": 0}
+    original_adapter_validator = evidence_module.validate_adapter_registry
+    original_generator_validator = evidence_module.validate_input_generator_registry
+
+    def adapter_attempt(*args, **kwargs):
+        calls["adapter"] += 1
+        return original_adapter_validator(*args, **kwargs)
+
+    def generator_attempt(*args, **kwargs):
+        calls["generator"] += 1
+        return original_generator_validator(*args, **kwargs)
+
+    monkeypatch.setattr(evidence_module, "validate_adapter_registry", adapter_attempt)
+    monkeypatch.setattr(
+        evidence_module, "validate_input_generator_registry", generator_attempt
+    )
+
+    with pytest.raises(EvidenceError) as exc_info:
+        evidence_module.verify_running_controller(
+            lock,
+            manifest,
+            {
+                "adapter_registry": adapter_registry,
+                "input_generator_registry": generator_registry,
+            },
+            evidence_root=evidence_root,
+        )
 
     assert exc_info.value.code == "E_AUTHORITY_MANIFEST"
     assert calls == {"adapter": 0, "generator": 0}

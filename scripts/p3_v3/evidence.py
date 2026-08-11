@@ -583,6 +583,8 @@ def verify_running_controller(
     lock: Mapping[str, Any],
     controller_manifest: Mapping[str, Any],
     locked_registries: Mapping[str, Any],
+    *,
+    evidence_root: str | Path,
 ) -> dict[str, Any]:
     """Bind installed verifier and registry bytes to the external lock."""
 
@@ -673,6 +675,43 @@ def verify_running_controller(
             raise EvidenceError(
                 "E_AUTHORITY_MANIFEST", "locked registry bytes differ"
             )
+        try:
+            resolved_evidence_root = Path(evidence_root).resolve(strict=True)
+        except OSError as exc:
+            raise EvidenceError(
+                "E_AUTHORITY_MANIFEST", "evidence root identity is unavailable"
+            ) from exc
+        for registry_name, entries_field in (
+            ("adapter_registry", "adapters"),
+            ("input_generator_registry", "generators"),
+        ):
+            entries = registries[registry_name].get(entries_field)
+            if type(entries) is not list:
+                raise EvidenceError(
+                    "E_AUTHORITY_MANIFEST", "locked registry entries are malformed"
+                )
+            for entry in entries:
+                if not isinstance(entry, Mapping):
+                    raise EvidenceError(
+                        "E_AUTHORITY_MANIFEST", "locked registry entry is malformed"
+                    )
+                relative = safe_relative_path(entry.get("implementation_path"))
+                try:
+                    resolved_implementation = (
+                        installed_root / relative
+                    ).resolve(strict=True)
+                except OSError as exc:
+                    raise EvidenceError(
+                        "E_AUTHORITY_MANIFEST",
+                        "installed registry implementation is unavailable",
+                    ) from exc
+                if resolved_implementation == resolved_evidence_root or (
+                    resolved_implementation.is_relative_to(resolved_evidence_root)
+                ):
+                    raise EvidenceError(
+                        "E_AUTHORITY_MANIFEST",
+                        "registry implementation overlaps the evidence root",
+                    )
         return {
             "adapter_registry": validate_adapter_registry(
                 registries["adapter_registry"], installed_root
@@ -2925,7 +2964,6 @@ def _load_evidence_index(
         root, value["ledger"], seen, loaded, "ledger", canonical=False
     )
     claims_path, claims = _indexed_file(root, value["claims"], seen, loaded, "claims")
-    claims = validate_claim_ledger(claims)
     job_root = _indexed_directory(root, value["job_root"], seen, "job_root")
 
     _, preflight_event = _indexed_file(
@@ -3105,60 +3143,6 @@ def _load_evidence_index(
         for field, reference in p12_index.items():
             _, p12[field] = _indexed_file(root, reference, seen, loaded, f"p12.{field}")
 
-    indexed_claim_paths = set(seen)
-    for claim in claims["claims"]:
-        if any(
-            reference not in indexed_claim_paths
-            for reference in claim["evidence_references"]
-        ):
-            raise EvidenceError(
-                "E_CLAIM_EVIDENCE", "claim names evidence absent from the index"
-            )
-
-    claim_ceiling = _validate_claim_ceiling_authority(
-        read_canonical_json(protocol_artifact_paths["claim_ceiling_sha256"])
-    )
-    authoritative_claims = [
-        validate_exact_object(
-            candidate,
-            _CLAIM_AUTHORITY_ROW_SCHEMA,
-            f"claim_ceiling_authority.claims[{index}]",
-        )
-        for index, candidate in enumerate(claim_ceiling["claims"])
-    ]
-    rq_spec_raw = protocol_artifact_paths["rq_spec_sha256"].read_text(encoding="utf-8")
-    authoritative_rqs = sorted(
-        set(re.findall(r"^### (RQ[0-9]+)：", rq_spec_raw, flags=re.MULTILINE))
-    )
-    authoritative_claim_ids = [claim["claim_id"] for claim in authoritative_claims]
-    authoritative_associations = {
-        claim["claim_id"]: claim["rqs"] for claim in authoritative_claims
-    }
-    if (
-        not authoritative_claim_ids
-        or authoritative_claim_ids != list(dict.fromkeys(authoritative_claim_ids))
-        or any(
-            claim["initial_status"] != "blocked"
-            or not claim["rqs"]
-            or claim["rqs"] != sorted(set(claim["rqs"]))
-            or not set(claim["rqs"]) <= set(authoritative_rqs)
-            for claim in authoritative_claims
-        )
-        or not authoritative_rqs
-        or claims["claim_authority_sha256"]
-        != protocol["claim_ceiling_sha256"]
-        or claims["rq_authority_sha256"] != protocol["rq_spec_sha256"]
-        or [claim["claim_id"] for claim in claims["claims"]]
-        != authoritative_claim_ids
-        or {
-            claim["claim_id"]: claim["rqs"] for claim in claims["claims"]
-        }
-        != authoritative_associations
-    ):
-        raise EvidenceError(
-            "E_CLAIM_SET", "claim ledger differs from byte-verified frozen authority"
-        )
-
     indexed_directories = [
         value["controller_source"]["root"],
         *[entry["root"] for entry in value["subject_sources"]],
@@ -3246,6 +3230,7 @@ def _load_evidence_index(
         "ledger_path": ledger_path,
         "claims_path": claims_path,
         "claims": claims,
+        "indexed_paths": frozenset(seen),
         "job_root": job_root,
         "subjects": subjects,
         "adapter_registries": adapter_registries,
@@ -3257,6 +3242,69 @@ def _load_evidence_index(
         "mr_chain": mr_chain,
         "p12": p12,
     }
+
+
+def _verify_claim_reconstruction(material: Mapping[str, Any]) -> dict[str, Any]:
+    claims = validate_claim_ledger(material["claims"])
+    indexed_claim_paths = material["indexed_paths"]
+    for claim in claims["claims"]:
+        if any(
+            reference not in indexed_claim_paths
+            for reference in claim["evidence_references"]
+        ):
+            raise EvidenceError(
+                "E_CLAIM_EVIDENCE", "claim names evidence absent from the index"
+            )
+
+    claim_ceiling = _validate_claim_ceiling_authority(
+        read_canonical_json(
+            material["protocol_artifact_paths"]["claim_ceiling_sha256"]
+        )
+    )
+    authoritative_claims = [
+        validate_exact_object(
+            candidate,
+            _CLAIM_AUTHORITY_ROW_SCHEMA,
+            f"claim_ceiling_authority.claims[{index}]",
+        )
+        for index, candidate in enumerate(claim_ceiling["claims"])
+    ]
+    rq_spec_raw = material["protocol_artifact_paths"]["rq_spec_sha256"].read_text(
+        encoding="utf-8"
+    )
+    authoritative_rqs = sorted(
+        set(re.findall(r"^### (RQ[0-9]+)：", rq_spec_raw, flags=re.MULTILINE))
+    )
+    authoritative_claim_ids = [claim["claim_id"] for claim in authoritative_claims]
+    authoritative_associations = {
+        claim["claim_id"]: claim["rqs"] for claim in authoritative_claims
+    }
+    protocol = material["protocol"]
+    if (
+        not authoritative_claim_ids
+        or authoritative_claim_ids != list(dict.fromkeys(authoritative_claim_ids))
+        or any(
+            claim["initial_status"] != "blocked"
+            or not claim["rqs"]
+            or claim["rqs"] != sorted(set(claim["rqs"]))
+            or not set(claim["rqs"]) <= set(authoritative_rqs)
+            for claim in authoritative_claims
+        )
+        or not authoritative_rqs
+        or claims["claim_authority_sha256"]
+        != protocol["claim_ceiling_sha256"]
+        or claims["rq_authority_sha256"] != protocol["rq_spec_sha256"]
+        or [claim["claim_id"] for claim in claims["claims"]]
+        != authoritative_claim_ids
+        or {
+            claim["claim_id"]: claim["rqs"] for claim in claims["claims"]
+        }
+        != authoritative_associations
+    ):
+        raise EvidenceError(
+            "E_CLAIM_SET", "claim ledger differs from byte-verified frozen authority"
+        )
+    return claims
 
 
 def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
@@ -3273,6 +3321,7 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
             "adapter_registry": material["adapter_registries"][0],
             "input_generator_registry": material["generator_registries"][0],
         },
+        evidence_root=material["root"],
     )
     material["adapter_registries"] = [
         installed_registries["adapter_registry"]
@@ -3630,6 +3679,7 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
         raise EvidenceError(
             "E_COMMON_CHRONOLOGY", "attempt consumed an unknown common input"
         )
+    _verify_claim_reconstruction(material)
     return {
         "status": "PASS",
         "authority_lock_sha256": args.authority_lock_sha256,
