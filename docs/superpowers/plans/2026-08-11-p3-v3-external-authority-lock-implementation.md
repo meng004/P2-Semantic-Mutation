@@ -750,9 +750,12 @@ Tests must prove:
   code, never by Authority Inputs text;
 - for controller and every subject checkout, the exact read-only Git query set
   is `rev-parse HEAD`, `rev-parse HEAD^{tree}`, `status --porcelain=v1`,
-  `remote get-url origin`, and `ls-files -z`; nonzero exit, dirty status,
-  malformed output, credential-bearing normalized identity, or filesystem/Git
-  inventory divergence fails before output;
+  `remote get-url origin`, and `ls-files --stage -z`; each tracked row is parsed
+  as exact `(mode, blob_oid, stage=0, path)` authority, and one anchored live-byte
+  snapshot must match its fixed-HEAD Git blob SHA-1 and regular-file mode before
+  the same bytes feed manifest and adapter derivation. Nonzero exit, dirty status,
+  malformed output, credential-bearing normalized identity, live/fixed-HEAD byte
+  drift, or filesystem/Git inventory divergence fails before output;
 - source-hash-verified deterministic adapters may run only through the reviewed
   in-process registry interface;
 - raw Git origin/userinfo is normalized in memory and absent from output;

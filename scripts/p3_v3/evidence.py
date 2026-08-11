@@ -11,6 +11,7 @@ import re
 import stat
 import subprocess
 import sys
+import tempfile
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
@@ -27,6 +28,7 @@ from p3_v3.artifacts import (  # noqa: E402
     read_canonical_regular_bytes,
     read_canonical_regular_json,
     read_canonical_json,
+    read_regular_file_snapshot,
     safe_relative_path,
     validate_exact_object,
     validate_sha256,
@@ -825,7 +827,7 @@ def _run_fixed_git_queries(root: Path) -> dict[str, Any]:
         ("rev-parse", "HEAD^{tree}"),
         ("status", "--porcelain=v1"),
         ("remote", "get-url", "origin"),
-        ("ls-files", "-z"),
+        ("ls-files", "--stage", "-z"),
     )
     for query in queries:
         try:
@@ -867,17 +869,43 @@ def _run_fixed_git_queries(root: Path) -> dict[str, Any]:
         origin = origin_raw[:-1].decode("utf-8")
     except UnicodeDecodeError as exc:
         raise EvidenceError("E_AUTHORITY_GIT", "Git origin output is malformed") from exc
-    tracked_raw = outputs[("ls-files", "-z")]
+    tracked_raw = outputs[("ls-files", "--stage", "-z")]
     if tracked_raw and not tracked_raw.endswith(b"\0"):
         raise EvidenceError("E_AUTHORITY_GIT", "Git tracked inventory is malformed")
+    tracked_entries: list[dict[str, Any]] = []
     try:
-        tracked = [
-            item.decode("utf-8") for item in tracked_raw.split(b"\0") if item
-        ]
-    except UnicodeDecodeError as exc:
+        for raw_record in tracked_raw.split(b"\0"):
+            if not raw_record:
+                continue
+            header, separator, raw_path = raw_record.partition(b"\t")
+            fields = header.split(b" ")
+            if not separator or len(fields) != 3:
+                raise ValueError("stage row shape differs")
+            raw_mode, raw_oid, raw_stage = fields
+            mode = raw_mode.decode("ascii")
+            blob_oid = raw_oid.decode("ascii")
+            stage_text = raw_stage.decode("ascii")
+            path = raw_path.decode("utf-8")
+            if (
+                mode not in {"100644", "100755"}
+                or _GIT_OBJECT_RE.fullmatch(blob_oid) is None
+                or stage_text != "0"
+                or safe_relative_path(path).as_posix() != path
+            ):
+                raise ValueError("stage row value differs")
+            tracked_entries.append(
+                {
+                    "mode": mode,
+                    "blob_oid": blob_oid,
+                    "stage": 0,
+                    "path": path,
+                }
+            )
+    except (UnicodeDecodeError, ValueError, EvidenceError) as exc:
         raise EvidenceError(
             "E_AUTHORITY_GIT", "Git tracked inventory is malformed"
         ) from exc
+    tracked = [entry["path"] for entry in tracked_entries]
     if (
         tracked != sorted(tracked, key=lambda value: value.encode("utf-8"))
         or len(tracked) != len(set(tracked))
@@ -891,12 +919,134 @@ def _run_fixed_git_queries(root: Path) -> dict[str, Any]:
         )
     ):
         raise EvidenceError("E_AUTHORITY_GIT", "Git tracked inventory is malformed")
+    base_commit = object_id(("rev-parse", "HEAD"))
+    base_tree = object_id(("rev-parse", "HEAD^{tree}"))
+    if not tracked_entries or _git_tree_oid(tracked_entries) != base_tree:
+        raise EvidenceError(
+            "E_AUTHORITY_GIT", "Git staged inventory differs from fixed HEAD tree"
+        )
     return {
-        "base_commit": object_id(("rev-parse", "HEAD")),
-        "base_tree": object_id(("rev-parse", "HEAD^{tree}")),
+        "base_commit": base_commit,
+        "base_tree": base_tree,
         "origin": origin,
         "tracked": tracked,
+        "tracked_entries": tracked_entries,
     }
+
+
+def _git_blob_oid(raw: bytes) -> str:
+    payload = b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw
+    return hashlib.sha1(payload, usedforsecurity=False).hexdigest()
+
+
+def _git_tree_oid(entries: Sequence[Mapping[str, Any]]) -> str:
+    root: dict[str, Any] = {}
+    for entry in entries:
+        components = entry["path"].split("/")
+        node = root
+        for component in components[:-1]:
+            child = node.setdefault(component, {})
+            if not isinstance(child, dict):
+                raise EvidenceError(
+                    "E_AUTHORITY_GIT", "Git inventory has a file/directory collision"
+                )
+            node = child
+        leaf = components[-1]
+        if leaf in node:
+            raise EvidenceError(
+                "E_AUTHORITY_GIT", "Git inventory has a duplicate tree entry"
+            )
+        node[leaf] = (entry["mode"], entry["blob_oid"])
+
+    def tree_oid(node: Mapping[str, Any]) -> str:
+        encoded: list[tuple[bytes, bytes]] = []
+        for name, value in node.items():
+            raw_name = name.encode("utf-8")
+            if isinstance(value, dict):
+                mode = b"40000"
+                oid = tree_oid(value)
+                sort_key = raw_name + b"/"
+            else:
+                mode = value[0].encode("ascii")
+                oid = value[1]
+                sort_key = raw_name
+            row = mode + b" " + raw_name + b"\0" + bytes.fromhex(oid)
+            encoded.append((sort_key, row))
+        body = b"".join(row for _key, row in sorted(encoded))
+        payload = b"tree " + str(len(body)).encode("ascii") + b"\0" + body
+        return hashlib.sha1(payload, usedforsecurity=False).hexdigest()
+
+    return tree_oid(root)
+
+
+def _read_git_tracked_snapshot(
+    root: Path, entries: Sequence[Mapping[str, Any]]
+) -> dict[str, tuple[bytes, str]]:
+    snapshot: dict[str, tuple[bytes, str]] = {}
+    for entry in entries:
+        path = entry["path"]
+        try:
+            raw, opened_mode = read_regular_file_snapshot(
+                root / path, f"Git tracked file {path}"
+            )
+        except EvidenceError as exc:
+            raise EvidenceError(
+                "E_AUTHORITY_GIT", "Git tracked file could not be snapshotted"
+            ) from exc
+        mode = "100755" if opened_mode & 0o111 else "100644"
+        if mode != entry["mode"] or _git_blob_oid(raw) != entry["blob_oid"]:
+            raise EvidenceError(
+                "E_AUTHORITY_GIT", "live tracked bytes differ from fixed HEAD"
+            )
+        snapshot[path] = (raw, mode)
+    return snapshot
+
+
+def _manifest_from_git_snapshot(
+    snapshot: Mapping[str, tuple[bytes, str]],
+    tracked_paths: Sequence[str],
+    role: str,
+) -> dict[str, Any]:
+    return {
+        "schema_version": "P3_V3_TRACKED_SOURCE_MANIFEST_V1",
+        "role": role,
+        "files": [
+            {
+                "relative_path": path,
+                "mode": snapshot[path][1],
+                "sha256": hashlib.sha256(snapshot[path][0]).hexdigest(),
+            }
+            for path in tracked_paths
+        ],
+    }
+
+
+def _snapshot_canonical_json(
+    snapshot: Mapping[str, tuple[bytes, str]], path: str, context: str
+) -> dict[str, Any]:
+    try:
+        raw = snapshot[path][0]
+        value = json.loads(
+            raw.decode("utf-8"),
+            parse_constant=lambda token: (_ for _ in ()).throw(ValueError(token)),
+        )
+        if not isinstance(value, dict) or canonical_json_bytes(value) != raw:
+            raise ValueError("canonical object differs")
+        return value
+    except (KeyError, UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_GIT", f"{context} is not a tracked canonical snapshot"
+        ) from exc
+
+
+def _materialize_git_snapshot(
+    destination: Path, snapshot: Mapping[str, tuple[bytes, str]]
+) -> None:
+    for relative, (raw, mode) in snapshot.items():
+        target = destination / safe_relative_path(relative).as_posix()
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(raw)
+        target.chmod(0o755 if mode == "100755" else 0o644)
 
 
 def _normalize_git_origin(origin: str) -> str:
@@ -925,11 +1075,15 @@ def _normalize_git_origin(origin: str) -> str:
 
 def _checkout_authority(
     root: Path, role_roots: Sequence[str], role: str
-) -> tuple[dict[str, Any], dict[str, Any], tuple[str, ...]]:
+) -> tuple[
+    dict[str, Any],
+    dict[str, Any],
+    tuple[str, ...],
+    dict[str, tuple[bytes, str]],
+]:
     safe_root = _lstat_directory_components(root)
     git = _run_fixed_git_queries(safe_root)
-    manifest = build_tracked_source_manifest(safe_root, role_roots, role)
-    manifest_paths = [row["relative_path"] for row in manifest["files"]]
+    snapshot = _read_git_tracked_snapshot(safe_root, git["tracked_entries"])
     if role == "controller-source":
         tracked = [
             item
@@ -938,9 +1092,11 @@ def _checkout_authority(
         ]
     else:
         tracked = git["tracked"]
-    if manifest_paths != tracked:
+    manifest = _manifest_from_git_snapshot(snapshot, tracked, role)
+    observed_manifest = build_tracked_source_manifest(safe_root, role_roots, role)
+    if canonical_json_bytes(observed_manifest) != canonical_json_bytes(manifest):
         raise EvidenceError(
-            "E_AUTHORITY_GIT", "filesystem and Git tracked inventories differ"
+            "E_AUTHORITY_GIT", "filesystem and fixed-HEAD tracked snapshot differ"
         )
     return (
         {
@@ -951,6 +1107,7 @@ def _checkout_authority(
         },
         manifest,
         tuple(git["tracked"]),
+        snapshot,
     )
 
 
@@ -986,11 +1143,14 @@ def _registered_implementation_paths(
 
 
 def _raw_authority_envelope(
-    controller_root: Path, relative_path: str, context: str
+    controller_root: Path,
+    relative_path: str,
+    context: str,
+    *,
+    raw: bytes | None = None,
 ) -> tuple[dict[str, Any], str]:
-    raw = read_canonical_regular_bytes(
-        controller_root / relative_path, context
-    )
+    if raw is None:
+        raw = read_canonical_regular_bytes(controller_root / relative_path, context)
     digest = hashlib.sha256(raw).hexdigest()
     return (
         {
@@ -1246,9 +1406,12 @@ def prepare_authority(
 
     inputs = validate_authority_inputs(authority_inputs)
     controller_root = _lstat_directory_components(Path(controller_root))
-    controller_repository, controller_manifest, controller_tracked = _checkout_authority(
-        controller_root, _CONTROLLER_ROLE_ROOTS, "controller-source"
-    )
+    (
+        controller_repository,
+        controller_manifest,
+        controller_tracked,
+        controller_snapshot,
+    ) = _checkout_authority(controller_root, _CONTROLLER_ROLE_ROOTS, "controller-source")
     declared_authority_paths = [
         path
         for field in (
@@ -1266,7 +1429,10 @@ def prepare_authority(
     governing_artifacts: dict[str, dict[str, Any]] = {}
     for role, relative_path in inputs["governing_material_paths"].items():
         envelope, digest = _raw_authority_envelope(
-            controller_root, relative_path, f"governing material {role}"
+            controller_root,
+            relative_path,
+            f"governing material {role}",
+            raw=controller_snapshot[relative_path][0],
         )
         governing_materials[f"{role}_sha256"] = digest
         governing_artifacts[f"{role}_sha256"] = envelope
@@ -1281,12 +1447,15 @@ def prepare_authority(
     for role, relative_path in inputs["protocol_artifact_paths"].items():
         if role == "rq_spec":
             artifact, _digest = _raw_authority_envelope(
-                controller_root, relative_path, "protocol artifact rq_spec"
+                controller_root,
+                relative_path,
+                "protocol artifact rq_spec",
+                raw=controller_snapshot[relative_path][0],
             )
             _rq_ids_from_spec_bytes(bytes.fromhex(artifact["bytes_hex"]))
         else:
-            artifact = read_canonical_regular_json(
-                controller_root / relative_path, f"protocol artifact {role}"
+            artifact = _snapshot_canonical_json(
+                controller_snapshot, relative_path, f"protocol artifact {role}"
             )
             _reject_credential_metadata(artifact)
         protocol_artifacts[f"{role}_sha256"] = artifact
@@ -1327,33 +1496,38 @@ def prepare_authority(
         protocol_artifacts["p12_contract_sha256"]
     )
 
-    adapter_path = controller_root / inputs["registry_artifact_paths"][
-        "adapter_registry"
-    ]
-    generator_path = controller_root / inputs["registry_artifact_paths"][
+    adapter_relative = inputs["registry_artifact_paths"]["adapter_registry"]
+    generator_relative = inputs["registry_artifact_paths"][
         "input_generator_registry"
     ]
-    adapter_artifact = read_canonical_regular_json(adapter_path, "adapter registry")
-    generator_artifact = read_canonical_regular_json(
-        generator_path, "input generator registry"
+    adapter_artifact = _snapshot_canonical_json(
+        controller_snapshot, adapter_relative, "adapter registry"
+    )
+    generator_artifact = _snapshot_canonical_json(
+        controller_snapshot, generator_relative, "input generator registry"
     )
     implementation_paths = [
         *_registered_implementation_paths(
-            inputs["registry_artifact_paths"]["adapter_registry"],
+            adapter_relative,
             adapter_artifact.get("adapters", []),
         ),
         *_registered_implementation_paths(
-            inputs["registry_artifact_paths"]["input_generator_registry"],
+            generator_relative,
             generator_artifact.get("generators", []),
         ),
     ]
     _require_tracked_paths(
         controller_tracked, implementation_paths, "registry implementations"
     )
-    adapter_registry = validate_adapter_registry(adapter_artifact, adapter_path.parent)
-    generator_registry = validate_input_generator_registry(
-        generator_artifact, generator_path.parent
-    )
+    with tempfile.TemporaryDirectory(prefix="p3-authority-controller-") as temporary:
+        snapshot_root = Path(temporary).resolve(strict=True)
+        _materialize_git_snapshot(snapshot_root, controller_snapshot)
+        adapter_registry = validate_adapter_registry(
+            adapter_artifact, (snapshot_root / adapter_relative).parent
+        )
+        generator_registry = validate_input_generator_registry(
+            generator_artifact, (snapshot_root / generator_relative).parent
+        )
     registry_artifacts = {
         "adapter_registry_sha256": adapter_artifact,
         "input_generator_registry_sha256": generator_artifact,
@@ -1372,11 +1546,20 @@ def prepare_authority(
     for subject_input in inputs["subjects"]:
         raw_root = Path(subject_input["root"])
         subject_root = raw_root if raw_root.is_absolute() else controller_root / raw_root
-        repository, source_manifest, _subject_tracked = _checkout_authority(
-            subject_root, ["."], "subject-source"
+        (
+            repository,
+            source_manifest,
+            _subject_tracked,
+            subject_snapshot,
+        ) = _checkout_authority(subject_root, ["."], "subject-source")
+        _require_tracked_paths(
+            _subject_tracked,
+            [subject_input["build_descriptor_path"]],
+            f"subject {subject_input['subject_id']} build descriptor",
         )
-        build_descriptor = read_canonical_regular_json(
-            subject_root / subject_input["build_descriptor_path"],
+        build_descriptor = _snapshot_canonical_json(
+            subject_snapshot,
+            subject_input["build_descriptor_path"],
             f"subject {subject_input['subject_id']} build descriptor",
         )
         entries = {
@@ -1394,22 +1577,25 @@ def prepare_authority(
             ],
             "build_descriptor_sha256": canonical_sha256(build_descriptor),
         }
-        adapter_discovery = run_adapter_discovery(
-            subject_root,
-            build_descriptor,
-            adapter_registry,
-            subject_input["adapter_id"],
-        )
-        public_behavior_frame = build_public_behavior_frame(
-            source_record, adapter_discovery
-        )
-        scale = derive_source_scale(subject_root, adapter_discovery)
-        profiling_workload = select_profiling_workload(
-            public_behavior_frame, scale["scale_class"]
-        )
-        common_inputs = build_common_inputs(
-            source_record, public_behavior_frame, generator_registry
-        )
+        with tempfile.TemporaryDirectory(prefix="p3-authority-subject-") as temporary:
+            snapshot_root = Path(temporary).resolve(strict=True)
+            _materialize_git_snapshot(snapshot_root, subject_snapshot)
+            adapter_discovery = run_adapter_discovery(
+                snapshot_root,
+                build_descriptor,
+                adapter_registry,
+                subject_input["adapter_id"],
+            )
+            public_behavior_frame = build_public_behavior_frame(
+                source_record, adapter_discovery
+            )
+            scale = derive_source_scale(snapshot_root, adapter_discovery)
+            profiling_workload = select_profiling_workload(
+                public_behavior_frame, scale["scale_class"]
+            )
+            common_inputs = build_common_inputs(
+                source_record, public_behavior_frame, generator_registry
+            )
         authority_row = {
             "subject_id": subject_input["subject_id"],
             "repository_role": subject_input["repository_role"],
@@ -1438,9 +1624,7 @@ def prepare_authority(
         ),
     ]
     objects.sort(key=lambda row: (row["object_source"], row["inventory_id"]))
-    dependency_lock = read_canonical_regular_bytes(
-        controller_root / "requirements-frozen.txt", "controller dependency lock"
-    )
+    dependency_lock = controller_snapshot["requirements-frozen.txt"][0]
     prepared = {
         "controller_repository": controller_repository,
         "controller_manifest": controller_manifest,
@@ -2808,11 +2992,49 @@ def _indexed_file(
         ) from exc
     if path.is_symlink() or not stat.S_ISREG(info.st_mode):
         raise EvidenceError("E_INDEX_PATH", f"indexed file is unsafe: {relative}")
-    if file_sha256(path) != reference["sha256"]:
+    try:
+        raw = read_canonical_regular_bytes(path, context)
+    except EvidenceError as exc:
+        if exc.code == "E_AUTHORITY_LOCK_PATH":
+            raise EvidenceError(
+                "E_INDEX_PATH", f"indexed file is unsafe: {relative}"
+            ) from exc
+        raise
+    if hashlib.sha256(raw).hexdigest() != reference["sha256"]:
         raise EvidenceError("E_INDEX_FILE_HASH", f"indexed bytes differ: {relative}")
-    value = read_canonical_json(path) if canonical else None
-    loaded[relative] = value
+    if canonical:
+        try:
+            value = json.loads(
+                raw.decode("utf-8"),
+                parse_constant=lambda token: (_ for _ in ()).throw(
+                    ValueError(token)
+                ),
+            )
+        except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
+            raise EvidenceError("E_JSON", f"invalid indexed JSON: {relative}") from exc
+        if canonical_json_bytes(value) != raw:
+            raise EvidenceError(
+                "E_NONCANONICAL_JSON", f"noncanonical indexed JSON: {relative}"
+            )
+    else:
+        value = raw
+    loaded[relative] = raw
     return path, value
+
+
+def _canonical_index_snapshot(raw: bytes, context: str) -> Any:
+    try:
+        value = json.loads(
+            raw.decode("utf-8"),
+            parse_constant=lambda token: (_ for _ in ()).throw(ValueError(token)),
+        )
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
+        raise EvidenceError("E_JSON", f"invalid indexed JSON: {context}") from exc
+    if canonical_json_bytes(value) != raw:
+        raise EvidenceError(
+            "E_NONCANONICAL_JSON", f"noncanonical indexed JSON: {context}"
+        )
+    return value
 
 
 def _phase(value: Any, coverage: list[str], context: str) -> str:
@@ -3013,19 +3235,20 @@ def _load_evidence_index(
         entry["subject_id"]: entry for entry in subject_sources
     }
 
-    protocol_path, protocol = _indexed_file(
+    _protocol_path, protocol = _indexed_file(
         root, value["protocol"], seen, loaded, "protocol"
     )
-    if file_sha256(protocol_path) != validated_lock["protocol"]["protocol_sha256"]:
+    if value["protocol"]["sha256"] != validated_lock["protocol"]["protocol_sha256"]:
         raise EvidenceError("E_AUTHORITY_PROTOCOL", "protocol bytes differ from lock")
     protocol_artifact_index = validate_exact_object(
         value["protocol_artifacts"],
         _PROTOCOL_ARTIFACT_SCHEMA,
         "protocol_artifacts",
     )
-    protocol_artifact_paths: dict[str, Path] = {}
+    protocol_artifacts: dict[str, Any] = {}
+    protocol_artifact_bytes: dict[str, bytes] = {}
     for field in _PROTOCOL_ARTIFACT_FIELDS:
-        artifact_path, _ = _indexed_file(
+        _artifact_path, artifact = _indexed_file(
             root,
             protocol_artifact_index[field],
             seen,
@@ -3046,18 +3269,16 @@ def _load_evidence_index(
             raise EvidenceError(
                 "E_PROTOCOL_BINDING", f"protocol byte binding differs: {field}"
             )
-        protocol_artifact_paths[field] = artifact_path
-    ledger_path, _ = _indexed_file(
+        protocol_artifacts[field] = artifact
+        protocol_artifact_bytes[field] = loaded[
+            protocol_artifact_index[field]["path"]
+        ]
+    ledger_path, ledger_raw = _indexed_file(
         root, value["ledger"], seen, loaded, "ledger", canonical=False
     )
-    claims_path, _ = _indexed_file(
+    _claims_path, claims_raw = _indexed_file(
         root, value["claims"], seen, loaded, "claims", canonical=False
     )
-    claims_raw = read_canonical_regular_bytes(claims_path, "indexed claims")
-    if hashlib.sha256(claims_raw).hexdigest() != value["claims"]["sha256"]:
-        raise EvidenceError(
-            "E_INDEX_FILE_HASH", "indexed claims changed during safe loading"
-        )
     job_root = _indexed_directory(root, value["job_root"], seen, "job_root")
 
     _, preflight_event = _indexed_file(
@@ -3152,7 +3373,7 @@ def _load_evidence_index(
                 raise EvidenceError(
                     "E_PROFILE_ATTEMPT_BINDING", "profiling trace identity is invalid"
                 )
-            trace_path, trace = _indexed_file(
+            _trace_path, trace = _indexed_file(
                 root,
                 trace_entry["artifact"],
                 seen,
@@ -3163,7 +3384,7 @@ def _load_evidence_index(
                 {
                     **trace_entry,
                     "artifact": trace,
-                    "artifact_sha256": file_sha256(trace_path),
+                    "artifact_sha256": trace_entry["artifact"]["sha256"],
                 }
             )
         material["profiling_traces"] = traces
@@ -3326,11 +3547,12 @@ def _load_evidence_index(
         "subject_sources": subject_sources,
         "preflight_event": preflight_event,
         "origin_receipt": origin_receipt,
-        "protocol_path": protocol_path,
+        "protocol_sha256": value["protocol"]["sha256"],
         "protocol": protocol,
-        "protocol_artifact_paths": protocol_artifact_paths,
+        "protocol_artifacts": protocol_artifacts,
+        "protocol_artifact_bytes": protocol_artifact_bytes,
         "ledger_path": ledger_path,
-        "claims_path": claims_path,
+        "ledger_raw": ledger_raw,
         "claims_raw": claims_raw,
         "indexed_paths": frozenset(seen),
         "job_root": job_root,
@@ -3347,12 +3569,9 @@ def _load_evidence_index(
 
 
 def _verify_claim_reconstruction(material: Mapping[str, Any]) -> dict[str, Any]:
-    claims = read_canonical_json(material["claims_path"])
-    if canonical_json_bytes(claims) != material["claims_raw"]:
-        raise EvidenceError(
-            "E_INDEX_FILE_HASH", "indexed claims changed during verification"
-        )
-    claims = validate_claim_ledger(claims)
+    claims = validate_claim_ledger(
+        _canonical_index_snapshot(material["claims_raw"], "claims")
+    )
     indexed_claim_paths = material["indexed_paths"]
     for claim in claims["claims"]:
         if any(
@@ -3364,8 +3583,9 @@ def _verify_claim_reconstruction(material: Mapping[str, Any]) -> dict[str, Any]:
             )
 
     claim_ceiling = _validate_claim_ceiling_authority(
-        read_canonical_json(
-            material["protocol_artifact_paths"]["claim_ceiling_sha256"]
+        _canonical_index_snapshot(
+            material["protocol_artifact_bytes"]["claim_ceiling_sha256"],
+            "claim ceiling authority",
         )
     )
     authoritative_claims = [
@@ -3377,7 +3597,7 @@ def _verify_claim_reconstruction(material: Mapping[str, Any]) -> dict[str, Any]:
         for index, candidate in enumerate(claim_ceiling["claims"])
     ]
     authoritative_rqs = _rq_ids_from_spec_bytes(
-        material["protocol_artifact_paths"]["rq_spec_sha256"].read_bytes()
+        material["protocol_artifact_bytes"]["rq_spec_sha256"]
     )
     authoritative_claim_ids = [claim["claim_id"] for claim in authoritative_claims]
     authoritative_associations = {
@@ -3528,7 +3748,7 @@ def _dispatch_verify_evidence(args: argparse.Namespace) -> dict:
             raise EvidenceError(
                 "E_P12_SUMMARY", "declared P12 summary differs from terminal attempts"
             )
-    protocol_sha256 = file_sha256(material["protocol_path"])
+    protocol_sha256 = material["protocol_sha256"]
     attempt_common_ids: set[str] = set()
     common_consumer_intents: dict[str, list[dict[str, Any]]] = {}
     for intent_path in material["job_root"].rglob("intent.json"):

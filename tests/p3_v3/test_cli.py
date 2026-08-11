@@ -1397,7 +1397,7 @@ def test_freeze_zero_execution_allows_only_fixed_git_and_verified_in_process(
         ("rev-parse", "HEAD^{tree}"),
         ("status", "--porcelain=v1"),
         ("remote", "get-url", "origin"),
-        ("ls-files", "-z"),
+        ("ls-files", "--stage", "-z"),
     }
 
     def fixed_git_only(argv, *args, **kwargs):
@@ -1453,6 +1453,104 @@ def test_freeze_authority_fails_closed_on_git_checkout_anomalies(
 
     with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
         evidence_module.build_authority_lock(controller, inputs)
+
+
+def test_fixed_git_stage_inventory_reports_exact_live_blob_and_mode(tmp_path):
+    controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
+
+    git = evidence_module._run_fixed_git_queries(controller)
+
+    path = "src/p3_v3/controller.py"
+    row = next(item for item in git["tracked_entries"] if item["path"] == path)
+    raw = (controller / path).read_bytes()
+    expected_blob = hashlib.sha1(
+        b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw,
+        usedforsecurity=False,
+    ).hexdigest()
+    assert row == {
+        "mode": "100644",
+        "blob_oid": expected_blob,
+        "stage": 0,
+        "path": path,
+    }
+
+
+@pytest.mark.parametrize(
+    "record",
+    [
+        b"120000 " + b"1" * 40 + b" 0\tlinked.py\0",
+        b"100644 " + b"1" * 39 + b" 0\tsource.py\0",
+        b"100644 " + b"1" * 40 + b" 1\tsource.py\0",
+        b"100644 " + b"1" * 40 + b" 0\t../escape.py\0",
+    ],
+)
+def test_fixed_git_stage_inventory_rejects_nonregular_or_malformed_rows(
+    tmp_path, monkeypatch, record
+):
+    controller, _inputs, _governing = _authority_freeze_fixture(tmp_path)
+    real_run = subprocess.run
+
+    def malformed_stage(argv, *args, **kwargs):
+        if tuple(argv[3:]) == ("ls-files", "--stage", "-z"):
+            return subprocess.CompletedProcess(argv, 0, record, b"")
+        return real_run(argv, *args, **kwargs)
+
+    monkeypatch.setattr(evidence_module.subprocess, "run", malformed_stage)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
+        evidence_module._run_fixed_git_queries(controller)
+
+
+def test_freeze_rejects_tracked_live_byte_drift_after_clean_status(
+    tmp_path, monkeypatch
+):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    tracked_path = controller / "src/p3_v3/controller.py"
+    real_run = subprocess.run
+    drifted = False
+
+    def drift_after_inventory(argv, *args, **kwargs):
+        nonlocal drifted
+        result = real_run(argv, *args, **kwargs)
+        if tuple(argv[3:]) == ("ls-files", "--stage", "-z") and not drifted:
+            drifted = True
+            tracked_path.write_text("CONTROLLER = 'drifted'\n", encoding="utf-8")
+        return result
+
+    monkeypatch.setattr(evidence_module.subprocess, "run", drift_after_inventory)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
+        evidence_module.build_authority_lock(controller, inputs)
+    assert drifted
+
+
+def test_freeze_rejects_staged_tree_drift_after_clean_status(
+    tmp_path, monkeypatch
+):
+    controller, inputs, _governing = _authority_freeze_fixture(tmp_path)
+    relative = "src/p3_v3/controller.py"
+    tracked_path = controller / relative
+    real_run = subprocess.run
+    drifted = False
+
+    def stage_drift_after_status(argv, *args, **kwargs):
+        nonlocal drifted
+        result = real_run(argv, *args, **kwargs)
+        if tuple(argv[3:]) == ("status", "--porcelain=v1") and not drifted:
+            drifted = True
+            tracked_path.write_text("CONTROLLER = 'staged-drift'\n", encoding="utf-8")
+            real_run(
+                ["git", "-C", str(controller), "add", relative],
+                capture_output=True,
+                check=True,
+            )
+        return result
+
+    monkeypatch.setattr(evidence_module.subprocess, "run", stage_drift_after_status)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_GIT"):
+        evidence_module.build_authority_lock(controller, inputs)
+    assert drifted
 
 
 def test_authority_determinism_raw_governing_byte_drift_changes_lock(tmp_path):
@@ -1587,15 +1685,13 @@ def test_concurrent_freezes_do_not_cross_snapshots_leak_state_or_write_pyc(
     second_controller, second_inputs, _ = _authority_freeze_fixture(second_root)
     real_build_common_inputs = evidence_module.build_common_inputs
     rendezvous = threading.Barrier(2)
-    first_complete = threading.Event()
-    first_generator_root = str(
-        first_controller / "registries/input_generators"
-    )
+    observed_snapshot_roots: list[str] = []
+    observed_lock = threading.Lock()
 
     def synchronized_common_inputs(source_record, public_frame, registry):
         rendezvous.wait(timeout=10)
-        if registry["_source_root"] != first_generator_root:
-            assert first_complete.wait(timeout=10)
+        with observed_lock:
+            observed_snapshot_roots.append(registry["_source_root"])
         return real_build_common_inputs(source_record, public_frame, registry)
 
     monkeypatch.setattr(
@@ -1603,16 +1699,12 @@ def test_concurrent_freezes_do_not_cross_snapshots_leak_state_or_write_pyc(
     )
     monkeypatch.setattr(sys, "dont_write_bytecode", False)
 
-    def freeze_first():
-        try:
-            return evidence_module.build_authority_lock(
-                first_controller, first_inputs
-            )
-        finally:
-            first_complete.set()
-
     with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
-        first_future = executor.submit(freeze_first)
+        first_future = executor.submit(
+            evidence_module.build_authority_lock,
+            first_controller,
+            first_inputs,
+        )
         second_future = executor.submit(
             evidence_module.build_authority_lock,
             second_controller,
@@ -1622,6 +1714,8 @@ def test_concurrent_freezes_do_not_cross_snapshots_leak_state_or_write_pyc(
         second_lock = second_future.result(timeout=20)
 
     assert first_lock["jobs"] and second_lock["jobs"]
+    assert len(observed_snapshot_roots) == 2
+    assert len(set(observed_snapshot_roots)) == 2
     assert sys.dont_write_bytecode is False
     assert capsys.readouterr() == ("", "")
     assert not list(first_controller.rglob("__pycache__"))
@@ -1697,12 +1791,11 @@ def test_freeze_rq_markdown_bytes_are_the_claim_verifiers_authority(tmp_path):
 
     assert evidence_module._verify_claim_reconstruction(
         {
-            "claims_path": claims_path,
             "claims_raw": claims_path.read_bytes(),
             "indexed_paths": frozenset({"rq_spec.md"}),
-            "protocol_artifact_paths": {
-                "rq_spec_sha256": rq_path,
-                "claim_ceiling_sha256": claim_ceiling_path,
+            "protocol_artifact_bytes": {
+                "rq_spec_sha256": rq_path.read_bytes(),
+                "claim_ceiling_sha256": claim_ceiling_path.read_bytes(),
             },
             "protocol": lock["protocol"],
         }
@@ -3196,6 +3289,30 @@ def test_evidence_index_rejects_noncanonical_bytes(tmp_path):
     assert result.returncode == 2
     assert json.loads(result.stderr)["code"] == "E_NONCANONICAL_JSON"
     assert not result.stdout
+
+
+def test_indexed_file_hash_and_canonical_parse_share_one_immutable_read(
+    tmp_path, monkeypatch
+):
+    original = {"snapshot": "original"}
+    replacement = {"snapshot": "replacement"}
+    artifact = tmp_path / "artifact.json"
+    artifact.write_bytes(canonical_json_bytes(original))
+    reference = _indexed_reference(tmp_path, artifact)
+    real_file_sha256 = evidence_module.file_sha256
+
+    def hash_then_swap(path):
+        digest = real_file_sha256(path)
+        Path(path).write_bytes(canonical_json_bytes(replacement))
+        return digest
+
+    monkeypatch.setattr(evidence_module, "file_sha256", hash_then_swap)
+
+    _path, value = evidence_module._indexed_file(
+        tmp_path, reference, set(), {}, "artifact"
+    )
+
+    assert value == original
 
 
 def _complete_phase_zero_evidence_index(tmp_path: Path) -> Path:
@@ -4753,6 +4870,36 @@ def test_protocol_binding_rejects_omitted_mandatory_policy(tmp_path, field):
 
     assert result.returncode == 2
     assert json.loads(result.stderr)["code"] == "E_SCHEMA_KEYS"
+
+
+@pytest.mark.parametrize("late_target", ["claims", "rq_spec", "claim_ceiling"])
+def test_claim_verification_uses_indexed_immutable_bytes_after_late_path_swap(
+    tmp_path, late_target
+):
+    index_path = _complete_phase_zero_evidence_index(tmp_path)
+    lock_path = tmp_path / "authority-lock.json"
+    lock = evidence_module.load_authority_lock(
+        lock_path, hashlib.sha256(lock_path.read_bytes()).hexdigest()
+    )
+    _index, material = evidence_module._load_evidence_index(
+        index_path, lock, lock_path
+    )
+    index = json.loads(index_path.read_text(encoding="utf-8"))
+    if late_target == "claims":
+        swapped = tmp_path / index["claims"]["path"]
+        swapped.write_bytes(canonical_json_bytes({"forged": True}))
+    else:
+        field = f"{late_target}_sha256"
+        swapped = tmp_path / index["protocol_artifacts"][field]["path"]
+        swapped.write_bytes(
+            b"# forged RQ authority\n"
+            if late_target == "rq_spec"
+            else canonical_json_bytes({"forged": True})
+        )
+
+    claims = evidence_module._verify_claim_reconstruction(material)
+
+    assert claims["schema_version"] == "p3-claim-evidence-v1"
 
 
 @pytest.mark.parametrize(

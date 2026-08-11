@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import re
+import secrets
 import stat
 import tempfile
 from collections.abc import Mapping
@@ -97,13 +98,87 @@ def _write_all(fd: int, payload: bytes) -> None:
         view = view[written:]
 
 
-def _fsync_directory(directory: Path) -> None:
-    flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0)
-    fd = os.open(directory, flags)
+def _close_quietly(fd: int | None) -> None:
+    if fd is None:
+        return
+    try:
+        os.close(fd)
+    except OSError:
+        pass
+
+
+def _directory_open_flags() -> int:
+    return (
+        os.O_RDONLY
+        | getattr(os, "O_DIRECTORY", 0)
+        | getattr(os, "O_NOFOLLOW", 0)
+    )
+
+
+def _open_parent_directory(
+    path: Path,
+    *,
+    create: bool,
+    code: str,
+    context: str,
+) -> tuple[int, str]:
+    """Open a path's parent one component at a time under anchored dirfds."""
+
+    target = Path(path)
+    name = target.name
+    if not name or name in {".", ".."} or "\x00" in name:
+        raise EvidenceError(code, f"{context} path is invalid")
+    parent = target.parent
+    parts = parent.parts
+    if target.is_absolute():
+        anchor = os.sep
+        components = parts[1:]
+    else:
+        anchor = "."
+        components = parts
+    if any(part in {"", ".", ".."} or "\x00" in part for part in components):
+        raise EvidenceError(code, f"{context} path is invalid")
+
+    flags = _directory_open_flags()
+    current_fd: int | None = None
+    try:
+        current_fd = os.open(anchor, flags)
+        for component in components:
+            try:
+                next_fd = os.open(component, flags, dir_fd=current_fd)
+            except FileNotFoundError:
+                if not create:
+                    raise
+                os.mkdir(component, 0o755, dir_fd=current_fd)
+                next_fd = os.open(component, flags, dir_fd=current_fd)
+            previous_fd = current_fd
+            current_fd = next_fd
+            _close_quietly(previous_fd)
+        return current_fd, name
+    except EvidenceError:
+        _close_quietly(current_fd)
+        raise
+    except OSError as exc:
+        _close_quietly(current_fd)
+        raise EvidenceError(code, f"{context} parent is unavailable") from exc
+
+
+def _fsync_directory(
+    directory: Path, *, directory_fd: int | None = None
+) -> None:
+    if directory_fd is not None:
+        os.fsync(directory_fd)
+        return
+    fd, _name = _open_parent_directory(
+        Path(directory) / ".fsync-anchor",
+        create=False,
+        code="E_ARTIFACT_WRITE",
+        context="artifact directory",
+    )
     try:
         os.fsync(fd)
     finally:
-        os.close(fd)
+        _close_quietly(fd)
 
 
 def _discard_temporary(path: Path) -> None:
@@ -119,48 +194,71 @@ def write_canonical_json(path: str | Path, value: Any, *, exclusive: bool) -> No
     target = Path(path)
     payload = canonical_json_bytes(value)
     if exclusive:
-        temporary: Path | None = None
+        parent_fd: int | None = None
+        temporary_name: str | None = None
         fd: int | None = None
         try:
-            target.parent.mkdir(parents=True, exist_ok=True)
-            fd, temporary_name = tempfile.mkstemp(
-                prefix=f".{target.name}.", suffix=".tmp", dir=target.parent
+            parent_fd, target_name = _open_parent_directory(
+                target,
+                create=True,
+                code="E_ARTIFACT_WRITE",
+                context="artifact",
             )
-            temporary = Path(temporary_name)
-            os.fchmod(fd, 0o644)
+            flags = (
+                os.O_WRONLY
+                | os.O_CREAT
+                | os.O_EXCL
+                | getattr(os, "O_NOFOLLOW", 0)
+            )
+            for _attempt in range(128):
+                candidate = f".{target_name}.{secrets.token_hex(12)}.tmp"
+                try:
+                    fd = os.open(candidate, flags, 0o644, dir_fd=parent_fd)
+                except FileExistsError:
+                    continue
+                temporary_name = candidate
+                break
+            if fd is None or temporary_name is None:
+                raise OSError("unable to allocate exclusive temporary file")
             _write_all(fd, payload)
             os.fsync(fd)
             os.close(fd)
             fd = None
             try:
-                os.link(temporary, target)
+                os.link(
+                    temporary_name,
+                    target_name,
+                    src_dir_fd=parent_fd,
+                    dst_dir_fd=parent_fd,
+                    follow_symlinks=False,
+                )
             except FileExistsError as exc:
                 raise EvidenceError(
                     "E_EXISTS", f"artifact already exists: {target}"
                 ) from exc
-            temporary.unlink()
-            temporary = None
-            _fsync_directory(target.parent)
+            os.unlink(temporary_name, dir_fd=parent_fd)
+            temporary_name = None
+            _fsync_directory(target.parent, directory_fd=parent_fd)
         except EvidenceError:
-            if fd is not None:
+            _close_quietly(fd)
+            if temporary_name is not None and parent_fd is not None:
                 try:
-                    os.close(fd)
+                    os.unlink(temporary_name, dir_fd=parent_fd)
                 except OSError:
                     pass
-            if temporary is not None:
-                _discard_temporary(temporary)
             raise
         except BaseException as exc:
-            if fd is not None:
+            _close_quietly(fd)
+            if temporary_name is not None and parent_fd is not None:
                 try:
-                    os.close(fd)
+                    os.unlink(temporary_name, dir_fd=parent_fd)
                 except OSError:
                     pass
-            if temporary is not None:
-                _discard_temporary(temporary)
             raise EvidenceError(
                 "E_ARTIFACT_WRITE", f"unable to create artifact: {target}"
             ) from exc
+        finally:
+            _close_quietly(parent_fd)
         return
 
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -182,28 +280,26 @@ def write_canonical_json(path: str | Path, value: Any, *, exclusive: bool) -> No
 
 
 def _lstat_regular_path(path: Path, context: str) -> Path:
+    """Compatibility precheck; the subsequent dirfd chain is authoritative."""
+
     absolute = path if path.is_absolute() else Path.cwd() / path
-    parts = absolute.parts
-    current = Path(parts[0])
+    current = Path(absolute.parts[0])
     try:
-        for index, part in enumerate(parts[1:], 1):
+        for index, part in enumerate(absolute.parts[1:], 1):
             current /= part
             info = current.lstat()
-            is_target = index == len(parts) - 1
+            is_target = index == len(absolute.parts) - 1
             if stat.S_ISLNK(info.st_mode):
                 raise EvidenceError(
                     "E_AUTHORITY_LOCK_PATH", f"{context} path is not symlink-free"
                 )
-            if is_target:
-                if not stat.S_ISREG(info.st_mode):
-                    raise EvidenceError(
-                        "E_AUTHORITY_LOCK_PATH",
-                        f"{context} path is not a regular file",
-                    )
-            elif not stat.S_ISDIR(info.st_mode):
+            if is_target and not stat.S_ISREG(info.st_mode):
                 raise EvidenceError(
-                    "E_AUTHORITY_LOCK_PATH",
-                    f"{context} parent is not a directory",
+                    "E_AUTHORITY_LOCK_PATH", f"{context} path is not a regular file"
+                )
+            if not is_target and not stat.S_ISDIR(info.st_mode):
+                raise EvidenceError(
+                    "E_AUTHORITY_LOCK_PATH", f"{context} parent is not a directory"
                 )
     except EvidenceError:
         raise
@@ -214,32 +310,51 @@ def _lstat_regular_path(path: Path, context: str) -> Path:
     return absolute
 
 
-def read_canonical_regular_bytes(path: Path, context: str) -> bytes:
-    """Read one symlink-free regular file without resolving path components."""
+def read_regular_file_snapshot(path: Path, context: str) -> tuple[bytes, int]:
+    """Read immutable bytes and mode from one anchored regular-file fd."""
 
-    source = _lstat_regular_path(Path(path), context)
-    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+    _lstat_regular_path(Path(path), context)
+    parent_fd: int | None = None
+    fd: int | None = None
+    flags = (
+        os.O_RDONLY
+        | getattr(os, "O_NOFOLLOW", 0)
+        | getattr(os, "O_NONBLOCK", 0)
+    )
     try:
-        fd = os.open(source, flags)
-        try:
-            if not stat.S_ISREG(os.fstat(fd).st_mode):
-                raise EvidenceError(
-                    "E_AUTHORITY_LOCK_PATH", f"{context} path is not a regular file"
-                )
-            chunks: list[bytes] = []
-            while True:
-                chunk = os.read(fd, 1024 * 1024)
-                if not chunk:
-                    return b"".join(chunks)
-                chunks.append(chunk)
-        finally:
-            os.close(fd)
+        parent_fd, name = _open_parent_directory(
+            Path(path),
+            create=False,
+            code="E_AUTHORITY_LOCK_PATH",
+            context=context,
+        )
+        fd = os.open(name, flags, dir_fd=parent_fd)
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise EvidenceError(
+                "E_AUTHORITY_LOCK_PATH", f"{context} path is not a regular file"
+            )
+        chunks: list[bytes] = []
+        while True:
+            chunk = os.read(fd, 1024 * 1024)
+            if not chunk:
+                return b"".join(chunks), os.fstat(fd).st_mode
+            chunks.append(chunk)
     except EvidenceError:
         raise
     except OSError as exc:
         raise EvidenceError(
             "E_AUTHORITY_LOCK_PATH", f"{context} path could not be read safely"
         ) from exc
+    finally:
+        _close_quietly(fd)
+        _close_quietly(parent_fd)
+
+
+def read_canonical_regular_bytes(path: Path, context: str) -> bytes:
+    """Read one regular file through an anchored no-symlink dirfd chain."""
+
+    raw, _mode = read_regular_file_snapshot(path, context)
+    return raw
 
 
 def read_canonical_regular_json(path: Path, context: str) -> dict[str, Any]:

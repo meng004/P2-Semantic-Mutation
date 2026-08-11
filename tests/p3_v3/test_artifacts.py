@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+from pathlib import Path
 
 import pytest
 
@@ -56,7 +57,7 @@ def test_exclusive_write_link_failure_removes_temporary_and_final_path(
 ):
     path = tmp_path / "artifact.json"
 
-    def fail_link(_source, _target):
+    def fail_link(*_args, **_kwargs):
         raise OSError("injected link failure")
 
     monkeypatch.setattr(artifacts_module.os, "link", fail_link)
@@ -140,9 +141,9 @@ def test_authority_atomicity_injected_freeze_write_failure_leaves_no_partial(
     real_write = artifacts_module.os.write
     fsynced: list[object] = []
 
-    def record_fsync(directory):
+    def record_fsync(directory, *, directory_fd=None):
         fsynced.append(directory)
-        return real_fsync_directory(directory)
+        return real_fsync_directory(directory, directory_fd=directory_fd)
 
     def fail_write(_fd, _payload):
         raise OSError("injected write failure")
@@ -185,10 +186,10 @@ def test_exclusive_write_preserves_exists_error_when_temporary_cleanup_fails(
     path = tmp_path / "artifact.json"
     path.write_bytes(b"original\n")
 
-    def fail_unlink(_path, *, missing_ok=False):
+    def fail_unlink(*_args, **_kwargs):
         raise OSError("injected cleanup failure")
 
-    monkeypatch.setattr(artifacts_module.Path, "unlink", fail_unlink)
+    monkeypatch.setattr(artifacts_module.os, "unlink", fail_unlink)
 
     with pytest.raises(EvidenceError) as caught:
         write_canonical_json(path, {"replacement": True}, exclusive=True)
@@ -202,14 +203,14 @@ def test_exclusive_write_preserves_write_error_when_temporary_cleanup_fails(
 ):
     path = tmp_path / "artifact.json"
 
-    def fail_link(_source, _target):
+    def fail_link(*_args, **_kwargs):
         raise OSError("injected link failure")
 
-    def fail_unlink(_path, *, missing_ok=False):
+    def fail_unlink(*_args, **_kwargs):
         raise OSError("injected cleanup failure")
 
     monkeypatch.setattr(artifacts_module.os, "link", fail_link)
-    monkeypatch.setattr(artifacts_module.Path, "unlink", fail_unlink)
+    monkeypatch.setattr(artifacts_module.os, "unlink", fail_unlink)
 
     with pytest.raises(EvidenceError) as caught:
         write_canonical_json(path, {"payload": True}, exclusive=True)
@@ -223,7 +224,7 @@ def test_exclusive_write_directory_fsync_failure_keeps_published_target(
 ):
     path = tmp_path / "artifact.json"
 
-    def fail_directory_fsync(_directory):
+    def fail_directory_fsync(_directory, **_kwargs):
         raise OSError("injected directory fsync failure")
 
     monkeypatch.setattr(artifacts_module, "_fsync_directory", fail_directory_fsync)
@@ -233,6 +234,57 @@ def test_exclusive_write_directory_fsync_failure_keeps_published_target(
 
     assert path.read_bytes() == b'{"published":true}\n'
     assert list(tmp_path.iterdir()) == [path]
+
+
+def test_exclusive_write_remains_anchored_when_parent_path_is_swapped(
+    tmp_path, monkeypatch
+):
+    parent = tmp_path / "publish"
+    parent.mkdir()
+    moved_parent = tmp_path / "publish-original"
+    attacker_parent = tmp_path / "publish-attacker"
+    attacker_parent.mkdir()
+    target = parent / "artifact.json"
+    real_open = artifacts_module.os.open
+    swapped = False
+
+    def swap_parent_before_temporary_open(path, flags, mode=0o777, *, dir_fd=None):
+        nonlocal swapped
+        if not swapped and flags & os.O_EXCL:
+            swapped = True
+            parent.rename(moved_parent)
+            parent.symlink_to(attacker_parent, target_is_directory=True)
+        kwargs = {} if dir_fd is None else {"dir_fd": dir_fd}
+        return real_open(path, flags, mode, **kwargs)
+
+    monkeypatch.setattr(artifacts_module.os, "open", swap_parent_before_temporary_open)
+
+    write_canonical_json(target, {"anchored": True}, exclusive=True)
+
+    assert swapped
+    assert (moved_parent / target.name).read_bytes() == b'{"anchored":true}\n'
+    assert not (attacker_parent / target.name).exists()
+
+
+def test_exclusive_write_preserves_primary_error_when_unlinkat_cleanup_fails(
+    tmp_path, monkeypatch
+):
+    target = tmp_path / "artifact.json"
+
+    def short_write(_fd, _payload):
+        return 0
+
+    def fail_cleanup(*_args, **_kwargs):
+        raise OSError("injected unlinkat cleanup failure")
+
+    monkeypatch.setattr(artifacts_module.os, "write", short_write)
+    monkeypatch.setattr(artifacts_module.os, "unlink", fail_cleanup)
+
+    with pytest.raises(EvidenceError) as caught:
+        write_canonical_json(target, {"payload": True}, exclusive=True)
+
+    assert caught.value.code == "E_ARTIFACT_WRITE"
+    assert not target.exists()
 
 
 def test_authority_lock_reader_accepts_one_canonical_regular_file(tmp_path):
@@ -245,6 +297,65 @@ def test_authority_lock_reader_accepts_one_canonical_regular_file(tmp_path):
     assert artifacts_module.read_canonical_regular_json(path, "authority lock") == {
         "schema_version": "P3_V3_AUTHORITY_LOCK_V1"
     }
+
+
+def test_authority_lock_reader_keeps_parent_directory_anchored_during_swap(
+    tmp_path, monkeypatch
+):
+    parent = tmp_path / "authority"
+    parent.mkdir()
+    moved_parent = tmp_path / "authority-original"
+    attacker_parent = tmp_path / "authority-attacker"
+    attacker_parent.mkdir()
+    target = parent / "lock.json"
+    original = canonical_json_bytes({"authority": "original"})
+    attacker = canonical_json_bytes({"authority": "attacker"})
+    target.write_bytes(original)
+    (attacker_parent / target.name).write_bytes(attacker)
+    real_open = artifacts_module.os.open
+    swapped = False
+
+    def swap_parent_before_final_open(path, flags, mode=0o777, *, dir_fd=None):
+        nonlocal swapped
+        if not swapped and Path(path).name == target.name:
+            swapped = True
+            parent.rename(moved_parent)
+            parent.symlink_to(attacker_parent, target_is_directory=True)
+        kwargs = {} if dir_fd is None else {"dir_fd": dir_fd}
+        return real_open(path, flags, mode, **kwargs)
+
+    monkeypatch.setattr(artifacts_module.os, "open", swap_parent_before_final_open)
+
+    assert artifacts_module.read_canonical_regular_bytes(
+        target, "authority lock"
+    ) == original
+    assert swapped
+
+
+def test_authority_lock_reader_rejects_final_file_swap_to_symlink(
+    tmp_path, monkeypatch
+):
+    target = tmp_path / "lock.json"
+    attacker = tmp_path / "attacker.json"
+    target.write_bytes(canonical_json_bytes({"authority": "original"}))
+    attacker.write_bytes(canonical_json_bytes({"authority": "attacker"}))
+    real_open = artifacts_module.os.open
+    swapped = False
+
+    def swap_file_before_final_open(path, flags, mode=0o777, *, dir_fd=None):
+        nonlocal swapped
+        if not swapped and Path(path).name == target.name:
+            swapped = True
+            target.unlink()
+            target.symlink_to(attacker)
+        kwargs = {} if dir_fd is None else {"dir_fd": dir_fd}
+        return real_open(path, flags, mode, **kwargs)
+
+    monkeypatch.setattr(artifacts_module.os, "open", swap_file_before_final_open)
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_PATH"):
+        artifacts_module.read_canonical_regular_bytes(target, "authority lock")
+    assert swapped
 
 
 def test_authority_lock_reader_rejects_symlinked_parent(tmp_path):
@@ -271,23 +382,12 @@ def test_authority_lock_reader_rejects_file_symlink(tmp_path):
         artifacts_module.read_canonical_regular_json(link, "authority lock")
 
 
-def test_authority_lock_reader_rejects_special_node_without_opening_it(
-    tmp_path, monkeypatch
-):
+def test_authority_lock_reader_rejects_special_node_without_blocking(tmp_path):
     fifo = tmp_path / "lock.fifo"
     os.mkfifo(fifo)
-    open_calls = 0
-
-    def unexpected_open(*_args, **_kwargs):
-        nonlocal open_calls
-        open_calls += 1
-        raise AssertionError("special authority node must be rejected before open")
-
-    monkeypatch.setattr(artifacts_module.os, "open", unexpected_open)
 
     with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_PATH"):
         artifacts_module.read_canonical_regular_json(fifo, "authority lock")
-    assert open_calls == 0
 
 
 def test_authority_lock_reader_rejects_noncanonical_bytes(tmp_path):
