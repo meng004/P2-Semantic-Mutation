@@ -729,10 +729,122 @@ def _job_derivation_fixture():
             }
         ],
     }
+    controller_manifest = {
+        "schema_version": "P3_V3_TRACKED_SOURCE_MANIFEST_V1",
+        "role": "controller-source",
+        "files": [
+            {
+                "relative_path": "src/p3_v3/controller.py",
+                "mode": "100644",
+                "sha256": _digest("controller-source"),
+            }
+        ],
+    }
+    subject_manifest = {
+        "schema_version": "P3_V3_TRACKED_SOURCE_MANIFEST_V1",
+        "role": "subject-source",
+        "files": [
+            {
+                "relative_path": "subject.py",
+                "mode": "100644",
+                "sha256": _digest("subject-source"),
+            }
+        ],
+    }
+    build_descriptor = {"schema_version": "BUILD_V1", "language": "python"}
+    governing_artifacts = {
+        field: {"schema_version": "GOVERNING_V1", "role": field}
+        for field in (
+            "scientific_plan_sha256",
+            "evidence_design_sha256",
+            "authority_lock_design_sha256",
+            "implementation_plan_sha256",
+        )
+    }
+    governing_artifacts["controller_implementation_manifest_sha256"] = (
+        controller_manifest
+    )
+    protocol_artifacts = {
+        field: {"schema_version": "PROTOCOL_ARTIFACT_V1", "role": field}
+        for field in _PROTOCOL_AUTHORITY_KEYS
+    }
+    protocol_artifacts["job_derivation_policy_sha256"] = copy.deepcopy(policy)
+    protocol = {
+        field: canonical_sha256(protocol_artifacts[field])
+        for field in _PROTOCOL_AUTHORITY_KEYS
+    }
+    registry_artifacts = {
+        "adapter_registry_sha256": {
+            "schema_version": "ADAPTER_REGISTRY_V1",
+            "implementations": ["PYTHON_PEP517_V1"],
+        },
+        "input_generator_registry_sha256": {
+            "schema_version": "INPUT_GENERATOR_REGISTRY_V1",
+            "implementations": ["DETERMINISTIC_COMMON_V1"],
+        },
+    }
+    registries = {
+        field: canonical_sha256(registry_artifacts[field])
+        for field in _REGISTRY_AUTHORITY_KEYS
+    }
     prepared = {
-        "protocol": {
-            "protocol_sha256": "a" * 64,
-            "job_derivation_policy_sha256": canonical_sha256(policy),
+        "controller_repository": {
+            "normalized_repository_identity": "github.com/example/controller",
+            "base_commit": "1" * 40,
+            "base_tree": "2" * 40,
+            "tracked_source_manifest_sha256": canonical_sha256(
+                controller_manifest
+            ),
+        },
+        "controller_manifest": controller_manifest,
+        "subjects": [
+            {
+                "authority_row": {
+                    "subject_id": "subject-a",
+                    "repository_role": "CONTROLLED_A",
+                    "normalized_repository_identity": "github.com/example/subject-a",
+                    "base_commit": "3" * 40,
+                    "base_tree": "4" * 40,
+                    "tracked_source_manifest_sha256": canonical_sha256(
+                        subject_manifest
+                    ),
+                    "build_descriptor_sha256": canonical_sha256(build_descriptor),
+                    "adapter_id": "PYTHON_PEP517_V1",
+                },
+                "source_manifest": subject_manifest,
+                "build_descriptor": build_descriptor,
+                "adapter_discovery": {"adapter_id": "PYTHON_PEP517_V1"},
+                "public_behavior_frame": {"subject_id": "subject-a"},
+                "profiling_workload": {"subject_id": "subject-a"},
+                "common_inputs": {"input_ids": ["e-common-0"]},
+            }
+        ],
+        "governing_materials": {
+            field: canonical_sha256(artifact)
+            for field, artifact in governing_artifacts.items()
+        },
+        "governing_artifacts": governing_artifacts,
+        "protocol": protocol,
+        "protocol_artifacts": protocol_artifacts,
+        "registries": registries,
+        "registry_artifacts": registry_artifacts,
+        "preflight": {
+            "normalized_repository_identity": "github.com/example/controller",
+            "base_commit": "1" * 40,
+            "base_tree": "2" * 40,
+            "dependency_lock_sha256": _digest("dependency-lock"),
+            "environment_policy_sha256": protocol["environment_lock_sha256"],
+            "required_capabilities": ["cpu"],
+            "forbidden_credential_fields": [
+                "authorization",
+                "credential",
+                "password",
+                "token",
+            ],
+        },
+        "claim_policy": {
+            "claim_ceiling_sha256": protocol["claim_ceiling_sha256"],
+            "required_status": "blocked",
         },
         "objects": [
             {
@@ -754,6 +866,7 @@ def _job_derivation_fixture():
                 "environment_sha256": "c" * 64,
             }
         ],
+        "job_derivation_policy": copy.deepcopy(policy),
     }
     return prepared, policy
 
@@ -772,7 +885,7 @@ def test_locked_job_derivation_expands_only_prepared_byte_bound_inventory():
     assert intents == [
         {
             "job_id": expected_job_id,
-            "protocol_sha256": "a" * 64,
+            "protocol_sha256": prepared["protocol"]["protocol_sha256"],
             "phase": "PHASE_2",
             "argv": [
                 "runner",
@@ -781,7 +894,7 @@ def test_locked_job_derivation_expands_only_prepared_byte_bound_inventory():
                 "e-common-0",
                 "env-1",
                 "1",
-                "a" * 64,
+                prepared["protocol"]["protocol_sha256"],
             ],
             "cwd_identity": "subject:subject-a",
             "environment_sha256": "c" * 64,
@@ -852,7 +965,9 @@ def test_locked_job_derivation_changes_when_prepared_authority_changes(source):
     if source == "subject":
         changed["objects"][0]["object_id"] = "mut-2"
     elif source == "protocol":
-        changed["protocol"]["protocol_sha256"] = "d" * 64
+        artifact = {"schema_version": "PROTOCOL_ARTIFACT_V1", "role": "changed"}
+        changed["protocol_artifacts"]["protocol_sha256"] = artifact
+        changed["protocol"]["protocol_sha256"] = canonical_sha256(artifact)
     elif source == "registry":
         changed["objects"][0]["inputs"][0]["sha256"] = "e" * 64
     else:
@@ -876,9 +991,53 @@ def test_locked_job_derivation_rejects_unavailable_prepared_role(field, value):
     prepared, policy = _job_derivation_fixture()
     policy["templates"][0][field] = value
     prepared["protocol"]["job_derivation_policy_sha256"] = canonical_sha256(policy)
+    prepared["job_derivation_policy"] = copy.deepcopy(policy)
+    prepared["protocol_artifacts"]["job_derivation_policy_sha256"] = copy.deepcopy(
+        policy
+    )
 
     with pytest.raises(EvidenceError, match="E_AUTHORITY_INTENT"):
         evidence_module.derive_locked_jobs(prepared, policy)
+
+
+def test_locked_job_derivation_rejects_reduced_protocol_mapping():
+    prepared, policy = _job_derivation_fixture()
+    del prepared["protocol"]["rq_spec_sha256"]
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_INTENT"):
+        evidence_module.derive_base_intents(prepared, policy)
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("execution_class", "REAL_SCIENTIFIC"),
+        ("p12_access_class", "REQUIRED"),
+    ],
+)
+def test_locked_job_derivation_rejects_locally_resealed_class_relabel(field, value):
+    prepared, policy = _job_derivation_fixture()
+    policy["templates"][0][field] = value
+    prepared["protocol"]["job_derivation_policy_sha256"] = canonical_sha256(policy)
+
+    with pytest.raises(
+        EvidenceError, match="E_AUTHORITY_(EXECUTION_CLASS|INTENT)"
+    ):
+        evidence_module.derive_locked_jobs(prepared, policy)
+
+
+@pytest.mark.parametrize("authority", ["subject", "registry"])
+def test_locked_job_derivation_rejects_stale_top_level_authority(authority):
+    prepared, policy = _job_derivation_fixture()
+    if authority == "subject":
+        prepared["subjects"][0]["authority_row"][
+            "tracked_source_manifest_sha256"
+        ] = "f" * 64
+    else:
+        prepared["registries"]["adapter_registry_sha256"] = "f" * 64
+
+    with pytest.raises(EvidenceError, match="E_AUTHORITY_INTENT"):
+        evidence_module.derive_base_intents(prepared, policy)
 
 
 def test_load_authority_lock_accepts_matching_canonical_bytes(tmp_path):

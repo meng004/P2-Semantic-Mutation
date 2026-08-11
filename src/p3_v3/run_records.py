@@ -477,8 +477,10 @@ def _require_directory(path: Path, context: str) -> list[Path]:
     return list(path.iterdir())
 
 
-def reconstruct_attempt_events(job_root: Path) -> list[dict[str, Any]]:
-    """Rebuild canonical ledger events from the frozen phase/job/attempt tree."""
+def _reconstruct_attempt_snapshot(
+    job_root: Path,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Read each attempt artifact once and derive records and events together."""
 
     root = Path(job_root)
     phase_entries = _require_directory(root, "job root")
@@ -494,6 +496,7 @@ def reconstruct_attempt_events(job_root: Path) -> list[dict[str, Any]]:
         )
 
     events: list[dict[str, Any]] = []
+    records: list[dict[str, Any]] = []
     previous: str | None = None
     for _, phase_directory in sorted(phase_directories):
         job_directories = _require_directory(phase_directory, "phase entry")
@@ -578,8 +581,9 @@ def reconstruct_attempt_events(job_root: Path) -> list[dict[str, Any]]:
                 )
                 events.append(intent_event)
                 previous = intent_event["event_sha256"]
-                result_path = attempt_directory / "result.json"
-                if result_path.exists():
+                result: dict[str, Any] | None = None
+                if "result.json" in names:
+                    result_path = attempt_directory / "result.json"
                     result = _validate_result(read_canonical_json(result_path), intent)
                     if (
                         result["job_id"] != intent["job_id"]
@@ -600,33 +604,20 @@ def reconstruct_attempt_events(job_root: Path) -> list[dict[str, Any]]:
                     previous_status = result["status"]
                 else:
                     previous_status = None
-    return events
+                records.append({"intent": intent, "result": result})
+    return records, events
+
+
+def reconstruct_attempt_events(job_root: Path) -> list[dict[str, Any]]:
+    """Rebuild canonical ledger events from the frozen phase/job/attempt tree."""
+
+    return _reconstruct_attempt_snapshot(Path(job_root))[1]
 
 
 def reconstruct_attempt_records(job_root: Path) -> list[dict[str, Any]]:
     """Return the exact validated intent/result records behind ledger events."""
 
-    root = Path(job_root)
-    reconstruct_attempt_events(root)
-    records: list[dict[str, Any]] = []
-    for phase_directory in sorted(
-        root.iterdir(), key=lambda path: _PHASE_IDS.index(path.name)
-    ):
-        for job_directory in sorted(phase_directory.iterdir(), key=lambda path: path.name):
-            for attempt_directory in sorted(
-                job_directory.iterdir(), key=lambda path: int(path.name)
-            ):
-                intent = _validate_intent(
-                    read_canonical_json(attempt_directory / "intent.json")
-                )
-                result_path = attempt_directory / "result.json"
-                result = (
-                    _validate_result(read_canonical_json(result_path), intent)
-                    if result_path.exists()
-                    else None
-                )
-                records.append({"intent": intent, "result": result})
-    return records
+    return _reconstruct_attempt_snapshot(Path(job_root))[0]
 
 
 def verify_attempt_tree(
@@ -634,13 +625,14 @@ def verify_attempt_tree(
 ) -> list[dict[str, Any]]:
     """Require the supplied ledger to be the exact reconstruction of the tree."""
 
-    events = reconstruct_attempt_events(Path(job_root))
+    _records, events = _reconstruct_attempt_snapshot(Path(job_root))
     expected = b"".join(canonical_json_bytes(event) for event in events)
-    if Path(ledger).read_bytes() != expected:
+    raw = Path(ledger).read_bytes()
+    if raw != expected:
         raise EvidenceError(
             "E_LEDGER_RECONSTRUCTION", "ledger bytes differ from reconstructed attempts"
         )
-    verified = verify_ledger(ledger)
+    verified = _verify_ledger_bytes(raw)
     if verified != events:
         raise EvidenceError(
             "E_LEDGER_RECONSTRUCTION",
@@ -717,7 +709,7 @@ def verify_locked_execution(
 
     jobs = _validate_locked_jobs(locked_jobs)
     try:
-        records = reconstruct_attempt_records(Path(job_root))
+        records, events = _reconstruct_attempt_snapshot(Path(job_root))
     except EvidenceError as exc:
         raise EvidenceError(
             "E_AUTHORITY_INTENT", "attempt tree differs from locked intent authority"
@@ -755,7 +747,18 @@ def verify_locked_execution(
         latest[intent["job_id"]] = record
 
     try:
-        verify_attempt_tree(job_root, ledger_path)
+        ledger_raw = Path(ledger_path).read_bytes()
+        expected_ledger = b"".join(canonical_json_bytes(event) for event in events)
+        if ledger_raw != expected_ledger:
+            raise EvidenceError(
+                "E_LEDGER_RECONSTRUCTION",
+                "ledger bytes differ from the shared attempt snapshot",
+            )
+        if _verify_ledger_bytes(ledger_raw) != events:
+            raise EvidenceError(
+                "E_LEDGER_RECONSTRUCTION",
+                "ledger events differ from the shared attempt snapshot",
+            )
     except (OSError, EvidenceError) as exc:
         raise EvidenceError(
             "E_AUTHORITY_INTENT", "ledger differs from complete attempt records"
@@ -772,8 +775,7 @@ def verify_locked_execution(
     }
 
 
-def verify_ledger(ledger_path: str | Path) -> list[dict[str, Any]]:
-    raw = Path(ledger_path).read_bytes()
+def _verify_ledger_bytes(raw: bytes) -> list[dict[str, Any]]:
     events: list[dict[str, Any]] = []
     previous: str | None = None
     for line_number, line in enumerate(raw.splitlines(keepends=True), 1):
@@ -820,6 +822,10 @@ def verify_ledger(ledger_path: str | Path) -> list[dict[str, Any]]:
         previous = event["event_sha256"]
         events.append(event)
     return events
+
+
+def verify_ledger(ledger_path: str | Path) -> list[dict[str, Any]]:
+    return _verify_ledger_bytes(Path(ledger_path).read_bytes())
 
 
 def close_phase(

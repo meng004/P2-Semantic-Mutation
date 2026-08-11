@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 from fractions import Fraction
+from pathlib import Path
 
 import pytest
 
@@ -342,6 +343,76 @@ def test_execution_relabel_cannot_override_locked_execution_class(tmp_path):
 
     with pytest.raises(EvidenceError, match="E_AUTHORITY_EXECUTION_CLASS"):
         run_records_module.verify_locked_execution([relabelled], jobs, ledger)
+
+
+def test_locked_execution_uses_one_attempt_snapshot_under_result_ledger_race(
+    tmp_path, monkeypatch
+):
+    intent = _intent(
+        job_id="4" * 64,
+        phase="PHASE_7",
+        job_role="P12",
+        object_type="P12_FAULT",
+        object_id="fault-race",
+    )
+    jobs, ledger = _locked_attempt_tree(tmp_path, [(intent, None)])
+    result = _result(
+        job_id=intent["job_id"], scientific_outcome="MR_SATISFIED"
+    )
+    result_path = jobs / "PHASE_7" / intent["job_id"] / "1/result.json"
+    original_exists = Path.exists
+    original_read_bytes = Path.read_bytes
+    state = {"result_exists_calls": 0, "mutated": False}
+
+    def publish_terminal_result_and_ledger():
+        if state["mutated"]:
+            return
+        state["mutated"] = True
+        write_result(result_path.parent, result)
+        intent_event = run_records_module._event(
+            1, "INTENT", intent, None, phase=intent["phase"]
+        )
+        result_event = run_records_module._event(
+            2,
+            "RESULT",
+            result,
+            intent_event["event_sha256"],
+            phase=intent["phase"],
+        )
+        ledger.write_bytes(
+            canonical_json_bytes(intent_event) + canonical_json_bytes(result_event)
+        )
+
+    def racing_exists(path):
+        observed = original_exists(path)
+        if path == result_path:
+            state["result_exists_calls"] += 1
+            if state["result_exists_calls"] == 2:
+                publish_terminal_result_and_ledger()
+        return observed
+
+    def racing_read_bytes(path):
+        if path == ledger and not state["mutated"]:
+            publish_terminal_result_and_ledger()
+        return original_read_bytes(path)
+
+    monkeypatch.setattr(Path, "exists", racing_exists)
+    monkeypatch.setattr(Path, "read_bytes", racing_read_bytes)
+    locked = _locked_job(
+        intent,
+        execution_class="REAL_SCIENTIFIC",
+        p12_access_class="REQUIRED",
+    )
+
+    try:
+        completion = run_records_module.verify_locked_execution(
+            [locked], jobs, ledger
+        )
+    except EvidenceError as exc:
+        assert "E_AUTHORITY_INTENT" in str(exc)
+    else:
+        assert completion["recorded_real_scientific_terminal_count"] == 1
+    assert state["mutated"]
 
 
 def test_profile_trace_result_requires_dedicated_role_type_digest_and_identity(tmp_path):

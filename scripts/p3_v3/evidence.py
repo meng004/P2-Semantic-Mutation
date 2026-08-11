@@ -171,24 +171,31 @@ _PREPARED_FORBIDDEN_FIELDS = frozenset(
         "completed_intent",
     }
 )
-_PREPARED_AUTHORITY_FIELDS = frozenset(
-    {
-        "controller_repository",
-        "controller_manifest",
-        "subjects",
-        "governing_materials",
-        "governing_artifacts",
-        "protocol",
-        "protocol_artifacts",
-        "registries",
-        "registry_artifacts",
-        "preflight",
-        "claim_policy",
-        "objects",
-        "environments",
-        "job_derivation_policy",
-    }
-)
+_PREPARED_AUTHORITY_SCHEMA = {
+    "controller_repository": dict,
+    "controller_manifest": dict,
+    "subjects": list,
+    "governing_materials": dict,
+    "governing_artifacts": dict,
+    "protocol": dict,
+    "protocol_artifacts": dict,
+    "registries": dict,
+    "registry_artifacts": dict,
+    "preflight": dict,
+    "claim_policy": dict,
+    "objects": list,
+    "environments": list,
+    "job_derivation_policy": dict,
+}
+_PREPARED_SUBJECT_SCHEMA = {
+    "authority_row": dict,
+    "source_manifest": dict,
+    "build_descriptor": dict,
+    "adapter_discovery": dict,
+    "public_behavior_frame": dict,
+    "profiling_workload": dict,
+    "common_inputs": dict,
+}
 _PREPARED_OBJECT_SCHEMA = {
     "object_source": str,
     "inventory_id": str,
@@ -693,44 +700,187 @@ def _authority_intent_failure(detail: str) -> None:
     raise EvidenceError("E_AUTHORITY_INTENT", detail)
 
 
+def _snapshot_prepared_authority(
+    prepared_authority: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Copy and cross-validate the complete internal authority value."""
+
+    try:
+        snapshot = json.loads(canonical_json_bytes(prepared_authority).decode("utf-8"))
+        value = validate_exact_object(
+            snapshot, _PREPARED_AUTHORITY_SCHEMA, "prepared authority"
+        )
+    except (TypeError, ValueError, json.JSONDecodeError, EvidenceError) as exc:
+        raise EvidenceError(
+            "E_AUTHORITY_INPUTS", "prepared authority schema differs"
+        ) from exc
+
+    try:
+        controller = validate_exact_object(
+            value["controller_repository"],
+            _CONTROLLER_AUTHORITY_SCHEMA,
+            "prepared controller_repository",
+        )
+        validate_sha256(
+            controller["tracked_source_manifest_sha256"],
+            "prepared controller manifest digest",
+        )
+        if canonical_sha256(value["controller_manifest"]) != controller[
+            "tracked_source_manifest_sha256"
+        ]:
+            _authority_intent_failure("prepared controller manifest binding differs")
+
+        subjects: list[dict[str, Any]] = []
+        subject_ids: list[str] = []
+        for index, candidate in enumerate(value["subjects"]):
+            subject = validate_exact_object(
+                candidate, _PREPARED_SUBJECT_SCHEMA, f"prepared subjects[{index}]"
+            )
+            authority_row = validate_exact_object(
+                subject["authority_row"],
+                _SUBJECT_AUTHORITY_SCHEMA,
+                f"prepared subjects[{index}].authority_row",
+            )
+            for field in (
+                "tracked_source_manifest_sha256",
+                "build_descriptor_sha256",
+            ):
+                validate_sha256(authority_row[field], f"prepared subject {field}")
+            if canonical_sha256(subject["source_manifest"]) != authority_row[
+                "tracked_source_manifest_sha256"
+            ]:
+                _authority_intent_failure("prepared subject manifest binding differs")
+            if canonical_sha256(subject["build_descriptor"]) != authority_row[
+                "build_descriptor_sha256"
+            ]:
+                _authority_intent_failure(
+                    "prepared subject build-descriptor binding differs"
+                )
+            subject_ids.append(authority_row["subject_id"])
+            subjects.append(subject)
+        if (
+            not subjects
+            or subject_ids != sorted(subject_ids)
+            or len(subject_ids) != len(set(subject_ids))
+        ):
+            _authority_intent_failure("prepared subjects are not sorted and unique")
+
+        governing = validate_exact_object(
+            value["governing_materials"],
+            _GOVERNING_AUTHORITY_SCHEMA,
+            "prepared governing_materials",
+        )
+        governing_artifacts = validate_exact_object(
+            value["governing_artifacts"],
+            {field: dict for field in _GOVERNING_AUTHORITY_SCHEMA},
+            "prepared governing_artifacts",
+        )
+        for field, digest in governing.items():
+            validate_sha256(digest, f"prepared governing_materials.{field}")
+            if canonical_sha256(governing_artifacts[field]) != digest:
+                _authority_intent_failure("prepared governing artifact binding differs")
+
+        protocol = validate_exact_object(
+            value["protocol"], _PROTOCOL_AUTHORITY_SCHEMA, "prepared protocol"
+        )
+        protocol_artifacts = validate_exact_object(
+            value["protocol_artifacts"],
+            {field: dict for field in _PROTOCOL_AUTHORITY_SCHEMA},
+            "prepared protocol_artifacts",
+        )
+        for field, digest in protocol.items():
+            validate_sha256(digest, f"prepared protocol.{field}")
+            if canonical_sha256(protocol_artifacts[field]) != digest:
+                _authority_intent_failure("prepared protocol artifact binding differs")
+
+        registries = validate_exact_object(
+            value["registries"], _REGISTRY_AUTHORITY_SCHEMA, "prepared registries"
+        )
+        registry_artifacts = validate_exact_object(
+            value["registry_artifacts"],
+            {field: dict for field in _REGISTRY_AUTHORITY_SCHEMA},
+            "prepared registry_artifacts",
+        )
+        for field, digest in registries.items():
+            validate_sha256(digest, f"prepared registries.{field}")
+            if canonical_sha256(registry_artifacts[field]) != digest:
+                _authority_intent_failure("prepared registry artifact binding differs")
+
+        preflight = validate_exact_object(
+            value["preflight"], _PREFLIGHT_AUTHORITY_SCHEMA, "prepared preflight"
+        )
+        claim_policy = validate_exact_object(
+            value["claim_policy"],
+            _CLAIM_POLICY_AUTHORITY_SCHEMA,
+            "prepared claim_policy",
+        )
+        if (
+            preflight["normalized_repository_identity"]
+            != controller["normalized_repository_identity"]
+            or preflight["base_commit"] != controller["base_commit"]
+            or preflight["base_tree"] != controller["base_tree"]
+            or preflight["environment_policy_sha256"]
+            != protocol["environment_lock_sha256"]
+            or claim_policy["claim_ceiling_sha256"]
+            != protocol["claim_ceiling_sha256"]
+            or claim_policy["required_status"] != "blocked"
+        ):
+            _authority_intent_failure("prepared cross-authority binding differs")
+    except EvidenceError as exc:
+        if str(exc).startswith("E_AUTHORITY_INTENT"):
+            raise
+        raise EvidenceError(
+            "E_AUTHORITY_INTENT", "prepared authority validation failed"
+        ) from exc
+    return value
+
+
+def _policy_class_projection(policy: Mapping[str, Any]) -> list[tuple[Any, Any, Any]]:
+    templates = policy.get("templates")
+    if not isinstance(templates, list):
+        return []
+    return [
+        (
+            template.get("template_id"),
+            template.get("execution_class"),
+            template.get("p12_access_class"),
+        )
+        for template in templates
+        if isinstance(template, Mapping)
+    ]
+
+
 def _validate_derivation_inputs(
     prepared_authority: Mapping[str, Any],
     job_derivation_policy: Mapping[str, Any],
-) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
+) -> tuple[
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+    dict[str, Any],
+    dict[str, Any],
+]:
     if not isinstance(prepared_authority, Mapping):
         raise EvidenceError("E_AUTHORITY_INPUTS", "prepared authority must be an object")
     forbidden = _PREPARED_FORBIDDEN_FIELDS.intersection(prepared_authority)
-    unexpected = set(prepared_authority).difference(_PREPARED_AUTHORITY_FIELDS)
+    unexpected = set(prepared_authority).difference(_PREPARED_AUTHORITY_SCHEMA)
     if forbidden or unexpected:
         raise EvidenceError(
             "E_AUTHORITY_INPUTS",
             "caller-supplied execution authority is forbidden",
         )
-    protocol = prepared_authority.get("protocol")
-    objects_value = prepared_authority.get("objects")
-    environments_value = prepared_authority.get("environments")
-    if (
-        not isinstance(protocol, Mapping)
-        or not isinstance(objects_value, list)
-        or not isinstance(environments_value, list)
-    ):
-        _authority_intent_failure("prepared authority inventories are unavailable")
-    try:
-        protocol_sha256 = protocol["protocol_sha256"]
-        policy_sha256 = protocol["job_derivation_policy_sha256"]
-        validate_sha256(protocol_sha256, "prepared protocol.protocol_sha256")
-        validate_sha256(
-            policy_sha256, "prepared protocol.job_derivation_policy_sha256"
-        )
-    except (KeyError, EvidenceError) as exc:
-        raise EvidenceError(
-            "E_AUTHORITY_INTENT", "prepared protocol authority differs"
-        ) from exc
+    prepared = _snapshot_prepared_authority(prepared_authority)
+    protocol = prepared["protocol"]
+    objects_value = prepared["objects"]
+    environments_value = prepared["environments"]
+    policy_sha256 = protocol["job_derivation_policy_sha256"]
     if not isinstance(job_derivation_policy, Mapping):
         _authority_intent_failure("job derivation policy must be an object")
     try:
-        policy = validate_exact_object(
-            dict(job_derivation_policy),
+        supplied_policy_snapshot = json.loads(
+            canonical_json_bytes(job_derivation_policy).decode("utf-8")
+        )
+        supplied_policy = validate_exact_object(
+            supplied_policy_snapshot,
             _JOB_DERIVATION_POLICY_SCHEMA,
             "job_derivation_policy",
         )
@@ -738,7 +888,18 @@ def _validate_derivation_inputs(
         raise EvidenceError(
             "E_AUTHORITY_INTENT", "job derivation policy schema differs"
         ) from exc
-    if canonical_sha256(policy) != policy_sha256:
+    prepared_policy = prepared["job_derivation_policy"]
+    if supplied_policy != prepared_policy:
+        if _policy_class_projection(supplied_policy) != _policy_class_projection(
+            prepared_policy
+        ):
+            raise EvidenceError(
+                "E_AUTHORITY_EXECUTION_CLASS",
+                "supplied execution classes differ from prepared authority",
+            )
+        _authority_intent_failure("supplied derivation policy differs from prepared authority")
+    policy = supplied_policy
+    if canonical_sha256(prepared_policy) != policy_sha256:
         _authority_intent_failure("job derivation policy bytes differ from protocol")
     if (
         policy["schema_version"] != "P3_V3_JOB_DERIVATION_POLICY_V1"
@@ -831,17 +992,23 @@ def _validate_derivation_inputs(
         or len(environment_roles) != len(set(environment_roles))
     ):
         _authority_intent_failure("prepared environments are not sorted and unique")
-    return objects, environments, policy
+    subject_ids = {
+        item["authority_row"]["subject_id"] for item in prepared["subjects"]
+    }
+    for item in objects:
+        if item["object_source"].startswith("SUBJECT") and item["subject_id"] not in subject_ids:
+            _authority_intent_failure("prepared object names an unavailable subject")
+    return objects, environments, policy, protocol
 
 
 def _expand_base_intents(
     prepared_authority: Mapping[str, Any],
     job_derivation_policy: Mapping[str, Any],
 ) -> list[tuple[dict[str, Any], dict[str, Any]]]:
-    objects, environments, policy = _validate_derivation_inputs(
+    objects, environments, policy, protocol = _validate_derivation_inputs(
         prepared_authority, job_derivation_policy
     )
-    protocol_sha256 = prepared_authority["protocol"]["protocol_sha256"]
+    protocol_sha256 = protocol["protocol_sha256"]
     environment_by_role = {
         item["environment_role"]: item for item in environments
     }
@@ -965,7 +1132,16 @@ def _expand_base_intents(
                     raise EvidenceError(
                         "E_AUTHORITY_INTENT", "derived intent is invalid"
                     ) from exc
-                expanded.append((intent, template))
+                expanded.append(
+                    (
+                        intent,
+                        {
+                            **template,
+                            "_maximum_attempts": policy["maximum_attempts"],
+                            "_retry_trigger": policy["retry_trigger"],
+                        },
+                    )
+                )
     expanded.sort(key=lambda pair: pair[0]["job_id"])
     job_ids = [pair[0]["job_id"] for pair in expanded]
     if len(job_ids) != len(set(job_ids)):
@@ -991,7 +1167,6 @@ def derive_locked_jobs(
     """Derive the exact external job-authority rows from frozen templates."""
 
     expanded = _expand_base_intents(prepared_authority, job_derivation_policy)
-    policy = dict(job_derivation_policy)
     return [
         {
             "job_id": intent["job_id"],
@@ -1000,8 +1175,8 @@ def derive_locked_jobs(
             "object_identity": f'{intent["object_type"]}:{intent["object_id"]}',
             "input_identity_sha256": canonical_sha256(intent["input_sha256"]),
             "intent_template_sha256": intent_template_sha256(intent),
-            "maximum_attempts": policy["maximum_attempts"],
-            "retry_trigger": policy["retry_trigger"],
+            "maximum_attempts": template["_maximum_attempts"],
+            "retry_trigger": template["_retry_trigger"],
             "execution_class": template["execution_class"],
             "p12_access_class": template["p12_access_class"],
         }
