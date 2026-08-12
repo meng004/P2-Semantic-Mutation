@@ -104,6 +104,37 @@ components by design).
 After PASS, P3 additionally checks each delivered archive/descriptor hash
 against its bridge record before any Phase 1 derivation.
 
+## 4.1 Parallel prep status (2026-08-12 night, while a P12 VM task runs)
+
+Read-only custodian prep was executed in the neutral workdir
+`~/Papers/p12-bridge-workdir/` (outside both repositories; its
+worksheet/resolved files map records to defects and must never enter the P3
+evidence chain):
+
+- `worksheet.json` — all 35 `verified_full` items extracted from
+  `data/ledgers/candidates.json` with repo/commit/ecosystem guesses
+  (ecosystem distribution: cmake 24, autotools 4, julia 3, python 4; three
+  records need repo-URL confirmation: E-PETSC-001, E-PETSC-004,
+  F-EIGEN-001 — GitLab-hosted).
+- `export_snapshots.py` — per-record upstream partial clone → fixed-commit
+  and tree-OID resolution → `git archive` delivery archive → snapshot dir →
+  canonical build descriptor; `--emit-config` assembles
+  `custodian_config.json`.
+- Pilot receipt (B-POCKETFFT-001): commit `fb21e4016b96`, tree
+  `24341306a51e`, archive `41dd6ac3fbeb…`; snapshot passes P3's
+  `canonical_source_tree_sha256`
+  (`dd179f0a23cc71da6a7bf61de226a9396b732f91c8b2528c20150da8560a949e`).
+
+Deferred until the running P12 task completes (repo writes / content-derived
+values): committing the contract copy into the P12 repo, computing the
+package root from release content, and the bridge release commit itself.
+
+Load-bearing finding for Phase 1 (not for the bridge): with 24 cmake + 4
+autotools subjects, the fail-closed CMAKE/MESON/AUTOTOOLS adapter stubs must
+become real discovery rules before full-inventory frame derivation; the 3
+julia subjects take the frozen `ADAPTER_UNSUPPORTED` path (no confirmatory
+adapter by design); only 4 subjects are python-buildable today.
+
 ## 5. What P3 does next (no further custodian action)
 
 Phase 1 frame derivation (scale, Public Behavior Frame, profiling-workload
