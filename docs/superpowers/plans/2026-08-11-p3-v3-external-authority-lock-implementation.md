@@ -1367,3 +1367,54 @@ scientific plan without changing any scientific result:
   inputs/templates, intents, ledger, eight phase receipts, and Evidence Index;
   all hashes/references are asserted before the real CLI rejects the registry
   without emitting the secret.
+
+## Freeze Record (2026-08-12) — Plan terminated under Exit (b)
+
+**Status: FROZEN.** By user decision of 2026-08-12 (retrospective review,
+`docs/review_20260812/authority_lock_r5_retrospective_root_cause_and_goal_alignment_review.md`),
+this plan is terminated at its current state. Round-6 repair work is **not
+authorized**. The `P3_V3_EXTERNAL_AUTHORITY_LOCK_IMPLEMENTATION_COMPLETE`
+terminal verdict was **not** reached and must not be claimed.
+
+Frozen identity:
+
+- commit `bdf6a7cb9f34ab31e52a7b75a6e32369840b9b65`
+  (tree `6e0ecc2de6083f5a100e0ef586cc11bd6d6d626e`)
+- design SHA-256
+  `7cc6389b3c2ef731722a6956e0b0f6fd58967dba5b847b52fd9cb8856a208490`
+- plan SHA-256 as committed at the frozen commit
+  `61412a0919340e0c993087c0c7743c59cb011b292e7a28efd6779a54eaa8a612`
+  (this appended Freeze Record postdates that hash and is not part of the
+  audited plan bytes)
+- freeze receipt: `849 passed in 344.01s`, pytest exit 0, at the frozen commit
+  in the clean worktree, run outside the shell sandbox (2026-08-12);
+  corroborated by the round-5 verification log (`849 passed in 388.77s`)
+
+Terminal audit state (round 5): specification audit PASS (0 load-bearing
+findings); operational/security audit BLOCKED with three P1 findings (F1
+acronym credential-key bypass, F2 `.git` metadata TOCTOU between validation
+and the four Git queries, F3 path-raceable subject source manifest) plus one
+non-blocking durability note.
+
+Disposition of open findings:
+
+- **F1 → backlog (validity repair).** If lock work ever resumes, fix by
+  class: one key-to-normalized-token-set function covering snake/camel/
+  ALL-CAPS/hyphen forms, with property tests. Do not fix by adding literals.
+- **F2, F3 → adjudicated non-blocking** under the right-sized threat model:
+  the evidence-package author is the researcher; the lock protects against
+  accidental tampering and transport corruption, not against adversarial
+  self-attestation. Material for the eventual paper's §Limitations.
+- The durability note stands as recorded.
+
+Scope of this freeze: the Authority Lock remains a reproducibility support
+artifact, off the paper's argumentation critical path. All claims remain
+`blocked`; nothing in this record upgrades any claim, authorizes P12 access,
+network, push, PR, merge, or a Cursor VM launch. Successor work proceeds under
+`docs/superpowers/plans/2026-08-12-p3-return-to-scientific-critical-path.md`.
+
+Backlog if lock work resumes (in addition to F1): freeze a bounded
+threat-model list before any audit round and judge PASS/BLOCK only within it;
+add a symmetric call-site checklist (controller/subject/sibling call sites) to
+every hardening change; split slow real-directory-traversal tests behind a
+dedicated marker so repair iterations run the fast logic layer only.
