@@ -195,6 +195,13 @@ infrastructure beyond what its phase's exit criterion names.
   `849 passed in 332.32s` (clean worktree, unsandboxed). Registries are
   declared-empty V1 pending Task 2 real implementations (protocol V2
   re-emit). Next action: Task 2 implementation plan.
+- 2026-08-12 (night): Task 3 intake instructions delivered. Custodian helper
+  `scripts/p3_v3/build_p12_bridge.py` (frozen-formula hashes, fresh nonces,
+  sealed reveal ledger) and runbook
+  `docs/superpowers/plans/2026-08-12-p3-phase1-bridge-intake.md` added;
+  end-to-end smoke: build → commit → lock → verify-bridge PASS. Awaiting
+  custodian materials (contract decision, eligible inventory, archives,
+  descriptors, consumer lock).
 - 2026-08-12 (later still): Task 2 executed GREEN (blocker 1 closed).
   E_COMMON ordinals fixed to the preregistered 0..29 derivation; real
   PYTHON_PEP517_V1 adapter + three fail-closed placeholder adapters + five
