@@ -334,7 +334,7 @@ def _common_input_fixture():
     raw_schema_sha256 = canonical_sha256(public_schema["raw_schema"])
     schema_selection_key = canonical_sha256(public_schema)
     rows = []
-    for ordinal in range(1, 31):
+    for ordinal in range(30):
         seed = int.from_bytes(
             bytes.fromhex(
                 canonical_sha256(
@@ -484,7 +484,7 @@ def test_common_input_evidence_rejects_identity_or_chronology_drift(mutation):
     if mutation == "row_keys":
         inventory["rows"][0]["fabricated"] = True
     elif mutation == "ordinal":
-        inventory["rows"][0]["ordinal"] = 0
+        inventory["rows"][0]["ordinal"] = 1
     elif mutation == "subject":
         inventory["controlled_subject_source_id"] = "41" * 32
     elif mutation == "workload_subject":

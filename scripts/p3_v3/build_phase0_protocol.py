@@ -114,6 +114,33 @@ ENVIRONMENTS: tuple[tuple[str, str, str, str], ...] = (
     ),
 )
 
+ADAPTER_IMPLEMENTATIONS: tuple[tuple[str, str, str], ...] = (
+    ("PYTHON_PEP517_V1", "python", "src/p3_v3/adapters/python_pep517_v1.py"),
+    ("CMAKE_CTEST_V1", "cmake", "src/p3_v3/adapters/cmake_ctest_v1.py"),
+    ("MESON_TEST_V1", "meson", "src/p3_v3/adapters/meson_test_v1.py"),
+    (
+        "AUTOTOOLS_MAKECHECK_V1",
+        "autotools",
+        "src/p3_v3/adapters/autotools_makecheck_v1.py",
+    ),
+)
+GENERATOR_IMPLEMENTATIONS: tuple[tuple[str, str], ...] = (
+    (
+        "JSON_SCHEMA_DRAFT2020_12_V1",
+        "src/p3_v3/input_generators/json_schema_draft2020_12_v1.py",
+    ),
+    ("CLI_TOKEN_GRAMMAR_V1", "src/p3_v3/input_generators/cli_token_grammar_v1.py"),
+    (
+        "NUMERIC_ARRAY_DOMAIN_V1",
+        "src/p3_v3/input_generators/numeric_array_domain_v1.py",
+    ),
+    ("TEXT_IO_SCHEMA_V1", "src/p3_v3/input_generators/text_io_schema_v1.py"),
+    (
+        "BINARY_RECORD_SCHEMA_V1",
+        "src/p3_v3/input_generators/binary_record_schema_v1.py",
+    ),
+)
+
 PASSPORT = """# P3 v3 Phase 0 authority: {title}
 
 > Authority ID: {authority_id}
@@ -203,13 +230,45 @@ def main() -> int:
     }
     outputs["environment_lock.json"] = canonical_json_bytes(environment_lock)
 
-    adapter_body = {"schema_version": "p3-adapter-registry-v1", "adapters": []}
+    adapter_rows = []
+    for adapter_id, ecosystem, relative in sorted(ADAPTER_IMPLEMENTATIONS):
+        adapter_rows.append(
+            {
+                "adapter_id": adapter_id,
+                "ecosystem": ecosystem,
+                "implementation_path": relative,
+                "source_sha256": hashlib.sha256(
+                    (ROOT / relative).read_bytes()
+                ).hexdigest(),
+            }
+        )
+    adapter_body = {
+        "schema_version": "p3-adapter-registry-v1",
+        "adapters": adapter_rows,
+    }
     outputs["adapter_registry.json"] = canonical_json_bytes(
         {**adapter_body, "artifact_sha256": canonical_sha256(adapter_body)}
     )
+    generator_rows = []
+    for generator_id, relative in sorted(GENERATOR_IMPLEMENTATIONS):
+        generator_rows.append(
+            {
+                "generator_id": generator_id,
+                "schema_kind": generator_id,
+                "implementation_path": relative,
+                "source_sha256": hashlib.sha256(
+                    (ROOT / relative).read_bytes()
+                ).hexdigest(),
+                "output_schema": {
+                    "generator_id": generator_id,
+                    "schema_version": "p3-common-input-envelope-v1",
+                },
+                "failure_code": f"{generator_id}_INVALID",
+            }
+        )
     generator_body = {
         "schema_version": "p3-input-generator-registry-v1",
-        "generators": [],
+        "generators": generator_rows,
     }
     outputs["input_generator_registry.json"] = canonical_json_bytes(
         {**generator_body, "artifact_sha256": canonical_sha256(generator_body)}

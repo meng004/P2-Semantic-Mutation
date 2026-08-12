@@ -1099,7 +1099,7 @@ def test_two_subject_material_is_fully_derived_and_order_invariant(
         cmake_material["subject"]["sites"]
     )
     assert [row["ordinal"] for row in python_material["common_inputs"]["rows"]] == list(
-        range(1, 31)
+        range(30)
     )
     assert any(
         row["status"] == "COMMON_INPUT_EXECUTABLE"
@@ -1463,7 +1463,7 @@ def test_unsupported_subject_common_inputs_remain_explicitly_unavailable(
     assert material["subject"]["sites"] == []
     assert material["technique_profile"]["primary_technique"] == "TECH_UNCERTAIN"
     assert [row["ordinal"] for row in material["common_inputs"]["rows"]] == list(
-        range(1, 31)
+        range(30)
     )
     assert {row["status"] for row in material["common_inputs"]["rows"]} == {
         "COMMON_INPUT_UNAVAILABLE"
@@ -3220,10 +3220,10 @@ def test_build_common_inputs_ordinals_seeds_dedupe_and_round_robin():
     inventory = build_common_inputs(_source_record(), frame, registry)
     assert inventory["schema_version"] == "p3-evaluation-inputs-common-v1"
     assert len(inventory["rows"]) == E_COMMON_COUNT == 30
-    assert [row["ordinal"] for row in inventory["rows"]] == list(range(1, 31))
+    assert [row["ordinal"] for row in inventory["rows"]] == list(range(30))
 
     source_id = frame["controlled_subject_source_id"]
-    for ordinal, row in enumerate(inventory["rows"], start=1):
+    for ordinal, row in enumerate(inventory["rows"]):
         expected_seed = int.from_bytes(
             bytes.fromhex(
                 canonical_sha256(
@@ -3340,7 +3340,7 @@ def test_generator_failure_occupies_ordinal_as_common_input_invalid():
     assert invalid_rows
     assert generated_rows
     for row in invalid_rows:
-        assert row["ordinal"] in range(1, 31)
+        assert row["ordinal"] in range(30)
         assert row["failure_code"] == "JSON_SCHEMA_DRAFT2020_12_V1_INVALID"
         assert row["envelope"] is None
         assert row["raw_payload_sha256"] is None
@@ -3370,7 +3370,7 @@ def test_generator_failure_occupies_ordinal_as_common_input_invalid():
         if item[2] == "JSON_SCHEMA_DRAFT2020_12_V1"
     )
     assert [row["ordinal"] for row in invalid_rows] == [
-        ordinal for ordinal in range(1, 31) if (ordinal - 1) % 2 == failing_index
+        ordinal for ordinal in range(30) if ordinal % 2 == failing_index
     ]
     assert len(invalid_rows) + len(generated_rows) == 30
 
@@ -3412,7 +3412,7 @@ def test_unsupported_discovery_yields_thirty_unavailable_rows():
     )
     assert len(inventory["rows"]) == 30
     assert {row["status"] for row in inventory["rows"]} == {"COMMON_INPUT_UNAVAILABLE"}
-    assert [row["ordinal"] for row in inventory["rows"]] == list(range(1, 31))
+    assert [row["ordinal"] for row in inventory["rows"]] == list(range(30))
     assert all(row["envelope"] is None for row in inventory["rows"])
     assert all(row["raw_payload_sha256"] is None for row in inventory["rows"])
 
@@ -3472,7 +3472,7 @@ def test_validate_common_inputs_on_fixed_source_preserves_identities():
         }
         for row in report["rows"]
     )
-    assert [row["ordinal"] for row in report["rows"]] == list(range(1, 31))
+    assert [row["ordinal"] for row in report["rows"]] == list(range(30))
     for before, after in zip(frozen_payloads, report["rows"], strict=True):
         assert after["ordinal"] == before[0]
         assert after["input_id"] == before[1]
@@ -3983,3 +3983,338 @@ def test_proposal_record_rejects_missing_hashes_and_fabricated_provider_paramete
     fabricated = {**base, "temperature": 0.7, "seed": 42}
     with pytest.raises(EvidenceError, match="E_PROPOSAL_UNAVAILABLE"):
         validate_proposal_record(fabricated)
+
+
+# --- Real source-derived implementations (charter Task 2) -------------------
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+REAL_PROJECT_ROOT = (
+    Path(__file__).resolve().parent / "fixtures" / "real_python_project"
+)
+REAL_ADAPTER_RELATIVE = "src/p3_v3/adapters/python_pep517_v1.py"
+REAL_ADAPTER_STUBS = {
+    "CMAKE_CTEST_V1": ("cmake", "src/p3_v3/adapters/cmake_ctest_v1.py"),
+    "MESON_TEST_V1": ("meson", "src/p3_v3/adapters/meson_test_v1.py"),
+    "AUTOTOOLS_MAKECHECK_V1": (
+        "autotools",
+        "src/p3_v3/adapters/autotools_makecheck_v1.py",
+    ),
+}
+REAL_GENERATOR_RELATIVE = {
+    "JSON_SCHEMA_DRAFT2020_12_V1": "src/p3_v3/input_generators/json_schema_draft2020_12_v1.py",
+    "CLI_TOKEN_GRAMMAR_V1": "src/p3_v3/input_generators/cli_token_grammar_v1.py",
+    "NUMERIC_ARRAY_DOMAIN_V1": "src/p3_v3/input_generators/numeric_array_domain_v1.py",
+    "TEXT_IO_SCHEMA_V1": "src/p3_v3/input_generators/text_io_schema_v1.py",
+    "BINARY_RECORD_SCHEMA_V1": "src/p3_v3/input_generators/binary_record_schema_v1.py",
+}
+REAL_VALID_SCHEMAS = {
+    "JSON_SCHEMA_DRAFT2020_12_V1": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "kind": "JSON_SCHEMA_DRAFT2020_12_V1",
+        "type": "object",
+        "properties": {"alpha": {"type": "integer"}, "beta": {"type": "string"}},
+        "required": ["alpha", "beta"],
+        "additionalProperties": False,
+    },
+    "CLI_TOKEN_GRAMMAR_V1": {
+        "kind": "CLI_TOKEN_GRAMMAR_V1",
+        "program": "demo-cli",
+        "tokens": {"min": 0, "max": 3},
+        "vocabulary": ["--help", "--version", "demo-cli"],
+    },
+    "NUMERIC_ARRAY_DOMAIN_V1": {
+        "kind": "NUMERIC_ARRAY_DOMAIN_V1",
+        "parameters": ["a", "b"],
+        "element_count": 2,
+        "dtype": "int64",
+        "minimum": -1000000,
+        "maximum": 1000000,
+    },
+    "TEXT_IO_SCHEMA_V1": {
+        "kind": "TEXT_IO_SCHEMA_V1",
+        "fields": ["prefix", "suffix"],
+        "max_length": 256,
+        "charset": "printable_ascii",
+    },
+    "BINARY_RECORD_SCHEMA_V1": {
+        "kind": "BINARY_RECORD_SCHEMA_V1",
+        "fields": ["payload"],
+        "record_bytes": 32,
+    },
+}
+_TEXT_ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789 "
+
+
+def _repo_file_entry(relative: str):
+    raw = (REPO_ROOT / relative).read_bytes()
+    return frames_module.SourceSnapshotEntry(
+        relative_path=relative,
+        mode="100644",
+        sha256=hashlib.sha256(raw).hexdigest(),
+        content=raw,
+    )
+
+
+def _real_controller_snapshot():
+    paths = sorted(
+        [
+            REAL_ADAPTER_RELATIVE,
+            *(relative for _eco, relative in REAL_ADAPTER_STUBS.values()),
+            *REAL_GENERATOR_RELATIVE.values(),
+        ]
+    )
+    entries = sorted(
+        (_repo_file_entry(path) for path in paths),
+        key=lambda entry: entry.relative_path.encode("utf-8"),
+    )
+    return frames_module.SourceSnapshot(entries=tuple(entries))
+
+
+def _real_adapter_registry() -> dict:
+    adapters = [
+        {
+            "adapter_id": "PYTHON_PEP517_V1",
+            "ecosystem": "python",
+            "implementation_path": REAL_ADAPTER_RELATIVE,
+            "source_sha256": hashlib.sha256(
+                (REPO_ROOT / REAL_ADAPTER_RELATIVE).read_bytes()
+            ).hexdigest(),
+        }
+    ]
+    for adapter_id, (ecosystem, relative) in sorted(REAL_ADAPTER_STUBS.items()):
+        adapters.append(
+            {
+                "adapter_id": adapter_id,
+                "ecosystem": ecosystem,
+                "implementation_path": relative,
+                "source_sha256": hashlib.sha256(
+                    (REPO_ROOT / relative).read_bytes()
+                ).hexdigest(),
+            }
+        )
+    body = {"schema_version": "p3-adapter-registry-v1", "adapters": adapters}
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def _real_generator_registry() -> dict:
+    generators = []
+    for generator_id, relative in sorted(REAL_GENERATOR_RELATIVE.items()):
+        raw = (REPO_ROOT / relative).read_bytes()
+        generators.append(
+            {
+                "generator_id": generator_id,
+                "schema_kind": generator_id,
+                "implementation_path": relative,
+                "source_sha256": hashlib.sha256(raw).hexdigest(),
+                "output_schema": {
+                    "generator_id": generator_id,
+                    "schema_version": "p3-common-input-envelope-v1",
+                },
+                "failure_code": f"{generator_id}_INVALID",
+            }
+        )
+    body = {
+        "schema_version": "p3-input-generator-registry-v1",
+        "generators": generators,
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def _real_discovery():
+    registry = validate_adapter_registry(
+        _real_adapter_registry(), _real_controller_snapshot()
+    )
+    return run_adapter_discovery(
+        _source_snapshot(REAL_PROJECT_ROOT),
+        {"ecosystem": "python"},
+        registry,
+        "PYTHON_PEP517_V1",
+    )
+
+
+def _load_real_generator(generator_id: str):
+    source = (REPO_ROOT / REAL_GENERATOR_RELATIVE[generator_id]).read_bytes()
+    namespace: dict = {"__name__": f"test_real_{generator_id.lower()}"}
+    exec(compile(source, REAL_GENERATOR_RELATIVE[generator_id], "exec"), namespace)
+    return namespace["generate"]
+
+
+def test_real_python_adapter_discovers_all_five_categories():
+    discovery = _real_discovery()
+    assert discovery["discovery_status"] == "EXECUTABLE"
+    categories = [row["category"] for row in discovery["declarations"]]
+    assert set(categories) == set(BEHAVIOR_CATEGORY_ORDER)
+    assert categories.count("PUBLIC_API") == 6
+    assert categories.count("CLI") == 1
+    assert categories.count("EXAMPLE") == 1
+    assert categories.count("BENCHMARK") == 1
+    assert categories.count("PROJECT_TEST") == 1
+    assert "build/generated.py" not in discovery["source_files"]
+    assert all(site["path"] != "build/generated.py" for site in discovery["sites"])
+    assert "src/demopkg/core.py" in discovery["source_files"]
+    assert "tests/test_core.py" in discovery["source_files"]
+
+
+def test_real_python_adapter_respects_public_and_all_restrictions():
+    discovery = _real_discovery()
+    entrypoints = {row["entrypoint"] for row in discovery["declarations"]}
+    assert "demopkg.core:add" in entrypoints
+    assert "demopkg.core:hidden_public" not in entrypoints
+    assert "demopkg.core:main" not in entrypoints
+    assert all(
+        row["provenance_path"] != "src/demopkg/_internal.py"
+        for row in discovery["declarations"]
+    )
+    assert all(
+        site["path"] != "src/demopkg/_internal.py" for site in discovery["sites"]
+    )
+
+
+def test_real_python_adapter_schema_mapping_classes():
+    discovery = _real_discovery()
+    kinds = sorted(schema["schema_kind"] for schema in discovery["public_schemas"])
+    assert kinds == [
+        "BINARY_RECORD_SCHEMA_V1",
+        "CLI_TOKEN_GRAMMAR_V1",
+        "JSON_SCHEMA_DRAFT2020_12_V1",
+        "NUMERIC_ARRAY_DOMAIN_V1",
+        "NUMERIC_ARRAY_DOMAIN_V1",
+        "TEXT_IO_SCHEMA_V1",
+    ]
+    assert all(
+        schema["raw_schema"].get("kind") != "NO_INPUT"
+        for schema in discovery["public_schemas"]
+    )
+    reset_rows = [
+        row
+        for row in discovery["declarations"]
+        if row["entrypoint"] == "demopkg.core:reset"
+    ]
+    assert len(reset_rows) == 1
+    assert reset_rows[0]["declared_input_schema_sha256"] == canonical_sha256(
+        {"kind": "NO_INPUT"}
+    )
+
+
+def test_real_python_adapter_is_deterministic():
+    first = _real_discovery()
+    second = _real_discovery()
+    assert first["artifact_sha256"] == second["artifact_sha256"]
+
+
+def test_real_python_adapter_requires_pyproject(tmp_path):
+    (tmp_path / "module.py").write_text("VALUE = 1\n", encoding="utf-8")
+    registry = validate_adapter_registry(
+        _real_adapter_registry(), _real_controller_snapshot()
+    )
+    with pytest.raises(EvidenceError, match="E_ADAPTER_EXECUTION"):
+        run_adapter_discovery(
+            _source_snapshot(tmp_path),
+            {"ecosystem": "python"},
+            registry,
+            "PYTHON_PEP517_V1",
+        )
+
+
+def test_real_python_adapter_never_reads_test_or_example_bodies_for_schemas():
+    discovery = _real_discovery()
+    for schema in discovery["public_schemas"]:
+        provenance = schema["provenance_path"]
+        assert provenance == "pyproject.toml" or provenance.startswith("src/")
+
+
+def test_real_python_adapter_sites_are_canonical():
+    discovery = _real_discovery()
+    symbols = {site["symbol"] for site in discovery["sites"]}
+    assert "demopkg.core:_helper" in symbols
+    assert "demopkg.core:Accumulator.add" in symbols
+    assert "demopkg.core:Accumulator.__init__" in symbols
+    for site in discovery["sites"]:
+        assert site["end_line"] >= site["start_line"] >= 1
+        assert site["start_col"] >= 0 and site["end_col"] >= 0
+
+
+@pytest.mark.parametrize("generator_id", sorted(REAL_GENERATOR_RELATIVE))
+def test_real_generator_is_deterministic_and_seed_sensitive(generator_id):
+    generate = _load_real_generator(generator_id)
+    schema_bytes = artifacts_module.canonical_json_bytes(
+        REAL_VALID_SCHEMAS[generator_id]
+    )
+    first = generate(schema_bytes, 7)
+    second = generate(schema_bytes, 7)
+    other = generate(schema_bytes, 8)
+    assert first == second
+    assert "failure_code" not in first
+    envelope = first["envelope"]
+    assert envelope["schema_version"] == "p3-common-input-envelope-v1"
+    assert envelope["generator_id"] == generator_id
+    assert first["raw_payload_sha256"] == hashlib.sha256(
+        artifacts_module.canonical_json_bytes(envelope["payload"])
+    ).hexdigest()
+    assert other["raw_payload_sha256"] != first["raw_payload_sha256"]
+
+
+@pytest.mark.parametrize("generator_id", sorted(REAL_GENERATOR_RELATIVE))
+def test_real_generator_rejects_invalid_schema_bytes(generator_id):
+    generate = _load_real_generator(generator_id)
+    for invalid in (b"", b"not json", b'{"kind": "WRONG_KIND"}\n'):
+        result = generate(invalid, 7)
+        assert result == {"failure_code": f"{generator_id}_INVALID"}
+
+
+def test_real_generator_payloads_conform_to_their_schemas():
+    payloads = {}
+    for generator_id in sorted(REAL_GENERATOR_RELATIVE):
+        generate = _load_real_generator(generator_id)
+        schema = REAL_VALID_SCHEMAS[generator_id]
+        result = generate(artifacts_module.canonical_json_bytes(schema), 11)
+        payloads[generator_id] = result["envelope"]["payload"]
+
+    json_arguments = payloads["JSON_SCHEMA_DRAFT2020_12_V1"]["arguments"]
+    assert sorted(json_arguments) == ["alpha", "beta"]
+    assert isinstance(json_arguments["alpha"], int)
+    assert isinstance(json_arguments["beta"], str)
+
+    argv = payloads["CLI_TOKEN_GRAMMAR_V1"]["argv"]
+    assert argv[0] == "demo-cli"
+    assert 0 <= len(argv) - 1 <= 3
+    assert all(token in {"--help", "--version", "demo-cli"} for token in argv[1:])
+
+    numeric = payloads["NUMERIC_ARRAY_DOMAIN_V1"]
+    assert numeric["dtype"] == "int64"
+    assert len(numeric["values"]) == 2
+    assert all(-1000000 <= value <= 1000000 for value in numeric["values"])
+    assert all(isinstance(value, int) for value in numeric["values"])
+
+    text_fields = payloads["TEXT_IO_SCHEMA_V1"]["fields"]
+    assert sorted(text_fields) == ["prefix", "suffix"]
+    for value in text_fields.values():
+        assert 1 <= len(value) <= 64
+        assert all(character in _TEXT_ALPHABET for character in value)
+
+    binary_fields = payloads["BINARY_RECORD_SCHEMA_V1"]["fields"]
+    assert sorted(binary_fields) == ["payload"]
+    assert len(binary_fields["payload"]) == 64
+    assert set(binary_fields["payload"]) <= set("0123456789abcdef")
+
+
+def test_real_pipeline_end_to_end_produces_executable_common_inputs():
+    discovery = _real_discovery()
+    subject_snapshot = _source_snapshot(REAL_PROJECT_ROOT)
+    scale = derive_source_scale(subject_snapshot, discovery)
+    assert scale["scale_class"] == "S"
+    frame = build_public_behavior_frame(_source_record(), discovery)
+    executable_rows = [
+        row for row in frame["rows"] if row["discovery_status"] == "EXECUTABLE"
+    ]
+    assert len(executable_rows) == 10
+    workload = select_profiling_workload(frame, scale["scale_class"])
+    assert workload["budget"] == 10
+    assert len(workload["selected_rows"]) == 10
+    registry = validate_input_generator_registry(
+        _real_generator_registry(), _real_controller_snapshot()
+    )
+    inventory = build_common_inputs(_source_record(), frame, registry)
+    assert [row["ordinal"] for row in inventory["rows"]] == list(range(30))
+    statuses = {row["status"] for row in inventory["rows"]}
+    assert statuses == {"COMMON_INPUT_EXECUTABLE"}

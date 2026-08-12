@@ -523,7 +523,7 @@ def verify_common_input_evidence(
         raise EvidenceError("E_COMMON_ROWS", "common input row count differs")
     rows: list[dict[str, Any]] = []
     input_ids: set[str] = set()
-    for index, candidate in enumerate(value["rows"], 1):
+    for index, candidate in enumerate(value["rows"]):
         row = validate_exact_object(
             candidate, _COMMON_ROW_SCHEMA, f"common_inputs.rows[{index}]"
         )

@@ -3482,7 +3482,7 @@ def build_common_inputs(
         )
     rows: list[dict[str, Any]] = []
     if not eligible:
-        for ordinal in range(1, E_COMMON_COUNT + 1):
+        for ordinal in range(E_COMMON_COUNT):
             seed = _common_input_seed(source_id, ordinal)
             status = "COMMON_INPUT_UNAVAILABLE"
             failure_code = "COMMON_INPUT_UNAVAILABLE"
@@ -3537,9 +3537,9 @@ def build_common_inputs(
                     )
                 )
 
-        for ordinal in range(1, E_COMMON_COUNT + 1):
+        for ordinal in range(E_COMMON_COUNT):
             seed = _common_input_seed(source_id, ordinal)
-            schema = eligible[(ordinal - 1) % len(eligible)]
+            schema = eligible[ordinal % len(eligible)]
             generator_entry = schema["generator"]
             generator_id = generator_entry["generator_id"]
             failure_code = generator_entry["failure_code"]
@@ -3887,7 +3887,7 @@ def validate_common_inputs_on_fixed_source(
     for index, row in enumerate(rows):
         if not isinstance(row, Mapping):
             raise EvidenceError("E_COMMON_INVENTORY", f"rows[{index}] must be an object")
-        if row.get("ordinal") != index + 1:
+        if row.get("ordinal") != index:
             raise EvidenceError("E_COMMON_INVENTORY", f"rows[{index}] ordinal differs")
         status = validator(row)
         if status not in {
