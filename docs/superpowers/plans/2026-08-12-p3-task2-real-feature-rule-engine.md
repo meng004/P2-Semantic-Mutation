@@ -123,14 +123,14 @@ Ruff via `.venv/bin/ruff`.
 
 ### Task A: E_COMMON ordinal spec-fidelity fix (RED → GREEN)
 
-- [ ] **A1 RED:** flip the three ordinal pins to `list(range(30))` and the
+- [x] **A1 RED:** flip the three ordinal pins to `list(range(30))` and the
   packages mutation probe from `rows[0]["ordinal"] = 0` to
   `rows[0]["ordinal"] = 1`; add explicit seed assertion
   `rows[0]["seed"] == int.from_bytes(bytes.fromhex(canonical_sha256({
   "domain": "P3-E-COMMON-SEED-v1", "controlled_subject_source_id": sid,
   "ordinal": 0}))[:8], "big")`. Run the touched tests; expect FAIL against
   current code.
-- [ ] **A2 GREEN:** in `bridge_and_frames.build_common_inputs` change both
+- [x] **A2 GREEN:** in `bridge_and_frames.build_common_inputs` change both
   `range(1, E_COMMON_COUNT + 1)` to `range(E_COMMON_COUNT)` and
   `eligible[(ordinal - 1) % len(eligible)]` to
   `eligible[ordinal % len(eligible)]`; in
@@ -200,9 +200,9 @@ frozen rule (its docstring restates it):
   `{path, symbol: dotted qualname, start_line: lineno,
   start_col: col_offset, end_line: end_lineno, end_col: end_col_offset}`.
 
-- [ ] **B1 RED:** add the fixture repo and the rule-class tests below;
+- [x] **B1 RED:** add the fixture repo and the rule-class tests below;
   run them; expect FAIL (no adapter file).
-- [ ] **B2 GREEN:** implement the adapter; tests pass.
+- [x] **B2 GREEN:** implement the adapter; tests pass.
 
 Rule-class tests (one per class, in `test_bridge_and_frames.py`):
 
@@ -249,8 +249,8 @@ rounded to 6 places); TEXT → per-field text of length `1..min(max_length,64)`
 over the frozen 37-character alphabet `a-z0-9space`; BINARY → per-field
 `record_bytes` hex from the stream.
 
-- [ ] **C1 RED:** parametrized generator tests (below); expect FAIL.
-- [ ] **C2 GREEN:** implement the five files; tests pass.
+- [x] **C1 RED:** parametrized generator tests (below); expect FAIL.
+- [x] **C2 GREEN:** implement the five files; tests pass.
 
 Rule-class tests (parametrized over the five IDs where applicable):
 
@@ -269,13 +269,13 @@ Rule-class tests (parametrized over the five IDs where applicable):
 
 ### Task D: end-to-end + registry V2 + protocol V2
 
-- [ ] **D1:** end-to-end test: real adapter registry (real file bytes read
+- [x] **D1:** end-to-end test: real adapter registry (real file bytes read
   from `src/p3_v3/adapters/…`, snapshot-installed) → `run_adapter_discovery`
   → `derive_source_scale` → `build_public_behavior_frame` →
   `select_profiling_workload` → `build_common_inputs` with the real
   generator registry: 30 rows, ordinals `list(range(30))`, ≥1
   `COMMON_INPUT_EXECUTABLE`, scale class `S` for the fixture repo.
-- [ ] **D2:** extend `build_phase0_protocol.py`: registry entries are built
+- [x] **D2:** extend `build_phase0_protocol.py`: registry entries are built
   from the real implementation files (`implementation_path` =
   controller-root-relative POSIX path, `source_sha256` = file SHA-256;
   adapter entry `{PYTHON_PEP517_V1, python}`; five generator entries with
@@ -286,14 +286,14 @@ Rule-class tests (parametrized over the five IDs where applicable):
 
 ### Task E: freeze receipt, report, commit
 
-- [ ] **E1:** Ruff on all created/modified files; full `tests/p3_v3` in the
+- [x] **E1:** Ruff on all created/modified files; full `tests/p3_v3` in the
   clean worktree, outside the sandbox (expected: previous count + new
   tests, 0 failures).
-- [ ] **E2:** task report
+- [x] **E2:** task report
   `docs/review_20260812/task2_rule_engine_task_report.md` (receipts: test
   counts, protocol V2 SHA, registry hashes, ordinal-fix citation trail,
   declared-open items); tick charter Task 2 checkboxes + ledger entry.
-- [ ] **E3:** one task-scoped commit
+- [x] **E3:** one task-scoped commit
   (`feat(p3-v3): make real feature records source-derived`).
 
 ## Non-goals (binding)

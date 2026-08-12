@@ -135,9 +135,14 @@ It is a reproducibility support artifact, off the argumentation critical path.
    (not each example) per Global Constraint 3.
 4. No verifier, lock, package, or run-records schema change.
 
-- [ ] Write task-scoped implementation plan (`writing-plans`)
-- [ ] Execute with review checkpoint; two-repair-round cap applies
-- [ ] Freeze-point full suite run in clean worktree; commit
+- [x] Write task-scoped implementation plan (`writing-plans`) —
+  `docs/superpowers/plans/2026-08-12-p3-task2-real-feature-rule-engine.md`
+- [x] Execute with review checkpoint; two-repair-round cap applies (one
+  repair round used: fixture-tree pytest collection guard)
+- [x] Freeze-point full suite run in clean worktree; commit —
+  `868 passed in 381.36s`, exit 0, unsandboxed, at `4ecefc57`;
+  commits `47935727` + `4ecefc57`; report
+  `docs/review_20260812/task2_rule_engine_task_report.md`
 
 ### Task 3: Phase 1 intake — P12 custodian bridge (user gate)
 
@@ -190,3 +195,12 @@ infrastructure beyond what its phase's exit criterion names.
   `849 passed in 332.32s` (clean worktree, unsandboxed). Registries are
   declared-empty V1 pending Task 2 real implementations (protocol V2
   re-emit). Next action: Task 2 implementation plan.
+- 2026-08-12 (later still): Task 2 executed GREEN (blocker 1 closed).
+  E_COMMON ordinals fixed to the preregistered 0..29 derivation; real
+  PYTHON_PEP517_V1 adapter + three fail-closed placeholder adapters + five
+  real E_COMMON generators landed as hash-bound registry implementations;
+  registries populated and protocol V2 re-emitted
+  (`f0bbd6334e161fd165e560b3e67809da354f256592a993a08d83436bb85ec64a`,
+  validate-protocol PASS). Freeze-point suite `868 passed in 381.36s`
+  (clean worktree at `4ecefc57`, unsandboxed). Next action: Task 3 (P12
+  custodian bridge intake) — blocked on user authorization and materials.
