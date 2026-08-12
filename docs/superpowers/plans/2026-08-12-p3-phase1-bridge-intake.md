@@ -12,6 +12,18 @@
 
 ## 0. Decision gates (custodian answers before building)
 
+> **Resolved 2026-08-12 ~23:00 (user decisions):** (1) successor contract —
+> draft at `~/Papers/p12-bridge-workdir/successor_contract_draft_v2.0.0.md`,
+> RQ4 keeps the full intention-to-evaluate design, P3 protocol V3 re-emit
+> after the contract freezes; (2a) GitLab main repositories for PETSc/Eigen;
+> (2b) fixed = the fix commit recorded in ledger `revisions.fixed` (first
+> hash; tags/PR-head refs where the ledger records only a version or PR, with
+> resolved 40-hex confirmed in `resolved.json`); (3) all 35 records dual
+> eligible (construct + criterion); (4) package root = canonical manifest
+> over the release package directory, computed after the local P12 task
+> completes. Worksheet updated accordingly; all 35 records carry resolvable
+> refs.
+
 1. **Governing contract** (remediation-matrix row 38): either an explicitly
    compatible successor P12 contract, or the frozen v1.1.2 contract under its
    own estimand (conservative default; primary RQ4 stays within v1.1.2
