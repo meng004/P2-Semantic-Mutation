@@ -104,7 +104,12 @@ components by design).
 After PASS, P3 additionally checks each delivered archive/descriptor hash
 against its bridge record before any Phase 1 derivation.
 
-## 4.1 Parallel prep status (2026-08-12 night, while a P12 VM task runs)
+## 4.1 Parallel prep status (2026-08-12 night, while a P12 task runs locally)
+
+Correction: the concurrent P12 task runs locally (not on a VM). All prep
+below stayed read-only against the P12 repository and wrote only to the
+neutral workdir, so no interference occurred; the batch upstream clone and
+any P12-repo write remain deferred until that task completes.
 
 Read-only custodian prep was executed in the neutral workdir
 `~/Papers/p12-bridge-workdir/` (outside both repositories; its
