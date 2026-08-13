@@ -1,6 +1,5 @@
 check:
 	@echo check
-check:=distractor
-
+test:=distractor
 test:
 	@echo test

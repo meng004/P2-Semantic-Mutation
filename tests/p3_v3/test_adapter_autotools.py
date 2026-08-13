@@ -77,11 +77,14 @@ def test_discovers_frozen_autotools_surface() -> None:
         for row in declarations
     ] == [
         ("PROJECT_TEST", "make:check", "Makefile", "L1"),
-        ("PROJECT_TEST", "make:test", "Makefile", "L5"),
+        ("PROJECT_TEST", "make:test", "Makefile", "L4"),
         ("PUBLIC_API", "include/a/a.h", "include/a/a.h", "path"),
         ("PROJECT_TEST", "testsuite/t_a.c", "testsuite/t_a.c", "path"),
         ("EXAMPLE", "examples/e.f", "examples/e.f", "path"),
     ]
+    assert len(
+        [row for row in declarations if row["entrypoint"].startswith("make:")]
+    ) == 2
     assert [row for row in declarations if row["category"] == "CLI"] == []
     assert declarations[0]["declared_inputs"] == {"argv_tokens": ["make", "check"]}
     assert declarations[1]["declared_inputs"] == {"argv_tokens": ["make", "test"]}
@@ -92,7 +95,7 @@ def test_discovers_frozen_autotools_surface() -> None:
     assert [
         (row["provenance_path"], row["provenance_span_or_key"])
         for row in result["public_schemas"]
-    ] == [("Makefile", "L1"), ("Makefile", "L5")]
+    ] == [("Makefile", "L1"), ("Makefile", "L4")]
     assert all(
         row["schema_kind"] == "CLI_TOKEN_GRAMMAR_V1"
         and row["raw_schema"]
