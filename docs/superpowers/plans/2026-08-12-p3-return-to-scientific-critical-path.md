@@ -163,8 +163,12 @@ It is a reproducibility support artifact, off the argumentation critical path.
 **Checkpoint:** requires the user to (a) authorize custodian engagement and
 (b) supply the bridge materials. This task cannot start autonomously.
 
-- [ ] User authorizes Phase 1 intake and supplies bridge materials
+- [x] User authorizes Phase 1 intake and supplies bridge materials
+  (2026-08-13: approved delivery sequence executed; bridge intake receipts
+  in `2026-08-12-p3-phase1-bridge-intake.md` §6)
 - [ ] Verify bridge, derive frames, close Phase 1 with receipts
+  (verify-bridge PASS 2026-08-13, `aba70e89b603…`; frame derivation still
+  blocked on real cmake/meson/autotools adapters)
 
 ### Sequencing note
 
@@ -211,3 +215,18 @@ infrastructure beyond what its phase's exit criterion names.
   validate-protocol PASS). Freeze-point suite `868 passed in 381.36s`
   (clean worktree at `4ecefc57`, unsandboxed). Next action: Task 3 (P12
   custodian bridge intake) — blocked on user authorization and materials.
+- 2026-08-13: Task 3 bridge intake executed GREEN under the user-approved
+  delivery sequence. Custodian side: 8 fixed identities corrected by the
+  per-record evidence audit (squash-merge PR heads → landed mainline
+  commits; `PIN_CONFLICT 0` after); `P12-BRIDGE-SNAPSHOT-RULE-v2` frozen
+  (ls-tree regular-file construction + frozen-formula transient exclusion +
+  deterministic PAX tar; 25/35 trees affected; pilot regression
+  byte-identical). P12 release commit
+  `d57fa8119e47baf88c5bcff2d67346864cf3672d` (tag `p3-bridge-v1`): 35-record
+  blinded bridge + ADOPTED consumer contract v2.0.0 + release package
+  (root `cf2803d5…`). P3 acceptance: verify-bridge PASS
+  (`aba70e89b603…`); neutral-named archives/descriptors 35/35 hash-matched;
+  protocol V3 re-emitted binding contract v2.0.0
+  (`4c25da539017…`, validate-protocol PASS) — contract §11 freeze complete.
+  Package C sealed custodian-side. Next action: real cmake/meson/autotools
+  adapters (task-scoped plan), then Phase 1 frame derivation.

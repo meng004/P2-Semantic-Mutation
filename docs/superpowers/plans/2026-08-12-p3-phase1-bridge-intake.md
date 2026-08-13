@@ -158,3 +158,48 @@ Phase 1 frame derivation (scale, Public Behavior Frame, profiling-workload
 selection, `E_COMMON`) runs from the verified bridge + archives under a new
 task-scoped plan. The custodian returns only at Phase 7 with the sealed
 reveal ledger.
+
+## 6. Intake completed 2026-08-13 (receipts)
+
+Executed under the user-approved delivery sequence (custodian decisions
+archived at `a65aea7c`; five decision gates resolved in §0).
+
+**Custodian-side corrections before the build (worksheet decisions block,
+neutral workdir):**
+
+- Per-record evidence audit: 8 fixed identities corrected to the custodian
+  verification pin or the squash-landed mainline fix commit (A-BLIS-001,
+  A-LAPACK-001, C-BOOSTMATH-001, D-FREIA-001, E-SUNDIALS-001/002/003/010);
+  `pull/N/head` refs proved off-mainline for squash-merged PRs. Ancestry of
+  every corrected commit verified in the local upstream clones. Three-way
+  check (rule ref / ledger prose / verification-log pins):
+  `PIN_MATCH 13, PIN_CONFLICT 0, NO_PIN 22`, zero rule-prefix mismatches.
+- `P12-BRIDGE-SNAPSHOT-RULE-v2`: snapshots/archives are built from
+  `git ls-tree -r <fixed_tree_oid>` regular-file blobs (raw bytes; symlinks,
+  gitlinks excluded by the frozen regular-file SourceSnapshot model) minus
+  every path the frozen `canonical_source_tree_sha256` fails closed on
+  (transient parts/names) — 25/35 fixed trees contained such paths
+  (857 non-regular + 634 transient entries excluded; full lists in
+  custodian `resolved.json`). Delivery archive = deterministic PAX tar
+  (sorted paths, mtime=0, uid/gid=0), reproducible from the tree OID alone.
+  Pilot regression: B-POCKETFFT-001 reproduces the §4.1 receipt hash
+  `dd179f0a23cc…` byte-identically. Phase 7 renormalization must apply this
+  same construction to the revealed trees.
+
+**Release and verification receipts:**
+
+| Item | Value |
+|---|---|
+| Contract (ADOPTED v2.0.0) | sha256 `646ab3419e2efbe473e4b743c6787e3ca10539664e50b090ec9ade86b29a69dc`, blob `fb162fe71b3056aab7a65f67508648369d45d020`, path `docs/P3_P12_CONSUMER_ACCEPTANCE_DATA_USE_PROTOCOL_v2.0.0.md` |
+| Package root | `cf2803d57d65dd9561406e40c8b613ea7b5e125ffac289c17f99025935fe732e` (canonical manifest, 65 files, `release/p3-bridge-v1-package`) |
+| Bridge | `bridge/p3_bridge_v1.json`, artifact_sha256 `99f36f87499b7e332beca9677e53671b144f1b37ed2250e0c74b8f757498d661`, blob `bcdd7180d9d5640e6b494713640a993573e4e503`, 35 records, zero label leakage |
+| P12 release commit | `d57fa8119e47baf88c5bcff2d67346864cf3672d`, tag `p3-bridge-v1` |
+| verify-bridge | `{"status": "PASS", "bridge_sha256": "aba70e89b603866f6171ee93a1004d04954e1a3e90b093ba1db889da17690000"}` |
+| Delivery | `data/p3_v3/p12_intake/{consumer_lock.json, verified_bridge.json, archives/, descriptors/}`, neutral-snapshot-ID filenames only; 35/35 archives+descriptors re-hash to their bridge records; archives (3.3 GB) gitignored, reproducible from the pinned release + rule-v2 exporter |
+| Protocol V3 | `p12_contract_sha256` rebound v1.1.2 → v2.0.0; `protocol_sha256 4c25da539017e2787c28932677f8f31ce29d8ccd6f95594f0fd0a9e7ae25c5dd`; validate-protocol PASS; contract §11 freeze steps (a)(b)(c) all satisfied |
+
+Package C (sealed reveal ledger with tree OIDs + nonces) remains
+custodian-side in the neutral workdir (`bridge-out/reveal_ledger.SEALED.json`).
+Frame derivation stays blocked on the real cmake/meson/autotools adapters
+(§4.1 load-bearing finding); the 3 Julia subjects keep the frozen
+`ADAPTER_UNSUPPORTED` path.
