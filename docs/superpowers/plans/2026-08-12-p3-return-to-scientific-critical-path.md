@@ -234,3 +234,18 @@ infrastructure beyond what its phase's exit criterion names.
   clean worktree `.worktrees/p3-v3-bridge-intake-freeze` at `940909f3`,
   unsandboxed; worktree removed after the run. Intake commits: `eb51036f`
   (bridge acceptance + delivery), `940909f3` (protocol V3 re-emit).
+- 2026-08-13 (night): Task 4 executed GREEN under standing user
+  authorization — real cmake/meson/autotools discovery adapters
+  (plan `2026-08-13-p3-task4-real-build-adapters.md`, subagent-driven:
+  gpt-5.6-sol-high implementers, claude-fable-5-thinking-max reviewers,
+  fix rounds within cap, plan amendments rounds 1-2 recorded). Scale
+  engine gained fortran/cuda; shared block v1.1 fixed masking/site/
+  decodability defects lockstep with a pairwise drift guard. Protocol V4
+  re-emitted (`240d8270d418…`, validate PASS). Blind smoke over the 28
+  delivered subjects: 23 OK, 5 verbatim fail-closed receipts
+  (`CMakeLists.txt is absent`; frozen hash-bound descriptors, honest ITT
+  funnel entries). Freeze receipt `893 passed in 361.79s` (clean worktree
+  at `b5e1645c`, unsandboxed). Commits `3745c66d..b5e1645c`; report
+  `docs/review_20260813/task4_adapters_task_report.md`. Next action:
+  Phase 1 frame derivation task-scoped plan (charter Task 3 second
+  checkbox).
