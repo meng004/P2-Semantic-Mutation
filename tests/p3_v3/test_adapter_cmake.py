@@ -61,15 +61,24 @@ def test_discovers_frozen_cmake_fixture_contract():
 
     assert by_category == {
         "PROJECT_TEST": ["ctest:mini_smoke", "ctest:mini_named"],
-        "CLI": ["target:mini_tool"],
+        "CLI": ["target:mini_tool", "target:mini_alias"],
         "EXAMPLE": ["target:mini_demo", "examples/demo.c"],
         "PUBLIC_API": ["include/mini/api.h"],
         "BENCHMARK": ["bench/perf.cu"],
+    }
+    assert "ctest:phantom" not in {
+        declaration["entrypoint"] for declaration in result["declarations"]
     }
     assert {
         row["schema_kind"] for row in result["public_schemas"]
     } <= _E_COMMON_KINDS
     assert len(result["public_schemas"]) == 3
+    assert len(
+        {
+            (row["provenance_path"], row["provenance_span_or_key"])
+            for row in result["public_schemas"]
+        }
+    ) == len(result["public_schemas"])
 
     assert [
         (site["path"], site["symbol"])

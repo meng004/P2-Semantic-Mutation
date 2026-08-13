@@ -1,38 +1,33 @@
-r"""CMAKE_CTEST_V1 frozen discovery rule.
-
-- Fail-closed guard: root `CMakeLists.txt` must exist and decode as UTF-8
+r"""- Fail-closed guard: root `CMakeLists.txt` must exist and decode as UTF-8
   (with `errors="replace"` forbidden); otherwise `raise ValueError`.
 - Build-file set: every non-excluded `CMakeLists.txt` and `*.cmake` file.
   Parse textually after stripping `#` line comments and cmake bracket
-  comments `#[[ … ]]`. Bracket comments are replaced with spaces while
-  preserving newlines so provenance line numbers remain true. The frozen
-  grammar accepts the simplification that `#` inside quoted strings starts a
-  line comment.
+  comments `#[[ … ]]`.
 - `PROJECT_TEST`: every `add_test(...)` occurrence. Grammar:
-  `add_test\s*\(\s*(?:NAME\s+)?([\"']?)([A-Za-z0-9_.:+/-]+)\1` (second
-  group = test name). Row: `entrypoint=f"ctest:{name}"`,
+  `(?<![A-Za-z0-9_])add_test\s*\(\s*(?:NAME\s+)?([\"']?)([A-Za-z0-9_.:+/-]+)\1`
+  (second group = test name; the lookbehind rejects wrapper macros such
+  as `sundials_add_test`). Row: `entrypoint=f"ctest:{name}"`,
   `normalized_entrypoint` = its casefold, `provenance_path` = the build
   file, `provenance_span_or_key=f"L{lineno}"`, `declared_inputs=
   {"argv_tokens": ["ctest", "-R", f"^{name}$"]}`, schema =
   `_cli_grammar_schema("ctest")` (one shared `public_schemas` row per
-  distinct provenance file+span), tags `[]`.
-- `CLI` / `EXAMPLE` / `BENCHMARK`: every `add_executable\s*\(\s*([\"']?)
-  ([A-Za-z0-9_.+-]+)\1` occurrence whose second group does not start with
-  `${` and is not followed on the same parenthesis group by the keywords
-  `IMPORTED|ALIAS`. Category = `_path_category` of the declaring build
-  file, else `CLI`. Row: `entrypoint=f"target:{name}"`, argv
-  `[name]`, schema `_cli_grammar_schema(name)` with a `public_schemas`
-  row for `CLI` rows only.
+  distinct provenance file+span — duplicate spans are emitted once),
+  tags `[]`.
+- `CLI` / `EXAMPLE` / `BENCHMARK`: every `(?<![A-Za-z0-9_])
+  add_executable\s*\(\s*([\"']?)([A-Za-z0-9_.+-]+)\1` occurrence whose
+  second group does not start with `${` and whose parenthesized argument
+  group does not contain the standalone case-sensitive uppercase token
+  `IMPORTED` or `ALIAS` (`\b(?:IMPORTED|ALIAS)\b` without IGNORECASE;
+  lower-case file names such as `alias.c` never suppress). Category =
+  `_path_category` of the declaring build file, else `CLI`. Row:
+  `entrypoint=f"target:{name}"`, argv `[name]`, schema
+  `_cli_grammar_schema(name)` with a `public_schemas` row for `CLI` rows
+  only (deduplicated by provenance file+span like the test rows).
 - `PUBLIC_API`: `_header_declarations`.
-- `EXAMPLE` / `BENCHMARK`: source-evidenced declarations for every
-  non-excluded file selected by the shared path-evidence rule.
 - `sites`: `_c_family_sites` over non-excluded `.c .cc .cpp .cxx .cu .h
   .hh .hpp .hxx .inl .cuh` files plus `_fortran_sites` over Fortran
-  suffixes, in sorted path order.
-- `source_files`: shared rule 2.
-- Declaration order: `PROJECT_TEST` and executable rows in build-file path
-  then line order; header and source-evidenced rows in sorted path order.
-"""
+  suffixes.
+- `source_files`: shared rule 2."""
 
 from __future__ import annotations
 
@@ -383,12 +378,12 @@ def _cli_grammar_schema(program: str) -> dict:
 ADAPTER_ID = "CMAKE_CTEST_V1"
 ECOSYSTEM = "cmake"
 _ADD_TEST = re.compile(
-    r"""add_test\s*\(\s*(?:NAME\s+)?(["']?)([A-Za-z0-9_.:+/-]+)\1"""
+    r"""(?<![A-Za-z0-9_])add_test\s*\(\s*(?:NAME\s+)?(["']?)([A-Za-z0-9_.:+/-]+)\1"""
 )
 _ADD_EXECUTABLE = re.compile(
-    r"""add_executable\s*\(\s*(["']?)([A-Za-z0-9_.+-]+)\1"""
+    r"""(?<![A-Za-z0-9_])add_executable\s*\(\s*(["']?)([A-Za-z0-9_.+-]+)\1"""
 )
-_EXCLUDED_EXECUTABLE_KIND = re.compile(r"\b(?:IMPORTED|ALIAS)\b", re.IGNORECASE)
+_EXCLUDED_EXECUTABLE_KIND = re.compile(r"\b(?:IMPORTED|ALIAS)\b")
 _BRACKET_COMMENT = re.compile(r"#\[\[.*?\]\]", re.DOTALL)
 _LINE_COMMENT = re.compile(r"#[^\n]*")
 
@@ -494,6 +489,14 @@ def discover(source_snapshot, build_descriptor: Mapping[str, Any]) -> dict[str, 
 
     declarations: list[dict] = []
     public_schemas: list[dict] = []
+    public_schema_keys: set[tuple[str, str]] = set()
+
+    def append_public_schema(path: str, line: int, raw_schema: dict) -> None:
+        key = (path, f"L{line}")
+        if key not in public_schema_keys:
+            public_schema_keys.add(key)
+            public_schemas.append(_public_schema(path, line, raw_schema))
+
     for path in _cmake_build_files(entries):
         text = _strip_cmake_comments(_decode(entries, path))
         events = [
@@ -515,7 +518,7 @@ def discover(source_snapshot, build_descriptor: Mapping[str, Any]) -> dict[str, 
                         raw_schema,
                     )
                 )
-                public_schemas.append(_public_schema(path, line, raw_schema))
+                append_public_schema(path, line, raw_schema)
                 continue
 
             if name.startswith("${"):
@@ -536,7 +539,7 @@ def discover(source_snapshot, build_descriptor: Mapping[str, Any]) -> dict[str, 
                 )
             )
             if category == "CLI":
-                public_schemas.append(_public_schema(path, line, raw_schema))
+                append_public_schema(path, line, raw_schema)
 
     declarations.extend(_header_declarations(entries))
     for path in sorted(entries):
