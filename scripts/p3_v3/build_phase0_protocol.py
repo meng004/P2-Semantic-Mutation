@@ -28,8 +28,11 @@ EVIDENCE_DESIGN_SHA256 = (
     "7e614e96aac833786d1b29580f8fae7d3f03c6567d7ca94f3e3c017addad2fa9"
 )
 RQ_SPEC_PATH = ROOT / "research/p3-semantic-mutation-core-claims-rqs-v1.3.0.md"
+# Protocol V3 (2026-08-13): binds the successor consumer contract v2.0.0
+# (contract §11 freeze step (c)); v1.1.2 remains the historical authority
+# for its own deliveries and is not rewritten.
 P12_CONTRACT_PATH = (
-    ROOT / "docs/protocols/P3_P12_CONSUMER_ACCEPTANCE_DATA_USE_PROTOCOL_v1.1.2.md"
+    ROOT / "docs/protocols/P3_P12_CONSUMER_ACCEPTANCE_DATA_USE_PROTOCOL_v2.0.0.md"
 )
 OUT = ROOT / "data/p3_v3/protocol"
 
