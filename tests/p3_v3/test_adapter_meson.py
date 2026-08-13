@@ -24,6 +24,34 @@ _E_COMMON_KINDS = {
     "TEXT_IO_SCHEMA_V1",
     "BINARY_RECORD_SCHEMA_V1",
 }
+_NORMATIVE_DOCSTRING = r"""- Fail-closed guard: root `meson.build` must exist; otherwise ValueError.
+- Build-file set: every non-excluded `meson.build` and `*.meson` file,
+  `#` comments stripped.
+- `PROJECT_TEST`: `(?<![A-Za-z0-9_])test\s*\(\s*'([^']+)'` rows with
+  `entrypoint=f"meson-test:{name}"`, argv `["meson", "test", name]`,
+  schema `_cli_grammar_schema("meson")` and a `public_schemas` row.
+  `(?<![A-Za-z0-9_])benchmark\s*\(\s*'([^']+)'` occurrences map to
+  `BENCHMARK` with `entrypoint=f"meson-benchmark:{name}"`, argv
+  `["meson", "test", "--benchmark", name]`, the same schema hash, and
+  **no** `public_schemas` row (amendment 2026-08-13: benchmark row shape
+  frozen as implemented).
+- `CLI`/`EXAMPLE`/`BENCHMARK` targets: `executable\s*\(\s*'([^']+)'` with
+  `_path_category` of the declaring build file, else `CLI`; rows shaped as
+  in the cmake rule.
+- Python-package branch: when root `pyproject.toml` exists with a
+  non-empty `[project].name`, additionally apply — verbatim — the
+  `PYTHON_PEP517_V1` module rules (package roots, public modules,
+  `PUBLIC_API` declarations with signature-derived schemas,
+  `[project.scripts]` CLI rows, path-evidenced `.py`
+  EXAMPLE/BENCHMARK/PROJECT_TEST rows, python `sites`).
+- In **both** branches the adapter additionally applies
+  `_header_declarations`, `_c_family_sites`, and `_fortran_sites`
+  (amendment 2026-08-13: the additive route is frozen — meson-python
+  subjects like SciPy carry public C headers and compiled sources whose
+  surface must not vanish because a pyproject exists). A
+  `(category, provenance_path)` pair is emitted once; first writer wins.
+- `source_files`: shared rule 2 (meson.build files themselves are not
+  scale-countable and stay out)."""
 
 
 def _snapshot(root: Path) -> SourceSnapshot:
@@ -85,6 +113,39 @@ def test_discovers_c_meson_tests_benchmarks_cli_headers_and_sites() -> None:
         site["path"] == "src/m.c" and site["symbol"] == "src/m.c:m_add"
         for site in result["sites"]
     )
+    assert not any(
+        "phantom" in row["entrypoint"] for row in result["declarations"]
+    )
+
+
+def test_docstring_is_the_amended_normative_rule() -> None:
+    assert meson_test_v1.__doc__ == _NORMATIVE_DOCSTRING
+
+
+def test_public_schemas_are_deduplicated_by_provenance() -> None:
+    raw = (
+        b"project('same-line')\n"
+        b"test('same', runner); executable('tool', 'tool.c')\n"
+    )
+    snapshot = SourceSnapshot(
+        entries=(
+            SourceSnapshotEntry(
+                relative_path="meson.build",
+                mode="100644",
+                sha256=hashlib.sha256(raw).hexdigest(),
+                content=raw,
+            ),
+        )
+    )
+
+    result = meson_test_v1.discover(snapshot, {})
+
+    assert len(result["declarations"]) == 2
+    assert len(result["public_schemas"]) == 1
+    assert {
+        (row["provenance_path"], row["provenance_span_or_key"])
+        for row in result["public_schemas"]
+    } == {("meson.build", "L2")}
 
 
 def test_discovers_python_package_branch_and_meson_tests() -> None:

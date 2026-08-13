@@ -1,12 +1,14 @@
-r"""MESON_TEST_V1 (subject: B-POCKETFFT-004 — a meson-python SciPy tree)
-
-- Fail-closed guard: root `meson.build` must exist; otherwise ValueError.
+r"""- Fail-closed guard: root `meson.build` must exist; otherwise ValueError.
 - Build-file set: every non-excluded `meson.build` and `*.meson` file,
   `#` comments stripped.
-- `PROJECT_TEST`: `test\s*\(\s*'([^']+)'` and
-  `benchmark\s*\(\s*'([^']+)'` (benchmark occurrences map to `BENCHMARK`).
-  Rows like the cmake test rule with `entrypoint=f"meson-test:{name}"`, argv
-  `["meson", "test", name]`, schema `_cli_grammar_schema("meson")`.
+- `PROJECT_TEST`: `(?<![A-Za-z0-9_])test\s*\(\s*'([^']+)'` rows with
+  `entrypoint=f"meson-test:{name}"`, argv `["meson", "test", name]`,
+  schema `_cli_grammar_schema("meson")` and a `public_schemas` row.
+  `(?<![A-Za-z0-9_])benchmark\s*\(\s*'([^']+)'` occurrences map to
+  `BENCHMARK` with `entrypoint=f"meson-benchmark:{name}"`, argv
+  `["meson", "test", "--benchmark", name]`, the same schema hash, and
+  **no** `public_schemas` row (amendment 2026-08-13: benchmark row shape
+  frozen as implemented).
 - `CLI`/`EXAMPLE`/`BENCHMARK` targets: `executable\s*\(\s*'([^']+)'` with
   `_path_category` of the declaring build file, else `CLI`; rows shaped as
   in the cmake rule.
@@ -15,11 +17,15 @@ r"""MESON_TEST_V1 (subject: B-POCKETFFT-004 — a meson-python SciPy tree)
   `PYTHON_PEP517_V1` module rules (package roots, public modules,
   `PUBLIC_API` declarations with signature-derived schemas,
   `[project.scripts]` CLI rows, path-evidenced `.py`
-  `EXAMPLE`/`BENCHMARK`/`PROJECT_TEST` rows, python `sites`). When it does not
-  exist, apply `_header_declarations` + `_c_family_sites` as in cmake.
+  EXAMPLE/BENCHMARK/PROJECT_TEST rows, python `sites`).
+- In **both** branches the adapter additionally applies
+  `_header_declarations`, `_c_family_sites`, and `_fortran_sites`
+  (amendment 2026-08-13: the additive route is frozen — meson-python
+  subjects like SciPy carry public C headers and compiled sources whose
+  surface must not vanish because a pyproject exists). A
+  `(category, provenance_path)` pair is emitted once; first writer wins.
 - `source_files`: shared rule 2 (meson.build files themselves are not
-  scale-countable and stay out).
-"""
+  scale-countable and stay out)."""
 
 from __future__ import annotations
 
@@ -388,9 +394,13 @@ _JSON_TYPE_BY_ANNOTATION = {
     "mapping": "object",
 }
 _JSON_ANY = ["array", "boolean", "integer", "null", "number", "object", "string"]
-_MESON_TEST = re.compile(r"test\s*\(\s*'([^']+)'")
-_MESON_BENCHMARK = re.compile(r"benchmark\s*\(\s*'([^']+)'")
-_MESON_EXECUTABLE = re.compile(r"executable\s*\(\s*'([^']+)'")
+_MESON_TEST = re.compile(r"(?<![A-Za-z0-9_])test\s*\(\s*'([^']+)'")
+_MESON_BENCHMARK = re.compile(
+    r"(?<![A-Za-z0-9_])benchmark\s*\(\s*'([^']+)'"
+)
+_MESON_EXECUTABLE = re.compile(
+    r"(?<![A-Za-z0-9_])executable\s*\(\s*'([^']+)'"
+)
 
 
 def _normalized_annotation(node: ast.AST | None) -> str:
@@ -935,11 +945,20 @@ def discover(
             raise ValueError(f"Fortran source is not UTF-8: {path}") from exc
         sites.extend(_fortran_sites(path, text))
 
+    distinct_public_schemas: list[dict] = []
+    seen_schema_provenance: set[tuple[str, str]] = set()
+    for row in public_schemas:
+        key = (row["provenance_path"], row["provenance_span_or_key"])
+        if key in seen_schema_provenance:
+            continue
+        seen_schema_provenance.add(key)
+        distinct_public_schemas.append(row)
+
     return {
         "adapter_id": ADAPTER_ID,
         "ecosystem": ECOSYSTEM,
         "source_files": _scale_source_files(entries),
         "declarations": declarations,
-        "public_schemas": public_schemas,
+        "public_schemas": distinct_public_schemas,
         "sites": sites,
     }
