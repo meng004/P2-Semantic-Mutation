@@ -29,7 +29,7 @@ from collections.abc import Mapping
 from typing import Any
 
 # --- SHARED-ADAPTER-BLOCK-v1 begin ---
-# Frozen shared discovery logic (plan 2026-08-13, normative rules 1-7).
+# Frozen shared discovery logic (plan 2026-08-13, normative rules 1-8).
 # This block is inlined byte-identically in CMAKE_CTEST_V1, MESON_TEST_V1,
 # and AUTOTOOLS_MAKECHECK_V1; a drift-guard test asserts equality.
 
@@ -77,6 +77,13 @@ def _excluded(relative_path: str) -> bool:
     )
 
 
+def _utf8_text_or_none(raw):
+    try:
+        return raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return None
+
+
 def _scale_source_files(entries) -> list[str]:
     selected = []
     for path in entries:
@@ -84,7 +91,10 @@ def _scale_source_files(entries) -> list[str]:
             continue
         name = path.rsplit("/", 1)[-1].casefold()
         suffix = "." + name.rsplit(".", 1)[-1] if "." in name else ""
-        if name == "cmakelists.txt" or suffix in _SCALE_SUFFIXES:
+        if (
+            (name == "cmakelists.txt" or suffix in _SCALE_SUFFIXES)
+            and _utf8_text_or_none(entries[path]) is not None
+        ):
             selected.append(path)
     return sorted(selected)
 
@@ -138,7 +148,8 @@ def _mask_c_comments_and_strings(text: str) -> str:
             continue
         if state == "string":
             if character == "\\" and index + 1 < length:
-                masked.append("  ")
+                masked.append(" ")
+                masked.append("\n" if text[index + 1] == "\n" else " ")
                 index += 2
                 continue
             if character == quote:
@@ -153,22 +164,36 @@ def _mask_c_comments_and_strings(text: str) -> str:
 
 
 _C_IDENTIFIER_BEFORE_PAREN = re.compile(r"([A-Za-z_][A-Za-z0-9_]*)\s*$")
+_C_TRANSPARENT_NAMESPACE = re.compile(
+    r"^\s*(?:inline\s+)?namespace"
+    r"(?:\s+[A-Za-z_][A-Za-z0-9_:]*)?\s*$"
+)
+_C_TRANSPARENT_EXTERN = re.compile(r'^\s*extern\s*"C(?:\+\+)?"\s*$')
+
+
+def _c_brace_is_transparent(masked_line, source_line, col):
+    return (
+        _C_TRANSPARENT_NAMESPACE.match(masked_line[:col]) is not None
+        or _C_TRANSPARENT_EXTERN.match(source_line[:col]) is not None
+    )
 
 
 def _c_family_sites(path: str, text: str) -> list[dict]:
     masked = _mask_c_comments_and_strings(text)
     lines = masked.split("\n")
+    source_lines = text.split("\n")
     sites: list[dict] = []
-    depth = 0
-    line_index = 0
-    total = len(lines)
-    while line_index < total:
-        line = lines[line_index]
+    brace_stack: list[bool] = []
+    for line_index, line in enumerate(lines):
+        source_line = source_lines[line_index]
+        first_non_whitespace = next(
+            (index for index, character in enumerate(line) if not character.isspace()),
+            None,
+        )
         if (
-            depth == 0
-            and line
-            and not line[0].isspace()
-            and line[0] not in {"#", "}", ";"}
+            not any(not transparent for transparent in brace_stack)
+            and first_non_whitespace is not None
+            and line[first_non_whitespace] not in {"#", "}", ";"}
         ):
             paren = line.find("(")
             if paren > 0:
@@ -192,13 +217,13 @@ def _c_family_sites(path: str, text: str) -> list[dict]:
                                         "end_col": end_col + 1,
                                     }
                                 )
-                                depth = 0
-                                line_index = end_line
-                                line = lines[line_index]
-                                depth -= line[: end_col + 1].count("{")
-                                depth += line[: end_col + 1].count("}")
-        depth += line.count("{") - line.count("}")
-        line_index += 1
+        for col, character in enumerate(line):
+            if character == "{":
+                brace_stack.append(
+                    _c_brace_is_transparent(line, source_line, col)
+                )
+            elif character == "}" and brace_stack:
+                brace_stack.pop()
     return sites
 
 
@@ -277,7 +302,8 @@ def _fortran_sites(path: str, text: str) -> list[dict]:
     for index, line in enumerate(lines):
         if _fortran_is_comment(line, fixed_form):
             continue
-        if _FORTRAN_END.match(line):
+        code_line = line.split("!", 1)[0]
+        if _FORTRAN_END.match(code_line):
             if stack:
                 name, start_line, start_col = stack.pop()
                 if not stack:
@@ -292,7 +318,10 @@ def _fortran_sites(path: str, text: str) -> list[dict]:
                         }
                     )
             continue
-        match = _FORTRAN_SUBROUTINE.match(line) or _FORTRAN_FUNCTION.match(line)
+        match = (
+            _FORTRAN_SUBROUTINE.match(code_line)
+            or _FORTRAN_FUNCTION.match(code_line)
+        )
         if match is not None:
             stack.append(
                 (
@@ -464,10 +493,9 @@ def discover(source_snapshot, build_descriptor: Mapping[str, Any]) -> dict[str, 
         suffix = ("." + name.rsplit(".", 1)[-1]).casefold() if "." in name else ""
         if suffix not in _C_FAMILY_SITE_SUFFIXES + _FORTRAN_SITE_SUFFIXES:
             continue
-        try:
-            text = entries[path].decode("utf-8")
-        except UnicodeDecodeError as exc:
-            raise ValueError(f"source file is not valid UTF-8: {path}") from exc
+        text = _utf8_text_or_none(entries[path])
+        if text is None:
+            continue
         if suffix in _C_FAMILY_SITE_SUFFIXES:
             sites.extend(_c_family_sites(path, text))
         else:
