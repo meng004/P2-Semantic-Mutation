@@ -167,8 +167,9 @@ It is a reproducibility support artifact, off the argumentation critical path.
   (2026-08-13: approved delivery sequence executed; bridge intake receipts
   in `2026-08-12-p3-phase1-bridge-intake.md` §6)
 - [ ] Verify bridge, derive frames, close Phase 1 with receipts
-  (verify-bridge PASS 2026-08-13, `aba70e89b603…`; frame derivation still
-  blocked on real cmake/meson/autotools adapters)
+  (verify-bridge PASS 2026-08-13, `aba70e89b603…`; adapters real since
+  Task 4 GREEN at `b5e1645c` — frame derivation unblocked for the 27
+  discoverable subjects, needs its own task-scoped plan)
 
 ### Sequencing note
 
