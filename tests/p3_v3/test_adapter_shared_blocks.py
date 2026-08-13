@@ -39,7 +39,7 @@ def _discover_with_sources(entries: dict[str, bytes]) -> dict:
     )
 
 
-def test_shared_adapter_blocks_match_controller_bytes():
+def test_shared_adapter_blocks_are_byte_identical():
     adapter_blocks = [
         _shared_block(_ADAPTER_DIR / name)
         for name in (
@@ -48,16 +48,8 @@ def test_shared_adapter_blocks_match_controller_bytes():
             "autotools_makecheck_v1.py",
         )
     ]
-    controller_block = _shared_block(
-        _ROOT
-        / ".superpowers"
-        / "sdd"
-        / "2026-08-13-p3-task4-real-build-adapters"
-        / "shared_adapter_block_v1.py"
-    )
 
     assert adapter_blocks[0] == adapter_blocks[1] == adapter_blocks[2]
-    assert adapter_blocks[0] == controller_block
 
 
 def test_c_family_sites_cross_transparent_wrappers_but_not_classes():

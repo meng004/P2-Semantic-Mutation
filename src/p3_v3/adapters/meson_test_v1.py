@@ -9,9 +9,11 @@ r"""- Fail-closed guard: root `meson.build` must exist; otherwise ValueError.
   `["meson", "test", "--benchmark", name]`, the same schema hash, and
   **no** `public_schemas` row (amendment 2026-08-13: benchmark row shape
   frozen as implemented).
-- `CLI`/`EXAMPLE`/`BENCHMARK` targets: `executable\s*\(\s*'([^']+)'` with
-  `_path_category` of the declaring build file, else `CLI`; rows shaped as
-  in the cmake rule.
+- `CLI`/`EXAMPLE`/`BENCHMARK` targets:
+  `(?<![A-Za-z0-9_])executable\s*\(\s*'([^']+)'` with `_path_category` of
+  the declaring build file, else `CLI`; rows shaped as in the cmake rule
+  (amendment 2026-08-13 round 2: the lookbehind literal was missing from
+  this bullet while the code and the test/benchmark bullet carried it).
 - Python-package branch: when root `pyproject.toml` exists with a
   non-empty `[project].name`, additionally apply — verbatim — the
   `PYTHON_PEP517_V1` module rules (package roots, public modules,
