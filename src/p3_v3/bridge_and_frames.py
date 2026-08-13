@@ -1869,8 +1869,12 @@ _TRANSIENT_SOURCE_PARTS = frozenset(
 _TRANSIENT_SOURCE_NAMES = _EXCLUDED_SOURCE_NAMES
 _PYTHON_SOURCE_SUFFIXES = frozenset({".py", ".pyi", ".pyx", ".pxd"})
 _CPP_SOURCE_SUFFIXES = frozenset(
-    {".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp", ".hxx", ".inl"}
+    {".c", ".cc", ".cpp", ".cu", ".cuh", ".cxx", ".h", ".hh", ".hpp", ".hxx", ".inl"}
 )
+_FORTRAN_SOURCE_SUFFIXES = frozenset(
+    {".f", ".for", ".f77", ".f90", ".f95", ".f03", ".f08"}
+)
+_FORTRAN_FIXED_FORM_SUFFIXES = frozenset({".f", ".for", ".f77"})
 
 
 def _reject_caller_discovery(value: Mapping[str, Any]) -> None:
@@ -2349,6 +2353,8 @@ def _source_language(relative_path: str) -> str:
         return "python"
     if suffix in _CPP_SOURCE_SUFFIXES:
         return "cpp"
+    if suffix in _FORTRAN_SOURCE_SUFFIXES:
+        return "fortran"
     raise EvidenceError(
         "E_SCALE_SOURCE_LANGUAGE", f"unsupported source language: {path.name}"
     )
@@ -2362,6 +2368,15 @@ def _effective_line_count(relative_path: str, raw: bytes) -> int:
         raise EvidenceError(
             "E_SCALE_SOURCE", f"source file is not UTF-8 text: {relative_path}"
         ) from exc
+    if language == "fortran":
+        fixed_form = Path(relative_path).suffix.casefold() in _FORTRAN_FIXED_FORM_SUFFIXES
+        return sum(
+            1
+            for line in lines
+            if line.strip()
+            and not line.lstrip().startswith("!")
+            and (not fixed_form or line[0] not in {"c", "C", "*", "d", "D"})
+        )
     if language in {"python", "cmake"}:
         return sum(
             1 for line in lines if line.strip() and not line.lstrip().startswith("#")
