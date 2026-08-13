@@ -230,3 +230,7 @@ infrastructure beyond what its phase's exit criterion names.
   (`4c25da539017…`, validate-protocol PASS) — contract §11 freeze complete.
   Package C sealed custodian-side. Next action: real cmake/meson/autotools
   adapters (task-scoped plan), then Phase 1 frame derivation.
+- 2026-08-13 (freeze receipt): full suite `868 passed in 364.65s` in the
+  clean worktree `.worktrees/p3-v3-bridge-intake-freeze` at `940909f3`,
+  unsandboxed; worktree removed after the run. Intake commits: `eb51036f`
+  (bridge acceptance + delivery), `940909f3` (protocol V3 re-emit).

@@ -199,7 +199,11 @@ neutral workdir):**
 | Protocol V3 | `p12_contract_sha256` rebound v1.1.2 → v2.0.0; `protocol_sha256 4c25da539017e2787c28932677f8f31ce29d8ccd6f95594f0fd0a9e7ae25c5dd`; validate-protocol PASS; contract §11 freeze steps (a)(b)(c) all satisfied |
 
 Package C (sealed reveal ledger with tree OIDs + nonces) remains
-custodian-side in the neutral workdir (`bridge-out/reveal_ledger.SEALED.json`).
-Frame derivation stays blocked on the real cmake/meson/autotools adapters
-(§4.1 load-bearing finding); the 3 Julia subjects keep the frozen
+custodian-side in the neutral workdir (`bridge-out/reveal_ledger.SEALED.json`,
+mode 0600). Frame derivation stays blocked on the real cmake/meson/autotools
+adapters (§4.1 load-bearing finding); the 3 Julia subjects keep the frozen
 `ADAPTER_UNSUPPORTED` path.
+
+Freeze-point receipt: full suite `868 passed in 364.65s` in a clean
+worktree at `940909f3` (unsandboxed). P3 intake commits: `eb51036f`
+(acceptance + delivery), `940909f3` (protocol V3).
