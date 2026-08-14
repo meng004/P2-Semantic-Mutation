@@ -29,11 +29,14 @@ from p3_v3.bridge_and_frames import (
     UNAVAILABLE_NOT_CLAIMED,
     build_common_inputs,
     build_contract_inputs,
+    build_phase1_unresolved_profiling_receipt,
     build_public_behavior_frame,
     build_subject_frames,
+    canonical_source_tree_sha256,
     classify_technique,
     close_slot,
     derive_source_scale,
+    derive_subject_material,
     discover_subject_or_fail_closed,
     rebuild_indexed_subject,
     run_adapter_discovery,
@@ -4280,6 +4283,109 @@ def test_run_adapter_discovery_still_raises_on_missing_build_file(tmp_path):
             registry,
             "PYTHON_PEP517_V1",
         )
+
+
+def test_phase1_unresolved_receipt_covers_selected_rows_and_classifies_uncertain():
+    behavior_id = _behavior_id("phase1-unexecuted")
+    workload = _synthetic_workload([(behavior_id, "PUBLIC_API")])
+    receipt = build_phase1_unresolved_profiling_receipt(
+        workload,
+        {
+            "normalized_source_tree_sha256": "41" * 32,
+            "build_descriptor_sha256": "42" * 32,
+        },
+        neutral_snapshot_id="61" * 32,
+        adapter_implementation_source_sha256="31" * 32,
+    )
+    assert receipt["schema_version"] == "p3-profiling-results-v1"
+    assert len(receipt["results"]) == 1
+    row = receipt["results"][0]
+    assert row["status"] == "ADAPTER_UNCERTAIN"
+    assert row["failure_code"] == "PHASE1_PROFILING_NOT_EXECUTED"
+    assert row["call_trace"] == []
+    assert row["timed_out"] is False
+    profile = classify_technique(workload, receipt)
+    assert profile["primary_technique"] == "TECH_UNCERTAIN"
+
+
+def test_phase1_unresolved_receipt_covers_empty_workload():
+    workload = _synthetic_workload([])
+    receipt = build_phase1_unresolved_profiling_receipt(
+        workload,
+        {
+            "normalized_source_tree_sha256": "41" * 32,
+            "build_descriptor_sha256": "42" * 32,
+        },
+        neutral_snapshot_id="61" * 32,
+        adapter_implementation_source_sha256=None,
+    )
+    assert receipt["results"] == []
+    profile = classify_technique(workload, receipt)
+    assert profile["primary_technique"] == "TECH_UNCERTAIN"
+
+
+def test_derive_subject_material_keeps_cmake_execution_failure_in_funnel(tmp_path):
+    source = tmp_path / "subject"
+    source.mkdir()
+    (source / "README.md").write_text("no cmake root\n", encoding="utf-8")
+    snapshot = _source_snapshot(source)
+    descriptor = {"ecosystem": "cmake", "language_family": "c"}
+    source_record = {
+        "normalized_source_tree_sha256": canonical_source_tree_sha256(snapshot),
+        "build_descriptor_sha256": canonical_sha256(descriptor),
+    }
+    adapter_registry = validate_adapter_registry(
+        _real_adapter_registry(), _real_controller_snapshot()
+    )
+    generator_registry = validate_input_generator_registry(
+        _real_generator_registry(), _real_controller_snapshot()
+    )
+    discovery = discover_subject_or_fail_closed(
+        snapshot, descriptor, adapter_registry, "CMAKE_CTEST_V1"
+    )
+    frame = build_public_behavior_frame(source_record, discovery)
+    scale = derive_source_scale(snapshot, discovery)
+    workload = select_profiling_workload(frame, scale["scale_class"])
+    receipt = build_phase1_unresolved_profiling_receipt(
+        workload,
+        source_record,
+        neutral_snapshot_id="ab" * 32,
+        adapter_implementation_source_sha256=discovery[
+            "implementation_source_sha256"
+        ],
+    )
+    record = {
+        "neutral_snapshot_id": "ab" * 32,
+        "fixed_tree_commitment": "11" * 32,
+        "normalized_source_tree_sha256": source_record[
+            "normalized_source_tree_sha256"
+        ],
+        "source_archive_sha256": "12" * 32,
+        "build_descriptor_sha256": source_record["build_descriptor_sha256"],
+        "eligibility_reason": "fixture",
+        "eligible_for_construct": True,
+        "eligible_for_criterion": True,
+    }
+    material = derive_subject_material(
+        {
+            "neutral_snapshot_id": "ab" * 32,
+            "source_snapshot": snapshot,
+            "source_record": source_record,
+            "build_descriptor": descriptor,
+            "adapter_registry": adapter_registry,
+            "input_generator_registry": generator_registry,
+            "profiling_results": receipt,
+        },
+        record,
+    )
+    assert material["adapter_discovery"]["discovery_status"] == (
+        "ADAPTER_EXECUTION_FAILED"
+    )
+    assert len(material["common_inputs"]["rows"]) == 30
+    assert {row["status"] for row in material["common_inputs"]["rows"]} == {
+        "COMMON_INPUT_UNAVAILABLE"
+    }
+    assert material["technique_profile"]["primary_technique"] == "TECH_UNCERTAIN"
 
 
 def test_real_python_adapter_never_reads_test_or_example_bodies_for_schemas():

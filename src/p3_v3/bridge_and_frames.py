@@ -2348,6 +2348,22 @@ def _validate_discovery(
             raise EvidenceError(
                 "E_ADAPTER_UNSUPPORTED", "unsupported discovery must contain no fallback data"
             )
+    elif status == "ADAPTER_EXECUTION_FAILED":
+        if value["adapter_id"] not in CONFIRMATORY_ADAPTERS:
+            raise EvidenceError("E_ADAPTER_ID", "failed discovery adapter is invalid")
+        validate_sha256(
+            value["implementation_source_sha256"], "implementation_source_sha256"
+        )
+        if value["ecosystem"] != _ADAPTER_ECOSYSTEMS[value["adapter_id"]]:
+            raise EvidenceError("E_ADAPTER_ECOSYSTEM", "discovery ecosystem differs")
+        if any(
+            value[field]
+            for field in ("source_files", "declarations", "public_schemas", "sites")
+        ):
+            raise EvidenceError(
+                "E_ADAPTER_EXECUTION",
+                "failed discovery must contain no fallback data",
+            )
     else:
         raise EvidenceError("E_ADAPTER_DISCOVERY", "discovery status is invalid")
     return value
@@ -2851,6 +2867,114 @@ def select_profiling_workload(frame: Mapping[str, Any], scale_class: str) -> dic
         "selected_rows": selected,
         "selected_behavior_ids": selected_ids,
         "selected_category_counts": counts,
+    }
+    return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
+def build_phase1_unresolved_profiling_receipt(
+    workload: Mapping[str, Any],
+    source_record: Mapping[str, Any],
+    *,
+    neutral_snapshot_id: str,
+    adapter_implementation_source_sha256: str | None,
+) -> dict[str, Any]:
+    """Bind selected Phase 1 rows without claiming profiling execution."""
+
+    if not isinstance(workload, Mapping):
+        raise EvidenceError("E_WORKLOAD", "profiling workload must be an object")
+    selected_rows = workload.get("selected_rows")
+    if not isinstance(selected_rows, list):
+        raise EvidenceError("E_WORKLOAD", "selected_rows are absent")
+    workload_sha256 = validate_sha256(
+        workload.get("artifact_sha256"), "profiling_workload.artifact_sha256"
+    )
+    workload_body = {
+        key: value for key, value in workload.items() if key != "artifact_sha256"
+    }
+    if workload_sha256 != canonical_sha256(workload_body):
+        raise EvidenceError("E_WORKLOAD_HASH", "profiling workload self-hash differs")
+
+    if not isinstance(source_record, Mapping):
+        raise EvidenceError("E_SOURCE_RECORD", "source_record must be an object")
+    source = validate_exact_object(
+        dict(source_record), _SOURCE_RECORD_SCHEMA, "source_record"
+    )
+    for field in ("normalized_source_tree_sha256", "build_descriptor_sha256"):
+        validate_sha256(source[field], f"source_record.{field}")
+    source_id = validate_sha256(
+        workload.get("controlled_subject_source_id"),
+        "profiling_workload.controlled_subject_source_id",
+    )
+    if source_id != _controlled_subject_source_id(source):
+        raise EvidenceError(
+            "E_PROFILE_SOURCE_BINDING", "profiling workload source binding differs"
+        )
+
+    neutral = validate_sha256(neutral_snapshot_id, "neutral_snapshot_id")
+    if adapter_implementation_source_sha256 is not None:
+        validate_sha256(
+            adapter_implementation_source_sha256,
+            "adapter_implementation_source_sha256",
+        )
+
+    empty_bytes_sha256 = hashlib.sha256(b"").hexdigest()
+    results: list[dict[str, Any]] = []
+    seen_behavior_ids: set[str] = set()
+    for index, candidate in enumerate(selected_rows):
+        if not isinstance(candidate, Mapping):
+            raise EvidenceError(
+                "E_WORKLOAD_ROW", f"selected_rows[{index}] must be an object"
+            )
+        behavior_id = validate_sha256(
+            candidate.get("behavior_id"), f"selected_rows[{index}].behavior_id"
+        )
+        if behavior_id in seen_behavior_ids:
+            raise EvidenceError(
+                "E_WORKLOAD_ROW", f"duplicate selected behavior: {behavior_id}"
+            )
+        seen_behavior_ids.add(behavior_id)
+        results.append(
+            {
+                "behavior_id": behavior_id,
+                "status": "ADAPTER_UNCERTAIN",
+                "argv": ["p3-phase1-unexecuted", behavior_id],
+                "input_sha256": [
+                    canonical_sha256(
+                        {
+                            "behavior_id": behavior_id,
+                            "domain": "P3-PHASE1-UNEXECUTED-INPUT-v1",
+                        }
+                    )
+                ],
+                "environment_sha256": canonical_sha256(
+                    {"domain": "P3-PHASE1-UNEXECUTED-ENV-v1"}
+                ),
+                "runner_version": "p3-phase1-unexecuted-v1",
+                "exit_code": None,
+                "stdout_sha256": empty_bytes_sha256,
+                "stderr_sha256": empty_bytes_sha256,
+                "call_trace": [],
+                "call_trace_sha256": canonical_sha256([]),
+                "timed_out": False,
+                "failure_code": "PHASE1_PROFILING_NOT_EXECUTED",
+                "observed_site_ids": [],
+            }
+        )
+    results.sort(key=lambda row: row["behavior_id"])
+    body = {
+        "schema_version": "p3-profiling-results-v1",
+        "neutral_snapshot_id": neutral,
+        "controlled_subject_source_id": source_id,
+        "normalized_source_tree_sha256": source[
+            "normalized_source_tree_sha256"
+        ],
+        "build_descriptor_sha256": source["build_descriptor_sha256"],
+        "profiling_workload_sha256": workload_sha256,
+        "adapter_implementation_source_sha256": (
+            adapter_implementation_source_sha256
+        ),
+        "runner_implementation_source_sha256": file_sha256(Path(__file__)),
+        "results": results,
     }
     return {**body, "artifact_sha256": canonical_sha256(body)}
 
