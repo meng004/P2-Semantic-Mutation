@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import os
 import random
 import shutil
 import subprocess
@@ -16,6 +17,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "src"))
 
 import scripts.p3_v3.evidence as evidence_cli  # noqa: E402
@@ -44,12 +46,14 @@ INTAKE_ROOT = ROOT / "data/p3_v3/p12_intake"
 FRAME_ROOT = ROOT / "data/p3_v3/phase1_frames"
 INPUT_ROOT = FRAME_ROOT / "inputs"
 OUTPUT_ROOT = FRAME_ROOT / "out"
+CHECKPOINT_ROOT = FRAME_ROOT / "checkpoint"
 BRIDGE_PATH = INTAKE_ROOT / "verified_bridge.json"
 ADAPTER_REGISTRY_PATH = ROOT / "data/p3_v3/protocol/adapter_registry.json"
 GENERATOR_REGISTRY_PATH = (
     ROOT / "data/p3_v3/protocol/input_generator_registry.json"
 )
 MAX_ARTIFACT_BYTES = 90 * 1024 * 1024
+CHECKPOINT_SCHEMA_VERSION = "p3-phase1-subject-checkpoint-v1"
 
 
 def _archive_member_path(member: tarfile.TarInfo) -> Path | None:
@@ -210,6 +214,182 @@ def assert_exact_coverage(
         )
 
 
+def emit_progress(
+    *,
+    stage: str,
+    elapsed_s: float,
+    index: int | None = None,
+    total: int | None = None,
+    neutral_snapshot_id: str | None = None,
+    extra: str = "",
+) -> None:
+    """Write a single progress line to stderr. stdout stays canonical JSON."""
+
+    parts = ["phase1-progress"]
+    if index is not None and total is not None:
+        parts.append(f"{index}/{total}")
+    if neutral_snapshot_id:
+        parts.append(neutral_snapshot_id)
+    parts.append(stage)
+    parts.append(f"elapsed_s={elapsed_s:.3f}")
+    if extra:
+        parts.append(extra)
+    print(" ".join(parts), file=sys.stderr, flush=True)
+
+
+def runner_implementation_sha256() -> str:
+    return canonical_sha256(
+        {
+            "driver": file_sha256(Path(__file__)),
+            "bridge_and_frames": file_sha256(
+                ROOT / "src/p3_v3/bridge_and_frames.py"
+            ),
+            "evidence": file_sha256(ROOT / "scripts/p3_v3/evidence.py"),
+        }
+    )
+
+
+def checkpoint_binding(
+    *,
+    neutral_snapshot_id: str,
+    source_archive_sha256: str,
+    build_descriptor_sha256: str,
+    canonical_source_tree_sha256: str,
+    adapter_registry_sha256: str,
+    input_generator_registry_sha256: str,
+    runner_implementation_sha256: str,
+) -> dict[str, str]:
+    return {
+        "neutral_snapshot_id": validate_sha256(
+            neutral_snapshot_id, "neutral_snapshot_id"
+        ),
+        "source_archive_sha256": validate_sha256(
+            source_archive_sha256, "source_archive_sha256"
+        ),
+        "build_descriptor_sha256": validate_sha256(
+            build_descriptor_sha256, "build_descriptor_sha256"
+        ),
+        "canonical_source_tree_sha256": validate_sha256(
+            canonical_source_tree_sha256, "canonical_source_tree_sha256"
+        ),
+        "adapter_registry_sha256": validate_sha256(
+            adapter_registry_sha256, "adapter_registry_sha256"
+        ),
+        "input_generator_registry_sha256": validate_sha256(
+            input_generator_registry_sha256, "input_generator_registry_sha256"
+        ),
+        "runner_implementation_sha256": validate_sha256(
+            runner_implementation_sha256, "runner_implementation_sha256"
+        ),
+    }
+
+
+def save_subject_checkpoint(
+    path: Path,
+    binding: Mapping[str, str],
+    spec: Mapping[str, Any],
+    summary: Mapping[str, Any],
+) -> None:
+    target = Path(path)
+    if target.exists():
+        if target.is_symlink() or not target.is_file():
+            raise EvidenceError("E_CHECKPOINT", "checkpoint path is unsafe")
+        target.unlink()
+    write_canonical_json(
+        target,
+        {
+            "schema_version": CHECKPOINT_SCHEMA_VERSION,
+            "binding": dict(binding),
+            "spec": dict(spec),
+            "summary": dict(summary),
+        },
+        exclusive=True,
+    )
+
+
+def load_subject_checkpoint(
+    path: Path, expected_binding: Mapping[str, str]
+) -> dict[str, Any] | None:
+    target = Path(path)
+    if not target.exists():
+        return None
+    if target.is_symlink() or not target.is_file():
+        raise EvidenceError("E_CHECKPOINT", "checkpoint path is unsafe")
+    try:
+        payload = read_canonical_json(target)
+    except EvidenceError:
+        return None
+    if not isinstance(payload, dict):
+        return None
+    if payload.get("schema_version") != CHECKPOINT_SCHEMA_VERSION:
+        return None
+    if payload.get("binding") != dict(expected_binding):
+        return None
+    spec = payload.get("spec")
+    summary = payload.get("summary")
+    if not isinstance(spec, dict) or not isinstance(summary, dict):
+        return None
+    return {"spec": spec, "summary": summary}
+
+
+def _capture_subject_snapshot(source_root: Path):
+    _manifest, snapshot = evidence_cli._capture_tracked_source_manifest(
+        source_root, ["."], "subject-source"
+    )
+    return snapshot
+
+
+def ensure_extracted_source(
+    archive_path: Path,
+    destination: Path,
+    expected_archive_sha256: str,
+    expected_tree_sha256: str,
+) -> tuple[Path, Any, str]:
+    """Reuse an extracted tree only after archive and source-tree hashes bind."""
+
+    archive_path = Path(archive_path)
+    destination = Path(destination)
+    expected_archive = validate_sha256(
+        expected_archive_sha256, "source_archive_sha256"
+    )
+    expected_tree = validate_sha256(
+        expected_tree_sha256, "canonical_source_tree_sha256"
+    )
+    if not archive_path.is_file():
+        raise EvidenceError("E_ARCHIVE", f"archive is absent: {archive_path}")
+    observed_archive = file_sha256(archive_path)
+    if observed_archive != expected_archive:
+        raise EvidenceError(
+            "E_ARCHIVE_HASH",
+            f"archive sha256 differs: expected {expected_archive}, observed {observed_archive}",
+        )
+
+    if destination.exists():
+        if destination.is_symlink() or not destination.is_dir():
+            raise EvidenceError(
+                "E_ARCHIVE_DESTINATION", "extraction destination is unsafe"
+            )
+        try:
+            snapshot = _capture_subject_snapshot(destination)
+            observed_tree = canonical_source_tree_sha256(snapshot)
+        except EvidenceError:
+            snapshot = None
+            observed_tree = None
+        if observed_tree == expected_tree and snapshot is not None:
+            return destination, snapshot, "reused"
+        shutil.rmtree(destination)
+
+    extract_archive(archive_path, destination, expected_archive)
+    snapshot = _capture_subject_snapshot(destination)
+    observed_tree = canonical_source_tree_sha256(snapshot)
+    if observed_tree != expected_tree:
+        raise EvidenceError(
+            "E_SOURCE_TREE_COMMITMENT",
+            "source tree differs after extraction",
+        )
+    return destination, snapshot, "extracted"
+
+
 def _validated_registries() -> tuple[dict[str, Any], dict[str, Any], dict, dict]:
     raw_adapters = read_canonical_json(ADAPTER_REGISTRY_PATH)
     raw_generators = read_canonical_json(GENERATOR_REGISTRY_PATH)
@@ -247,36 +427,69 @@ def build_subject_specs(
         _validated_registries()
     )
     ecosystem_to_adapter = _ecosystem_to_adapter(validated_adapters)
+    adapter_registry_digest = file_sha256(ADAPTER_REGISTRY_PATH)
+    generator_registry_digest = file_sha256(GENERATOR_REGISTRY_PATH)
+    runner_digest = runner_implementation_sha256()
+    CHECKPOINT_ROOT.mkdir(parents=True, exist_ok=True)
     specs: list[dict[str, Any]] = []
     summaries: list[dict[str, Any]] = []
-    for record in sorted(records, key=lambda row: row["neutral_snapshot_id"]):
+    ordered = sorted(records, key=lambda row: row["neutral_snapshot_id"])
+    total = len(ordered)
+    for index, record in enumerate(ordered, start=1):
+        started = time.monotonic()
         neutral = validate_sha256(
             record.get("neutral_snapshot_id"), "record.neutral_snapshot_id"
         )
+
+        def progress(stage: str, extra: str = "") -> None:
+            emit_progress(
+                index=index,
+                total=total,
+                neutral_snapshot_id=neutral,
+                stage=stage,
+                elapsed_s=time.monotonic() - started,
+                extra=extra,
+            )
+
         descriptor = load_descriptor(
             INTAKE_ROOT / "descriptors" / f"{neutral}.json",
             record["build_descriptor_sha256"],
         )
-        source_root = extract_archive(
+        binding = checkpoint_binding(
+            neutral_snapshot_id=neutral,
+            source_archive_sha256=record["source_archive_sha256"],
+            build_descriptor_sha256=record["build_descriptor_sha256"],
+            canonical_source_tree_sha256=record["normalized_source_tree_sha256"],
+            adapter_registry_sha256=adapter_registry_digest,
+            input_generator_registry_sha256=generator_registry_digest,
+            runner_implementation_sha256=runner_digest,
+        )
+        checkpoint_path = CHECKPOINT_ROOT / f"{neutral}.json"
+        resumed = load_subject_checkpoint(checkpoint_path, binding)
+        source_root, snapshot, action = ensure_extracted_source(
             INTAKE_ROOT / "archives" / f"{neutral}.tar",
             INTAKE_ROOT / "extracted" / neutral,
             record["source_archive_sha256"],
+            record["normalized_source_tree_sha256"],
         )
-        _manifest, snapshot = evidence_cli._capture_tracked_source_manifest(
-            source_root, ["."], "subject-source"
-        )
-        observed_tree = canonical_source_tree_sha256(snapshot)
-        if observed_tree != record["normalized_source_tree_sha256"]:
-            raise EvidenceError(
-                "E_SOURCE_TREE_COMMITMENT",
-                f"source tree differs for neutral snapshot {neutral}",
-            )
+        progress("archive verified")
+        progress(f"archive {action}")
+        progress("source captured")
         source_record = {
             "normalized_source_tree_sha256": record[
                 "normalized_source_tree_sha256"
             ],
             "build_descriptor_sha256": record["build_descriptor_sha256"],
         }
+        relative_root = source_root.relative_to(ROOT).as_posix()
+        if resumed is not None:
+            spec = dict(resumed["spec"])
+            spec["source_root"] = relative_root
+            specs.append(spec)
+            summaries.append(dict(resumed["summary"]))
+            progress("workload/receipt completed", extra="resumed=true")
+            del snapshot
+            continue
         ecosystem = descriptor.get("ecosystem")
         if not isinstance(ecosystem, str) or not ecosystem:
             raise EvidenceError(
@@ -288,6 +501,7 @@ def build_subject_specs(
             validated_adapters,
             ecosystem_to_adapter.get(ecosystem),
         )
+        progress("discovery completed")
         frame = build_public_behavior_frame(source_record, discovery)
         scale = derive_source_scale(snapshot, discovery)
         workload = select_profiling_workload(frame, scale["scale_class"])
@@ -299,25 +513,26 @@ def build_subject_specs(
                 "implementation_source_sha256"
             ],
         )
-        specs.append(
-            {
-                "neutral_snapshot_id": neutral,
-                "source_root": source_root.relative_to(ROOT).as_posix(),
-                "source_record": source_record,
-                "build_descriptor": descriptor,
-                "adapter_registry": raw_adapters,
-                "input_generator_registry": raw_generators,
-                "profiling_results": receipt,
-            }
-        )
-        summaries.append(
-            {
-                "neutral_snapshot_id": neutral,
-                "discovery_status": discovery["discovery_status"],
-                "scale_class": scale["scale_class"],
-                "selected_row_count": len(workload["selected_rows"]),
-            }
-        )
+        spec = {
+            "neutral_snapshot_id": neutral,
+            "source_root": relative_root,
+            "source_record": source_record,
+            "build_descriptor": descriptor,
+            "adapter_registry": raw_adapters,
+            "input_generator_registry": raw_generators,
+            "profiling_results": receipt,
+        }
+        summary = {
+            "neutral_snapshot_id": neutral,
+            "discovery_status": discovery["discovery_status"],
+            "scale_class": scale["scale_class"],
+            "selected_row_count": len(workload["selected_rows"]),
+        }
+        specs.append(spec)
+        summaries.append(summary)
+        save_subject_checkpoint(checkpoint_path, binding, spec, summary)
+        progress("workload/receipt completed")
+        del snapshot
     assert_exact_coverage(records, specs)
     return specs, summaries
 
@@ -364,11 +579,24 @@ def _run_build_frames(specs_path: Path, output_root: Path) -> dict[str, Any]:
         "--output-root",
         str(output_root),
     ]
+    env = os.environ.copy()
+    env["PYTHONUNBUFFERED"] = "1"
+    pythonpath = str(ROOT / "src")
+    existing = env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = (
+        pythonpath if not existing else pythonpath + os.pathsep + existing
+    )
     completed = subprocess.run(
-        command, cwd=ROOT, text=True, capture_output=True, check=False
+        command,
+        cwd=ROOT,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=None,
+        env=env,
+        check=False,
     )
     if completed.returncode != 0:
-        detail = (completed.stderr or completed.stdout)[-4000:].strip()
+        detail = (completed.stdout or "")[-4000:].strip()
         raise EvidenceError("E_BUILD_FRAMES", detail or "build-frames failed")
     try:
         result = json.loads(completed.stdout)
@@ -401,7 +629,12 @@ def main() -> int:
     subject_specs_path.unlink(missing_ok=True)
     write_canonical_json(subject_specs_path, specs, exclusive=True)
 
+    def wall_progress(stage: str) -> None:
+        emit_progress(stage=stage, elapsed_s=time.monotonic() - started)
+
+    wall_progress("production pass 1 started")
     production = _run_build_frames(subject_specs_path, OUTPUT_ROOT)
+    wall_progress("production pass 1 completed")
     if production.get("subject_count") != 35 or production.get(
         "common_input_count"
     ) != 1050:
@@ -419,6 +652,7 @@ def main() -> int:
         shuffled_specs_path = temporary_root / "subject-specs.json"
         shuffled_output_root = temporary_root / "out"
         write_canonical_json(shuffled_specs_path, shuffled, exclusive=True)
+        wall_progress("production pass 2 started")
         shuffled_result = _run_build_frames(
             shuffled_specs_path, shuffled_output_root
         )
@@ -429,6 +663,7 @@ def main() -> int:
             raise EvidenceError(
                 "E_SHUFFLE_IDENTITY", "shuffled frame regeneration differs by bytes"
             )
+        wall_progress("production pass 2 completed")
 
     result = {
         "status": "PASS",
