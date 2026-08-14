@@ -166,10 +166,12 @@ It is a reproducibility support artifact, off the argumentation critical path.
 - [x] User authorizes Phase 1 intake and supplies bridge materials
   (2026-08-13: approved delivery sequence executed; bridge intake receipts
   in `2026-08-12-p3-phase1-bridge-intake.md` §6)
-- [ ] Verify bridge, derive frames, close Phase 1 with receipts
+- [x] Verify bridge, derive frames, close Phase 1 with receipts
   (verify-bridge PASS 2026-08-13, `aba70e89b603…`; adapters real since
-  Task 4 GREEN at `b5e1645c` — frame derivation unblocked for the 27
-  discoverable subjects, needs its own task-scoped plan)
+  Task 4 GREEN at `b5e1645c`; frames frozen 2026-08-14/15 at `54a72576`
+  after CA-01/CA-02. Actual funnel 3/9/23, not the planned 3/5/27.
+  Status after push: `PHASE1_CLOSURE_CANDIDATE` pending Sol High final
+  review. Claims stay `blocked`.)
 
 ### Sequencing note
 
@@ -250,3 +252,22 @@ infrastructure beyond what its phase's exit criterion names.
   `docs/review_20260813/task4_adapters_task_report.md`. Next action:
   Phase 1 frame derivation task-scoped plan (charter Task 3 second
   checkbox).
+- 2026-08-14/15: Phase 1 frames derived under CA-01/CA-02. Original
+  90 MiB gate correctly stopped the driver after production pass 1
+  (`E_ARTIFACT_SIZE`; `subject-frames.json` = 101,778,506 bytes;
+  schema unchanged; raw JSON not stripped). Sol High CA-01 review
+  PASS authorized the 128 MiB root-only exception and gzip transport.
+  Shuffle pass 2 (no pass-1 rerun, no checkpoint substitute) exit 0,
+  13,440.041 s, 281/281, all raw SHA-256 identical,
+  `shuffle_byte_identical=true`. Actual funnel **3/9/23** (planned
+  3/5/27 remains expectation only). Four extra Python fail-closed
+  reasons kept verbatim (`pyproject.toml is absent` ×2; `pyproject
+  [project].name is absent` ×2); not relabeled `EXECUTABLE`. Python
+  coverage drop is a Phase 1 limitation. Git stores
+  `subject-frames.json.gz` (`gzip -n -9`, Apple gzip 479); raw JSON
+  remains local scientific identity
+  `588ff83530c16ef2647b523c157bf5585320dae17754918364db8bd96c5e304b`.
+  Freeze `934 passed in 564.00s` at `54a72576`. Protocol V4 unchanged.
+  Claims stay `blocked`. Commits `693ae67f` (amendment), `54a72576`
+  (frames). Status after push: `PHASE1_CLOSURE_CANDIDATE` pending Sol
+  High final review; not `PHASE1_CLOSED`.

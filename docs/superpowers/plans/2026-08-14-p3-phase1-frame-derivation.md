@@ -588,18 +588,11 @@ slots/contracts/applicability committed; (3) extracted trees gitignored;
 - Produce: `data/p3_v3/phase1_frames/receipts.json` (counts + hashes;
   no labels)
 
-- [ ] **Step D1:** Run the driver unsandboxed from the repo root.
-  Expect CLI PASS, 35 subjects, 1050 common-input rows, shuffle
-  byte-identity. Record wall time. If capture rejects a P12-legal tree,
-  repair subject-source capture (Decision 5) within the two-round cap
-  and re-run. If a single output file exceeds 90 MB, stop and report;
-  do not strip artifacts silently.
-
-```bash
-PYTHONPATH=src /opt/anaconda3/bin/python scripts/p3_v3/build_phase1_frames.py
-```
-
-- [ ] **Step D2:** Write `receipts.json` with: bridge sha256, protocol
+- [x] **Step D1:** Production pass 1 completed; original driver then
+  stopped at `E_ARTIFACT_SIZE` (101,778,506-byte `subject-frames.json`).
+  That stop was correct. Pass 1 was not rerun. Shuffle pass 2 ran via
+  the CA-01 continuation path.
+- [x] **Step D2:** Write `receipts.json` with: bridge sha256, protocol
   sha256, adapter/generator registry sha256s, per-neutral
   `discovery_status`, `scale_class`, `primary_technique` (must be
   `TECH_UNCERTAIN` for every subject), common-input status counts,
@@ -609,30 +602,14 @@ PYTHONPATH=src /opt/anaconda3/bin/python scripts/p3_v3/build_phase1_frames.py
   `CMakeLists.txt is absent`), 27 `EXECUTABLE` (23 cmake/meson/autotools
   OK + 4 python). If a count differs, record the actual status and stop
   for controller adjudication — do not relabel.
-
-- [ ] **Step D3:** Freeze-point full suite in a **new** clean worktree,
-  unsandboxed:
-
-```bash
-git worktree add .worktrees/p3-v3-phase1-frames-freeze HEAD
-cd .worktrees/p3-v3-phase1-frames-freeze
-PYTHONPATH=src /opt/anaconda3/bin/python -m pytest tests/p3_v3 -q
-```
-
-Expect all passed, exit 0. Then `git worktree remove` the freeze
-worktree. Never run the full suite in the 1.4 GB-untracked main
-checkout.
-
-- [ ] **Step D4:** Task report + charter: tick Task 3 checkbox 2; ledger
-  entry dated 2026-08-14 naming commits, protocol V4 (unchanged unless
-  a capture repair forced a protocol-adjacent file — do **not** re-emit
-  protocol unless adapter/generator bytes changed), freeze receipt,
-  shuffle identity, funnel counts. Claims stay `blocked`. Next action:
-  Phase 2 task-scoped plan (preflight/pilot/profiling) — out of scope.
-
-- [ ] **Step D5: Commits** (two): one `feat(p3-v3)` for frames/receipts,
-  one `docs(p3-v3)` for report/charter. Then `git push origin main`
-  (user requested; no force).
+  **Actual (CA-02): 3 / 9 / 23.** Four extra Python fail-closed
+  reasons retained verbatim.
+- [x] **Step D3:** Freeze-point full suite in a **new** clean worktree,
+  unsandboxed: `934 passed in 564.00s` at `54a72576`.
+- [x] **Step D4:** Task report + charter: tick Task 3 checkbox 2; ledger
+  entry dated 2026-08-14/15.
+- [x] **Step D5: Commits** (amendment `693ae67f`, frames `54a72576`,
+  docs follow). Then `git push origin main` (no force).
 
 **Acceptance (frozen):** (1) `build-frames` PASS on 35 subjects; (2)
 shuffle regeneration byte-identical; (3) every `primary_technique` is
@@ -666,7 +643,7 @@ Python fail-closed subjects (two missing `pyproject.toml`, two missing
 `[project].name`) stay in the ITT funnel with their original reasons.
 Do not relabel them `EXECUTABLE`. Claims stay `blocked`.
 
-- [ ] **Step D6:** CA-01 continuation tests + shuffle pass 2 + gzip
+- [x] **Step D6:** CA-01 continuation tests + shuffle pass 2 + gzip
   transport + receipts with actual funnel 3/9/23.
 
 ## Self-review
