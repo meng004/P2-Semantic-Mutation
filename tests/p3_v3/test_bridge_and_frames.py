@@ -34,6 +34,7 @@ from p3_v3.bridge_and_frames import (
     classify_technique,
     close_slot,
     derive_source_scale,
+    discover_subject_or_fail_closed,
     rebuild_indexed_subject,
     run_adapter_discovery,
     select_construct_subjects,
@@ -3392,13 +3393,18 @@ def test_supported_common_input_generation_fails_closed_when_all_rows_invalid():
         build_common_inputs(_source_record(), frame, registry)
 
 
-def test_executable_discovery_with_zero_eligible_schemas_fails_closed():
+def test_executable_discovery_with_zero_eligible_schemas_yields_unavailable_rows():
     registry = validate_input_generator_registry(
         _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
     )
-
-    with pytest.raises(EvidenceError, match="E_COMMON_EXECUTABLE"):
-        build_common_inputs(_source_record(), _public_frame_with_schemas([]), registry)
+    inventory = build_common_inputs(
+        _source_record(), _public_frame_with_schemas([]), registry
+    )
+    assert len(inventory["rows"]) == 30
+    assert {row["status"] for row in inventory["rows"]} == {
+        "COMMON_INPUT_UNAVAILABLE"
+    }
+    assert [row["ordinal"] for row in inventory["rows"]] == list(range(30))
 
 
 def test_unsupported_discovery_yields_thirty_unavailable_rows():
@@ -3415,6 +3421,23 @@ def test_unsupported_discovery_yields_thirty_unavailable_rows():
     assert [row["ordinal"] for row in inventory["rows"]] == list(range(30))
     assert all(row["envelope"] is None for row in inventory["rows"])
     assert all(row["raw_payload_sha256"] is None for row in inventory["rows"])
+
+
+def test_fail_closed_discovery_yields_thirty_unavailable_rows():
+    registry = validate_input_generator_registry(
+        _load_generator_registry(), _source_snapshot(GENERATOR_FIXTURE_ROOT)
+    )
+    inventory = build_common_inputs(
+        _source_record(),
+        _public_frame_with_schemas(
+            [], discovery_status="ADAPTER_EXECUTION_FAILED"
+        ),
+        registry,
+    )
+    assert len(inventory["rows"]) == 30
+    assert {row["status"] for row in inventory["rows"]} == {
+        "COMMON_INPUT_UNAVAILABLE"
+    }
 
 
 def test_validate_common_inputs_on_fixed_source_preserves_identities():
@@ -4210,6 +4233,49 @@ def test_real_python_adapter_requires_pyproject(tmp_path):
     with pytest.raises(EvidenceError, match="E_ADAPTER_EXECUTION"):
         run_adapter_discovery(
             _source_snapshot(tmp_path),
+            {"ecosystem": "python"},
+            registry,
+            "PYTHON_PEP517_V1",
+        )
+
+
+def test_discover_subject_or_fail_closed_keeps_missing_cmakelists_visible(tmp_path):
+    source = tmp_path / "subject"
+    source.mkdir()
+    (source / "README.md").write_text("no cmake root\n", encoding="utf-8")
+    registry = validate_adapter_registry(
+        _real_adapter_registry(), _real_controller_snapshot()
+    )
+    discovery = discover_subject_or_fail_closed(
+        _source_snapshot(source),
+        {"ecosystem": "cmake", "language_family": "c"},
+        registry,
+        "CMAKE_CTEST_V1",
+    )
+    assert discovery["discovery_status"] == "ADAPTER_EXECUTION_FAILED"
+    assert discovery["adapter_id"] == "CMAKE_CTEST_V1"
+    assert discovery["ecosystem"] == "cmake"
+    assert discovery["implementation_source_sha256"]
+    assert discovery["source_files"] == []
+    assert discovery["declarations"] == []
+    assert discovery["public_schemas"] == []
+    assert discovery["sites"] == []
+    assert discovery["unsupported_or_exclusion_reason"] == "CMakeLists.txt is absent"
+    assert discovery["artifact_sha256"] == canonical_sha256(
+        {key: value for key, value in discovery.items() if key != "artifact_sha256"}
+    )
+
+
+def test_run_adapter_discovery_still_raises_on_missing_build_file(tmp_path):
+    source = tmp_path / "subject"
+    source.mkdir()
+    (source / "module.py").write_text("VALUE = 1\n", encoding="utf-8")
+    registry = validate_adapter_registry(
+        _real_adapter_registry(), _real_controller_snapshot()
+    )
+    with pytest.raises(EvidenceError, match="E_ADAPTER_EXECUTION"):
+        run_adapter_discovery(
+            _source_snapshot(source),
             {"ecosystem": "python"},
             registry,
             "PYTHON_PEP517_V1",

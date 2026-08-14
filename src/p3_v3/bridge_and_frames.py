@@ -2176,6 +2176,54 @@ def run_adapter_discovery(
     return {**body, "artifact_sha256": canonical_sha256(body)}
 
 
+def discover_subject_or_fail_closed(
+    source_snapshot: SourceSnapshot,
+    build_descriptor: Mapping[str, Any],
+    registry: Mapping[str, Any],
+    adapter_id: str | None,
+) -> dict[str, Any]:
+    """Run discovery; keep adapter execution failure visible in the ITT funnel."""
+
+    try:
+        return run_adapter_discovery(
+            source_snapshot, build_descriptor, registry, adapter_id
+        )
+    except EvidenceError as exc:
+        if exc.code != "E_ADAPTER_EXECUTION" or not adapter_id:
+            raise
+        entries = {
+            entry.get("adapter_id"): entry
+            for entry in registry["adapters"]
+            if isinstance(entry, Mapping)
+        }
+        entry = entries.get(adapter_id)
+        if not isinstance(entry, Mapping):
+            raise
+        cause = exc.__cause__
+        reason = str(cause) if cause is not None else str(exc)
+        ecosystem = entry.get("ecosystem")
+        if not isinstance(ecosystem, str) or not ecosystem:
+            ecosystem = (
+                build_descriptor.get("ecosystem")
+                if isinstance(build_descriptor, Mapping)
+                and isinstance(build_descriptor.get("ecosystem"), str)
+                else ""
+            )
+        body = {
+            "schema_version": "p3-adapter-discovery-v1",
+            "adapter_id": adapter_id,
+            "ecosystem": ecosystem,
+            "discovery_status": "ADAPTER_EXECUTION_FAILED",
+            "implementation_source_sha256": entry["source_sha256"],
+            "source_files": [],
+            "declarations": [],
+            "public_schemas": [],
+            "sites": [],
+            "unsupported_or_exclusion_reason": reason,
+        }
+        return {**body, "artifact_sha256": canonical_sha256(body)}
+
+
 def _validate_discovery(
     discovery: Mapping[str, Any],
     *,
@@ -3480,20 +3528,19 @@ def build_common_inputs(
             "public frame controlled_subject_source_id differs from source_record",
         )
     discovery_status = public_frame.get("discovery_status")
-    if discovery_status not in {"EXECUTABLE", "ADAPTER_UNSUPPORTED"}:
+    if discovery_status not in {
+        "EXECUTABLE",
+        "ADAPTER_UNSUPPORTED",
+        "ADAPTER_EXECUTION_FAILED",
+    }:
         raise EvidenceError("E_FRAME", "public frame discovery status is invalid")
     kind_to_generator = {
         entry["schema_kind"]: entry for entry in validated_registry["generators"]
     }
     eligible = _eligible_public_schemas(public_frame, kind_to_generator)
-    if discovery_status == "ADAPTER_UNSUPPORTED" and eligible:
+    if discovery_status in {"ADAPTER_UNSUPPORTED", "ADAPTER_EXECUTION_FAILED"} and eligible:
         raise EvidenceError(
             "E_FRAME", "unsupported discovery cannot carry eligible public schemas"
-        )
-    if discovery_status == "EXECUTABLE" and not eligible:
-        raise EvidenceError(
-            "E_COMMON_EXECUTABLE",
-            "executable discovery produced no eligible common-input schema",
         )
     rows: list[dict[str, Any]] = []
     if not eligible:
@@ -3622,8 +3669,12 @@ def build_common_inputs(
                 }
             )
 
-    if discovery_status == "EXECUTABLE" and not any(
-        row["status"] == "COMMON_INPUT_EXECUTABLE" for row in rows
+    if (
+        discovery_status == "EXECUTABLE"
+        and eligible
+        and not any(
+            row["status"] == "COMMON_INPUT_EXECUTABLE" for row in rows
+        )
     ):
         raise EvidenceError(
             "E_COMMON_EXECUTABLE",
@@ -3704,7 +3755,7 @@ def derive_subject_material(
         raise EvidenceError("E_ADAPTER_REGISTRY", "adapter registry entries are absent")
     adapter_id = _ecosystem_to_adapter(adapter_registry).get(ecosystem)
     source_id = _controlled_subject_source_id(source_record)
-    raw_discovery = run_adapter_discovery(
+    raw_discovery = discover_subject_or_fail_closed(
         source_snapshot,
         spec["build_descriptor"],
         adapter_registry,
