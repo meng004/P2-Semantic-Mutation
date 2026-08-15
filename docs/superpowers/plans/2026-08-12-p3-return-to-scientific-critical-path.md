@@ -170,8 +170,11 @@ It is a reproducibility support artifact, off the argumentation critical path.
   (verify-bridge PASS 2026-08-13, `aba70e89b603…`; adapters real since
   Task 4 GREEN at `b5e1645c`; frames frozen 2026-08-14/15 at `54a72576`
   after CA-01/CA-02. Actual funnel 3/9/23, not the planned 3/5/27.
-  Status after push: `PHASE1_CLOSURE_CANDIDATE` pending Sol High final
-  review. Claims stay `blocked`.)
+  Final review PASS archived at
+  `docs/review_20260815/phase1_sol_high_final_review.md`
+  (file SHA-256
+  `95345c4229e8e3dedd21e3f7da022fc5daeceb1018392dc1d0e3e35b00fa5a7d`).
+  Status: `PHASE1_CLOSED`. Claims stay `blocked`.)
 
 ### Sequencing note
 
@@ -269,5 +272,11 @@ infrastructure beyond what its phase's exit criterion names.
   `588ff83530c16ef2647b523c157bf5585320dae17754918364db8bd96c5e304b`.
   Freeze `934 passed in 564.00s` at `54a72576`. Protocol V4 unchanged.
   Claims stay `blocked`. Commits `693ae67f` (amendment), `54a72576`
-  (frames). Status after push: `PHASE1_CLOSURE_CANDIDATE` pending Sol
-  High final review; not `PHASE1_CLOSED`.
+  (frames).
+- 2026-08-15 (Sol High final review): independent read-only verdict PASS
+  archived at
+  `docs/review_20260815/phase1_sol_high_final_review.md`
+  (file SHA-256
+  `95345c4229e8e3dedd21e3f7da022fc5daeceb1018392dc1d0e3e35b00fa5a7d`).
+  Status: `PHASE1_CLOSED`; claims remain `blocked`; no Phase 2 execution
+  is authorized.
