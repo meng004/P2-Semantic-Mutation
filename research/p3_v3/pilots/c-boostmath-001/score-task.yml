@@ -1,0 +1,35 @@
+baseline: fixed Boost.Math commit 03ea9c8 on this VM
+inputs:
+  boost_buggy:
+    author: jzmaddock <john@johnmaddock.co.uk>
+    authored_at: '2024-02-04T17:32:30+00:00'
+    full_sha: 75dcb3e3d560663be7e4e04dc4556d12fe54e348
+    short: 75dcb3e
+    subject: 'Merge pull request #1078 from andrjohns/ibeta-inv-assert'
+    tree_sha: e0b72128532db7dbac0fb2c1bfb740ba0851f576
+  boost_fixed:
+    author: jzmaddock <john@johnmaddock.co.uk>
+    authored_at: '2024-02-06T12:34:39+00:00'
+    full_sha: 03ea9c8d7dff1083facd134c8f641e006b68fdae
+    short: 03ea9c8
+    subject: 'Merge pull request #1080 from boostorg/issue184_2024'
+    tree_sha: dc86f3259c84f68ac7c4e2be11a1ed8567011240
+  fixtures:
+  - roots_m037
+  - roots_m003
+  p12_files:
+    data/mutation/c-boostmath-001/NOTES.md: beec37836e60e596c2b719a4b27233b7e3beb3d6f8dcaf827863d971677c89fa
+    data/mutation/c-boostmath-001/case-all.json: 9b1e52bfd1c65da0fa9ea2f49d124b12eda85c23bc19f41496cec06d9eaf26f8
+    data/mutation/c-boostmath-001/mutants/manifest.json: 49bfff62e2badc5283ab48d8eafe83df29d7a69cdc6a1ed1836c7f13fd511fd0
+    scripts/cloud/c-boostmath-001-verification/skew_normal_quantile_mono.cpp: 86dff4a862febce7f9a5eb305195042b2556adff7d0185ca095c00e135a51d91
+    scripts/mutation/c-boostmath-001/mr_suite.cpp: df956d9b21efe5de891131993f045723a57711edc8d6c430a71e285f3fde13ce
+metric: observed single-case MR terminal-state difference
+outputs:
+  atomic_ledger: data/p3_v3/pilots/c-boostmath-001/atomic-ledger.jsonl
+  comparison: data/p3_v3/pilots/c-boostmath-001/comparison.json
+reproducibility_policy: fixed compiler flags, no scientific retry, three repetitions,
+  contract frozen before fixture import
+research_question: Can the minimal P3 chain complete on one revealed case, and is
+  an MR outcome difference observed on this fixed run?
+stopping_rule: one planned inventory; no substitution; stop after two repair rounds
+subject: boost::math::quantile(skew_normal_distribution, p)

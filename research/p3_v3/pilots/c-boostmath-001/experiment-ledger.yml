@@ -1,0 +1,26 @@
+atomic_row_count: 135
+baseline_validity:
+  A1-a: VALID
+  A1-b: VALID
+  B1-1: VALID
+  B1-2: VALID
+  B1-3: VALID
+  B2-1: VALID
+  B2-4: VALID
+  B2-8: VALID
+  T1: VALID
+certification_terminal_states:
+  roots_m003: CONFIRMED_NON_EQUIVALENT
+  roots_m037: CONFIRMED_NON_EQUIVALENT
+comparison_sha256: 0dd3e96de7fd594484ae89a762585c9185dc9509016c1393639ef9755a21cd33
+contract_sha256: 2b79fd46cc188d53f8438ee3c6edec182fbe56c77dc34c7221be2419f4b1dd17
+environment_sha256: 0d31795fc0a50c36d291817969a2fc7d149f7fa2c2386fb70f14a250d956ac64
+ledger_sha256: 41253ecc312606f3c327fba466733291de340014c1bf051f7beef1cef9892543
+lineage:
+  claim_ceiling: observed_single_case
+  confirmatory_eligible: false
+  excluded_from_35_subject_freeze: true
+  execution_mode: RETROSPECTIVE_PIPELINE_REPLAY
+  selection_outcome_independent: false
+  study_role: PILOT_ONLY
+status: FRESH_CLOSED
