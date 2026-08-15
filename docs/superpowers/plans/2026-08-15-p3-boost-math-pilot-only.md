@@ -196,6 +196,7 @@ Named schemas, and any future schema whose version starts with `p3-pilot-`, are 
 - `p3-pilot-result-v1`
 - `p3-pilot-certification-intent-v1`
 - `p3-pilot-certification-result-v1`
+- `p3-pilot-not-started-v1`
 - `p3-pilot-receipt-v1`
 
 Common fields on every durable JSON pilot artifact, and only these common fields:
@@ -305,6 +306,7 @@ sensitivity_planned_count: 80
 evaluation_planned_count: 560
 certification_planned_count: 8
 build_planned_count: 11
+original_execution_planned_count: 80
 outcome_bytes_read: false
 ```
 
@@ -325,16 +327,16 @@ authorization_b_sha256: str
 jobs: list
 build_jobs: list
 certification_jobs: list
+original_execution_jobs: list
 primary_jobs: list
 sensitivity_jobs: list
-original_execution_jobs: list
 primary_planned_count: 480
 sensitivity_planned_count: 80
 evaluation_planned_count: 560
 certification_planned_count: 8
 build_planned_count: 11
 original_execution_planned_count: 80
-total_planned_count: 579
+total_planned_count: 659
 ```
 
 Each `jobs` item is an exact object:
@@ -347,17 +349,21 @@ argv: list[str]
 cwd_identity: str
 tree_sha256: str
 timeout_seconds: int
+command_template_sha256: str
 input_sha256: str | None
 evaluation_mr_sha256: str | None
 mutant_id: str | None
+dependency_job_ids: list[str]
 predecessor_sha256: list[str]
 ```
 
-`job_kind` is one of `CMAKE_CONFIGURE`, `BASELINE_BUILD`, `BASELINE_SMOKE`, `MUTANT_BUILD`, `CERTIFICATION`, `PRIMARY_EVALUATION`, `SENSITIVITY_EVALUATION`. `run_pilot_command` accepts a `job_id` only when it equals an item in `jobs`. Prefix matching such as `job-mutant-build-` is forbidden. Implicit fields `freeze["source_manifest"]` and `freeze["job_argv"]` are forbidden.
+`job_kind` is one of `CMAKE_CONFIGURE`, `BASELINE_BUILD`, `BASELINE_SMOKE`, `MUTANT_BUILD`, `CERTIFICATION`, `ORIGINAL_EVALUATION`, `PRIMARY_EVALUATION`, `SENSITIVITY_EVALUATION`. `run_pilot_command` accepts a `job_id` only when it equals an item in `jobs`. Prefix matching such as `job-mutant-build-` is forbidden. Implicit fields `freeze["source_manifest"]` and `freeze["job_argv"]` are forbidden.
 
-`jobs` is the concatenation, in this order, of `build_jobs`, `certification_jobs`, `primary_jobs`, and `sensitivity_jobs`. Lengths must be 11, 8, 480, and 80. `total_planned_count` is 579.
+`jobs` is the concatenation, in this frozen order, of `build_jobs`, `certification_jobs`, `original_execution_jobs`, `primary_jobs`, and `sensitivity_jobs`. Lengths must be 11, 8, 80, 480, and 80. `total_planned_count` is 659.
 
-Original-execution cache: unique original runs are `2 evaluation MRs × 30 PILOT_COMMON` plus `2 evaluation MRs × 5 PILOT_CONTRACT × 2 contracts`, which is 80. Those 80 identities populate `original_execution_jobs`. Each original identity may be reused by every mutant that shares that MR and input. Receipt `original_execution_started_count` counts unique original identities, not per-mutant replays. Evaluation rows remain 560 and must not double-count a cached original as a second planned original job. A missing original identity is `E_PILOT_OUTPUT_DRIFT`. Implicit reuse without an `original_execution_jobs` entry is forbidden.
+Each `ORIGINAL_EVALUATION` job binds the original tree SHA-256, evaluation MR SHA-256, input SHA-256, `evaluation_input_class`, exact argv, timeout, command-template SHA-256, and predecessor hashes. Unique original runs are `2 evaluation MRs × 30 PILOT_COMMON` plus `2 evaluation MRs × 5 PILOT_CONTRACT × 2 contracts`, which is 80. Those 80 identities populate `original_execution_jobs` and are members of `jobs`. Implicit original execution, implicit cache, or excluding an original process from the executable count is `E_PILOT_OUTPUT_DRIFT`.
+
+Each `PRIMARY_EVALUATION` and `SENSITIVITY_EVALUATION` job must include `dependency_job_ids` naming the corresponding original job and the required build and certification jobs. Evaluation rows remain 560. Original jobs are not extra mutant rows. A missing original identity is `E_PILOT_OUTPUT_DRIFT`.
 
 ### Schema `p3-pilot-intent-v1`
 
@@ -397,7 +403,32 @@ cpu_seconds: float
 peak_rss_bytes: int
 ```
 
-Result must bind `intent_sha256` of the already written intent. If `intent.json` exists, a second launch of the same `run_id`/`job_id` is `E_PILOT_RETRY_FORBIDDEN` even when `result.json` is absent. Crash without result keeps the intent and is counted `started` and not `PASS`. Timeout writes result `TIMEOUT`. Global cutoff writes result `INCONCLUSIVE` with `failure_reason=GLOBAL_TIMEOUT_NOT_STARTED` for every not-started execution-plan job.
+Result must bind `intent_sha256` of the already written intent. If `intent.json` exists, a second launch of the same `run_id`/`job_id` is `E_PILOT_RETRY_FORBIDDEN` even when `result.json` is absent. Timeout writes result `TIMEOUT`. A not-started job must not write `result.json` and must not forge `intent_sha256`.
+
+### Schema `p3-pilot-not-started-v1`
+
+Path: `data/p3_v3/pilot/boost_math/attempts/<job_id>/1/not-started.json`. Independent exact artifact. It is written only for jobs that never received an intent. Exact additional keys:
+
+```text
+job_id: str
+run_id: str
+execution_plan_sha256: str
+job_sha256: str
+recorded_at: str
+launched: false
+terminal_status: "INCONCLUSIVE"
+failure_reason: str
+predecessor_sha256: list[str]
+dependency_job_ids: list[str]
+```
+
+`failure_reason` is exactly `GLOBAL_TIMEOUT_NOT_STARTED` or `DEPENDENCY_NOT_STARTED`. A not-started disposition must not contain `intent_sha256`, `started_at`, `argv`, `exit_code`, or any terminal result field. Forging `intent_sha256` is `E_PILOT_ORACLE`.
+
+`started_count` counts only jobs that already have a written intent. `not_started_count` counts only valid not-started dispositions. `terminal_count` equals valid results plus valid not-started dispositions.
+
+If an intent exists and the process later disappears, a reconciler may write a `p3-pilot-result-v1` with `terminal_status=FAIL_INFRASTRUCTURE` and `failure_reason=ORPHANED_INTENT_NO_PROCESS` only after proving that no process still holds that `job_id`. That write binds the original `intent_sha256`. It must not launch a command and is not a retry. If the old process cannot be proved absent, the runner must BLOCK and must not close the receipt.
+
+If a dependency job fails, every not-yet-started downstream job is retained and receives `DEPENDENCY_NOT_STARTED`. Evaluation rows must not be deleted.
 
 ### Schema `p3-pilot-certification-intent-v1`
 
@@ -437,7 +468,7 @@ witness_sha256: str
 
 ### Schema `p3-pilot-receipt-v1`
 
-Additional keys: `receipt_id`, `gate_id` equal to `G4_EVIDENCE_PACKAGE`, `freeze_sha256`, `execution_plan_sha256`, `score_task_sha256`, `ledger_sha256`, `build_planned_count`, `build_started_count`, `build_terminal_count`, `build_not_started_count`, `certification_planned_count`, `certification_started_count`, `certification_terminal_count`, `certification_not_started_count`, `primary_planned_count`, `primary_started_count`, `primary_terminal_count`, `primary_not_started_count`, `sensitivity_planned_count`, `sensitivity_started_count`, `sensitivity_terminal_count`, `sensitivity_not_started_count`, `evaluation_planned_count`, `original_execution_planned_count`, `original_execution_started_count`, `total_planned_count`, `total_started_count`, `total_terminal_count`, `total_not_started_count`, `claims_status` equal to `blocked`, `rq4_supported` equal to `false`, `formal_denominator_membership` equal to `false`.
+Additional keys: `receipt_id`, `gate_id` equal to `G4_EVIDENCE_PACKAGE`, `freeze_sha256`, `execution_plan_sha256`, `score_task_sha256`, `ledger_sha256`, `build_planned_count`, `build_started_count`, `build_terminal_count`, `build_not_started_count`, `certification_planned_count`, `certification_started_count`, `certification_terminal_count`, `certification_not_started_count`, `primary_planned_count`, `primary_started_count`, `primary_terminal_count`, `primary_not_started_count`, `sensitivity_planned_count`, `sensitivity_started_count`, `sensitivity_terminal_count`, `sensitivity_not_started_count`, `evaluation_planned_count`, `original_execution_planned_count`, `original_execution_started_count`, `original_execution_terminal_count`, `original_execution_not_started_count`, `total_planned_count`, `total_started_count`, `total_terminal_count`, `total_not_started_count`, `claims_status` equal to `blocked`, `rq4_supported` equal to `false`, `formal_denominator_membership` equal to `false`.
 
 Required error codes:
 
@@ -451,6 +482,7 @@ Required error codes:
 - `E_PILOT_CHRONOLOGY`
 - `E_PILOT_SELECTION`
 - `E_PILOT_ORACLE`
+- `E_PILOT_ORPHAN_UNRESOLVED`
 - `E_PILOT_BYTES_TYPE`
 - `E_PILOT_PATCH_HASH`
 - `E_PILOT_PATCH_SCOPE`
@@ -547,7 +579,7 @@ Frozen stronger assignment: exactly 2 semantic mutants per frozen construction c
 
 On a shared site, the syntactic baseline is the unique first candidate under the published syntactic operator order. A second candidate on that site is not selected.
 
-`relation_sha256` is `canonical_sha256` of the relation identity fields excluding `artifact_sha256`. `site_sha256` is `canonical_sha256` of path and span. `semantic_signature` is `canonical_sha256` of `source_input_transform`, `follow_up_input_transform`, metamorphic predicate, tolerance class, and oracle direction.
+`relation_sha256` is `canonical_sha256` of the relation identity fields excluding `relation_sha256` and `artifact_sha256`. `site_sha256` is `canonical_sha256` of path and span. `semantic_signature` is `canonical_sha256` of `source_input_transform`, `follow_up_input_transform`, metamorphic predicate, tolerance class, and oracle direction.
 
 If two construction contracts cannot share one executable input schema, raise `E_PILOT_FREEZE_INCOMPLETE`. Do not manufacture a shared input.
 
@@ -571,6 +603,7 @@ tolerance_class: str
 tolerance_value: str
 activation_obligation: str
 expected_violation_direction: str
+relation_sha256: str
 artifact_sha256: str
 ```
 
@@ -768,6 +801,19 @@ def _syntactic_operator_key(operator: Mapping[str, Any], site: Mapping[str, Any]
     )
 
 
+def _mutant_id(mutant: Mapping[str, Any]) -> str:
+    semantic = mutant.get("semantic_mutant_id")
+    syntactic = mutant.get("syntactic_mutant_id")
+    if isinstance(semantic, str) and syntactic is None:
+        return semantic
+    if isinstance(syntactic, str) and semantic is None:
+        return syntactic
+    raise EvidenceError(
+        "E_PILOT_SELECTION",
+        "mutant id must be exactly one of semantic_mutant_id or syntactic_mutant_id",
+    )
+
+
 def build_semantic_mutants(
     contracts: Sequence[Mapping[str, Any]],
     sites: Sequence[Mapping[str, Any]],
@@ -776,7 +822,7 @@ def build_semantic_mutants(
 ) -> list[dict[str, Any]]:
     if len(contracts) != 2:
         raise EvidenceError("E_PILOT_FREEZE_INCOMPLETE", "need exactly 2 contracts")
-    qualified: list[dict[str, Any]] = []
+    qualified: list[tuple[tuple[Any, ...], dict[str, Any]]] = []
     for contract in contracts:
         for site in sites:
             for operator in operator_catalogue["operators"]:
@@ -789,16 +835,18 @@ def build_semantic_mutants(
                 identity = _materialize_semantic_mutant(source_snapshot, site, operator, contract)
                 if identity["construction_contract_id"] != contract["construction_contract_id"]:
                     continue
-                identity["composite_order"] = (
+                if "composite_order" in identity:
+                    raise EvidenceError("E_PILOT_SELECTION", "composite_order must not enter a durable mutant")
+                key = (
                     _relation_key(contract),
                     _site_key(site),
                     _semantic_operator_key(operator),
                 )
-                qualified.append(identity)
-    qualified.sort(key=lambda item: item["composite_order"])
+                qualified.append((key, identity))
+    qualified.sort(key=lambda item: item[0])
     selected: list[dict[str, Any]] = []
     per_contract: dict[str, int] = {}
-    for item in qualified:
+    for _key, item in qualified:
         contract_id = item["construction_contract_id"]
         if per_contract.get(contract_id, 0) >= 2:
             continue
@@ -869,10 +917,15 @@ def certify_mutant(
     if evidence["non_equivalence_witness"].get("mr_kill_outcome") is not None:
         raise EvidenceError("E_PILOT_CERT_READS_MR", "certification must not read MR kill outcomes")
     return {
-        "schema": "p3-pilot-certification-v1",
-        "mutant_id": frozen_identities["mutant_id"],
+        "schema_version": "p3-pilot-certification-result-v1",
+        "job_id": frozen_identities["job_id"],
+        "run_id": frozen_identities["run_id"],
+        "attempt": 1,
+        "intent_sha256": frozen_identities["intent_sha256"],
+        "ended_at": _utc_now(),
         "gates": evidence,
         "terminal_state": _derive_terminal_state(evidence),
+        "witness_sha256": witness,
     }
 
 
@@ -888,13 +941,23 @@ def build_evaluation_jobs(
     primary: list[dict[str, Any]] = []
     sensitivity: list[dict[str, Any]] = []
     for mutant in mutants:
+        mutant_id = _mutant_id(mutant)
         for mr in mrs:
             for row in common_inputs:
                 primary.append(_evaluation_job(freeze, mutant, mr, row, "PILOT_COMMON"))
-            inherited = contract_inputs_by_mutant[mutant["mutant_id"]]
+            inherited = contract_inputs_by_mutant[mutant_id]
             if len(inherited) != 5:
                 raise EvidenceError("E_PILOT_FREEZE_INCOMPLETE", "each mutant binds exactly 5 PILOT_CONTRACT inputs")
             for row in inherited:
+                sensitivity.append(
+                    _evaluation_job(
+                        freeze,
+                        mutant,
+                        mr,
+                        row,
+                        "PILOT_CONTRACT",
+                    )
+                )
     primary.sort(key=lambda item: item["job_id"])
     sensitivity.sort(key=lambda item: item["job_id"])
     if len(primary) != 8 * 2 * 30:
@@ -918,6 +981,7 @@ def _evaluation_job(
     input_class: str,
 ) -> dict[str, Any]:
     job_kind = "PRIMARY_EVALUATION" if input_class == "PILOT_COMMON" else "SENSITIVITY_EVALUATION"
+    mutant_id = _mutant_id(mutant)
     argv = _rebuild_argv(
         command_template_sha256=freeze["command_template_sha256"],
         job_kind=job_kind,
@@ -926,8 +990,14 @@ def _evaluation_job(
         evaluation_mr_sha256=mr["artifact_sha256"],
         timeout_seconds=freeze["timeout_policy"]["mutant_evaluation"],
     )
+    original_job_id = _job_id(
+        "ORIGINAL_EVALUATION",
+        mr["evaluation_mr_id"],
+        row["input_sha256"],
+        input_class,
+    )
     return {
-        "job_id": _job_id(job_kind, mutant["mutant_id"], mr["evaluation_mr_id"], row["input_sha256"]),
+        "job_id": _job_id(job_kind, mutant_id, mr["evaluation_mr_id"], row["input_sha256"]),
         "job_kind": job_kind,
         "evaluation_input_class": input_class,
         "argv": argv,
@@ -937,12 +1007,78 @@ def _evaluation_job(
         "timeout_seconds": freeze["timeout_policy"]["mutant_evaluation"],
         "input_sha256": row["input_sha256"],
         "evaluation_mr_sha256": mr["artifact_sha256"],
-        "mutant_id": mutant["mutant_id"],
+        "mutant_id": mutant_id,
+        "dependency_job_ids": sorted(
+            {
+                original_job_id,
+                *_required_build_job_ids(freeze, mutant_id),
+                *_required_certification_job_ids(freeze, mutant_id),
+            }
+        ),
         "predecessor_sha256": sorted(
             {
                 freeze["source_manifest_sha256"],
                 freeze["command_template_sha256"],
                 mutant["artifact_sha256"],
+                mr["artifact_sha256"],
+                row["input_sha256"],
+            }
+        ),
+    }
+
+
+def build_original_execution_jobs(
+    freeze: Mapping[str, Any],
+    mrs: Sequence[Mapping[str, Any]],
+    common_inputs: Sequence[Mapping[str, Any]],
+    contract_inputs_by_contract: Mapping[str, Sequence[Mapping[str, Any]]],
+) -> list[dict[str, Any]]:
+    jobs: list[dict[str, Any]] = []
+    for mr in mrs:
+        for row in common_inputs:
+            jobs.append(_original_execution_job(freeze, mr, row, "PILOT_COMMON"))
+        for rows in contract_inputs_by_contract.values():
+            if len(rows) != 5:
+                raise EvidenceError("E_PILOT_FREEZE_INCOMPLETE", "each contract binds exactly 5 PILOT_CONTRACT inputs")
+            for row in rows:
+                jobs.append(_original_execution_job(freeze, mr, row, "PILOT_CONTRACT"))
+    jobs.sort(key=lambda item: item["job_id"])
+    if len(jobs) != 80:
+        raise EvidenceError("E_PILOT_FREEZE_INCOMPLETE", "original_execution_planned_count must be 80")
+    return jobs
+
+
+def _original_execution_job(
+    freeze: Mapping[str, Any],
+    mr: Mapping[str, Any],
+    row: Mapping[str, Any],
+    input_class: str,
+) -> dict[str, Any]:
+    argv = _rebuild_argv(
+        command_template_sha256=freeze["command_template_sha256"],
+        job_kind="ORIGINAL_EVALUATION",
+        tree_sha256=freeze["normalized_source_tree_sha256"],
+        input_sha256=row["input_sha256"],
+        evaluation_mr_sha256=mr["artifact_sha256"],
+        timeout_seconds=freeze["timeout_policy"]["mutant_evaluation"],
+    )
+    return {
+        "job_id": _job_id("ORIGINAL_EVALUATION", mr["evaluation_mr_id"], row["input_sha256"], input_class),
+        "job_kind": "ORIGINAL_EVALUATION",
+        "evaluation_input_class": input_class,
+        "argv": argv,
+        "command_template_sha256": freeze["command_template_sha256"],
+        "cwd_identity": _cwd_identity(freeze["normalized_source_tree_sha256"]),
+        "tree_sha256": freeze["normalized_source_tree_sha256"],
+        "timeout_seconds": freeze["timeout_policy"]["mutant_evaluation"],
+        "input_sha256": row["input_sha256"],
+        "evaluation_mr_sha256": mr["artifact_sha256"],
+        "mutant_id": None,
+        "dependency_job_ids": _required_build_job_ids(freeze, None),
+        "predecessor_sha256": sorted(
+            {
+                freeze["source_manifest_sha256"],
+                freeze["command_template_sha256"],
                 mr["artifact_sha256"],
                 row["input_sha256"],
             }
@@ -1006,32 +1142,33 @@ The future runner must:
 - never retry
 - refuse to start a `run_id` whose attempt directory already exists
 - stop starting new jobs when wall time reaches 14400 seconds
-- record every not-yet-started job in the complete execution-plan inventory as `terminal_status=INCONCLUSIVE` and `failure_reason=GLOBAL_TIMEOUT_NOT_STARTED`
+- write `p3-pilot-not-started-v1` for every not-yet-started job in the complete 659-job inventory, with `failure_reason=GLOBAL_TIMEOUT_NOT_STARTED` or `DEPENDENCY_NOT_STARTED`
+- never write `result.json` or `intent_sha256` for a not-started job
 - retain every frozen row, started or not
 - refuse a receipt that marks a not-started row as `PASS`
 
 Frozen inventory counts:
 
 ```text
+build_planned_count = 11
+certification_planned_count = 8
+original_execution_planned_count = 2 * 30 + 2 * 5 * 2 = 80
 primary_planned_count = 8 mutants * 2 evaluation_mr_id * 30 PILOT_COMMON = 480
 sensitivity_planned_count = 8 mutants * 2 evaluation_mr_id * 5 PILOT_CONTRACT = 80
 evaluation_planned_count = 480 + 80 = 560
-certification_planned_count = 8
-build_planned_count = 11
-original_execution_planned_count = 2 * 30 + 2 * 5 * 2 = 80
-total_planned_count = 11 + 8 + 480 + 80 = 579
+total_planned_count = 11 + 8 + 80 + 480 + 80 = 659
 ```
 
-Receipt conservation is required for each category and for the total:
+Receipt conservation is required for each category, including original execution, and for the total:
 
 ```text
 category_started_count + category_not_started_count = category_planned_count
 category_terminal_count = category_started_count + category_not_started_count
-total_started_count + total_not_started_count = total_planned_count
-total_terminal_count = total_planned_count
+total_started_count + total_not_started_count = 659
+total_terminal_count = 659
 ```
 
-A mismatch is `E_PILOT_OUTPUT_DRIFT`. Global timeout writes `GLOBAL_TIMEOUT_NOT_STARTED` for every unstarted job in the 579-item inventory, including build, certification, primary, and sensitivity jobs. Crash after intent and before result keeps the intent, counts the job `started`, and is not `PASS`. Timeout writes result `TIMEOUT`. Existing intent forbids retry of the same `run_id`/`job_id`.
+`started_count` counts only written intents. `not_started_count` counts only not-started dispositions. `terminal_count` equals valid results plus valid not-started dispositions. A mismatch is `E_PILOT_OUTPUT_DRIFT`. Global timeout writes `GLOBAL_TIMEOUT_NOT_STARTED` for every unstarted job in the 659-item inventory, including build, certification, original, primary, and sensitivity jobs. After a started intent, a disappeared process may be reconciled to `ORPHANED_INTENT_NO_PROCESS` without launching a command and without retry. Timeout writes result `TIMEOUT`. Existing intent forbids retry of the same `run_id`/`job_id`.
 
 ### Task 1: Independent PILOT_ONLY Schemas and Leakage Guards
 
@@ -1057,6 +1194,9 @@ Required future tests:
 - `test_raw_bytes_never_enter_canonical_sha256`
 - `test_patch_json_is_serializable`
 - `test_patch_replays_to_source_snapshot_tree_hash`
+- `test_exact_job_keys_match_producer`
+- `test_composite_order_not_in_durable_artifact`
+- `test_execution_plan_self_hash_and_source_manifest_binding`
 
 In `src/p3_v3/packages.py`, `build_package` and `_validate_manifest` must call `reject_confirmatory_pilot`. A `class` value `PILOT_ONLY` is `E_PILOT_PACKAGE_CLASS`.
 
@@ -1105,6 +1245,9 @@ Produces: `p3-pilot-source-manifest-v1` at `source-manifest.json`.
 Production archive reading must use one opened file descriptor for identity, hash, and buffering:
 
 ```python
+import os
+
+
 def read_production_archive_bytes(archive_path: str) -> bytes:
     fd = os.open(archive_path, os.O_RDONLY)
     try:
@@ -1227,7 +1370,7 @@ env PYTHONPATH=src python3 -m pytest tests/p3_v3/test_pilot.py::test_freeze_reje
 Minimum GREEN, expected exit 0:
 
 ```text
-env PYTHONPATH=src python3 -m pytest tests/p3_v3/test_pilot.py::test_freeze_rejects_count_three_relations tests/p3_v3/test_pilot.py::test_freeze_accepts_exact_244305_fixture tests/p3_v3/test_pilot.py::test_freeze_rejects_reused_contract_identity tests/p3_v3/test_pilot.py::test_mr_builder_rejects_contract_bytes tests/p3_v3/test_pilot.py::test_contract_builder_rejects_mr_bytes tests/p3_v3/test_pilot.py::test_selection_keeps_first_n_total_order tests/p3_v3/test_pilot.py::test_first_n_published_order_is_permutation_invariant tests/p3_v3/test_pilot.py::test_two_plus_two_contract_coverage tests/p3_v3/test_pilot.py::test_syntactic_first_candidate_on_shared_site tests/p3_v3/test_pilot.py::test_freeze_rejects_authorization_b tests/p3_v3/test_pilot.py::test_raw_bytes_never_enter_canonical_sha256 tests/p3_v3/test_pilot.py::test_patch_replays_to_source_snapshot_tree_hash -q
+env PYTHONPATH=src python3 -m pytest tests/p3_v3/test_pilot.py::test_freeze_rejects_count_three_relations tests/p3_v3/test_pilot.py::test_freeze_accepts_exact_244305_fixture tests/p3_v3/test_pilot.py::test_freeze_rejects_reused_contract_identity tests/p3_v3/test_pilot.py::test_mr_builder_rejects_contract_bytes tests/p3_v3/test_pilot.py::test_contract_builder_rejects_mr_bytes tests/p3_v3/test_pilot.py::test_selection_keeps_first_n_total_order tests/p3_v3/test_pilot.py::test_first_n_published_order_is_permutation_invariant tests/p3_v3/test_pilot.py::test_two_plus_two_contract_coverage tests/p3_v3/test_pilot.py::test_syntactic_first_candidate_on_shared_site tests/p3_v3/test_pilot.py::test_freeze_rejects_authorization_b tests/p3_v3/test_pilot.py::test_raw_bytes_never_enter_canonical_sha256 tests/p3_v3/test_pilot.py::test_patch_replays_to_source_snapshot_tree_hash tests/p3_v3/test_pilot.py::test_composite_order_not_in_durable_artifact -q
 ```
 
 Task-specific regression, expected exit 0:
@@ -1248,7 +1391,7 @@ Independent stop: Sol High freeze review. Do not compile mutants. Do not enter T
 
 User authorization required: yes, authorization B. Gate: `G3_EXECUTION` after Sol High freeze PASS.
 
-Create: `data/p3_v3/pilot/boost_math/execution-plan.json`, `data/p3_v3/pilot/boost_math/attempts/<job_id>/1/intent.json` and `result.json`, certification intent/result files, `heartbeat.json`, `checkpoint.json`.
+Create: `data/p3_v3/pilot/boost_math/execution-plan.json`, `data/p3_v3/pilot/boost_math/attempts/<job_id>/1/intent.json` and `result.json`, `not-started.json` where required, certification intent/result files, `heartbeat.json`, `checkpoint.json`.
 
 Modify: `src/p3_v3/pilot.py`, `scripts/p3_v3/pilot.py`, `tests/p3_v3/test_pilot.py`.
 
@@ -1259,21 +1402,83 @@ Produces: `p3-pilot-execution-plan-v1` after authorization B verification, then 
 ```python
 def build_execution_plan(
     freeze: Mapping[str, Any],
-    authorization_b_sha256: str,
+    authorization_b_path: Path,
     source_manifest_sha256: str,
 ) -> dict[str, Any]:
-    if "authorization_b_sha256" in freeze:
-        raise EvidenceError("E_PILOT_CHRONOLOGY", "freeze must not contain authorization B")
-    if authorization_b_sha256 != file_sha256(Path("data/p3_v3/pilot/boost_math/user-auth-execution.txt")):
-        raise EvidenceError("E_PILOT_ORACLE", "authorization B mismatch")
+    validate_exact_object(freeze, PILOT_FREEZE_EXACT)
+    freeze_body = {key: value for key, value in freeze.items() if key != "artifact_sha256"}
+    if freeze["artifact_sha256"] != canonical_sha256(freeze_body):
+        raise EvidenceError("E_PILOT_OUTPUT_DRIFT", "freeze artifact_sha256 mismatch")
+    if "authorization_b_sha256" in freeze or "job_argv" in freeze or "source_manifest" in freeze:
+        raise EvidenceError("E_PILOT_CHRONOLOGY", "freeze must not contain authorization B or implicit fields")
+    auth_bytes = authorization_b_path.read_bytes()
+    if auth_bytes != b"AUTHORIZE_BOOSTMATH_PILOT_EXECUTION\n":
+        raise EvidenceError("E_PILOT_ORACLE", "authorization B bytes differ")
+    authorization_b_sha256 = raw_sha256(auth_bytes)
+    if authorization_b_sha256 != file_sha256(authorization_b_path):
+        raise EvidenceError("E_PILOT_ORACLE", "authorization B hash mismatch")
+    if source_manifest_sha256 != freeze["source_manifest_sha256"]:
+        raise EvidenceError("E_PILOT_SOURCE_IDENTITY", "source_manifest_sha256 differs from freeze binding")
     inventories = _build_complete_inventories(freeze)
-    return {
+    jobs = (
+        inventories["build_jobs"]
+        + inventories["certification_jobs"]
+        + inventories["original_execution_jobs"]
+        + inventories["primary_jobs"]
+        + inventories["sensitivity_jobs"]
+    )
+    if (
+        len(inventories["build_jobs"]) != 11
+        or len(inventories["certification_jobs"]) != 8
+        or len(inventories["original_execution_jobs"]) != 80
+        or len(inventories["primary_jobs"]) != 480
+        or len(inventories["sensitivity_jobs"]) != 80
+        or len(jobs) != 659
+    ):
+        raise EvidenceError("E_PILOT_FREEZE_INCOMPLETE", "execution-plan inventory counts differ")
+    body = {
         "schema_version": "p3-pilot-execution-plan-v1",
-        "freeze_sha256": canonical_sha256({k: v for k, v in freeze.items() if k != "artifact_sha256"}),
+        "execution_class": "PILOT_ONLY",
+        "denominator": "PILOT_ONLY",
+        "p12_item_id": freeze["p12_item_id"],
+        "neutral_snapshot_id": freeze["neutral_snapshot_id"],
+        "normalized_source_tree_sha256": freeze["normalized_source_tree_sha256"],
+        "controlled_subject_id": freeze["controlled_subject_id"],
+        "controlled_subject_source_id": freeze["controlled_subject_source_id"],
+        "predecessor_sha256": sorted(
+            {
+                freeze["artifact_sha256"],
+                source_manifest_sha256,
+                authorization_b_sha256,
+            }
+        ),
+        "execution_plan_id": canonical_sha256(
+            {
+                "freeze_sha256": freeze["artifact_sha256"],
+                "authorization_b_sha256": authorization_b_sha256,
+            }
+        ),
+        "gate_id": "G3_EXECUTION",
+        "freeze_sha256": freeze["artifact_sha256"],
         "source_manifest_sha256": source_manifest_sha256,
         "authorization_b_sha256": authorization_b_sha256,
-        **inventories,
+        "jobs": jobs,
+        "build_jobs": inventories["build_jobs"],
+        "certification_jobs": inventories["certification_jobs"],
+        "original_execution_jobs": inventories["original_execution_jobs"],
+        "primary_jobs": inventories["primary_jobs"],
+        "sensitivity_jobs": inventories["sensitivity_jobs"],
+        "primary_planned_count": 480,
+        "sensitivity_planned_count": 80,
+        "evaluation_planned_count": 560,
+        "certification_planned_count": 8,
+        "build_planned_count": 11,
+        "original_execution_planned_count": 80,
+        "total_planned_count": 659,
     }
+    body["artifact_sha256"] = canonical_sha256(body)
+    validate_exact_object(body, PILOT_EXECUTION_PLAN_EXACT)
+    return body
 
 
 def run_pilot_command(intent: Mapping[str, Any], execution_plan: Mapping[str, Any]) -> dict[str, Any]:
@@ -1284,9 +1489,23 @@ def run_pilot_command(intent: Mapping[str, Any], execution_plan: Mapping[str, An
     if intent["argv"] != job["argv"]:
         raise EvidenceError("E_PILOT_ORACLE", "argv differs from execution-plan inventory")
     return _execute_isolated(intent, job)
+
+
+def reconcile_orphaned_intent(intent: Mapping[str, Any], process_absent: bool) -> dict[str, Any]:
+    if not process_absent:
+        raise EvidenceError("E_PILOT_ORPHAN_UNRESOLVED", "old process cannot be proved absent")
+    return {
+        "schema_version": "p3-pilot-result-v1",
+        "job_id": intent["job_id"],
+        "run_id": intent["run_id"],
+        "attempt": 1,
+        "intent_sha256": canonical_sha256({key: value for key, value in intent.items() if key != "artifact_sha256"}),
+        "terminal_status": "FAIL_INFRASTRUCTURE",
+        "failure_reason": "ORPHANED_INTENT_NO_PROCESS",
+    }
 ```
 
-`_execute_isolated` must materialize the bound tree into a root named by that tree SHA-256, launch `argv` with `shell=False`, enforce `timeout_seconds`, hash stdout and stderr, record `wall_seconds`, `cpu_seconds`, and `peak_rss_bytes`, write a heartbeat at least every 30 seconds, write intent before launch, write result after termination bound to `intent_sha256`, and refuse a second call when `intent.json` already exists for that `run_id`/`job_id`.
+`_execute_isolated` must materialize the bound tree into a root named by that tree SHA-256, launch `argv` with `shell=False`, enforce `timeout_seconds`, hash stdout and stderr, record `wall_seconds`, `cpu_seconds`, and `peak_rss_bytes`, write a heartbeat at least every 30 seconds, write intent before launch, write result after termination bound to `intent_sha256`, and refuse a second call when `intent.json` already exists for that `run_id`/`job_id`. `reconcile_orphaned_intent` must not call `_execute_isolated` and must not start a process.
 
 CUDA missing is ignored. CMake extra flags must not add `-DCMAKE_CUDA_COMPILER` as a required cache entry.
 
@@ -1314,7 +1533,7 @@ env PYTHONPATH=src python3 -m pytest tests/p3_v3/test_pilot.py::test_execute_rej
 Minimum GREEN, expected exit 0:
 
 ```text
-env PYTHONPATH=src python3 -m pytest tests/p3_v3/test_pilot.py::test_execute_rejects_missing_authorization_b tests/p3_v3/test_pilot.py::test_execute_rejects_unknown_argv tests/p3_v3/test_pilot.py::test_execute_records_timeout_without_retry tests/p3_v3/test_pilot.py::test_execute_rejects_second_run_id tests/p3_v3/test_pilot.py::test_kill_requires_original_satisfy_and_mutant_violate tests/p3_v3/test_pilot.py::test_global_timeout_marks_not_started tests/p3_v3/test_pilot.py::test_run_pilot_command_rejects_prefix_job_id tests/p3_v3/test_pilot.py::test_execution_plan_requires_exact_job_inventory tests/p3_v3/test_pilot.py::test_primary_count_480 tests/p3_v3/test_pilot.py::test_sensitivity_count_80 tests/p3_v3/test_pilot.py::test_evaluation_count_560 tests/p3_v3/test_pilot.py::test_pilot_contract_excluded_from_primary tests/p3_v3/test_pilot.py::test_certify_rejects_forged_policy tests/p3_v3/test_pilot.py::test_certify_rejects_forged_result tests/p3_v3/test_pilot.py::test_certify_derives_terminal_from_receipts_only -q
+env PYTHONPATH=src python3 -m pytest tests/p3_v3/test_pilot.py::test_execute_rejects_missing_authorization_b tests/p3_v3/test_pilot.py::test_execute_rejects_unknown_argv tests/p3_v3/test_pilot.py::test_execute_records_timeout_without_retry tests/p3_v3/test_pilot.py::test_execute_rejects_second_run_id tests/p3_v3/test_pilot.py::test_kill_requires_original_satisfy_and_mutant_violate tests/p3_v3/test_pilot.py::test_global_timeout_marks_not_started tests/p3_v3/test_pilot.py::test_run_pilot_command_rejects_prefix_job_id tests/p3_v3/test_pilot.py::test_execution_plan_requires_exact_job_inventory tests/p3_v3/test_pilot.py::test_primary_count_480 tests/p3_v3/test_pilot.py::test_sensitivity_count_80 tests/p3_v3/test_pilot.py::test_evaluation_count_560 tests/p3_v3/test_pilot.py::test_original_count_80 tests/p3_v3/test_pilot.py::test_total_count_659 tests/p3_v3/test_pilot.py::test_mutant_jobs_bind_original_dependency tests/p3_v3/test_pilot.py::test_not_started_does_not_require_intent tests/p3_v3/test_pilot.py::test_orphan_reconciliation_does_not_launch tests/p3_v3/test_pilot.py::test_pilot_contract_excluded_from_primary tests/p3_v3/test_pilot.py::test_certify_rejects_forged_policy tests/p3_v3/test_pilot.py::test_certify_rejects_forged_result tests/p3_v3/test_pilot.py::test_certify_derives_terminal_from_receipts_only tests/p3_v3/test_pilot.py::test_certification_schema_is_result_v1 tests/p3_v3/test_pilot.py::test_exact_job_keys_match_producer tests/p3_v3/test_pilot.py::test_execution_plan_self_hash_and_source_manifest_binding -q
 ```
 
 Those tests must use a fake command such as `python3 -c "import time; time.sleep(5)"` with `timeout_seconds=1`. They must not invoke CMake on Boost.Math in the unit suite.
@@ -1396,7 +1615,7 @@ Candidate claim table rules:
 - RQ4 is never unlocked by this pilot
 - the table must not use population or cross-project wording
 
-Receipt conservation: build, certification, primary, sensitivity, original-execution, and total counters must each satisfy started + not_started = planned and terminal = planned. Primary planned is 480. Sensitivity planned is 80. Evaluation planned is 560. Total planned is 579. A not-started row cannot be `PASS`. `claims_status` is `blocked`. `rq4_supported` is `false`. `formal_denominator_membership` is `false`.
+Receipt conservation: build, certification, original-execution, primary, sensitivity, and total counters must each satisfy started + not_started = planned and terminal = planned. Primary planned is 480. Sensitivity planned is 80. Evaluation planned is 560. Original planned is 80. Total planned is 659. A not-started row cannot be `PASS` and cannot bind a forged `intent_sha256`. `claims_status` is `blocked`. `rq4_supported` is `false`. `formal_denominator_membership` is `false`.
 
 CLI:
 
@@ -1467,10 +1686,10 @@ A later authorized execution may close only when all of the following are true:
 - Freeze cardinality is 2/4/4/30/5 with paired mutants, distinct contract-group identities, two independent evaluation MRs, reconstructable patches, and no authorization B
 - Construction and MR chains are hash-chained and mutually unread
 - Selection uses the published total orders, 2+2 coverage, and permutation-invariant first-N
-- Task 4 writes `execution-plan.json` only after authorization B and binds the exact 579-job inventory
+- Task 4 writes `execution-plan.json` only after authorization B and binds the exact 659-job inventory
 - Two user authorization files were hashed into the relevant artifacts
-- Timeouts are the frozen integers; every unstarted execution-plan job is `GLOBAL_TIMEOUT_NOT_STARTED`
-- Build, certification, primary=480, sensitivity=80, evaluation=560, original-execution=80, and total=579 counters conserve
+- Timeouts are the frozen integers; every unstarted execution-plan job receives `p3-pilot-not-started-v1`
+- Build=11, certification=8, original=80, primary=480, sensitivity=80, evaluation=560, and total=659 counters conserve
 - `score-task.yml` and `experiment-ledger.yml` exist and the receipt says `claims_status=blocked`, `rq4_supported=false`, and `formal_denominator_membership=false`
 - Claim ledger bytes are unchanged
 - CUDA was not required
