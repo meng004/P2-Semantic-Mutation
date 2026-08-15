@@ -13,7 +13,7 @@ with Sol High.
 | Required P3 base commit | `8cd3e2da8ab31cc313a17fed01dc63ea84d59690` |
 | Required P3 base tree | `be48398268f8096b6872d9e918f3064fa13cea98` |
 | Branch | `cursor/p3-c-boostmath-pilot-001` |
-| Head after evidence commit | `422420ebaf169a34106eb2e0f78527c9b3856c1c` |
+| Head after evidence commit | `e27307d0401650b14c81aad00e3cceaefd2ea546` |
 
 Start-gate check at session open:
 
@@ -30,7 +30,7 @@ git status --porcelain
 
 1. `39cd3f4b078e3b8037898df38858de7bf2a82f85`
    `feat(p3-v3): add isolated boostmath pilot runner`
-2. `422420ebaf169a34106eb2e0f78527c9b3856c1c`
+2. `e27307d0401650b14c81aad00e3cceaefd2ea546`
    `exp(p3-v3): record C-BOOSTMATH-001 pilot evidence`
 
 ## Exact execution commands
