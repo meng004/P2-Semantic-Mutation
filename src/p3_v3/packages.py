@@ -18,6 +18,7 @@ from .artifacts import (
     validate_exact_object,
     validate_sha256,
 )
+from .pilot import reject_confirmatory_pilot
 
 PACKAGE_A_CLASSES = {
     "PUBLIC_BEHAVIOR_FRAME",
@@ -212,6 +213,7 @@ def build_package(
         if relative in seen:
             raise EvidenceError("E_PACKAGE_DUPLICATE", f"duplicate path: {relative}")
         seen.add(relative)
+        _reject_pilot_package_class(spec["class"], f"file_specs[{index}]")
         if spec["class"] not in effective_classes:
             raise EvidenceError(
                 "E_PACKAGE_CONTENT_CLASS",
@@ -239,8 +241,14 @@ def build_package(
     return {**body, "artifact_sha256": canonical_sha256(body)}
 
 
+def _reject_pilot_package_class(class_name: str, context: str) -> None:
+    if class_name == "PILOT_ONLY":
+        raise EvidenceError("E_PILOT_PACKAGE_CLASS", f"{context} rejected PILOT_ONLY")
+
+
 def _validate_manifest(manifest: Mapping[str, Any]) -> dict[str, Any]:
     value = validate_exact_object(dict(manifest), _MANIFEST_SCHEMA, "manifest")
+    reject_confirmatory_pilot(value, "package.manifest")
     body = {key: item for key, item in value.items() if key != "artifact_sha256"}
     if value["artifact_sha256"] != canonical_sha256(body):
         raise EvidenceError("E_PACKAGE_MANIFEST_HASH", "manifest self-hash differs")

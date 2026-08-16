@@ -24,6 +24,7 @@ from .artifacts import (
     write_canonical_json,
 )
 from .bridge_and_frames import INFRASTRUCTURE_RETRY_LIMIT, P12_OUTCOME_STATES
+from .pilot import reject_confirmatory_pilot
 
 TERMINAL_STATES = {
     "PASS",
@@ -740,6 +741,11 @@ def _validate_locked_jobs(
             raise EvidenceError(
                 "E_AUTHORITY_JOB_SET", "locked job schema differs"
             ) from exc
+        if job["execution_class"] == "PILOT_ONLY":
+            raise EvidenceError(
+                "E_PILOT_DENOMINATOR_LEAK",
+                f"locked_jobs[{index}] rejected PILOT_ONLY execution_class",
+            )
         if (
             job["execution_class"] not in _EXECUTION_CLASSES
             or job["p12_access_class"] not in _P12_ACCESS_CLASSES
@@ -921,6 +927,8 @@ def _verify_ledger_bytes(raw: bytes) -> list[dict[str, Any]]:
             raise EvidenceError(
                 "E_LEDGER_JSON", f"invalid ledger line {line_number}"
             ) from exc
+        if isinstance(event, Mapping):
+            reject_confirmatory_pilot(event, f"ledger[{line_number}]")
         if canonical_json_bytes(event) != line:
             raise EvidenceError(
                 "E_LEDGER_CANONICAL", f"noncanonical ledger line {line_number}"
@@ -1371,6 +1379,11 @@ def validate_claim_ledger(claims: Mapping[str, Any]) -> dict[str, Any]:
             )
         for reference in references:
             safe_relative_path(reference)
+            if reference.startswith("data/p3_v3/pilot/"):
+                raise EvidenceError(
+                    "E_PILOT_DENOMINATOR_LEAK",
+                    "claim ledger cannot cite pilot evidence",
+                )
         normalized.append(claim)
     claim_ids = [claim["claim_id"] for claim in normalized]
     if claim_ids != list(dict.fromkeys(claim_ids)):

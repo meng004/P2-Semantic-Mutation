@@ -63,6 +63,7 @@ from p3_v3.packages import (  # noqa: E402
     verify_package,
 )
 from p3_v3.preflight import run_preflight  # noqa: E402
+from p3_v3.pilot import reject_confirmatory_pilot  # noqa: E402
 from p3_v3.run_records import (  # noqa: E402
     _verify_locked_execution_snapshot,
     close_phase,
@@ -72,6 +73,10 @@ from p3_v3.run_records import (  # noqa: E402
     verify_ledger,
     verify_phase_receipt,
 )
+
+
+def reject_confirmatory_artifact(value, context: str) -> None:
+    reject_confirmatory_pilot(value, context)
 
 SCIENTIFIC_PLAN_SHA256 = (
     "fea00496801c31ba074aa74742f5e6a77019ffc2e344642122a15462d7443830"
@@ -2608,6 +2613,8 @@ def load_authority_lock(lock_path: Path, expected_sha256: str) -> dict[str, Any]
         raise EvidenceError(
             "E_AUTHORITY_LOCK_SCHEMA", "authority lock is noncanonical"
         )
+    if isinstance(value, Mapping):
+        reject_confirmatory_artifact(value, "authority-lock")
     return validate_authority_lock(value)
 
 
@@ -3767,6 +3774,8 @@ def _indexed_file(
             raise EvidenceError(
                 "E_NONCANONICAL_JSON", f"noncanonical indexed JSON: {relative}"
             )
+        if isinstance(value, Mapping):
+            reject_confirmatory_artifact(value, context)
     else:
         value = raw
     loaded[relative] = raw
@@ -3785,6 +3794,8 @@ def _canonical_index_snapshot(raw: bytes, context: str) -> Any:
         raise EvidenceError(
             "E_NONCANONICAL_JSON", f"noncanonical indexed JSON: {context}"
         )
+    if isinstance(value, Mapping):
+        reject_confirmatory_artifact(value, context)
     return value
 
 
@@ -3819,6 +3830,8 @@ def _load_evidence_index(
         raise EvidenceError(
             "E_NONCANONICAL_JSON", "evidence index bytes are noncanonical"
         )
+    if isinstance(parsed, Mapping):
+        reject_confirmatory_artifact(parsed, "evidence_index")
     _reject_credential_metadata(parsed)
     value = validate_exact_object(parsed, _INDEX_SCHEMA, "evidence_index")
     index_sha256 = hashlib.sha256(raw).hexdigest()
@@ -4842,7 +4855,9 @@ def dispatch(args: argparse.Namespace) -> dict:
         _write_output(args.output, manifest)
         return {"status": "PASS", "manifest_sha256": canonical_sha256(manifest)}
     if args.command == "verify-package":
-        verify_package(args.root, read_canonical_json(args.manifest))
+        manifest = read_canonical_json(args.manifest)
+        reject_confirmatory_artifact(manifest, "verify-package")
+        verify_package(args.root, manifest)
         return {"status": "PASS", "manifest_sha256": file_sha256(args.manifest)}
     if args.command == "run-preflight":
         result = run_preflight(args.root, read_canonical_json(args.spec))

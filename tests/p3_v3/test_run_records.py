@@ -1052,6 +1052,22 @@ def test_claim_ledger_rejects_nonblocked_or_nonexact_claims(mutation):
         validate_claim_ledger(_claim_ledger(*claims))
 
 
+def test_claim_ledger_rejects_pilot_evidence_path():
+    with pytest.raises(EvidenceError, match="E_PILOT_DENOMINATOR_LEAK"):
+        validate_claim_ledger(
+            _claim_ledger(
+                _claim(
+                    "C1_SEMANTIC_MUTATION_SYSTEM_PROTOCOL",
+                    "data/p3_v3/pilot/boost_math/pilot-plan.json",
+                ),
+                _claim(
+                    "C2_CROSS_PROJECT_OPERATOR_EFFECTIVENESS",
+                    "protocol.json",
+                ),
+            )
+        )
+
+
 def test_phase7_p12_result_requires_scientific_outcome_and_others_forbid_it(tmp_path):
     controlled = tmp_path / "jobs/controlled/1"
     create_intent(controlled, _intent(job_id="controlled"))

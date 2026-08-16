@@ -22,6 +22,7 @@ from p3_v3.artifacts import (
     EvidenceError,
     canonical_json_bytes,
     canonical_sha256,
+    file_sha256,
     write_canonical_json,
 )
 from p3_v3.bridge_and_frames import (
@@ -7060,3 +7061,83 @@ def test_verify_evidence_parser_dispatch_checks_external_digest_before_index(
     monkeypatch.setattr(evidence_module, "_load_evidence_index", forbid_index_loading)
     with pytest.raises(EvidenceError, match="E_AUTHORITY_LOCK_DIGEST"):
         evidence_module.dispatch(args)
+
+
+def test_cli_verify_package_rejects_unknown_pilot_schema(tmp_path):
+    manifest = tmp_path / "manifest.json"
+    manifest.write_bytes(
+        canonical_json_bytes(
+            {
+                "schema_version": "p3-pilot-future-v9",
+                "role": "CONSTRUCTION_A",
+                "parents": [],
+                "files": [],
+                "package_tree_sha256": "0" * 64,
+                "artifact_sha256": "0" * 64,
+            }
+        )
+    )
+    args = evidence_module.build_parser().parse_args(
+        ["verify-package", "--root", str(tmp_path), "--manifest", str(manifest)]
+    )
+    with pytest.raises(EvidenceError, match="E_PILOT_DENOMINATOR_LEAK"):
+        evidence_module.dispatch(args)
+
+
+def test_cli_verify_run_records_rejects_pilot_schema_before_ledger_validation(
+    tmp_path,
+):
+    ledger = tmp_path / "ledger.jsonl"
+    ledger.write_bytes(
+        canonical_json_bytes(
+            {
+                "schema_version": "p3-pilot-future-v9",
+                "execution_class": "PILOT_ONLY",
+                "denominator": "PILOT_ONLY",
+            }
+        )
+    )
+    args = evidence_module.build_parser().parse_args(
+        ["verify-run-records", "--ledger", str(ledger)]
+    )
+    with pytest.raises(EvidenceError, match="E_PILOT_DENOMINATOR_LEAK"):
+        evidence_module.dispatch(args)
+
+
+def test_cli_verify_evidence_rejects_pilot_artifact_before_confirmatory_validation(
+    tmp_path,
+):
+    lock = tmp_path / "authority-lock.json"
+    lock.write_bytes(
+        canonical_json_bytes(
+            {
+                "schema_version": "p3-pilot-future-v9",
+                "execution_class": "PILOT_ONLY",
+                "denominator": "PILOT_ONLY",
+            }
+        )
+    )
+    index = tmp_path / "index.json"
+    index.write_bytes(canonical_json_bytes({"schema_version": "p3-pilot-future-v9"}))
+    args = evidence_module.build_parser().parse_args(
+        [
+            "verify-evidence",
+            "--index",
+            str(index),
+            "--authority-lock",
+            str(lock),
+            "--authority-lock-sha256",
+            file_sha256(lock),
+        ]
+    )
+    with pytest.raises(EvidenceError, match="E_PILOT_DENOMINATOR_LEAK"):
+        evidence_module.dispatch(args)
+
+
+def test_pilot_cli_forbids_source_and_execution_verbs():
+    import scripts.p3_v3.pilot as pilot_cli
+
+    parser = pilot_cli.build_parser()
+    for verb in ("validate-source", "extract", "freeze", "execute", "certify"):
+        with pytest.raises(SystemExit):
+            parser.parse_args([verb])

@@ -8,6 +8,7 @@ import pytest
 import p3_v3.packages as packages_module
 from p3_v3.artifacts import EvidenceError, canonical_sha256
 from p3_v3.packages import (
+    ALLOWED_CLASSES,
     PACKAGE_A_CLASSES,
     PACKAGE_B_CLASSES,
     PACKAGE_B_PRIMARY_CLASSES,
@@ -607,3 +608,21 @@ def test_common_input_evidence_requires_validity_hash_in_first_consumer_intent()
                 }
             ],
         )
+
+
+def test_pilot_only_class_rejected_before_generic_package_class(tmp_path):
+    source = tmp_path / "source"
+    source.mkdir()
+    (source / "program.py").write_text("print(1)\n", encoding="utf-8")
+    with pytest.raises(EvidenceError, match="E_PILOT_PACKAGE_CLASS"):
+        build_package(
+            "CONSTRUCTION_A",
+            source,
+            [{"path": "program.py", "class": "PILOT_ONLY"}],
+            ["a" * 64],
+        )
+
+
+def test_allowed_classes_omit_pilot_only():
+    for classes in ALLOWED_CLASSES.values():
+        assert "PILOT_ONLY" not in classes
