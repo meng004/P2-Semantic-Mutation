@@ -1,0 +1,1 @@
+{"authorized_state":"PILOT_PLAN_FROZEN","claims":"blocked","reviewed_plan_path":"docs/superpowers/plans/2026-08-16-p3-boost-math-pilot-foundation-only.md","reviewed_plan_sha256":"479931df4dd6562177e28c333305f3c55bbf081a596f5e7de337b8a92fa73463","verdict":"PASS"}
