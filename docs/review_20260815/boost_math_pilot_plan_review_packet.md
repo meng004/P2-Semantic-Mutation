@@ -1,24 +1,24 @@
-# Boost.Math PILOT_ONLY Plan Review Packet — P1A1 Named Amendment
+# Boost.Math PILOT_ONLY Plan Review Packet — P1A2 Exact-Schema Closure
 
-- Packet title: P1A1 named amendment to the Boost.Math PILOT_ONLY plan
-- Round: P1A1_BOOST_MATH_PILOT_PLAN_CONTRACT_AMENDMENT
+- Packet title: P1A2 exact-schema closure amendment to the Boost.Math PILOT_ONLY plan
+- Round: P1A2_BOOST_MATH_PILOT_PLAN_EXACT_SCHEMA_CLOSURE
 - Builder identity: Cursor VM
-- Amendment type: controller-approved named amendment
-- Base commit: `0c6d5e4089e22d0fb2f320dc57c588c3fcf51d70`
-- Starting commit for this amendment: `0c6d5e4089e22d0fb2f320dc57c588c3fcf51d70`
-- Reviewed repair range: `0c6d5e4089e22d0fb2f320dc57c588c3fcf51d70..NEW_HEAD`
+- Amendment type: controller-approved named amendment after P1A1 BLOCK
+- Base commit: `fe6d259c2883a93f8724b0093aa817bb96615802`
+- Starting commit for this amendment: `fe6d259c2883a93f8724b0093aa817bb96615802`
+- Reviewed repair range: `fe6d259c2883a93f8724b0093aa817bb96615802..NEW_HEAD`
 - NEW_HEAD is the unique successor commit on `origin/main` that modifies only the two files listed below
 - Plan path: `docs/superpowers/plans/2026-08-15-p3-boost-math-pilot-only.md`
 - Packet path: `docs/review_20260815/boost_math_pilot_plan_review_packet.md`
-- Old plan SHA-256: `06d3586c8310d23defb5f70aab3bce539732c2288825799da54159b0ef0b9104`
-- Old plan bytes: 76675
-- Old plan LF count: 1489
-- New plan SHA-256: `cfe89b1da2842c298626f03ddd76ff00f39738eadebf61d2cb40fa9d1e8af04c`
-- New plan bytes: 87376
-- New plan LF count: 1708
-- Old packet SHA-256: `050d51323e8775c74ed639cf4685c43fab914b0951119a692b20a9bfe9af9ac5`
-- Old packet bytes: 9047
-- Old packet LF count: 157
+- Old plan SHA-256: `cfe89b1da2842c298626f03ddd76ff00f39738eadebf61d2cb40fa9d1e8af04c`
+- Old plan bytes: 87376
+- Old plan LF count: 1708
+- New plan SHA-256: `1612a6ee81773c7db97625ae3497fab31b93ad70f2ecaefce2fdd845bda73cca`
+- New plan bytes: 90718
+- New plan LF count: 1767
+- Old packet SHA-256: `99faaab0759163164ae3104ead19349578c16078e498ee21967c6e9c670b02fe`
+- Old packet bytes: 9473
+- Old packet LF count: 160
 - New packet SHA-256, bytes, and LF: the SHA-256, byte length, and LF count of this file after the authorized two-file commit; this packet does not self-hash
 - Requested reviewer: GPT-5.6 Sol High
 - Reasoning setting: high
@@ -26,7 +26,7 @@
 - This packet does not record an independent review PASS, does not speak for the reviewer, and does not claim `PILOT_PLAN_FROZEN`.
 - This packet is not an independent PASS.
 
-The conventional R2 GREEN on `0c6d5e4089e22d0fb2f320dc57c588c3fcf51d70` was overturned by an independent AST and exact-schema review. That review proved mechanical contract holes: an unparsable Python fence, a sensitivity loop with no body, schema/producer mismatches, durable `composite_order` pollution, original executions excluded from the executable inventory, not-started results that could not bind a missing intent, an incomplete execution-plan producer, and an undeclared certification schema name. This amendment repairs only those contracts. It does not enlarge scientific scope.
+P1A1 independent review returned `BLOCK`. Conventional AST GREEN did not prove that the published producers can emit exact artifacts. This amendment repairs only four mechanical contracts: three-argument `validate_exact_object`, the certification-result exact producer, the orphan-result exact producer with honest null unobserved fields, and the started/not-started XOR terminal machine. Scientific cardinality, timeouts, selection, denominator, and claims ceiling are unchanged.
 
 ## File change list
 
@@ -37,21 +37,20 @@ This round modifies only:
 
 No source, test, protocol, ledger, claim, data, or Boost.Math source file was created or modified.
 
-## A1.1–A1.5 line index
+## A2.1–A2.4 line index
 
 Line numbers refer to the new plan.
 
 | Amendment | Anchors | Lines |
 |---|---|---|
-| A1.1 sensitivity builder and AST-valid fences | `sensitivity.append(`, `_evaluation_job(..., "PILOT_CONTRACT")` | 952, 958 |
-| A1.2 exact schema/producer alignment | `relation_sha256: str`; definition excluding self-hash; `_mutant_id`; job `command_template_sha256`; `(key, identity)` tuple; exact-key test | 606, 582, 804, 295/352, 845, 1197/1536 |
-| A1.3 original executions in exact inventory | `ORIGINAL_EVALUATION`; five-way concatenation; `total_planned_count: 659`; `11 + 8 + 80 + 480 + 80 = 659`; `dependency_job_ids`; `build_original_execution_jobs` | 360/364/994/1059, 362, 339, 1159, 356/366/1011, 1030 |
-| A1.4 legal not-started and crash terminal | `p3-pilot-not-started-v1`; `not-started.json`; `ORPHANED_INTENT_NO_PROCESS`; `DEPENDENCY_NOT_STARTED`; `reconcile_orphaned_intent` | 408, 410/1394, 429/1171/1504, 425/431/1145, 1494 |
-| A1.5 execution-plan and certification exact artifacts | `build_execution_plan`; source-manifest compare; `artifact_sha256`; `schema_version = p3-pilot-certification-result-v1` | 1403, 1420, 1479, 920 |
+| A2.1 three-argument `validate_exact_object` | `pilot_freeze`, `pilot_execution_plan` | 1441, 1513–1516 |
+| A2.2 certification-result exact producer | common fields, intent `artifact_sha256` bind, `PILOT_CERTIFICATION_RESULT_EXACT` | 892–961, 957 |
+| A2.3 orphan-result exact producer | `str \| None` unobserved fields, `None` literals, `PILOT_RESULT_EXACT` | 397–408, 1528–1568 |
+| A2.4 terminal XOR | `(intent.json + result.json) XOR not-started.json`; both not-started reasons in Task 4 stop and score stopping rule | 1431–1433, 1616, 1649 |
 
 ## Authority input hashes
 
-Unchanged from `0c6d5e4089e22d0fb2f320dc57c588c3fcf51d70`.
+Unchanged from `fe6d259c2883a93f8724b0093aa817bb96615802`.
 
 | Path | SHA-256 |
 |---|---|
@@ -80,68 +79,53 @@ Boost.Math Phase 1 frames, suffix `74cdc825c3c728c25f5ea857af1565350515a4e631fb0
 
 ## RED
 
-Validator target: `git show 0c6d5e4089e22d0fb2f320dc57c588c3fcf51d70:docs/superpowers/plans/2026-08-15-p3-boost-math-pilot-only.md`.
+Command:
+
+```text
+git show fe6d259c2883a93f8724b0093aa817bb96615802:docs/superpowers/plans/2026-08-15-p3-boost-math-pilot-only.md \
+  | python3 /tmp/p1a2_validate.py -
+```
 
 Exit code: 1
 
 ```text
-python_fenced_blocks=4
-AST_OK fence-1 chars=741
-PROVED: fence-2 ast.parse failed: expected an indented block after 'for' statement on line 259 line=260
-AST_OK fence-3 chars=875
-AST_OK fence-4 chars=1361
-PROVED: 1 of 4 python fenced blocks fail ast.parse
-PROVED: sensitivity 'for row in inherited:' has no body
-PROVED: contract schema lacks relation_sha256 but _relation_key reads it
-PROVED: semantic/syntactic schemas have no unified mutant_id but job builder reads mutant['mutant_id']
-  semantic keys include ['semantic_mutant_id: str', 'mutant_tree_sha256: str']
-  syntactic keys include ['syntactic_mutant_id: str', 'paired_semantic_mutant_id: str', 'mutant_tree_sha256: str']
-PROVED: exact job schema lacks command_template_sha256 but producer outputs it
-PROVED: composite_order is written onto the durable mutant identity
-PROVED: original_execution_jobs is not in jobs concatenation
-PROVED: total 579 is 11+8+480+80 and excludes the 80 original executions
-PROVED: not-started disposition writes a result that requires intent_sha256 with no intent
-PROVED: execution-plan producer omits complete exact artifact fields: execution_plan_id, gate_id, validate_exact_object, total_planned_count
-PROVED: build_execution_plan does not compare source_manifest_sha256 with freeze binding
-PROVED: certify_mutant emits undeclared schema p3-pilot-certification-v1
-
-RED SUMMARY: all 12 amendment gaps proved
+PASS four Python fences AST-valid
+FAIL build_execution_plan validate_exact arity != 3: observed arities [2, 2]
+FAIL certify_mutant exact producer incomplete: keys [] != ['artifact_sha256', 'attempt', 'controlled_subject_id', 'controlled_subject_source_id', 'denominator', 'ended_at', 'execution_class', 'gates', 'intent_sha256', 'job_id', 'neutral_snapshot_id', 'normalized_source_tree_sha256', 'p12_item_id', 'predecessor_sha256', 'run_id', 'schema_version', 'terminal_state', 'witness_sha256']
+FAIL reconcile_orphaned_intent exact producer incomplete: keys [] != ['artifact_sha256', 'attempt', 'controlled_subject_id', 'controlled_subject_source_id', 'cpu_seconds', 'denominator', 'ended_at', 'execution_class', 'exit_code', 'failure_reason', 'intent_sha256', 'job_id', 'neutral_snapshot_id', 'normalized_source_tree_sha256', 'p12_item_id', 'peak_rss_bytes', 'predecessor_sha256', 'run_id', 'schema_version', 'stderr_sha256', 'stdout_sha256', 'terminal_status', 'wall_seconds']
+FAIL orphan unknown evidence remains null: unobserved fields are not None
+FAIL terminal disposition text conflict: xor=False still_claims_all=True
+FAIL both not-started reasons covered: Task 4 stop or score stopping_rule incomplete
+PASS counts remain 11/8/80/480/80/659
+PASS claims remain blocked
+RED SUMMARY: build_execution_plan validate_exact arity != 3; certify_mutant exact producer incomplete; reconcile_orphaned_intent exact producer incomplete; orphan unknown evidence remains null; terminal disposition text conflict; both not-started reasons covered
 ```
 
 ## GREEN
 
-Validator target: the amended working-tree plan.
+Command:
+
+```text
+python3 /tmp/p1a2_validate.py \
+  docs/superpowers/plans/2026-08-15-p3-boost-math-pilot-only.md
+```
 
 Exit code: 0
 
 ```text
-PASS 4 python fenced blocks parsed
-PASS: sensitivity loop produces 80 jobs
-PASS: relation_sha256 schema/consumer consistent
-PASS: normalized mutant ID helper covers semantic/syntactic
-PASS: job exact keys equal producer
-  keys ['job_id', 'job_kind', 'evaluation_input_class', 'argv', 'cwd_identity', 'tree_sha256', 'timeout_seconds', 'command_template_sha256', 'input_sha256', 'evaluation_mr_sha256', 'mutant_id', 'dependency_job_ids', 'predecessor_sha256']
-PASS: composite_order does not enter durable artifact
-PASS: original jobs are exact executable inventory members
-PASS: build=11
-PASS: certification=8
-PASS: original=80
-PASS: primary=480
-PASS: sensitivity=80
-PASS: evaluation=560
-PASS: total=659
-PASS: mutant jobs bind original dependency
-PASS: not-started artifact does not require intent
-PASS: crash reconciliation does not execute a command and forbids retry
-PASS: execution-plan exact self-hash and source-manifest binding
-PASS: certification schema consistent
-PASS: claims=blocked
-PASS: rq4_supported=false
-PASS: formal_denominator_membership=false
-PASS: full suite command at every Task end
-
-GREEN SUMMARY: all amendment assertions passed
+PASS four Python fences AST-valid
+PASS validate_exact_object calls have context
+PASS certification-result exact producer
+PASS orphan-result exact producer
+PASS orphan unknown evidence remains null
+PASS terminal disposition XOR
+PASS both not-started reasons covered
+PASS counts remain 11/8/80/480/80/659
+PASS claims remain blocked
+GREEN SUMMARY: exact-schema closure assertions passed
 ```
+
+Repair rounds used: 1 (no second mechanical correction).
 
 ## Declarations
 
@@ -157,4 +141,4 @@ GREEN SUMMARY: all amendment assertions passed
 - `claims=blocked`
 - Current requested state: `PILOT_PLAN_REVIEW_CANDIDATE`
 
-GPT-5.6 Sol High is requested to perform an independent high-reasoning review of `0c6d5e4089e22d0fb2f320dc57c588c3fcf51d70..NEW_HEAD`. This builder does not assign PASS and does not claim `PILOT_PLAN_FROZEN`.
+GPT-5.6 Sol High is requested to perform an independent high-reasoning review of `fe6d259c2883a93f8724b0093aa817bb96615802..NEW_HEAD`. This builder does not assign PASS and does not claim `PILOT_PLAN_FROZEN`.

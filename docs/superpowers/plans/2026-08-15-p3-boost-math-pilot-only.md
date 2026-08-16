@@ -394,16 +394,18 @@ attempt: 1
 intent_sha256: str
 ended_at: str
 exit_code: int | None
-stdout_sha256: str
-stderr_sha256: str
+stdout_sha256: str | None
+stderr_sha256: str | None
 terminal_status: str
 failure_reason: str
-wall_seconds: float
-cpu_seconds: float
-peak_rss_bytes: int
+wall_seconds: float | None
+cpu_seconds: float | None
+peak_rss_bytes: int | None
 ```
 
 Result must bind `intent_sha256` of the already written intent. If `intent.json` exists, a second launch of the same `run_id`/`job_id` is `E_PILOT_RETRY_FORBIDDEN` even when `result.json` is absent. Timeout writes result `TIMEOUT`. A not-started job must not write `result.json` and must not forge `intent_sha256`.
+
+`stdout_sha256`, `stderr_sha256`, `wall_seconds`, `cpu_seconds`, and `peak_rss_bytes` may all be `null` only when `terminal_status=FAIL_INFRASTRUCTURE` and `failure_reason=ORPHANED_INTENT_NO_PROCESS`. A normally launched and terminated job must record the observed stdout hash, stderr hash, and resource metrics. Zero values or empty-output hashes must not stand in for unobserved evidence.
 
 ### Schema `p3-pilot-not-started-v1`
 
@@ -891,9 +893,14 @@ def build_syntactic_baselines(
 
 def certify_mutant(
     *,
-    frozen_identities: Mapping[str, Any],
+    intent: Mapping[str, Any],
+    freeze: Mapping[str, Any],
     receipts: Sequence[Mapping[str, Any]],
 ) -> dict[str, Any]:
+    validate_exact_object(intent, PILOT_CERTIFICATION_INTENT_EXACT, "pilot_certification_intent")
+    intent_body = {key: value for key, value in intent.items() if key != "artifact_sha256"}
+    if intent["artifact_sha256"] != canonical_sha256(intent_body):
+        raise EvidenceError("E_PILOT_OUTPUT_DRIFT", "certification intent artifact_sha256 mismatch")
     required = (
         "patch_scope",
         "build_and_execution",
@@ -905,28 +912,52 @@ def certify_mutant(
         "non_equivalence_witness",
         "uniqueness",
     )
-    evidence = _derive_certification_gates(frozen_identities, receipts)
+    evidence = _derive_certification_gates(intent, freeze, receipts)
     if set(evidence) != set(required):
         raise EvidenceError("E_PILOT_CERT_INCOMPLETE", "nine-gate evidence missing")
-    if "witness_policy" in frozen_identities or "terminal_state" in frozen_identities:
+    if "witness_policy" in intent or "terminal_state" in intent:
         raise EvidenceError("E_PILOT_FORGED_POLICY", "caller-supplied certification terminals are rejected")
     witness = evidence["non_equivalence_witness"]["witness_sha256"]
-    forbidden = set(frozen_identities["pilot_common_input_sha256s"]) | set(frozen_identities["pilot_contract_input_sha256s"]) | set(frozen_identities["mr_evaluation_input_sha256s"])
+    forbidden = set(freeze["pilot_common_input_sha256s"]) | set(freeze["pilot_contract_input_sha256s"]) | set(freeze["mr_evaluation_input_sha256s"])
     if witness in forbidden:
         raise EvidenceError("E_PILOT_WITNESS_COLLISION", "witness equals a published evaluation input")
     if evidence["non_equivalence_witness"].get("mr_kill_outcome") is not None:
         raise EvidenceError("E_PILOT_CERT_READS_MR", "certification must not read MR kill outcomes")
-    return {
+    receipt_hashes = sorted({item["artifact_sha256"] for item in receipts})
+    body = {
         "schema_version": "p3-pilot-certification-result-v1",
-        "job_id": frozen_identities["job_id"],
-        "run_id": frozen_identities["run_id"],
+        "execution_class": "PILOT_ONLY",
+        "denominator": "PILOT_ONLY",
+        "p12_item_id": freeze["p12_item_id"],
+        "neutral_snapshot_id": freeze["neutral_snapshot_id"],
+        "normalized_source_tree_sha256": freeze["normalized_source_tree_sha256"],
+        "controlled_subject_id": freeze["controlled_subject_id"],
+        "controlled_subject_source_id": freeze["controlled_subject_source_id"],
+        "predecessor_sha256": sorted(
+            {
+                intent["artifact_sha256"],
+                intent["frozen_contract_sha256"],
+                intent["frozen_patch_sha256"],
+                intent["mutant_tree_sha256"],
+                *receipt_hashes,
+            }
+        ),
+        "job_id": intent["job_id"],
+        "run_id": intent["run_id"],
         "attempt": 1,
-        "intent_sha256": frozen_identities["intent_sha256"],
+        "intent_sha256": intent["artifact_sha256"],
         "ended_at": _utc_now(),
         "gates": evidence,
         "terminal_state": _derive_terminal_state(evidence),
         "witness_sha256": witness,
     }
+    body["artifact_sha256"] = canonical_sha256(body)
+    validate_exact_object(
+        body,
+        PILOT_CERTIFICATION_RESULT_EXACT,
+        "pilot_certification_result",
+    )
+    return body
 
 
 def build_evaluation_jobs(
@@ -1397,7 +1428,9 @@ Modify: `src/p3_v3/pilot.py`, `scripts/p3_v3/pilot.py`, `tests/p3_v3/test_pilot.
 
 Consumes: `pilot-freeze.json`, authorization B, validated source-manifest SHA-256, exact build descriptor identity.
 
-Produces: `p3-pilot-execution-plan-v1` after authorization B verification, then one `p3-pilot-intent-v1` and one `p3-pilot-result-v1` per inventory job. Certification jobs additionally write `p3-pilot-certification-intent-v1` and `p3-pilot-certification-result-v1`.
+Produces: `p3-pilot-execution-plan-v1` after authorization B verification. Each inventory job has exactly one terminal disposition:
+(intent.json + result.json) XOR not-started.json.
+A job that already has `intent.json` must not write `not-started.json`. A job that never received an intent must not write `result.json`. The not-started `failure_reason` is exactly `GLOBAL_TIMEOUT_NOT_STARTED` or `DEPENDENCY_NOT_STARTED`. Certification jobs that start write `p3-pilot-certification-intent-v1` and `p3-pilot-certification-result-v1`.
 
 ```python
 def build_execution_plan(
@@ -1405,7 +1438,7 @@ def build_execution_plan(
     authorization_b_path: Path,
     source_manifest_sha256: str,
 ) -> dict[str, Any]:
-    validate_exact_object(freeze, PILOT_FREEZE_EXACT)
+    validate_exact_object(freeze, PILOT_FREEZE_EXACT, "pilot_freeze")
     freeze_body = {key: value for key, value in freeze.items() if key != "artifact_sha256"}
     if freeze["artifact_sha256"] != canonical_sha256(freeze_body):
         raise EvidenceError("E_PILOT_OUTPUT_DRIFT", "freeze artifact_sha256 mismatch")
@@ -1477,7 +1510,11 @@ def build_execution_plan(
         "total_planned_count": 659,
     }
     body["artifact_sha256"] = canonical_sha256(body)
-    validate_exact_object(body, PILOT_EXECUTION_PLAN_EXACT)
+    validate_exact_object(
+        body,
+        PILOT_EXECUTION_PLAN_EXACT,
+        "pilot_execution_plan",
+    )
     return body
 
 
@@ -1492,17 +1529,39 @@ def run_pilot_command(intent: Mapping[str, Any], execution_plan: Mapping[str, An
 
 
 def reconcile_orphaned_intent(intent: Mapping[str, Any], process_absent: bool) -> dict[str, Any]:
+    validate_exact_object(intent, PILOT_INTENT_EXACT, "pilot_intent")
+    intent_body = {key: value for key, value in intent.items() if key != "artifact_sha256"}
+    if intent["artifact_sha256"] != canonical_sha256(intent_body):
+        raise EvidenceError("E_PILOT_OUTPUT_DRIFT", "intent artifact_sha256 mismatch")
     if not process_absent:
         raise EvidenceError("E_PILOT_ORPHAN_UNRESOLVED", "old process cannot be proved absent")
-    return {
+    body = {
         "schema_version": "p3-pilot-result-v1",
+        "execution_class": "PILOT_ONLY",
+        "denominator": "PILOT_ONLY",
+        "p12_item_id": intent["p12_item_id"],
+        "neutral_snapshot_id": intent["neutral_snapshot_id"],
+        "normalized_source_tree_sha256": intent["normalized_source_tree_sha256"],
+        "controlled_subject_id": intent["controlled_subject_id"],
+        "controlled_subject_source_id": intent["controlled_subject_source_id"],
+        "predecessor_sha256": sorted({intent["artifact_sha256"]}),
         "job_id": intent["job_id"],
         "run_id": intent["run_id"],
         "attempt": 1,
-        "intent_sha256": canonical_sha256({key: value for key, value in intent.items() if key != "artifact_sha256"}),
+        "intent_sha256": intent["artifact_sha256"],
+        "ended_at": _utc_now(),
+        "exit_code": None,
+        "stdout_sha256": None,
+        "stderr_sha256": None,
         "terminal_status": "FAIL_INFRASTRUCTURE",
         "failure_reason": "ORPHANED_INTENT_NO_PROCESS",
+        "wall_seconds": None,
+        "cpu_seconds": None,
+        "peak_rss_bytes": None,
     }
+    body["artifact_sha256"] = canonical_sha256(body)
+    validate_exact_object(body, PILOT_RESULT_EXACT, "pilot_result")
+    return body
 ```
 
 `_execute_isolated` must materialize the bound tree into a root named by that tree SHA-256, launch `argv` with `shell=False`, enforce `timeout_seconds`, hash stdout and stderr, record `wall_seconds`, `cpu_seconds`, and `peak_rss_bytes`, write a heartbeat at least every 30 seconds, write intent before launch, write result after termination bound to `intent_sha256`, and refuse a second call when `intent.json` already exists for that `run_id`/`job_id`. `reconcile_orphaned_intent` must not call `_execute_isolated` and must not start a process.
@@ -1550,7 +1609,7 @@ Final complete suite, expected exit 0:
 env PYTHONPATH=src python3 -m pytest tests/p3_v3 -q
 ```
 
-Independent stop: all frozen jobs terminal or marked `GLOBAL_TIMEOUT_NOT_STARTED`. Do not open the claim ledger. Do not enter Task 5 automatically.
+Independent stop: all frozen jobs have exactly one terminal disposition, either `(intent.json + result.json)` or `not-started.json` with `GLOBAL_TIMEOUT_NOT_STARTED` or `DEPENDENCY_NOT_STARTED`. Do not open the claim ledger. Do not enter Task 5 automatically.
 
 ### Task 5: Evidence Closure and Reproducibility Package
 
@@ -1587,7 +1646,7 @@ outputs:
   - pilot-receipt.json
   - experiment-ledger.yml
 deterministic_reproducibility_policy: "same archive bytes, same freeze, same reconstructed argv, same timeout, no retry"
-stopping_rule: "first terminal result per run_id; full-pilot wall 14400 seconds; GLOBAL_TIMEOUT_NOT_STARTED for unstarted rows"
+stopping_rule: "first terminal result per run_id; full-pilot wall 14400 seconds; GLOBAL_TIMEOUT_NOT_STARTED or DEPENDENCY_NOT_STARTED for unstarted rows"
 claims: "blocked"
 ```
 
@@ -1615,7 +1674,7 @@ Candidate claim table rules:
 - RQ4 is never unlocked by this pilot
 - the table must not use population or cross-project wording
 
-Receipt conservation: build, certification, original-execution, primary, sensitivity, and total counters must each satisfy started + not_started = planned and terminal = planned. Primary planned is 480. Sensitivity planned is 80. Evaluation planned is 560. Original planned is 80. Total planned is 659. A not-started row cannot be `PASS` and cannot bind a forged `intent_sha256`. `claims_status` is `blocked`. `rq4_supported` is `false`. `formal_denominator_membership` is `false`.
+Receipt conservation: build, certification, original-execution, primary, sensitivity, and total counters must each satisfy started + not_started = planned and terminal = planned. Primary planned is 480. Sensitivity planned is 80. Evaluation planned is 560. Original planned is 80. Total planned is 659. A not-started row cannot be `PASS` and cannot bind a forged `intent_sha256`. Receipt closure accepts both `GLOBAL_TIMEOUT_NOT_STARTED` and `DEPENDENCY_NOT_STARTED`. `claims_status` is `blocked`. `rq4_supported` is `false`. `formal_denominator_membership` is `false`.
 
 CLI:
 
