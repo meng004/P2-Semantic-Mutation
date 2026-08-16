@@ -4,7 +4,7 @@
 
 **Goal:** Isolate Boost.Math `PILOT_ONLY` work behind a fail-closed `p3-pilot-*` discriminator, one exact `p3-pilot-plan-v1` machine artifact, and confirmatory leakage guards. This plan covers foundation isolation only.
 
-**Architecture:** Keep every confirmatory `p3-v3-*` schema unchanged. Add one new exact artifact family whose every `schema_version` starts with `p3-pilot-`. Teach confirmatory package, run-record, and evidence seams to reject that prefix and the `PILOT_ONLY` class before any confirmatory object is accepted. Bind the machine plan to this Markdown file, a future archived independent Sol High plan verdict, and a blocked claim ceiling. After the single implementation task, stop at `PILOT_IMPLEMENTATION_REVIEW_CANDIDATE`.
+**Architecture:** Keep every confirmatory `p3-v3-*` schema unchanged. Add one new exact artifact family whose every `schema_version` starts with `p3-pilot-`. Teach confirmatory package, run-record, and evidence seams to reject that prefix and the `PILOT_ONLY` class before any confirmatory object is accepted. Bind the machine plan to this Markdown file, the frozen canonical Sol High verdict path, and a blocked claim ceiling. After the single implementation task, stop at `PILOT_IMPLEMENTATION_REVIEW_CANDIDATE`.
 
 **Tech Stack:** Python 3.11 or newer, existing `src/p3_v3/artifacts.py` exact-object helpers, existing confirmatory package, run-record, and evidence modules, pytest with `PYTHONPATH=src`.
 
@@ -28,13 +28,15 @@
 - `p3_v3.packages.ALLOWED_CLASSES` remains the confirmatory class set and must stay free of `PILOT_ONLY`.
 - `p3_v3.run_records` confirmatory execution classes remain `SYNTHETIC_INFRASTRUCTURE`, `NON_SCIENTIFIC_CONTROL`, and `REAL_SCIENTIFIC`.
 - Cursor VM has no `rtk`. Later implementation uses bare `python3`, `pytest`, and `git`.
-- This planning node does not run pytest, does not run a production command, and does not start Task 1.
+- This planning node does not run pytest, does not run a production command, does not start Task 1, and does not create the canonical verdict file.
 
 ---
 
 ## Scope Downgrade Context
 
 Independent P1A2 review returned `SCOPE_DOWNGRADE` on the complete plan `docs/superpowers/plans/2026-08-15-p3-boost-math-pilot-only.md`. Surface contracts in that document are not enough to freeze a full source-to-closure path, because certification binding and orphan closure now need a new evidence model. Those problems stay out of scope.
+
+Independent P1SD1 review returned `BLOCK` on the first foundation candidate because the G1 verdict gate accepted arbitrary files and the three confirmatory CLI entries were not tested through `dispatch()`. This repair closes those two contracts only.
 
 This foundation plan covers only G1 isolation:
 
@@ -46,7 +48,8 @@ This foundation plan covers only G1 isolation:
 
 This plan has exactly one implementation task.
 
-Starting commit for this planning node: `4746283ca2d89da435596ea60ef0e707c2abee79`.
+Starting commit for the first foundation candidate: `4746283ca2d89da435596ea60ef0e707c2abee79`.
+Starting commit for this gate-binding repair: `b79bcd62c3c81ada82726a3a06809086ff9ff1d7`.
 
 ---
 
@@ -114,6 +117,88 @@ The later implementation task may modify only:
 
 No other file is approved. In particular, do not create `tests/p3_v3/test_pilot_extract.py`, `tests/p3_v3/fixtures/pilot/valid_source_manifest_min.json`, or `data/p3_v3/pilot/boost_math/source-manifest.json`.
 
+The canonical verdict path is reserved and is not part of the Task 1 create list:
+
+- `docs/review_20260816/boost_math_pilot_foundation_sol_high_review.md`
+
+That file is created only by a later independent archival node after an independent plan PASS. Task 1 must not create, overwrite, or modify it. This planning node also must not create it.
+
+---
+
+## Canonical Verdict Gate
+
+Frozen production path:
+
+```text
+docs/review_20260816/boost_math_pilot_foundation_sol_high_review.md
+```
+
+The file is one canonical JSON object with exactly one terminal LF. Extra text, Markdown prose, or a second object is `E_PILOT_PLAN_VERDICT`. Exact keys and exact types:
+
+```python
+from pathlib import Path
+
+from p3_v3.artifacts import EvidenceError, validate_exact_object, validate_sha256
+
+CANONICAL_FOUNDATION_VERDICT_PATH = Path(
+    "docs/review_20260816/boost_math_pilot_foundation_sol_high_review.md"
+)
+FOUNDATION_MARKDOWN_PATH = Path(
+    "docs/superpowers/plans/2026-08-16-p3-boost-math-pilot-foundation-only.md"
+)
+FOUNDATION_VERDICT_EXACT = {
+    "reviewed_plan_path": str,
+    "reviewed_plan_sha256": str,
+    "verdict": str,
+    "authorized_state": str,
+    "claims": str,
+}
+
+
+def validate_foundation_verdict(
+    value: object, markdown_plan_sha256: str
+) -> dict:
+    validated = validate_exact_object(
+        value, FOUNDATION_VERDICT_EXACT, "foundation-verdict"
+    )
+    validate_sha256(
+        validated["reviewed_plan_sha256"], "foundation-verdict.reviewed_plan_sha256"
+    )
+    if validated["reviewed_plan_path"] != FOUNDATION_MARKDOWN_PATH.as_posix():
+        raise EvidenceError("E_PILOT_PLAN_VERDICT", "reviewed plan path differs")
+    if validated["reviewed_plan_sha256"] != markdown_plan_sha256:
+        raise EvidenceError("E_PILOT_PLAN_VERDICT", "reviewed plan hash differs")
+    if validated["verdict"] != "PASS":
+        raise EvidenceError("E_PILOT_PLAN_VERDICT", "verdict is not PASS")
+    if validated["authorized_state"] != "PILOT_PLAN_FROZEN":
+        raise EvidenceError(
+            "E_PILOT_PLAN_VERDICT", "authorized_state is not PILOT_PLAN_FROZEN"
+        )
+    if validated["claims"] != "blocked":
+        raise EvidenceError("E_PILOT_PLAN_VERDICT", "claims are not blocked")
+    return validated
+```
+
+Required literal fields after the exact-object check:
+
+- `reviewed_plan_path` equals `docs/superpowers/plans/2026-08-16-p3-boost-math-pilot-foundation-only.md`
+- `reviewed_plan_sha256` equals the runtime SHA-256 of that Markdown file
+- `verdict: PASS`
+- `authorized_state: PILOT_PLAN_FROZEN`
+- `claims: blocked`
+
+Arbitrary text, `BLOCK`, a wrong plan hash, extra keys, or missing keys must raise `E_PILOT_PLAN_VERDICT`. A missing canonical file is `E_PILOT_PLAN_VERDICT_ABSENT`. A non-regular file is `E_PILOT_PLAN_VERDICT`.
+
+Production `write_pilot_plan(markdown_path, output_path)` reads only `CANONICAL_FOUNDATION_VERDICT_PATH`. It has no verdict-path argument. Tests may monkeypatch that constant onto a temporary regular file. Monkeypatching the path does not skip `validate_foundation_verdict`.
+
+Task 1 start preconditions, checked before any write:
+
+- the canonical verdict path is a tracked, clean, regular file;
+- Task 1 does not create, overwrite, or modify it;
+- `reviewed_plan_sha256` equals the SHA-256 of the Markdown file actually being bound.
+
+If an independent review later writes `verdict: PASS` and `authorized_state: PILOT_PLAN_FROZEN` into that archival file, that archival node is still not Task 1.
+
 ---
 
 ## Discriminator and Leakage Guards
@@ -164,12 +249,16 @@ A confirmatory seam must call `is_pilot_artifact` before filename checks and bef
 - `_EXECUTION_CLASSES` must stay `{SYNTHETIC_INFRASTRUCTURE, NON_SCIENTIFIC_CONTROL, REAL_SCIENTIFIC}`.
 - `_validate_locked_jobs` must treat `execution_class=PILOT_ONLY` as `E_PILOT_DENOMINATOR_LEAK` before the generic `E_AUTHORITY_EXECUTION_CLASS` path.
 - `validate_claim_ledger` must reject any evidence reference whose path starts with `data/p3_v3/pilot/` using `E_PILOT_DENOMINATOR_LEAK`.
+- `_verify_ledger_bytes` must call `reject_confirmatory_pilot(event, f"ledger[{line_number}]")` immediately after a successful `json.loads` and before `_EVENT_SCHEMA` or other confirmatory validation. Ordinary malformed JSON remains `E_LEDGER_JSON` and must not be rewritten as `E_PILOT_DENOMINATOR_LEAK`.
 
 `scripts/p3_v3/evidence.py`:
 
 - Import `reject_confirmatory_pilot`.
-- `verify-package`, `verify-run-records`, and `verify-evidence` must reject an object whose `schema.startswith("p3-pilot-")` or whose `execution_class` or `denominator` equals `PILOT_ONLY`.
-- Add `reject_confirmatory_artifact(value, context)` as a thin wrapper that calls `reject_confirmatory_pilot`. Tests may call that wrapper directly.
+- Add `reject_confirmatory_artifact(value, context)` as a thin wrapper that calls `reject_confirmatory_pilot`.
+- `dispatch()` for `verify-package` must `read_canonical_json` the manifest, then call `reject_confirmatory_artifact(manifest, "verify-package")` before `verify_package`.
+- `dispatch()` for `verify-run-records` must reach `verify_ledger`, whose first Mapping check is the discriminator above.
+- `dispatch()` for `verify-evidence` must call the discriminator on every top-level Mapping produced by `load_authority_lock` and `_load_evidence_index` after the raw object is obtained and before that object's confirmatory validator. For the authority lock, the call is after `json.loads` and the canonical-byte check, and before `validate_authority_lock`. For the evidence index, the call is after `json.loads` and the canonical-byte check, and before `validate_exact_object(parsed, _INDEX_SCHEMA, "evidence_index")`. The same earliest-Mapping rule applies to every later top-level artifact loaded from the index.
+- Ordinary malformed JSON remains the existing `E_JSON` / `E_AUTHORITY_LOCK_SCHEMA` / `E_LEDGER_JSON` path and must not be reported as pilot leakage.
 
 ---
 
@@ -217,14 +306,26 @@ Literal constraints after the exact-object check:
 | `formal_denominator_membership` | `false` |
 | `rq4_supported` | `false` |
 
-`predecessor_sha256` is a sorted unique list of lowercase SHA-256 strings. `markdown_plan_sha256` and `sol_high_plan_verdict_sha256` must pass `validate_sha256`. `artifact_sha256` is `canonical_sha256` of the object with that field removed.
+`markdown_plan_sha256` and `sol_high_plan_verdict_sha256` must pass `validate_sha256`. `artifact_sha256` is `canonical_sha256` of the object with that field removed.
 
-The producer `write_pilot_plan(markdown_path, verdict_path, output_path)` may run only when the verdict file already exists. It binds:
+Predecessor binding is exact. Empty lists, a third hash, a swapped unpaired hash, or any set other than the two bound hashes is `E_PILOT_PLAN_PREDECESSOR`.
 
-- `markdown_plan_sha256` = SHA-256 of `docs/superpowers/plans/2026-08-16-p3-boost-math-pilot-foundation-only.md` for the production output, or of the caller-supplied markdown path in tests;
-- `sol_high_plan_verdict_sha256` = SHA-256 of the archived independent Sol High plan verdict file.
+```python
+predecessor_sha256 == sorted(
+    [
+        markdown_plan_sha256,
+        sol_high_plan_verdict_sha256,
+    ]
+)
+```
 
-A missing verdict file is `E_PILOT_PLAN_VERDICT_ABSENT`. The producer must not invent a placeholder hash.
+The producer `write_pilot_plan(markdown_path, output_path)` uses `CANONICAL_FOUNDATION_VERDICT_PATH` only. It binds:
+
+- `markdown_plan_sha256` = SHA-256 of the Markdown file actually passed in, which for production must be `FOUNDATION_MARKDOWN_PATH`;
+- `sol_high_plan_verdict_sha256` = SHA-256 of the canonical verdict file bytes after `validate_foundation_verdict` succeeds;
+- `predecessor_sha256` = the two-hash sorted list above.
+
+A missing canonical verdict file is `E_PILOT_PLAN_VERDICT_ABSENT`. The producer must not invent a placeholder hash and must not accept a caller-supplied verdict path.
 
 This schema is not a source-identity document, not a freeze, not an execution plan, and not a result. Extra keys such as `archive_sha256`, `freeze_id`, `execution_plan_id`, `job_id`, or `terminal_status` are `E_SCHEMA_KEYS`.
 
@@ -233,14 +334,13 @@ Foundation CLI `scripts/p3_v3/pilot.py` may expose only:
 ```text
 env PYTHONPATH=src python3 scripts/p3_v3/pilot.py write-plan \
   --markdown docs/superpowers/plans/2026-08-16-p3-boost-math-pilot-foundation-only.md \
-  --verdict <archived-sol-high-plan-verdict> \
   --output data/p3_v3/pilot/boost_math/pilot-plan.json
 
 env PYTHONPATH=src python3 scripts/p3_v3/pilot.py validate-plan \
   --plan data/p3_v3/pilot/boost_math/pilot-plan.json
 ```
 
-Forbidden CLI verbs include `validate-source`, `extract`, `freeze`, `execute`, and `certify`. Forbidden module names include `write_source_manifest`, `validate_pilot_source_manifest`, `prepare_source`, `enter_source_gate`, `enter_execution_gate`, and `write_execution_plan`.
+The production `write-plan` parser must not accept `--verdict`. Forbidden CLI verbs include `validate-source`, `extract`, `freeze`, `execute`, and `certify`. Forbidden module names include `write_source_manifest`, `validate_pilot_source_manifest`, `prepare_source`, `enter_source_gate`, `enter_execution_gate`, and `write_execution_plan`.
 
 ---
 
@@ -249,13 +349,14 @@ Forbidden CLI verbs include `validate-source`, `extract`, `freeze`, `execute`, a
 **Files:**
 - Create: `src/p3_v3/pilot.py`, `scripts/p3_v3/pilot.py`, `tests/p3_v3/test_pilot.py`, `tests/p3_v3/test_pilot_leakage.py`, `tests/p3_v3/fixtures/pilot/valid_plan_min.json`, `tests/p3_v3/fixtures/pilot/confirmatory_denied_plan.json`, `data/p3_v3/pilot/boost_math/pilot-plan.json`
 - Modify: `src/p3_v3/packages.py`, `src/p3_v3/run_records.py`, `scripts/p3_v3/evidence.py`, `tests/p3_v3/test_packages.py`, `tests/p3_v3/test_run_records.py`, `tests/p3_v3/test_cli.py`
+- Do not create: `docs/review_20260816/boost_math_pilot_foundation_sol_high_review.md`
 
 **Interfaces:**
-- Consumes: `validate_exact_object(value, schema, context)`, `canonical_sha256`, `validate_sha256`, `write_canonical_json`, `read_canonical_json`, `EvidenceError`, existing confirmatory package, run-record, and evidence entry points
-- Produces: `is_pilot_artifact`, `reject_confirmatory_pilot`, `validate_pilot_plan`, `write_pilot_plan`, confirmatory rejection at package, run-record, and evidence seams, and one `p3-pilot-plan-v1` file
-- Does not produce: source manifest, freeze, execution plan, result, or claim-ledger write
+- Consumes: `validate_exact_object(value, schema, context)`, `canonical_sha256`, `validate_sha256`, `write_canonical_json`, `read_canonical_json`, `EvidenceError`, existing confirmatory package, run-record, and evidence `dispatch()` entry points
+- Produces: `is_pilot_artifact`, `reject_confirmatory_pilot`, `validate_foundation_verdict`, `validate_pilot_plan`, `write_pilot_plan`, confirmatory rejection at package, run-record, and evidence seams, and one `p3-pilot-plan-v1` file
+- Does not produce: source manifest, freeze, execution plan, result, claim-ledger write, or the canonical verdict file
 
-User authorization required: no. Gate: `G1_IMPLEMENTATION` only after an archived independent Sol High plan-review verdict exists. This planning node does not start the gate.
+User authorization required: no. Gate: `G1_IMPLEMENTATION` only after the canonical verdict file exists as a tracked, clean, regular file and validates as `verdict: PASS`. This planning node does not start the gate.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -269,14 +370,36 @@ from pathlib import Path
 
 import pytest
 
-from p3_v3.artifacts import EvidenceError, canonical_sha256, write_canonical_json
+from p3_v3.artifacts import EvidenceError, write_canonical_json
 
 
 def _sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def test_pilot_plan_requires_exact_keys(tmp_path):
+def _install_valid_verdict(monkeypatch, tmp_path: Path, markdown: Path) -> Path:
+    import p3_v3.pilot as pilot
+
+    verdict = tmp_path / "boost_math_pilot_foundation_sol_high_review.md"
+    write_canonical_json(
+        verdict,
+        {
+            "reviewed_plan_path": (
+                "docs/superpowers/plans/"
+                "2026-08-16-p3-boost-math-pilot-foundation-only.md"
+            ),
+            "reviewed_plan_sha256": _sha256_bytes(markdown.read_bytes()),
+            "verdict": "PASS",
+            "authorized_state": "PILOT_PLAN_FROZEN",
+            "claims": "blocked",
+        },
+        exclusive=True,
+    )
+    monkeypatch.setattr(pilot, "CANONICAL_FOUNDATION_VERDICT_PATH", verdict)
+    return verdict
+
+
+def test_pilot_plan_requires_exact_keys():
     from p3_v3.pilot import validate_pilot_plan
 
     value = {
@@ -288,34 +411,30 @@ def test_pilot_plan_requires_exact_keys(tmp_path):
         validate_pilot_plan(value)
 
 
-def test_pilot_plan_requires_self_hash(tmp_path):
+def test_pilot_plan_requires_self_hash(tmp_path, monkeypatch):
     from p3_v3.pilot import write_pilot_plan, validate_pilot_plan
 
     markdown = tmp_path / "plan.md"
-    verdict = tmp_path / "verdict.md"
     output = tmp_path / "pilot-plan.json"
     markdown.write_text("foundation markdown\n", encoding="utf-8")
-    verdict.write_text("archived verdict\n", encoding="utf-8")
-    written = write_pilot_plan(markdown, verdict, output)
+    _install_valid_verdict(monkeypatch, tmp_path, markdown)
+    written = write_pilot_plan(markdown, output)
     broken = dict(written)
     broken["artifact_sha256"] = "0" * 64
     with pytest.raises(EvidenceError, match="E_PILOT_PLAN_HASH"):
         validate_pilot_plan(broken)
 
 
-def test_pilot_plan_binds_markdown_and_verdict(tmp_path):
+def test_pilot_plan_binds_markdown_and_verdict(tmp_path, monkeypatch):
     from p3_v3.pilot import write_pilot_plan, validate_pilot_plan
 
     markdown = tmp_path / "plan.md"
-    verdict = tmp_path / "verdict.md"
     output = tmp_path / "pilot-plan.json"
     markdown.write_text("foundation markdown\n", encoding="utf-8")
-    verdict.write_text("archived verdict\n", encoding="utf-8")
-    written = write_pilot_plan(markdown, verdict, output)
+    verdict = _install_valid_verdict(monkeypatch, tmp_path, markdown)
+    written = write_pilot_plan(markdown, output)
     validated = validate_pilot_plan(written)
-    assert validated["markdown_plan_sha256"] == _sha256_bytes(
-        markdown.read_bytes()
-    )
+    assert validated["markdown_plan_sha256"] == _sha256_bytes(markdown.read_bytes())
     assert validated["sol_high_plan_verdict_sha256"] == _sha256_bytes(
         verdict.read_bytes()
     )
@@ -324,6 +443,132 @@ def test_pilot_plan_binds_markdown_and_verdict(tmp_path):
     assert validated["rq4_supported"] is False
     assert validated["execution_class"] == "PILOT_ONLY"
     assert validated["denominator"] == "PILOT_ONLY"
+
+
+def test_pilot_plan_predecessors_equal_plan_and_verdict(tmp_path, monkeypatch):
+    from p3_v3.pilot import write_pilot_plan, validate_pilot_plan
+
+    markdown = tmp_path / "plan.md"
+    output = tmp_path / "pilot-plan.json"
+    markdown.write_text("foundation markdown\n", encoding="utf-8")
+    verdict = _install_valid_verdict(monkeypatch, tmp_path, markdown)
+    validated = validate_pilot_plan(write_pilot_plan(markdown, output))
+    assert validated["predecessor_sha256"] == sorted(
+        [
+            _sha256_bytes(markdown.read_bytes()),
+            _sha256_bytes(verdict.read_bytes()),
+        ]
+    )
+
+
+def test_pilot_plan_rejects_extra_predecessor(tmp_path, monkeypatch):
+    from p3_v3.pilot import write_pilot_plan, validate_pilot_plan
+
+    markdown = tmp_path / "plan.md"
+    output = tmp_path / "pilot-plan.json"
+    markdown.write_text("foundation markdown\n", encoding="utf-8")
+    _install_valid_verdict(monkeypatch, tmp_path, markdown)
+    written = write_pilot_plan(markdown, output)
+    extra = list(written["predecessor_sha256"]) + ["0" * 64]
+    written["predecessor_sha256"] = sorted(extra)
+    with pytest.raises(EvidenceError, match="E_PILOT_PLAN_PREDECESSOR"):
+        validate_pilot_plan(written)
+
+
+def test_write_plan_rejects_missing_canonical_verdict(tmp_path, monkeypatch):
+    import p3_v3.pilot as pilot
+
+    markdown = tmp_path / "plan.md"
+    output = tmp_path / "pilot-plan.json"
+    markdown.write_text("foundation markdown\n", encoding="utf-8")
+    missing = tmp_path / "missing-verdict.md"
+    monkeypatch.setattr(pilot, "CANONICAL_FOUNDATION_VERDICT_PATH", missing)
+    with pytest.raises(EvidenceError, match="E_PILOT_PLAN_VERDICT_ABSENT"):
+        pilot.write_pilot_plan(markdown, output)
+
+
+def test_write_plan_rejects_arbitrary_verdict_text(tmp_path, monkeypatch):
+    import p3_v3.pilot as pilot
+
+    markdown = tmp_path / "plan.md"
+    output = tmp_path / "pilot-plan.json"
+    markdown.write_text("foundation markdown\n", encoding="utf-8")
+    verdict = tmp_path / "boost_math_pilot_foundation_sol_high_review.md"
+    verdict.write_text("not a foundation verdict object\n", encoding="utf-8")
+    monkeypatch.setattr(pilot, "CANONICAL_FOUNDATION_VERDICT_PATH", verdict)
+    with pytest.raises(EvidenceError, match="E_PILOT_PLAN_VERDICT"):
+        pilot.write_pilot_plan(markdown, output)
+
+
+def test_write_plan_rejects_non_pass_verdict(tmp_path, monkeypatch):
+    import p3_v3.pilot as pilot
+
+    markdown = tmp_path / "plan.md"
+    output = tmp_path / "pilot-plan.json"
+    markdown.write_text("foundation markdown\n", encoding="utf-8")
+    verdict = tmp_path / "boost_math_pilot_foundation_sol_high_review.md"
+    write_canonical_json(
+        verdict,
+        {
+            "reviewed_plan_path": (
+                "docs/superpowers/plans/"
+                "2026-08-16-p3-boost-math-pilot-foundation-only.md"
+            ),
+            "reviewed_plan_sha256": _sha256_bytes(markdown.read_bytes()),
+            "verdict": "BLOCK",
+            "authorized_state": "PILOT_PLAN_FROZEN",
+            "claims": "blocked",
+        },
+        exclusive=True,
+    )
+    monkeypatch.setattr(pilot, "CANONICAL_FOUNDATION_VERDICT_PATH", verdict)
+    with pytest.raises(EvidenceError, match="E_PILOT_PLAN_VERDICT"):
+        pilot.write_pilot_plan(markdown, output)
+
+
+def test_write_plan_rejects_verdict_plan_hash_mismatch(tmp_path, monkeypatch):
+    import p3_v3.pilot as pilot
+
+    markdown = tmp_path / "plan.md"
+    output = tmp_path / "pilot-plan.json"
+    markdown.write_text("foundation markdown\n", encoding="utf-8")
+    verdict = tmp_path / "boost_math_pilot_foundation_sol_high_review.md"
+    write_canonical_json(
+        verdict,
+        {
+            "reviewed_plan_path": (
+                "docs/superpowers/plans/"
+                "2026-08-16-p3-boost-math-pilot-foundation-only.md"
+            ),
+            "reviewed_plan_sha256": "0" * 64,
+            "verdict": "PASS",
+            "authorized_state": "PILOT_PLAN_FROZEN",
+            "claims": "blocked",
+        },
+        exclusive=True,
+    )
+    monkeypatch.setattr(pilot, "CANONICAL_FOUNDATION_VERDICT_PATH", verdict)
+    with pytest.raises(EvidenceError, match="E_PILOT_PLAN_VERDICT"):
+        pilot.write_pilot_plan(markdown, output)
+
+
+def test_write_plan_cli_has_no_verdict_override():
+    import scripts.p3_v3.pilot as pilot_cli
+
+    parser = pilot_cli.build_parser()
+    with pytest.raises(SystemExit):
+        parser.parse_args(
+            [
+                "write-plan",
+                "--markdown",
+                "docs/superpowers/plans/"
+                "2026-08-16-p3-boost-math-pilot-foundation-only.md",
+                "--verdict",
+                "docs/review_20260816/forged-verdict.md",
+                "--output",
+                "data/p3_v3/pilot/boost_math/pilot-plan.json",
+            ]
+        )
 
 
 def test_pilot_plan_rejected_as_source_manifest():
@@ -370,8 +615,7 @@ from __future__ import annotations
 import pytest
 
 from p3_v3.artifacts import EvidenceError, canonical_sha256
-from p3_v3.packages import build_package, verify_package
-from p3_v3.run_records import validate_claim_ledger
+from p3_v3.packages import verify_package
 import p3_v3.run_records as run_records_module
 import scripts.p3_v3.evidence as evidence_module
 
@@ -409,13 +653,90 @@ def test_pilot_denominator_rejected_from_confirmatory_evidence():
         evidence_module.reject_confirmatory_artifact(value, "verify-evidence")
 ```
 
-Add the same three leakage assertions to `tests/p3_v3/test_packages.py`, `tests/p3_v3/test_run_records.py`, and `tests/p3_v3/test_cli.py` respectively so those existing modules also fail closed:
+Add the production `dispatch()` tests to `tests/p3_v3/test_cli.py`. Each test must assert `E_PILOT_DENOMINATOR_LEAK` and must enter `evidence_module.dispatch`.
+
+```python
+from p3_v3.artifacts import EvidenceError, canonical_json_bytes, file_sha256
+
+
+def test_cli_verify_package_rejects_unknown_pilot_schema(tmp_path):
+    manifest = tmp_path / "manifest.json"
+    manifest.write_bytes(
+        canonical_json_bytes(
+            {
+                "schema_version": "p3-pilot-future-v9",
+                "role": "CONSTRUCTION_A",
+                "parents": [],
+                "files": [],
+                "package_tree_sha256": "0" * 64,
+                "artifact_sha256": "0" * 64,
+            }
+        )
+    )
+    args = evidence_module.build_parser().parse_args(
+        ["verify-package", "--root", str(tmp_path), "--manifest", str(manifest)]
+    )
+    with pytest.raises(EvidenceError, match="E_PILOT_DENOMINATOR_LEAK"):
+        evidence_module.dispatch(args)
+
+
+def test_cli_verify_run_records_rejects_pilot_schema_before_ledger_validation(
+    tmp_path,
+):
+    ledger = tmp_path / "ledger.jsonl"
+    ledger.write_bytes(
+        canonical_json_bytes(
+            {
+                "schema_version": "p3-pilot-future-v9",
+                "execution_class": "PILOT_ONLY",
+                "denominator": "PILOT_ONLY",
+            }
+        )
+    )
+    args = evidence_module.build_parser().parse_args(
+        ["verify-run-records", "--ledger", str(ledger)]
+    )
+    with pytest.raises(EvidenceError, match="E_PILOT_DENOMINATOR_LEAK"):
+        evidence_module.dispatch(args)
+
+
+def test_cli_verify_evidence_rejects_pilot_artifact_before_confirmatory_validation(
+    tmp_path,
+):
+    lock = tmp_path / "authority-lock.json"
+    lock.write_bytes(
+        canonical_json_bytes(
+            {
+                "schema_version": "p3-pilot-future-v9",
+                "execution_class": "PILOT_ONLY",
+                "denominator": "PILOT_ONLY",
+            }
+        )
+    )
+    index = tmp_path / "index.json"
+    index.write_bytes(canonical_json_bytes({"schema_version": "p3-pilot-future-v9"}))
+    args = evidence_module.build_parser().parse_args(
+        [
+            "verify-evidence",
+            "--index",
+            str(index),
+            "--authority-lock",
+            str(lock),
+            "--authority-lock-sha256",
+            file_sha256(lock),
+        ]
+    )
+    with pytest.raises(EvidenceError, match="E_PILOT_DENOMINATOR_LEAK"):
+        evidence_module.dispatch(args)
+```
+
+Also keep these existing-module assertions:
 
 - `test_packages.py`: `build_package` with `class=PILOT_ONLY` raises `E_PILOT_PACKAGE_CLASS`; `ALLOWED_CLASSES` values do not contain `PILOT_ONLY`.
 - `test_run_records.py`: `validate_claim_ledger` rejects a reference starting with `data/p3_v3/pilot/`.
-- `test_cli.py`: `evidence_module.dispatch` for `verify-package` rejects a `p3-pilot-future-v9` manifest; `scripts/p3_v3/pilot.py` parser has no `validate-source`, `extract`, `freeze`, `execute`, or `certify` command.
+- `test_cli.py`: `scripts/p3_v3/pilot.py` parser has no `validate-source`, `extract`, `freeze`, `execute`, or `certify` command.
 
-Create fixture `tests/p3_v3/fixtures/pilot/confirmatory_denied_plan.json` as a complete object whose `schema_version` is `p3-pilot-future-v9` and whose `execution_class` and `denominator` are `PILOT_ONLY`. Create `tests/p3_v3/fixtures/pilot/valid_plan_min.json` only by calling `write_pilot_plan` on a committed markdown and verdict pair, then copying the produced object. Do not hand-edit `artifact_sha256`.
+Create fixture `tests/p3_v3/fixtures/pilot/confirmatory_denied_plan.json` as a complete object whose `schema_version` is `p3-pilot-future-v9` and whose `execution_class` and `denominator` are `PILOT_ONLY`. Create `tests/p3_v3/fixtures/pilot/valid_plan_min.json` only by calling `write_pilot_plan` after installing a content-valid monkeypatched verdict, then copying the produced object. Do not hand-edit `artifact_sha256`.
 
 - [ ] **Step 2: Run RED**
 
@@ -434,9 +755,9 @@ Expected: exit 1 because `p3_v3.pilot` is absent and the new leakage assertions 
 
 - [ ] **Step 3: Write the minimal implementation**
 
-`src/p3_v3/pilot.py` must define the discriminator, `PILOT_PLAN_EXACT`, `validate_pilot_plan`, and `write_pilot_plan` exactly as specified above. `write_pilot_plan` writes only `p3-pilot-plan-v1` through `write_canonical_json(output_path, value, exclusive=True)` and then re-reads the file with `validate_pilot_plan`.
+`src/p3_v3/pilot.py` must define the discriminator, `CANONICAL_FOUNDATION_VERDICT_PATH`, `FOUNDATION_VERDICT_EXACT`, `PILOT_PLAN_EXACT`, `validate_foundation_verdict`, `validate_pilot_plan`, and `write_pilot_plan(markdown_path, output_path)` exactly as specified above. `write_pilot_plan` writes only `p3-pilot-plan-v1` through `write_canonical_json(output_path, value, exclusive=True)` and then re-reads the file with `validate_pilot_plan`.
 
-`scripts/p3_v3/pilot.py` must parse only `write-plan` and `validate-plan`.
+`scripts/p3_v3/pilot.py` must parse only `write-plan` and `validate-plan`. The `write-plan` parser accepts `--markdown` and `--output` only.
 
 In `src/p3_v3/packages.py`, insert the `PILOT_ONLY` class rejection and the `_validate_manifest` discriminator call shown below.
 
@@ -463,7 +784,7 @@ if job["execution_class"] == "PILOT_ONLY":
     )
 ```
 
-Place that check immediately after the successful `validate_exact_object` call in `_validate_locked_jobs`, before the generic `_EXECUTION_CLASSES` test. In `validate_claim_ledger`, after `safe_relative_path(reference)`:
+Place that check immediately after the successful `validate_exact_object` call in `_validate_locked_jobs`, before the generic `_EXECUTION_CLASSES` test. In `_verify_ledger_bytes`, after `event = json.loads(line.decode("utf-8"))` and before `validate_exact_object(event, _EVENT_SCHEMA, f"ledger[{line_number}]")`, call `reject_confirmatory_pilot(event, f"ledger[{line_number}]")`. In `validate_claim_ledger`, after `safe_relative_path(reference)`:
 
 ```python
 if reference.startswith("data/p3_v3/pilot/"):
@@ -483,9 +804,9 @@ def reject_confirmatory_artifact(value, context: str) -> None:
     reject_confirmatory_pilot(value, context)
 ```
 
-Call `reject_confirmatory_artifact` on every JSON object read by `verify-package`, `verify-run-records`, and `verify-evidence` before ordinary confirmatory validation.
+Wire the three `dispatch()` commands as specified in the leakage section. Do not add a new implementation file.
 
-Production `write-plan` output path is `data/p3_v3/pilot/boost_math/pilot-plan.json`. That write is allowed only after the archived Sol High verdict file exists. This planning node does not perform that write.
+Production `write-plan` output path is `data/p3_v3/pilot/boost_math/pilot-plan.json`. That write is allowed only after the canonical verdict file exists and validates. This planning node does not perform that write.
 
 - [ ] **Step 4: Run minimum GREEN**
 
@@ -514,7 +835,7 @@ Expected: exit 0. Existing confirmatory tests must keep passing. `ALLOWED_CLASSE
 
 - [ ] **Step 6: Stop for independent implementation review**
 
-Stage only the approved Create and Modify paths. Do not enter a source gate. Do not enter an execution gate. Requested state after this task is `PILOT_IMPLEMENTATION_REVIEW_CANDIDATE`. Task 1 PASS does not authorize source preparation or production execution.
+Stage only the approved Create and Modify paths. Do not create the canonical verdict file. Do not enter a source gate. Do not enter an execution gate. Requested state after this task is `PILOT_IMPLEMENTATION_REVIEW_CANDIDATE`. Task 1 PASS does not authorize source preparation or production execution.
 
 ---
 
@@ -529,6 +850,7 @@ The pytest commands above are future implementation commands. This planning node
 Stop immediately if implementation would require:
 
 - modifying a file outside the approved map;
+- creating `docs/review_20260816/boost_math_pilot_foundation_sol_high_review.md`;
 - designing source, build, certification, execution, orphan, or evidence-closure procedures;
 - changing an authority or Frame file;
 - writing a claim-ledger update;

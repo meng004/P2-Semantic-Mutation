@@ -1,16 +1,19 @@
-# Boost.Math PILOT_FOUNDATION_ONLY Plan Review Packet — P1SD1
+# Boost.Math PILOT_FOUNDATION_ONLY Plan Review Packet — P1SD1R1
 
-- Packet title: P1SD1 Boost.Math pilot foundation scope downgrade
-- Round: P1SD1_BOOST_MATH_PILOT_FOUNDATION_ONLY_PLAN
+- Packet title: P1SD1R1 foundation review and leakage gate repair
+- Round: P1SD1R1_FOUNDATION_GATE_BINDING_REPAIR
 - Builder identity: Cursor VM
-- Amendment type: controller-required scope downgrade after independent P1A2 `SCOPE_DOWNGRADE`
-- Starting commit: `4746283ca2d89da435596ea60ef0e707c2abee79`
-- Ending commit: the unique successor commit on `origin/main` that adds only the two files listed below
+- Amendment type: controller-required named repair after independent P1SD1 `BLOCK`
+- Starting commit: `b79bcd62c3c81ada82726a3a06809086ff9ff1d7`
+- Ending commit: the unique successor commit on `origin/main` that modifies only the two files listed below
 - Foundation plan path: `docs/superpowers/plans/2026-08-16-p3-boost-math-pilot-foundation-only.md`
 - Packet path: `docs/review_20260816/boost_math_pilot_foundation_plan_review_packet.md`
-- Foundation plan SHA-256: `26994305219c42a39b9683ff31b0bc4ed490118ea691bf3932201414dce2418a`
-- Foundation plan bytes: 25711
-- Foundation plan LF count: 541
+- Old plan SHA-256: `26994305219c42a39b9683ff31b0bc4ed490118ea691bf3932201414dce2418a`
+- Old plan bytes: 25711
+- Old plan LF count: 541
+- New plan SHA-256: `479931df4dd6562177e28c333305f3c55bbf081a596f5e7de337b8a92fa73463`
+- New plan bytes: 39333
+- New plan LF count: 863
 - Packet SHA-256, bytes, and LF: the SHA-256, byte length, and LF count of this file after the authorized two-file commit; this packet does not self-hash
 - Requested reviewer: GPT-5.6 Sol High
 - Reasoning setting: high
@@ -18,24 +21,41 @@
 - This packet is not an independent PASS.
 - This packet does not record an independent review PASS and does not speak for the reviewer.
 - Task 1 was not started.
+- The canonical verdict file was not created.
 - `claims=blocked`
 
-Independent P1A2 review confirmed surface-contract hygiene on the complete 2026-08-15 plan and then returned `SCOPE_DOWNGRADE`. Certification exact-schema binding and orphan closure now need a new evidence model. This node therefore does not amend or freeze that complete plan. It proposes a separate `PILOT_FOUNDATION_ONLY` candidate that covers only G1 isolation.
+Independent P1SD1 review returned `BLOCK`. The first foundation candidate isolated G1 scope correctly, but the G1 verdict gate accepted arbitrary files and the three confirmatory CLI entries were not tested through `dispatch()`. This repair freezes the canonical verdict path and content contract, binds `predecessor_sha256` to exactly the plan and verdict hashes, and requires earliest-Mapping leakage checks on `verify-package`, `verify-run-records`, and `verify-evidence`.
 
 ## File change list
 
-This round creates only:
+This round modifies only:
 
 1. `docs/superpowers/plans/2026-08-16-p3-boost-math-pilot-foundation-only.md`
 2. `docs/review_20260816/boost_math_pilot_foundation_plan_review_packet.md`
 
-No existing file was modified. In particular, `docs/superpowers/plans/2026-08-15-p3-boost-math-pilot-only.md` and `docs/review_20260815/boost_math_pilot_plan_review_packet.md` were not edited, not executed, and not frozen. The complete 2026-08-15 pilot plan remains an unfrozen candidate.
+No other file was created or modified. In particular, `docs/review_20260816/boost_math_pilot_foundation_sol_high_review.md` was not created. `docs/superpowers/plans/2026-08-15-p3-boost-math-pilot-only.md` remains an unfrozen candidate and was not edited.
 
 No source, test, protocol, ledger, claim, data, or Boost.Math source file was created or modified.
 
+## Repair line index
+
+Line numbers refer to the new plan.
+
+| Repair | Anchors | Lines |
+|---|---|---|
+| Canonical verdict path reserved outside Task 1 create list | `boost_math_pilot_foundation_sol_high_review.md` | 120–124 |
+| Verdict exact schema and `validate_foundation_verdict` | `FOUNDATION_VERDICT_EXACT`, `verdict: PASS`, `authorized_state: PILOT_PLAN_FROZEN`, `claims: blocked` | 128–186 |
+| Production producer has no verdict-path argument | `write_pilot_plan(markdown_path, output_path)` | 192–198, 322–328 |
+| Production CLI has no `--verdict` | `write-plan --markdown --output` | 332–343 |
+| Exact predecessor binding | `predecessor_sha256 == sorted([markdown_plan_sha256, sol_high_plan_verdict_sha256])` | 311–320 |
+| Three `dispatch()` earliest-Mapping seams | `verify-package`, `verify-run-records`, `verify-evidence` | 247–261 |
+| Verdict-gate tests | `test_write_plan_rejects_*`, `test_write_plan_cli_has_no_verdict_override` | 479–579 |
+| Predecessor tests | `test_pilot_plan_predecessors_equal_plan_and_verdict`, `test_pilot_plan_rejects_extra_predecessor` | 448–477 |
+| Three CLI leakage tests | `test_cli_verify_package_rejects_unknown_pilot_schema`, `test_cli_verify_run_records_rejects_pilot_schema_before_ledger_validation`, `test_cli_verify_evidence_rejects_pilot_artifact_before_confirmatory_validation` | 662–728 |
+
 ## Authority input hashes
 
-Unchanged from `4746283ca2d89da435596ea60ef0e707c2abee79`.
+Unchanged from `b79bcd62c3c81ada82726a3a06809086ff9ff1d7`.
 
 | Path | SHA-256 |
 |---|---|
@@ -64,144 +84,135 @@ Boost.Math Phase 1 frames, suffix `74cdc825c3c728c25f5ea857af1565350515a4e631fb0
 
 ## RED
 
-Command, run before either target file existed:
+Command, run against the frozen P1SD1 plan at `b79bcd62c3c81ada82726a3a06809086ff9ff1d7`:
 
 ```text
-python3 - <<'PY'
-from pathlib import Path
+git show b79bcd62c3c81ada82726a3a06809086ff9ff1d7:docs/superpowers/plans/2026-08-16-p3-boost-math-pilot-foundation-only.md |
+python3 -c '
+import sys
+text = sys.stdin.read()
 
-plan = Path("docs/superpowers/plans/2026-08-16-p3-boost-math-pilot-foundation-only.md")
-packet = Path("docs/review_20260816/boost_math_pilot_foundation_plan_review_packet.md")
+required = [
+    "docs/review_20260816/boost_math_pilot_foundation_sol_high_review.md",
+    "test_write_plan_rejects_arbitrary_verdict_text",
+    "test_write_plan_rejects_verdict_plan_hash_mismatch",
+    "test_pilot_plan_predecessors_equal_plan_and_verdict",
+    "test_cli_verify_run_records_rejects_pilot_schema_before_ledger_validation",
+    "test_cli_verify_evidence_rejects_pilot_artifact_before_confirmatory_validation",
+]
+for token in required:
+    assert token in text, token
 
-assert plan.is_file()
-assert packet.is_file()
-PY
+assert "<archived-sol-high-plan-verdict>" not in text
+assert "verdict.write_text(\"archived verdict\\n\"" not in text
+'
 ```
 
 Exit code: 1
 
 ```text
 Traceback (most recent call last):
-  File "<stdin>", line 6, in <module>
-AssertionError
+  File "<string>", line 14, in <module>
+AssertionError: docs/review_20260816/boost_math_pilot_foundation_sol_high_review.md
 ```
 
-Failure location: `docs/superpowers/plans/2026-08-16-p3-boost-math-pilot-foundation-only.md` did not exist.
+Failure location: the committed P1SD1 plan lacked the frozen canonical verdict path.
 
 ## GREEN
 
-Command, run after the foundation plan was written:
+Command, run after the repaired plan was written:
 
 ```text
 python3 - <<'PY'
 from pathlib import Path
+import ast
+import re
 
-plan = Path("docs/superpowers/plans/2026-08-16-p3-boost-math-pilot-foundation-only.md")
+plan = Path(
+    "docs/superpowers/plans/"
+    "2026-08-16-p3-boost-math-pilot-foundation-only.md"
+)
 text = plan.read_text(encoding="utf-8")
 
 required = [
-    "PILOT_FOUNDATION_ONLY",
-    "PILOT_PLAN_REVIEW_CANDIDATE",
-    "p3-pilot-plan-v1",
-    'schema.startswith("p3-pilot-")',
-    "execution_class",
-    "PILOT_ONLY",
-    "denominator",
-    "artifact_sha256",
-    "markdown_plan_sha256",
-    "sol_high_plan_verdict_sha256",
-    "formal_denominator_membership",
-    "rq4_supported",
-    "claims=blocked",
+    "docs/review_20260816/boost_math_pilot_foundation_sol_high_review.md",
+    "verdict: PASS",
+    "authorized_state: PILOT_PLAN_FROZEN",
+    "claims: blocked",
+    "test_write_plan_rejects_missing_canonical_verdict",
+    "test_write_plan_rejects_arbitrary_verdict_text",
+    "test_write_plan_rejects_non_pass_verdict",
+    "test_write_plan_rejects_verdict_plan_hash_mismatch",
+    "test_write_plan_cli_has_no_verdict_override",
+    "test_pilot_plan_predecessors_equal_plan_and_verdict",
+    "test_pilot_plan_rejects_extra_predecessor",
+    "test_cli_verify_package_rejects_unknown_pilot_schema",
+    "test_cli_verify_run_records_rejects_pilot_schema_before_ledger_validation",
+    "test_cli_verify_evidence_rejects_pilot_artifact_before_confirmatory_validation",
+    "E_PILOT_DENOMINATOR_LEAK",
     "PILOT_IMPLEMENTATION_REVIEW_CANDIDATE",
-    "python3 -m pytest tests/p3_v3 -q",
+    "claims=blocked",
 ]
 for token in required:
     assert token in text, token
 
-for token in ("TODO", "TBD", "..."):
+for token in ("<archived-sol-high-plan-verdict>", "TODO", "TBD", "..."):
     assert token not in text, token
 
+assert 'verdict.write_text("archived verdict\\n"' not in text
 assert text.count("### Task ") == 1
 assert "def certify_mutant" not in text
 assert "def build_execution_plan" not in text
 assert "reconcile_orphaned_intent" not in text
-assert "cmake -S" not in text
-assert "git clone" not in text
-assert "PILOT_PLAN_FROZEN" not in text
 
-print("PASS foundation-only scope")
-print("PASS exact pilot isolation contract")
-print("PASS one implementation task")
-print("PASS no source/build/certification/execution procedures")
+for index, block in enumerate(
+    re.findall(r"```python\n(.*?)```", text, re.S),
+    start=1,
+):
+    ast.parse(block)
+    print(f"AST_OK {index}")
+
+print("PASS canonical verdict gate")
+print("PASS exact predecessor binding")
+print("PASS three confirmatory CLI leakage seams")
+print("PASS foundation-only scope retained")
 print("PASS claims remain blocked")
 PY
 ```
 
-First GREEN attempt exit code: 1
+Exit code: 0
 
 ```text
-Traceback (most recent call last):
-  File "<stdin>", line 27, in <module>
-AssertionError: ...
-```
-
-Cause: one `write_canonical_json(..., exclusive=True)` placeholder in Step 3. One mechanical correction replaced it with `write_canonical_json(output_path, value, exclusive=True)`.
-
-Second GREEN attempt exit code: 0
-
-```text
-PASS foundation-only scope
-PASS exact pilot isolation contract
-PASS one implementation task
-PASS no source/build/certification/execution procedures
+AST_OK 1
+AST_OK 2
+AST_OK 3
+AST_OK 4
+AST_OK 5
+AST_OK 6
+AST_OK 7
+AST_OK 8
+AST_OK 9
+AST_OK 10
+AST_OK 11
+PASS canonical verdict gate
+PASS exact predecessor binding
+PASS three confirmatory CLI leakage seams
+PASS foundation-only scope retained
 PASS claims remain blocked
 ```
 
-Repair rounds used: 1.
-
-## Foundation contract captured by the new plan
-
-- `execution_class = PILOT_ONLY`
-- `denominator = PILOT_ONLY`
-- every `schema.startswith("p3-pilot-")` object is rejected by confirmatory package, run-record, and evidence seams
-- unknown future `p3-pilot-*` schemas are rejected the same way
-- `p3-pilot-plan-v1` uses exact keys, exact types, and `artifact_sha256` self-hash
-- machine plan binds foundation Markdown SHA-256, a future archived Sol High plan verdict SHA-256, `claims=blocked`, `formal_denominator_membership=false`, and `rq4_supported=false`
-- plan artifact cannot be accepted as a source manifest, freeze, execution plan, or result
-- exactly one implementation task
-- Task 1 PASS does not authorize source preparation or production execution
-- later implementation must stop at `PILOT_IMPLEMENTATION_REVIEW_CANDIDATE`
-
-Approved later Create paths:
-
-- `src/p3_v3/pilot.py`
-- `scripts/p3_v3/pilot.py`
-- `tests/p3_v3/test_pilot.py`
-- `tests/p3_v3/test_pilot_leakage.py`
-- `tests/p3_v3/fixtures/pilot/valid_plan_min.json`
-- `tests/p3_v3/fixtures/pilot/confirmatory_denied_plan.json`
-- `data/p3_v3/pilot/boost_math/pilot-plan.json`
-
-Approved later Modify paths:
-
-- `src/p3_v3/packages.py`
-- `src/p3_v3/run_records.py`
-- `scripts/p3_v3/evidence.py`
-- `tests/p3_v3/test_packages.py`
-- `tests/p3_v3/test_run_records.py`
-- `tests/p3_v3/test_cli.py`
-
-No other later file is approved by this foundation plan.
+Repair rounds used: 0.
 
 ## Declarations
 
 - The complete 2026-08-15 pilot plan remains unfrozen.
+- This foundation plan remains a review candidate and is not frozen by this packet.
 - This packet is not an independent PASS.
+- If an independent review later PASSes this repaired plan, the next node is formal foundation plan verdict archival. That node is still not Task 1.
 - No production path was executed.
-- No Phase 2 formal execution authorization is granted by this packet.
 - No pytest, build, preflight, profiling, mutant, or MR command was run.
 - Task 1 was not started.
+- `docs/review_20260816/boost_math_pilot_foundation_sol_high_review.md` was not created.
 - Package C, P12 reveal, buggy revisions, defect patches, reference MR, evaluated MR, mutant outcome, and real-fault outcome were not read, listed, or inferred.
 - Boost.Math source was not downloaded and was not cloned.
 - The claim ledger was not modified.
@@ -210,4 +221,4 @@ No other later file is approved by this foundation plan.
 - `claims=blocked`
 - Current requested state: `PILOT_PLAN_REVIEW_CANDIDATE`
 
-GPT-5.6 Sol High is requested to perform an independent high-reasoning review of the two new files on the successor of `4746283ca2d89da435596ea60ef0e707c2abee79`. This builder does not assign PASS.
+GPT-5.6 Sol High is requested to perform an independent high-reasoning review of `b79bcd62c3c81ada82726a3a06809086ff9ff1d7..NEW_HEAD`. This builder does not assign PASS.
