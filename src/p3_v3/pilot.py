@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from collections.abc import Mapping
 from pathlib import Path
@@ -191,7 +192,7 @@ def _read_foundation_verdict(markdown_plan_sha256: str) -> str:
             "canonical foundation verdict is not canonical JSON",
         )
     validate_foundation_verdict(parsed, markdown_plan_sha256)
-    return file_sha256(path)
+    return hashlib.sha256(raw).hexdigest()
 
 
 def write_pilot_plan(markdown_path: str | Path, output_path: str | Path) -> dict[str, Any]:

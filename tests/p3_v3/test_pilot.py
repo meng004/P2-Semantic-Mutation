@@ -5,7 +5,11 @@ from pathlib import Path
 
 import pytest
 
-from p3_v3.artifacts import EvidenceError, write_canonical_json
+from p3_v3.artifacts import (
+    EvidenceError,
+    canonical_json_bytes,
+    write_canonical_json,
+)
 
 
 def _sha256_bytes(data: bytes) -> str:
@@ -240,3 +244,34 @@ def test_foundation_cannot_enter_source_or_execution_gate():
     )
     for name in forbidden:
         assert not hasattr(pilot, name)
+
+
+def test_write_plan_hashes_the_validated_verdict_snapshot(tmp_path, monkeypatch):
+    import p3_v3.pilot as pilot
+
+    markdown = tmp_path / "plan.md"
+    output = tmp_path / "pilot-plan.json"
+    markdown.write_text("foundation markdown\n", encoding="utf-8")
+    verdict = _install_valid_verdict(monkeypatch, tmp_path, markdown)
+    validated_verdict_sha256 = _sha256_bytes(verdict.read_bytes())
+    original_validate = pilot.validate_foundation_verdict
+
+    def validate_then_replace(value, markdown_plan_sha256):
+        result = original_validate(value, markdown_plan_sha256)
+        replacement = dict(value)
+        replacement["claims"] = "not-blocked"
+        verdict.write_bytes(canonical_json_bytes(replacement))
+        return result
+
+    monkeypatch.setattr(
+        pilot,
+        "validate_foundation_verdict",
+        validate_then_replace,
+    )
+    written = pilot.write_pilot_plan(markdown, output)
+
+    assert _sha256_bytes(verdict.read_bytes()) != validated_verdict_sha256
+    assert (
+        written["sol_high_plan_verdict_sha256"]
+        == validated_verdict_sha256
+    )
