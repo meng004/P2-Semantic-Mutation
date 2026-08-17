@@ -1942,3 +1942,173 @@ def test_corrupt_archive_cleans_only_attempt_owned_staging(tmp_path, monkeypatch
     assert not Path(str(materialize) + ".staging").exists()
     assert not materialize.exists()
     assert not (tmp_path / "source-manifest.json").exists()
+
+
+def test_corrupt_magic_archive_writes_exact_format_failure_result(tmp_path, monkeypatch):
+    from p3_v3 import pilot_source
+
+    chain = _install_full_authority_chain(monkeypatch, tmp_path)
+    raw = b"PK\x03\x04not-a-valid-zip-body"
+    archive = tmp_path / "corrupt-magic.zip"
+    archive.write_bytes(raw)
+    snapshot = pilot_source.read_production_archive_bytes(archive)
+    assert snapshot.raw == raw
+    materialize = tmp_path / "materialize"
+    with pytest.raises(EvidenceError, match="E_PILOT_ARCHIVE_FORMAT"):
+        pilot_source.run_validate_source(archive, materialize)
+    result_path = tmp_path / "source-preparation-result.json"
+    assert result_path.is_file()
+    result = __import__("json").loads(result_path.read_text(encoding="utf-8"))
+    expected = _canonical_result(
+        predecessors=chain["predecessors"],
+        terminal_status="FAIL_INFRASTRUCTURE",
+        failure_reason="ARCHIVE_FORMAT_UNSUPPORTED",
+        source_manifest_sha256=None,
+        archive_sha256=snapshot.sha256,
+        archive_bytes=snapshot.size,
+        materialized_tree_sha256=None,
+    )
+    assert result == expected
+    assert result["archive_sha256"] == snapshot.sha256
+    assert result["archive_bytes"] == snapshot.size
+    assert result["materialized_tree_sha256"] is None
+    assert result["source_manifest_sha256"] is None
+    assert not (tmp_path / "source-manifest.json").exists()
+    assert not materialize.exists()
+    assert not Path(str(materialize) + ".staging").exists()
+
+
+def test_staging_write_oserror_is_extraction_failure_not_archive_format(
+    tmp_path, monkeypatch
+):
+    from p3_v3 import pilot_source
+
+    chain = _install_full_authority_chain(monkeypatch, tmp_path)
+    archive, snapshot, _tree, _count, _total = _synthetic_tree_metrics(
+        tmp_path, {"pkg/a.txt": b"hello\n"}
+    )
+
+    def boom(*_args, **_kwargs):
+        raise OSError("injected staging write failure")
+
+    monkeypatch.setattr(pilot_source, "_write_streamed_member", boom)
+    materialize = tmp_path / "materialize"
+    with pytest.raises(EvidenceError, match="E_PILOT_EXTRACT_UNSAFE"):
+        pilot_source.run_validate_source(archive, materialize)
+    result_path = tmp_path / "source-preparation-result.json"
+    assert result_path.is_file()
+    result = __import__("json").loads(result_path.read_text(encoding="utf-8"))
+    expected = _canonical_result(
+        predecessors=chain["predecessors"],
+        terminal_status="FAIL_INFRASTRUCTURE",
+        failure_reason="EXTRACTION_UNSAFE",
+        source_manifest_sha256=None,
+        archive_sha256=snapshot.sha256,
+        archive_bytes=snapshot.size,
+        materialized_tree_sha256=None,
+    )
+    assert result == expected
+    assert not (tmp_path / "source-manifest.json").exists()
+    assert not materialize.exists()
+    assert not Path(str(materialize) + ".staging").exists()
+
+
+def test_manifest_publication_crash_with_staging_recovers_on_retry(tmp_path, monkeypatch):
+    from p3_v3 import pilot_source
+
+    class PublicationCrash(BaseException):
+        """Crash after exclusive manifest create and before root rename."""
+
+    chain = _install_full_authority_chain(monkeypatch, tmp_path)
+    _force_frozen_tree_hash(monkeypatch)
+    archive, snapshot, _tree, _count, _total = _synthetic_tree_metrics(
+        tmp_path, {"pkg/a.txt": b"hello\n"}
+    )
+    materialize = tmp_path / "materialize"
+    staging = Path(str(materialize) + ".staging")
+    manifest_path = tmp_path / "source-manifest.json"
+    result_path = tmp_path / "source-preparation-result.json"
+    real_replace = pilot_source.os.replace
+
+    def crash_replace(src, dst, *args, **kwargs):
+        if Path(src) == staging and Path(dst) == materialize:
+            raise PublicationCrash("injected after manifest publication")
+        return real_replace(src, dst, *args, **kwargs)
+
+    monkeypatch.setattr(pilot_source.os, "replace", crash_replace)
+    with pytest.raises(PublicationCrash):
+        pilot_source.run_validate_source(archive, materialize)
+    assert manifest_path.is_file()
+    assert staging.is_dir()
+    assert (staging / "a.txt").read_bytes() == b"hello\n"
+    assert not materialize.exists()
+    assert not result_path.exists()
+    manifest_bytes = manifest_path.read_bytes()
+    staging_inode = staging.stat().st_ino
+    monkeypatch.setattr(pilot_source.os, "replace", real_replace)
+    extract_calls: list[str] = []
+    original_extract = pilot_source.extract_archive_to_staging
+
+    def spy_extract(snapshot_obj, staging_path):
+        extract_calls.append(str(staging_path))
+        return original_extract(snapshot_obj, staging_path)
+
+    monkeypatch.setattr(pilot_source, "extract_archive_to_staging", spy_extract)
+    pilot_source.run_validate_source(archive, materialize)
+    assert extract_calls == []
+    assert manifest_path.read_bytes() == manifest_bytes
+    assert materialize.is_dir()
+    assert materialize.stat().st_ino == staging_inode
+    assert (materialize / "a.txt").read_bytes() == b"hello\n"
+    assert not staging.exists()
+    result = __import__("json").loads(result_path.read_text(encoding="utf-8"))
+    assert result["terminal_status"] == "PASS"
+    assert result["source_manifest_sha256"] == _sha256_bytes(manifest_bytes)
+    assert result["archive_sha256"] == snapshot.sha256
+    assert result["archive_bytes"] == snapshot.size
+    assert result["predecessor_sha256"] == sorted(
+        [*chain["predecessors"], _sha256_bytes(manifest_bytes)]
+    )
+
+
+def test_manifest_only_mismatched_staging_is_preserved_and_rejected(
+    tmp_path, monkeypatch
+):
+    from p3_v3 import pilot_source
+
+    chain = _install_full_authority_chain(monkeypatch, tmp_path)
+    archive, snapshot, _tree, file_count, total_bytes = _synthetic_tree_metrics(
+        tmp_path, {"pkg/a.txt": b"hello\n"}
+    )
+    manifest = _canonical_manifest(
+        predecessors=chain["predecessors"],
+        archive_sha256=snapshot.sha256,
+        archive_bytes=snapshot.size,
+        archive_format=snapshot.archive_format,
+        file_count=file_count,
+        total_bytes=total_bytes,
+    )
+    write_canonical_json(tmp_path / "source-manifest.json", manifest, exclusive=True)
+    materialize = tmp_path / "materialize"
+    staging = Path(str(materialize) + ".staging")
+    staging.mkdir()
+    wrong = staging / "wrong.txt"
+    wrong.write_bytes(b"mismatch-bytes\n")
+    staging_inode = staging.stat().st_ino
+    file_inode = wrong.stat().st_ino
+    extract_calls: list[str] = []
+
+    def forbidden_extract(snapshot_obj, staging_path):
+        extract_calls.append(str(staging_path))
+        raise AssertionError("extractor must not run for mismatched residue")
+
+    monkeypatch.setattr(pilot_source, "extract_archive_to_staging", forbidden_extract)
+    with pytest.raises(EvidenceError, match="E_PILOT_SOURCE_TREE_MISMATCH"):
+        pilot_source.run_validate_source(archive, materialize)
+    assert staging.stat().st_ino == staging_inode
+    assert wrong.stat().st_ino == file_inode
+    assert wrong.read_bytes() == b"mismatch-bytes\n"
+    assert list(staging.iterdir()) == [wrong]
+    assert extract_calls == []
+    assert not materialize.exists()
+    assert not (tmp_path / "source-preparation-result.json").exists()

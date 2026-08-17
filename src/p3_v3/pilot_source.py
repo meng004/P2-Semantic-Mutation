@@ -909,9 +909,12 @@ def extract_archive_to_staging(snapshot: ArchiveSnapshot, staging: Path) -> Path
     except EvidenceError:
         shutil.rmtree(staging, ignore_errors=True)
         raise
-    except (zipfile.BadZipFile, tarfile.TarError, OSError) as exc:
+    except (zipfile.BadZipFile, tarfile.TarError) as exc:
         shutil.rmtree(staging, ignore_errors=True)
         raise EvidenceError("E_PILOT_ARCHIVE_FORMAT", "archive is corrupt") from exc
+    except OSError as exc:
+        shutil.rmtree(staging, ignore_errors=True)
+        raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "staging write failed") from exc
     return staging
 
 
@@ -1735,6 +1738,27 @@ def _reject_preexisting_staging(staging: Path) -> None:
         )
 
 
+def _staging_lexists(staging: Path) -> bool:
+    try:
+        os.lstat(staging)
+    except FileNotFoundError:
+        return False
+    except OSError as exc:
+        raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "staging cannot be inspected") from exc
+    return True
+
+
+def _require_safe_residue_staging(staging: Path) -> None:
+    try:
+        info = os.lstat(staging)
+    except OSError as exc:
+        raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "staging cannot be inspected") from exc
+    if stat.S_ISLNK(info.st_mode):
+        raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "staging is a symlink")
+    if not stat.S_ISDIR(info.st_mode):
+        raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "staging is not a directory")
+
+
 def _fresh_prepare(archive: Path, materialize_root: Path, chain: _GateChain) -> None:
     staging = _staging_path(materialize_root)
     _reject_preexisting_staging(staging)
@@ -1771,6 +1795,10 @@ def _fresh_prepare(archive: Path, materialize_root: Path, chain: _GateChain) -> 
             if owned_staging:
                 shutil.rmtree(staging, ignore_errors=True)
             _write_fail_result(chain, "EXTRACTION_UNSAFE", snapshot, None)
+        elif exc.code == "E_PILOT_ARCHIVE_FORMAT":
+            if owned_staging:
+                shutil.rmtree(staging, ignore_errors=True)
+            _write_fail_result(chain, "ARCHIVE_FORMAT_UNSUPPORTED", snapshot, None)
         raise
 
 
@@ -1794,7 +1822,16 @@ def _recover_manifest_only(
     if manifest_snap.value is None or manifest_snap.digest is None:
         raise EvidenceError("E_PILOT_SOURCE_MANIFEST", "manifest snapshot is absent")
     staging = _staging_path(materialize_root)
-    _reject_preexisting_staging(staging)
+    if _staging_lexists(staging):
+        _require_safe_residue_staging(staging)
+        snapshot = _require_matching_archive(archive, manifest_snap.value)
+        tree = capture_materialized_tree(staging)
+        tree_hash = validate_materialized_tree_with_phase1(tree)
+        _require_tree_matches_manifest(tree, tree_hash, manifest_snap.value)
+        result = _pass_result_object(chain, snapshot, tree_hash, manifest_snap.digest)
+        os.replace(staging, materialize_root)
+        write_canonical_json(SOURCE_PREPARATION_RESULT_PATH, result, exclusive=True)
+        return
     snapshot = _require_matching_archive(archive, manifest_snap.value)
     extract_archive_to_staging(snapshot, staging)
     try:
@@ -1861,14 +1898,19 @@ def run_validate_source(archive: Path, materialize_root: Path) -> None:
 
     chain = verify_production_gate_chain()
     root = Path(materialize_root)
-    _reject_preexisting_staging(_staging_path(root))
     state, manifest_snap, result_snap = _inspect_state(chain, root)
+    staging = _staging_path(root)
     if state == "FRESH":
         _fresh_prepare(Path(archive), root, chain)
         return
     if state == "MANIFEST_ONLY":
         _recover_manifest_only(Path(archive), root, chain, manifest_snap)
         return
+    if staging.exists() or _staging_lexists(staging):
+        raise EvidenceError(
+            "E_PILOT_SOURCE_OUTPUT_EXISTS",
+            "pre-existing staging must be preserved",
+        )
     if state == "MANIFEST_AND_ROOT":
         _recover_manifest_and_root(Path(archive), root, chain, manifest_snap)
         return
