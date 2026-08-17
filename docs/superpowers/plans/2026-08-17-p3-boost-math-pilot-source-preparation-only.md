@@ -4,7 +4,7 @@
 
 **Goal:** Define one later capability that can hash, extract, and identity-check a caller-supplied archive under a fail-closed extractor and the Phase 1 normalized-tree algorithm. This planning node writes the plan only. The later capability task uses runtime-generated synthetic ZIP and TAR fixtures. It does not read a real Boost.Math archive and does not create a production source manifest, preparation result, authorization A, or launch authority.
 
-**Architecture:** Keep confirmatory `p3-v3-*` schemas unchanged. Add `src/p3_v3/pilot_source.py` as the only new production module. The formal source-preparation plan verdict is archived before any capability implementation. Production `run_validate_source` then reads one verified snapshot of each machine authority in a single acyclic topological order: plan, plan verdict, capability verdict plus reviewed production bytes, launch packet, launch verdict, launch authority, and Authorization A. Only after that chain validates may the module snapshot an archive, extract into new staging, validate the Phase 1 tree on staging, and publish in the frozen order manifest, then materialize root, then PASS result. Capability PASS still does not authorize real preparation.
+**Architecture:** Keep confirmatory `p3-v3-*` schemas unchanged. Add `src/p3_v3/pilot_source.py` as the only new production module. The formal source-preparation plan verdict is archived before any capability implementation. Production `run_validate_source` then reads one verified snapshot of each machine authority in the unique acyclic topological order: source-preparation plan, plan verdict, capability verdict plus reviewed production bytes, Authorization A, launch packet, launch verdict, then launch authority. Only after that chain validates may the module snapshot an archive, extract into new staging, validate the Phase 1 tree on staging, and publish in the frozen order manifest, then materialize root, then PASS result. Capability PASS still does not authorize real preparation.
 
 **Tech Stack:** Python 3.11 or newer, existing `src/p3_v3/artifacts.py` exact-object helpers including `read_regular_file_snapshot`, existing `SourceSnapshot`, `SourceSnapshotEntry`, and `canonical_source_tree_sha256` from `src/p3_v3/bridge_and_frames.py`, pytest with `PYTHONPATH=src`. Cursor VM has no `rtk`. Later implementation uses bare `python3`, `pytest`, `sha256sum`, `wc`, and `git`.
 
@@ -579,7 +579,7 @@ def validate_source_preparation_launch_verdict(
 
 A missing launch authority is `E_PILOT_SOURCE_PREPARATION_LAUNCH_ABSENT`. Hash mismatch, schema drift, or non-PASS is `E_PILOT_SOURCE_PREPARATION_LAUNCH`. Either case writes zero production outputs.
 
-The launch verdict reviews only the launch packet and the already frozen predecessors: plan verdict SHA-256, capability verdict SHA-256, and Authorization A SHA-256. It must not contain `reviewed_launch_path` or `reviewed_launch_sha256`. `source-preparation-launch.json` is exclusive-created only after that launch verdict is archived. No predecessor of the launch authority may cite the launch authority hash. Launch authority binds the capability verdict file SHA-256. Test-file hashes remain review evidence inside the capability verdict; production re-snapshots only `src/p3_v3/pilot_source.py` and `scripts/p3_v3/pilot.py`.
+The launch packet is exclusive-created only after Authorization A exists. The launch verdict reviews only the launch packet and the already frozen predecessors: plan verdict SHA-256, capability verdict SHA-256, and Authorization A SHA-256. It must not contain `reviewed_launch_path` or `reviewed_launch_sha256`. `source-preparation-launch.json` is exclusive-created only after that launch verdict is archived. No predecessor of the launch authority may cite the launch authority hash. Launch authority binds the capability verdict file SHA-256. Test-file hashes remain review evidence inside the capability verdict; production re-snapshots only `src/p3_v3/pilot_source.py` and `scripts/p3_v3/pilot.py`.
 
 ---
 
@@ -603,7 +603,7 @@ Frozen identity:
 - bytes: 38
 - LF: 1
 
-This planning node does not create that file. The later capability task does not create that file. Production CLI must not accept an authorization-path override. Tests may monkeypatch the frozen path constant onto a temporary regular file. Tests must still require the exact 38 bytes and the frozen SHA-256. A missing or unsafe snapshot is `E_PILOT_PREPARATION_AUTH_ABSENT`. Wrong bytes or a wrong hash is `E_PILOT_PREPARATION_AUTH`. Either authorization failure writes no source manifest, no preparation result, and no materialize root.
+Authorization A is a successor of the capability implementation verdict and a predecessor of the launch packet. This planning node does not create that file. The later capability task does not create that file. Production CLI must not accept an authorization-path override. Tests may monkeypatch the frozen path constant onto a temporary regular file. Tests must still require the exact 38 bytes and the frozen SHA-256. A missing or unsafe snapshot is `E_PILOT_PREPARATION_AUTH_ABSENT`. Wrong bytes or a wrong hash is `E_PILOT_PREPARATION_AUTH`. Either authorization failure writes no source manifest, no preparation result, and no materialize root.
 
 ```python
 from __future__ import annotations
@@ -647,6 +647,8 @@ Frozen directed edges mean "must exist before". The graph must be a DAG. Launch 
 AUTHORITY_DEPENDENCY_EDGES = [
     ("source_preparation_plan", "plan_verdict"),
     ("plan_verdict", "capability_verdict"),
+    ("capability_verdict", "authorization_a"),
+    ("authorization_a", "launch_packet"),
     ("plan_verdict", "launch_packet"),
     ("capability_verdict", "launch_packet"),
     ("launch_packet", "launch_verdict"),
@@ -663,6 +665,17 @@ AUTHORITY_DEPENDENCY_EDGES = [
     ("authorization_a", "source_manifest"),
     ("source_manifest", "pass_result"),
 ]
+UNIQUE_AUTHORITY_ORDER = [
+    "source_preparation_plan",
+    "plan_verdict",
+    "capability_verdict",
+    "authorization_a",
+    "launch_packet",
+    "launch_verdict",
+    "launch_authority",
+    "source_manifest",
+    "pass_result",
+]
 PROCESS_ORDER = [
     "G1_FOUNDATION_IMPLEMENTATION_PASS",
     "independent_source_preparation_plan_review",
@@ -678,38 +691,88 @@ PROCESS_ORDER = [
     "production_source_preparation",
     "independent_manifest_result_review",
 ]
+PROCESS_AUTHORITY_PROJECTION = list(UNIQUE_AUTHORITY_ORDER)
 
 
-def topological_authority_order(edges: list[tuple[str, str]]) -> list[str]:
-    nodes = sorted({node for edge in edges for node in edge})
-    incoming = {node: 0 for node in nodes}
+def count_topological_authority_orders(
+    edges: list[tuple[str, str]],
+    limit: int = 2,
+) -> int:
+    nodes = {node for edge in edges for node in edge}
     outgoing: dict[str, list[str]] = {node: [] for node in nodes}
+    incoming = {node: 0 for node in nodes}
     for start, end in edges:
         outgoing[start].append(end)
         incoming[end] += 1
-    ready = sorted(node for node, count in incoming.items() if count == 0)
+    found = 0
+
+    def walk(indeg: dict[str, int], ready: list[str], placed: int) -> None:
+        nonlocal found
+        if found >= limit:
+            return
+        if placed == len(nodes):
+            found += 1
+            return
+        if not ready:
+            raise ValueError("authority dependency graph contains a cycle")
+        for index in range(len(ready)):
+            if found >= limit:
+                return
+            node = ready[index]
+            next_ready = ready[:index] + ready[index + 1 :]
+            next_indeg = dict(indeg)
+            for nxt in outgoing[node]:
+                next_indeg[nxt] -= 1
+                if next_indeg[nxt] == 0:
+                    next_ready.append(nxt)
+            walk(next_indeg, next_ready, placed + 1)
+
+    start_ready = [node for node, value in incoming.items() if value == 0]
+    walk(incoming, start_ready, 0)
+    return found
+
+
+def require_unique_topological_authority_order(
+    edges: list[tuple[str, str]],
+) -> list[str]:
+    nodes = {node for edge in edges for node in edge}
+    outgoing: dict[str, list[str]] = {node: [] for node in nodes}
+    incoming = {node: 0 for node in nodes}
+    for start, end in edges:
+        outgoing[start].append(end)
+        incoming[end] += 1
     order: list[str] = []
-    while ready:
-        node = ready.pop(0)
+    remaining = set(nodes)
+    while remaining:
+        ready = [node for node in remaining if incoming[node] == 0]
+        if not ready:
+            raise ValueError("authority dependency graph contains a cycle")
+        if len(ready) > 1:
+            raise ValueError(
+                "authority dependency graph has a non-unique topological order"
+            )
+        node = ready[0]
         order.append(node)
-        for nxt in sorted(outgoing[node]):
+        remaining.remove(node)
+        for nxt in outgoing[node]:
             incoming[nxt] -= 1
-            if incoming[nxt] == 0:
-                ready.append(nxt)
-                ready.sort()
-    if len(order) != len(nodes):
-        raise ValueError("authority dependency graph contains a cycle")
+    if count_topological_authority_orders(edges, limit=2) != 1:
+        raise ValueError(
+            "authority dependency graph has a non-unique topological order"
+        )
+    if order != UNIQUE_AUTHORITY_ORDER:
+        raise ValueError("unique topological order differs from the frozen sequence")
     return order
 ```
 
-The unique production snapshot order is the topological order of that DAG, with Authorization A readable first because it has in-degree zero together with the plan. Concrete production read sequence:
+Lexicographic ready-set tie-breaking is not a uniqueness proof. `require_unique_topological_authority_order` rejects a cycle and rejects any graph with more than one legal topological order. The unique production snapshot order is exactly `UNIQUE_AUTHORITY_ORDER`. Authorization A is not an initial ready node. It becomes ready only after the capability verdict. The launch packet becomes ready only after Authorization A. Concrete production read sequence:
 
-1. Authorization A snapshot and exact-byte check.
-2. Source-preparation plan markdown snapshot.
-3. Source-preparation plan verdict snapshot, parsed and validated against the plan snapshot hash.
-4. Capability implementation verdict snapshot, parsed and validated against the plan snapshot hash and the plan-verdict snapshot hash.
-5. Safe single-fd snapshots of `src/p3_v3/pilot_source.py` and `scripts/p3_v3/pilot.py`; require those digests to equal the capability verdict. Missing files or byte drift write zero production outputs.
-6. Launch packet snapshot.
+1. Source-preparation plan markdown snapshot.
+2. Source-preparation plan verdict snapshot, parsed and validated against the plan snapshot hash.
+3. Capability implementation verdict snapshot, parsed and validated against the plan snapshot hash and the plan-verdict snapshot hash.
+4. Safe single-fd snapshots of `src/p3_v3/pilot_source.py` and `scripts/p3_v3/pilot.py`; require those digests to equal the capability verdict. Missing files or byte drift write zero production outputs.
+5. Authorization A snapshot and exact-byte check.
+6. Launch packet snapshot, which may exist only after Authorization A.
 7. Launch verdict snapshot, parsed and validated against the packet, plan-verdict, capability-verdict, and Authorization A snapshot hashes. The launch verdict must not mention a launch-authority hash.
 8. Launch authority snapshot, parsed and validated against every snapshot hash from steps 1 through 7, including the launch-verdict snapshot hash.
 
@@ -1168,7 +1231,7 @@ Capability-unit tests use synthetic trees. Those trees will not equal the frozen
 
 Fresh PASS attempt, after the complete gate chain and Authorization A have validated and after output reconciliation says a fresh attempt is legal:
 
-1. Verify every authority snapshot, Authorization A, and the initial output state.
+1. Verify every authority snapshot in `UNIQUE_AUTHORITY_ORDER`, including Authorization A after the capability verdict and before the launch packet, and verify the initial output state.
 2. Obtain one stable `ArchiveSnapshot` from a single archive fd.
 3. Unpack only into a newly created staging directory.
 4. On that staging payload, finish a complete `SourceSnapshot`, Phase 1 tree hash, file count, and total bytes.
@@ -1591,6 +1654,7 @@ REQUIRED_SOURCE_PREPARATION_TESTS = [
     "test_authority_snapshot_binds_validated_bytes_on_replacement_race",
     "test_capability_verdict_requires_reviewed_commit",
     "test_capability_verdict_binds_implementation_files",
+    "test_authority_dependency_graph_has_exactly_one_topological_order",
     "test_reconciliation_classifier_is_total_and_exclusive",
     "test_streamed_chunk_exceeds_member_limit_before_write",
     "test_streamed_chunks_exceed_total_limit",
@@ -1768,6 +1832,35 @@ def test_single_top_level_file_is_not_stripped():
     assert shared_top_level_directory(["readme.txt"]) is None
     assert shared_top_level_directory(["pkg/a", "pkg/b"]) == "pkg"
     assert shared_top_level_directory(["pkg/b", "pkg/a"]) == "pkg"
+
+
+def test_authority_dependency_graph_has_exactly_one_topological_order():
+    from p3_v3.pilot_source import (
+        AUTHORITY_DEPENDENCY_EDGES,
+        UNIQUE_AUTHORITY_ORDER,
+        count_topological_authority_orders,
+        require_unique_topological_authority_order,
+    )
+
+    order = require_unique_topological_authority_order(AUTHORITY_DEPENDENCY_EDGES)
+    assert count_topological_authority_orders(AUTHORITY_DEPENDENCY_EDGES) == 1
+    assert order == UNIQUE_AUTHORITY_ORDER
+    missing_capability_to_auth = [
+        edge
+        for edge in AUTHORITY_DEPENDENCY_EDGES
+        if edge != ("capability_verdict", "authorization_a")
+    ]
+    with pytest.raises(ValueError, match="non-unique topological order"):
+        require_unique_topological_authority_order(missing_capability_to_auth)
+    assert count_topological_authority_orders(missing_capability_to_auth) != 1
+    missing_auth_to_packet = [
+        edge
+        for edge in AUTHORITY_DEPENDENCY_EDGES
+        if edge != ("authorization_a", "launch_packet")
+    ]
+    with pytest.raises(ValueError, match="non-unique topological order"):
+        require_unique_topological_authority_order(missing_auth_to_packet)
+    assert count_topological_authority_orders(missing_auth_to_packet) != 1
 
 
 def test_reconciliation_classifier_is_total_and_exclusive():

@@ -1,21 +1,21 @@
-# Boost.Math PILOT_SOURCE_PREPARATION_ONLY Plan Review Packet — P1SP1R2
+# Boost.Math PILOT_SOURCE_PREPARATION_ONLY Plan Review Packet — P1SP1R3
 
-- Node name: `P1SP1R2_BOOST_MATH_PILOT_SOURCE_PREPARATION_PLAN_ACYCLIC_AUTHORITY_AND_TOTAL_STATE_REPAIR`
-- Packet title: acyclic authority chain and total reconciliation repair
+- Node name: `P1SP1R3_BOOST_MATH_PILOT_SOURCE_PREPARATION_PLAN_UNIQUE_TOPOLOGY_CLOSURE`
+- Packet title: unique authority topological-order closure
 - Builder identity: Cursor VM
-- Starting commit: `0a5cab6660419860d22c2bff5dcf98e5f27a44f1`
+- Starting commit: `1ef6b0cd1d58611a54011028cc9087435f259d95`
 - Ending commit: this node does not write an ending-commit token. The ending commit is the unique successor on `origin/main` that modifies only the two files listed below.
 - Plan path: `docs/superpowers/plans/2026-08-17-p3-boost-math-pilot-source-preparation-only.md`
-- Old plan SHA-256: `5f59a5d475f358f5901af88043126dc9b2ecb830f9b80c384105a4c87e338442`
-- Old plan bytes: 67506
-- Old plan LF count: 1585
-- New plan SHA-256: `e72b4b53a1ac1c2711bab83dc7874ba201468ad8705ae5368995f2cb0e0bf39f`
-- New plan bytes: 86099
-- New plan LF count: 2014
+- Old plan SHA-256: `e72b4b53a1ac1c2711bab83dc7874ba201468ad8705ae5368995f2cb0e0bf39f`
+- Old plan bytes: 86099
+- Old plan LF count: 2014
+- New plan SHA-256: `faddb776c5e6704df6708bebe8ab14a0de198f76328d777d7d92091fbe30f60a`
+- New plan bytes: 90094
+- New plan LF count: 2107
 - Packet path: `docs/review_20260817/boost_math_pilot_source_preparation_plan_review_packet.md`
-- Old packet SHA-256: `ae51f2ea8695db8fb8aa1cf6c80c084ed162f01368510b159809556c09ee4047`
-- Old packet bytes: 14897
-- Old packet LF count: 310
+- Old packet SHA-256: `9dc16fe06c1ed0821015341fabc07c69ef728154ee1d4c5a44e039e1617fe1f7`
+- Old packet bytes: 10898
+- Old packet LF count: 189
 - New packet SHA-256, bytes, and LF: recorded by the post-write `sha256sum` and `wc` commands in this node; this packet does not self-hash
 - Requested reviewer: GPT-5.6 Sol High
 - Reasoning setting: high
@@ -24,6 +24,7 @@
 - Process location remains: `PILOT_EXECUTION_AWAITING_USER_AUTHORIZATION`
 - This packet is not an independent PASS.
 - This packet does not record an independent review PASS and does not speak for the reviewer.
+- This packet does not claim `PILOT_PLAN_FROZEN`.
 - No formal Sol High verdict was created.
 - Authorization A was not created.
 - Launch authority was not created.
@@ -47,20 +48,19 @@ Line numbers refer to the new plan.
 
 | Repair | Anchors | Lines |
 |---|---|---|
-| Correct process order, plan verdict before implementation | `formal source-preparation plan verdict archival` then `capability implementation` | 44–57 |
-| Gate-error mapping and NaN-rejecting JSON | `map_gate_error`, `parse_constant` | 147–180 |
-| Capability verdict binds commit, plan verdict, and four files | `SOURCE_PREPARATION_CAPABILITY_VERDICT_EXACT`, `reviewed_plan_verdict_sha256` | 256–377 |
-| Runtime production-byte check | `verify_reviewed_production_bytes` | 378–397 |
-| Acyclic launch verdict schema | `SOURCE_PREPARATION_LAUNCH_VERDICT_EXACT` without launch-authority hash | 457–466 |
-| Launch authority created after launch verdict | launch authority binds `launch_sol_high_verdict_sha256` | 438–456, 582 |
-| DAG and unique topological order | `AUTHORITY_DEPENDENCY_EDGES`, `PROCESS_ORDER`, `topological_authority_order` | 641–709 |
-| Incremental streamed limits | `begin_member`, `consume_chunk`, `end_member` | 980–1033 |
-| Total exclusive classifier | `classify_reconciliation`, `enumerate_reconciliation_cases` | 1180–1370 |
-| Unique future task | `Task 1: Pilot Source-Preparation Capability On Synthetic Fixtures` | 1549 |
+| Architecture read order matches unique DAG | Authorization A after capability verdict, before launch packet | 7 |
+| Process order still archives plan verdict before implementation | `formal source-preparation plan verdict archival` then `capability implementation` | 44–57 |
+| Authorization A is successor of capability verdict | Authorization A section | 606 |
+| Added edges `capability_verdict -> authorization_a` and `authorization_a -> launch_packet` | `AUTHORITY_DEPENDENCY_EDGES` | 647–667 |
+| Frozen unique order | `UNIQUE_AUTHORITY_ORDER` | 668–678 |
+| True uniqueness check, no lexicographic tie-break | `count_topological_authority_orders`, `require_unique_topological_authority_order` | 697–766 |
+| Runtime snapshot order matches unique DAG | production read sequence | 768–777 |
+| Uniqueness test plus two edge-removal checks | `test_authority_dependency_graph_has_exactly_one_topological_order` | 1657, 1837–1863 |
+| Unique future task | `Task 1: Pilot Source-Preparation Capability On Synthetic Fixtures` | 1612 |
 
 ## Authority input hashes
 
-Unchanged from `0a5cab6660419860d22c2bff5dcf98e5f27a44f1`. Rechecked 17/17 OK.
+Unchanged from `1ef6b0cd1d58611a54011028cc9087435f259d95`. Rechecked 17/17 OK.
 
 | Path | SHA-256 |
 |---|---|
@@ -84,28 +84,32 @@ Unchanged from `0a5cab6660419860d22c2bff5dcf98e5f27a44f1`. Rechecked 17/17 OK.
 
 ## RED
 
-Command, run against the old plan at `0a5cab6660419860d22c2bff5dcf98e5f27a44f1`. The checker built a dependency graph from schema fields, inspected process-order steps, counted reconciliation rows, parsed the capability validator AST, and inspected `StreamedLimitCounter` methods.
+Command, run against the old plan at `1ef6b0cd1d58611a54011028cc9087435f259d95`. The checker executed `AUTHORITY_DEPENDENCY_EDGES`, counted nodes and edges, proved acyclicity by Kahn exhaustion, enumerated every topological order without lexicographic tie-break, and compared that count to the uniqueness claim.
 
 Exit code: 1
 
 ```text
-GRAPH_EDGES [('launch_authority', 'launch_verdict'), ('launch_verdict', 'launch_authority')]
-PROCESS_STEPS listed capability implementation at index 1 and formal plan verdict archival at index 4
-CLAIMED seven ACTUAL_ROWS [8 rows including failure-terminal and schema-mismatch]
-COUNTER_METHODS ['__init__', 'add_member']
-SEMANTIC_RED_FAILURES
-- authority dependency graph has a cycle: launch_authority -> launch_verdict_hash and launch_verdict -> launch_authority_hash
-- capability implementation at step 1 precedes formal plan verdict archival at step 4
-- reconciliation claims 7 states but table has 8 rows; failure-terminal any/any overlaps schema-mismatch
-- reconciliation omits a unique disposition for valid PASS result plus manifest with root absent, and for FAIL result plus manifest
-- capability verdict reviewed_commit is only typed as str and is never read; validator does not bind reviewed implementation file SHAs
-- StreamedLimitCounter.add_member(streamed_bytes) only checks after the complete member length is known; no begin_member/consume_chunk pre-write incremental seam
-RED_ITEM_COUNT=6
+NODES 9
+EDGES 17
+IN_DEGREE_ZERO ['authorization_a', 'source_preparation_plan']
+ACYCLIC True
+TOPOLOGICAL_ORDER_COUNT 5
+ORDER_1 source_preparation_plan -> authorization_a -> plan_verdict -> capability_verdict -> launch_packet -> launch_verdict -> launch_authority -> source_manifest -> pass_result
+ORDER_2 source_preparation_plan -> plan_verdict -> authorization_a -> capability_verdict -> launch_packet -> launch_verdict -> launch_authority -> source_manifest -> pass_result
+ORDER_3 source_preparation_plan -> plan_verdict -> capability_verdict -> authorization_a -> launch_packet -> launch_verdict -> launch_authority -> source_manifest -> pass_result
+ORDER_4 source_preparation_plan -> plan_verdict -> capability_verdict -> launch_packet -> authorization_a -> launch_verdict -> launch_authority -> source_manifest -> pass_result
+ORDER_5 authorization_a -> source_preparation_plan -> plan_verdict -> capability_verdict -> launch_packet -> launch_verdict -> launch_authority -> source_manifest -> pass_result
+LEXICOGRAPHIC_KAHN authorization_a -> source_preparation_plan -> plan_verdict -> capability_verdict -> launch_packet -> launch_verdict -> launch_authority -> source_manifest -> pass_result
+LEX_IS_ONE_OF_MANY True
+UNIQUENESS_CLAIM_PRESENT True
+CLAIM_CONSISTENT_WITH_GRAPH False
 ```
+
+The old graph was acyclic and had 9 nodes and 17 edges. It had 5 legal topological orders. `authorization_a` and `source_preparation_plan` were both initial ready nodes. The previous `topological_authority_order` function selected one of those five orders by sorting the ready set. That deterministic tie-break is not a uniqueness proof. The uniqueness declaration was therefore inconsistent with the graph.
 
 ## GREEN
 
-The validator parses every Python fence, constructs the authority DAG, runs a topological sort, executes the reconciliation classifier on every enumerated combination, and executes `StreamedLimitCounter` consume-before-write checks.
+The validator parsed every Python fence, executed the repaired edge list, counted topological orders by enumeration with limit 2, required ready-set size 1 at every Kahn step, removed each new edge in turn, executed the reconciliation classifier, and executed `StreamedLimitCounter`.
 
 ```text
 python3 semantic_green.py
@@ -132,36 +136,36 @@ AST_OK 15
 AST_OK 16
 AST_OK 17
 AST_OK 18
-PASS authority dependency graph DAG-valid
-PASS unique topological production order
-PASS formal plan verdict precedes capability implementation
-PASS no launch/verdict mutual hash dependency
-PASS capability verdict binds reviewed commit, plan verdict, and four files
-PASS runtime production bytes drift fail closed
-PASS reconciliation classifier total and mutually exclusive
-PASS incremental pre-write streamed limits
-PASS stable gate-specific error mapping
-PASS one future Task
+PASS all Python fences AST-valid
+PASS authority graph nodes=9 edges=19
+PASS authority graph acyclic
+PASS topological-order count exactly 1
+PASS unique order matches process order
+PASS removal of capability-to-authorization edge is detected
+PASS removal of authorization-to-launch-packet edge is detected
+PASS launch authority chain remains acyclic
+PASS capability verdict bindings retained
+PASS reconciliation combinations=31 states=12
+PASS incremental pre-write limits retained
+PASS exactly one future Task
 PASS file map unchanged
 PASS claims remain blocked
 ```
 
-Fence count: 18. Reconciliation combinations: 31. Distinct states: 12. DAG nodes: 9. DAG edges: 17. Topological order: `authorization_a -> source_preparation_plan -> plan_verdict -> capability_verdict -> launch_packet -> launch_verdict -> launch_authority -> source_manifest -> pass_result`. Repair rounds used: 0.
+Fence count: 18. New graph: 9 nodes, 19 edges. Topological-order count: 1. Unique order: `source_preparation_plan -> plan_verdict -> capability_verdict -> authorization_a -> launch_packet -> launch_verdict -> launch_authority -> source_manifest -> pass_result`. Added edges: `("capability_verdict", "authorization_a")` and `("authorization_a", "launch_packet")`. Removing either added edge makes `require_unique_topological_authority_order` raise and makes the enumerated count differ from 1. Reconciliation combinations remain 31. Distinct states remain 12. Repair rounds used: 0.
 
 ## Plan self-review
 
 - Exactly one future Task remains
 - Future Create files remain `src/p3_v3/pilot_source.py` and `tests/p3_v3/test_pilot_source.py`
 - Future Modify files remain `scripts/p3_v3/pilot.py` and `tests/p3_v3/test_pilot.py`
-- Capability tests still use runtime synthetic ZIP and TAR fixtures only
-- Formal plan verdict now precedes capability implementation
-- Launch verdict no longer hashes the launch authority
-- Launch authority is created after the launch verdict
-- Capability verdict binds `reviewed_commit`, plan-verdict SHA, and the four implementation and test files
-- Production re-snapshots module and CLI bytes
-- Reconciliation classifier is total and mutually exclusive
-- Streamed limits check each chunk before write
-- Gate errors map to stable codes
+- Formal plan verdict still precedes capability implementation
+- Authority graph now has exactly one topological order
+- Uniqueness is proved by ready-set size 1 and by enumeration, not by lexicographic tie-break
+- Launch verdict still does not hash the launch authority
+- Capability verdict still binds `reviewed_commit`, plan-verdict SHA, and the four implementation and test files
+- Reconciliation classifier remains total and mutually exclusive
+- Streamed limits still check each chunk before write
 - `claims=blocked`
 - Formal denominator membership is false
 - `rq4_supported=false`
@@ -186,4 +190,4 @@ Fence count: 18. Reconciliation combinations: 31. Distinct states: 12. DAG nodes
 - `claims=blocked`
 - Current requested state: `PILOT_PLAN_REVIEW_CANDIDATE`
 
-GPT-5.6 Sol High is requested to perform an independent high-reasoning review of the unique two-file successor that starts from `0a5cab6660419860d22c2bff5dcf98e5f27a44f1`. This builder does not assign PASS.
+GPT-5.6 Sol High is requested to perform an independent high-reasoning review of the unique two-file successor that starts from `1ef6b0cd1d58611a54011028cc9087435f259d95`. This builder does not assign PASS.
