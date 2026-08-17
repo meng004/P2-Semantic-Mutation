@@ -1730,14 +1730,6 @@ def _staging_path(materialize_root: Path) -> Path:
     return Path(str(Path(materialize_root)) + ".staging")
 
 
-def _reject_preexisting_staging(staging: Path) -> None:
-    if staging.exists():
-        raise EvidenceError(
-            "E_PILOT_SOURCE_OUTPUT_EXISTS",
-            "pre-existing staging must be preserved",
-        )
-
-
 def _staging_lexists(staging: Path) -> bool:
     try:
         os.lstat(staging)
@@ -1746,6 +1738,14 @@ def _staging_lexists(staging: Path) -> bool:
     except OSError as exc:
         raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "staging cannot be inspected") from exc
     return True
+
+
+def _reject_preexisting_staging(staging: Path) -> None:
+    if _staging_lexists(staging):
+        raise EvidenceError(
+            "E_PILOT_SOURCE_OUTPUT_EXISTS",
+            "pre-existing staging must be preserved",
+        )
 
 
 def _require_safe_residue_staging(staging: Path) -> None:
@@ -1906,7 +1906,7 @@ def run_validate_source(archive: Path, materialize_root: Path) -> None:
     if state == "MANIFEST_ONLY":
         _recover_manifest_only(Path(archive), root, chain, manifest_snap)
         return
-    if staging.exists() or _staging_lexists(staging):
+    if _staging_lexists(staging):
         raise EvidenceError(
             "E_PILOT_SOURCE_OUTPUT_EXISTS",
             "pre-existing staging must be preserved",

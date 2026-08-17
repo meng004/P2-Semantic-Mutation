@@ -2112,3 +2112,35 @@ def test_manifest_only_mismatched_staging_is_preserved_and_rejected(
     assert extract_calls == []
     assert not materialize.exists()
     assert not (tmp_path / "source-preparation-result.json").exists()
+
+
+def test_dangling_staging_symlink_is_rejected_before_archive_snapshot(
+    tmp_path, monkeypatch
+):
+    from p3_v3 import pilot_source
+
+    _install_full_authority_chain(monkeypatch, tmp_path)
+    materialize = tmp_path / "materialize"
+    staging = Path(str(materialize) + ".staging")
+    missing_target = tmp_path / "absent-staging-target"
+    staging.symlink_to(missing_target, target_is_directory=True)
+    before_stat = os.lstat(staging)
+    before_target = os.readlink(staging)
+    archive_calls: list[str] = []
+    original_read = pilot_source.read_production_archive_bytes
+
+    def spy_read(path):
+        archive_calls.append(str(path))
+        return original_read(path)
+
+    monkeypatch.setattr(pilot_source, "read_production_archive_bytes", spy_read)
+    with pytest.raises(EvidenceError, match="E_PILOT_SOURCE_OUTPUT_EXISTS"):
+        pilot_source.run_validate_source(tmp_path / "unused.zip", materialize)
+    assert archive_calls == []
+    after_stat = os.lstat(staging)
+    assert staging.is_symlink()
+    assert after_stat.st_ino == before_stat.st_ino
+    assert os.readlink(staging) == before_target
+    assert not materialize.exists()
+    assert not (tmp_path / "source-manifest.json").exists()
+    assert not (tmp_path / "source-preparation-result.json").exists()
