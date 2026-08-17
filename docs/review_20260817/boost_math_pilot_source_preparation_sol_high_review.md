@@ -1,0 +1,1 @@
+{"authorized_state":"PILOT_SOURCE_PREPARATION_PLAN_FROZEN","claims":"blocked","reviewed_plan_path":"docs/superpowers/plans/2026-08-17-p3-boost-math-pilot-source-preparation-only.md","reviewed_plan_sha256":"faddb776c5e6704df6708bebe8ab14a0de198f76328d777d7d92091fbe30f60a","verdict":"PASS"}
