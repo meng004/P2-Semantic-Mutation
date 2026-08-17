@@ -246,6 +246,24 @@ def test_foundation_cannot_enter_source_or_execution_gate():
         assert not hasattr(pilot, name)
 
 
+def test_validate_source_cli_accepts_only_archive_and_materialize_root():
+    import scripts.p3_v3.pilot as pilot_cli
+
+    parser = pilot_cli.build_parser()
+    args = parser.parse_args(
+        [
+            "validate-source",
+            "--archive",
+            "synthetic.zip",
+            "--materialize-root",
+            "synthetic-root",
+        ]
+    )
+    assert args.command == "validate-source"
+    assert args.archive == "synthetic.zip"
+    assert args.materialize_root == "synthetic-root"
+
+
 def test_write_plan_hashes_the_validated_verdict_snapshot(tmp_path, monkeypatch):
     import p3_v3.pilot as pilot
 

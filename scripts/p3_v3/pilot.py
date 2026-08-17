@@ -22,6 +22,9 @@ def build_parser() -> argparse.ArgumentParser:
     write.add_argument("--output", required=True)
     validate = sub.add_parser("validate-plan")
     validate.add_argument("--plan", required=True)
+    source = sub.add_parser("validate-source")
+    source.add_argument("--archive", required=True)
+    source.add_argument("--materialize-root", required=True)
     return parser
 
 
@@ -33,6 +36,10 @@ def main(argv: list[str] | None = None) -> int:
             write_pilot_plan(args.markdown, args.output)
         elif args.command == "validate-plan":
             validate_pilot_plan(read_canonical_json(args.plan))
+        elif args.command == "validate-source":
+            from p3_v3.pilot_source import run_validate_source
+
+            run_validate_source(Path(args.archive), Path(args.materialize_root))
         else:
             raise EvidenceError("E_CLI_COMMAND", f"unsupported command: {args.command}")
     except EvidenceError as exc:
