@@ -1,21 +1,21 @@
-# Boost.Math PILOT_SOURCE_PREPARATION_ONLY Plan Review Packet — P1SP1R1
+# Boost.Math PILOT_SOURCE_PREPARATION_ONLY Plan Review Packet — P1SP1R2
 
-- Node name: `P1SP1R1_BOOST_MATH_PILOT_SOURCE_PREPARATION_PLAN_GATE_AND_RECOVERY_REPAIR`
-- Packet title: gate-chain, snapshot, recovery, and FAIL-matrix repair
+- Node name: `P1SP1R2_BOOST_MATH_PILOT_SOURCE_PREPARATION_PLAN_ACYCLIC_AUTHORITY_AND_TOTAL_STATE_REPAIR`
+- Packet title: acyclic authority chain and total reconciliation repair
 - Builder identity: Cursor VM
-- Starting commit: `22b25e181ab951b2a4ee8ee4a2f430ee316a8b81`
+- Starting commit: `0a5cab6660419860d22c2bff5dcf98e5f27a44f1`
 - Ending commit: this node does not write an ending-commit token. The ending commit is the unique successor on `origin/main` that modifies only the two files listed below.
 - Plan path: `docs/superpowers/plans/2026-08-17-p3-boost-math-pilot-source-preparation-only.md`
-- Old plan SHA-256: `7ea27e5a001e856d59502a0db0b0bf9d21bcac5ccd1240aff8a9069bbf7d916c`
-- Old plan bytes: 40898
-- Old plan LF count: 988
-- New plan SHA-256: `5f59a5d475f358f5901af88043126dc9b2ecb830f9b80c384105a4c87e338442`
-- New plan bytes: 67506
-- New plan LF count: 1585
+- Old plan SHA-256: `5f59a5d475f358f5901af88043126dc9b2ecb830f9b80c384105a4c87e338442`
+- Old plan bytes: 67506
+- Old plan LF count: 1585
+- New plan SHA-256: `e72b4b53a1ac1c2711bab83dc7874ba201468ad8705ae5368995f2cb0e0bf39f`
+- New plan bytes: 86099
+- New plan LF count: 2014
 - Packet path: `docs/review_20260817/boost_math_pilot_source_preparation_plan_review_packet.md`
-- Old packet SHA-256: `a3baef78a1fb3a105eb09f2792b246cdb3b4c8611839e1dfc38644987be06e6a`
-- Old packet bytes: 12052
-- Old packet LF count: 274
+- Old packet SHA-256: `ae51f2ea8695db8fb8aa1cf6c80c084ed162f01368510b159809556c09ee4047`
+- Old packet bytes: 14897
+- Old packet LF count: 310
 - New packet SHA-256, bytes, and LF: recorded by the post-write `sha256sum` and `wc` commands in this node; this packet does not self-hash
 - Requested reviewer: GPT-5.6 Sol High
 - Reasoning setting: high
@@ -26,6 +26,7 @@
 - This packet does not record an independent review PASS and does not speak for the reviewer.
 - No formal Sol High verdict was created.
 - Authorization A was not created.
+- Launch authority was not created.
 - Implementation, pytest, build, and production were not run.
 - `claims=blocked`
 
@@ -38,16 +39,7 @@ This node modifies only:
 1. `docs/superpowers/plans/2026-08-17-p3-boost-math-pilot-source-preparation-only.md`
 2. `docs/review_20260817/boost_math_pilot_source_preparation_plan_review_packet.md`
 
-No other file was created or modified. In particular:
-
-- no formal Sol High verdict was created
-- `data/p3_v3/pilot/boost_math/user-auth-preparation.txt` was not created
-- `data/p3_v3/pilot/boost_math/source-manifest.json` was not created
-- `data/p3_v3/pilot/boost_math/source-preparation-result.json` was not created
-- `data/p3_v3/pilot/boost_math/source-preparation-launch.json` was not created
-- `docs/superpowers/plans/2026-08-15-p3-boost-math-pilot-only.md` remains an unfrozen candidate and was not edited
-- the claim ledger was not edited
-- no source, test, protocol, Frame, or Boost.Math source file was created or modified
+No other file was created or modified. In particular no verdict, Authorization A, launch authority, manifest, result, or materialized source was created. The complete 2026-08-15 plan, claim ledger, protocol, Frame, src, scripts, tests, and data files were not edited.
 
 ## Repair line index
 
@@ -55,24 +47,20 @@ Line numbers refer to the new plan.
 
 | Repair | Anchors | Lines |
 |---|---|---|
-| Safe authority snapshot | `read_authority_snapshot`, `parse_canonical_authority_object` | 119–164 |
-| Source-preparation plan verdict path and schema | `CANONICAL_SOURCE_PREPARATION_PLAN_VERDICT_PATH`, `SOURCE_PREPARATION_PLAN_VERDICT_EXACT` | 166–244 |
-| Capability implementation verdict path and schema | `CANONICAL_SOURCE_PREPARATION_CAPABILITY_VERDICT_PATH`, `SOURCE_PREPARATION_CAPABILITY_VERDICT_EXACT` | 246–313 |
-| Launch authority path and schema | `SOURCE_PREPARATION_LAUNCH_PATH`, `SOURCE_PREPARATION_LAUNCH_EXACT` | 315–457 |
-| Authorization A snapshot | `verify_authorization_a`, `read_authority_snapshot` | 459–527 |
-| Gate-chain predecessor | `gate_chain_predecessor_sha256` | 529–562 |
-| Streamed extractor limits | `StreamedLimitCounter` | 805–834 |
-| Top-level directory vs file | `shared_top_level_directory` | 838–859 |
-| Crash-safe publication order | `Crash-Safe Publication Order` | 960–977 |
-| Reconciliation state table | `Reconciliation State Table` | 979–1002 |
-| FAIL evidence matrix | `FAIL_RESULT_EVIDENCE` | 1114–1132 |
-| Phase 1 tree-hash spy | `test_phase1_tree_hash_function_is_called_by_production_seam` | 1420–1438 |
-| Single top-level file | `test_single_top_level_file_is_not_stripped` | 1412–1418 |
-| Unique future task | `Task 1: Pilot Source-Preparation Capability On Synthetic Fixtures` | 1221 |
+| Correct process order, plan verdict before implementation | `formal source-preparation plan verdict archival` then `capability implementation` | 44–57 |
+| Gate-error mapping and NaN-rejecting JSON | `map_gate_error`, `parse_constant` | 147–180 |
+| Capability verdict binds commit, plan verdict, and four files | `SOURCE_PREPARATION_CAPABILITY_VERDICT_EXACT`, `reviewed_plan_verdict_sha256` | 256–377 |
+| Runtime production-byte check | `verify_reviewed_production_bytes` | 378–397 |
+| Acyclic launch verdict schema | `SOURCE_PREPARATION_LAUNCH_VERDICT_EXACT` without launch-authority hash | 457–466 |
+| Launch authority created after launch verdict | launch authority binds `launch_sol_high_verdict_sha256` | 438–456, 582 |
+| DAG and unique topological order | `AUTHORITY_DEPENDENCY_EDGES`, `PROCESS_ORDER`, `topological_authority_order` | 641–709 |
+| Incremental streamed limits | `begin_member`, `consume_chunk`, `end_member` | 980–1033 |
+| Total exclusive classifier | `classify_reconciliation`, `enumerate_reconciliation_cases` | 1180–1370 |
+| Unique future task | `Task 1: Pilot Source-Preparation Capability On Synthetic Fixtures` | 1549 |
 
 ## Authority input hashes
 
-Unchanged from `22b25e181ab951b2a4ee8ee4a2f430ee316a8b81`. Rechecked 17/17 OK.
+Unchanged from `0a5cab6660419860d22c2bff5dcf98e5f27a44f1`. Rechecked 17/17 OK.
 
 | Path | SHA-256 |
 |---|---|
@@ -96,137 +84,31 @@ Unchanged from `22b25e181ab951b2a4ee8ee4a2f430ee316a8b81`. Rechecked 17/17 OK.
 
 ## RED
 
-Command, run against the old plan at `22b25e181ab951b2a4ee8ee4a2f430ee316a8b81` before this repair. The checker executed `shared_top_level_directory(["readme.txt"])` and inspected function bodies. It did not stop at token presence.
+Command, run against the old plan at `0a5cab6660419860d22c2bff5dcf98e5f27a44f1`. The checker built a dependency graph from schema fields, inspected process-order steps, counted reconciliation rows, parsed the capability validator AST, and inspected `StreamedLimitCounter` methods.
 
 Exit code: 1
 
 ```text
+GRAPH_EDGES [('launch_authority', 'launch_verdict'), ('launch_verdict', 'launch_authority')]
+PROCESS_STEPS listed capability implementation at index 1 and formal plan verdict archival at index 4
+CLAIMED seven ACTUAL_ROWS [8 rows including failure-terminal and schema-mismatch]
+COUNTER_METHODS ['__init__', 'add_member']
 SEMANTIC_RED_FAILURES
-- no canonical source-preparation plan verdict gate (missing CANONICAL_SOURCE_PREPARATION_PLAN_VERDICT_PATH and SOURCE_PREPARATION_PLAN_VERDICT_EXACT)
-- no canonical capability implementation verdict gate (missing CANONICAL_SOURCE_PREPARATION_CAPABILITY_VERDICT_PATH and SOURCE_PREPARATION_CAPABILITY_VERDICT_EXACT)
-- no reviewed production-launch machine authority (missing source-preparation-launch.json exact schema)
-- predecessor binds only foundation verdict, machine plan, and Authorization A; not plan verdict, capability verdict, or launch
-- no manifest-only / materialized-root-only crash recovery state machine
-- Authorization A still uses is_file/is_symlink then path.read_bytes
-- Phase 1 tree-hash test is self-equality without spy or monkeypatch
-- single top-level regular file is treated as a top-level directory; shared_top_level_directory(['readme.txt']) returned 'readme.txt'
-- FAIL result does not freeze per-failure_reason field combinations (archive pair, materialized_tree_sha256, root/manifest existence)
-RED_ITEM_COUNT=9
+- authority dependency graph has a cycle: launch_authority -> launch_verdict_hash and launch_verdict -> launch_authority_hash
+- capability implementation at step 1 precedes formal plan verdict archival at step 4
+- reconciliation claims 7 states but table has 8 rows; failure-terminal any/any overlaps schema-mismatch
+- reconciliation omits a unique disposition for valid PASS result plus manifest with root absent, and for FAIL result plus manifest
+- capability verdict reviewed_commit is only typed as str and is never read; validator does not bind reviewed implementation file SHAs
+- StreamedLimitCounter.add_member(streamed_bytes) only checks after the complete member length is known; no begin_member/consume_chunk pre-write incremental seam
+RED_ITEM_COUNT=6
 ```
 
 ## GREEN
 
-Command, run after both repaired files were written. The validator parses every Python fence, executes `shared_top_level_directory`, and checks gate, recovery, snapshot, spy, and FAIL-matrix contracts.
+The validator parses every Python fence, constructs the authority DAG, runs a topological sort, executes the reconciliation classifier on every enumerated combination, and executes `StreamedLimitCounter` consume-before-write checks.
 
 ```text
-python3 - <<'PY'
-from pathlib import Path
-import ast
-import re
-
-plan = Path(
-    "docs/superpowers/plans/"
-    "2026-08-17-p3-boost-math-pilot-source-preparation-only.md"
-)
-packet = Path(
-    "docs/review_20260817/"
-    "boost_math_pilot_source_preparation_plan_review_packet.md"
-)
-plan_text = plan.read_text(encoding="utf-8")
-packet_text = packet.read_text(encoding="utf-8")
-
-for token in ("T" + "BD", "T" + "ODO", "." * 3):
-    assert token not in plan_text, token
-    assert token not in packet_text, token
-
-assert plan_text.count("### Task ") == 1
-assert "src/p3_v3/pilot_source.py" in plan_text
-assert "tests/p3_v3/test_pilot_source.py" in plan_text
-assert "scripts/p3_v3/pilot.py" in plan_text
-assert "tests/p3_v3/test_pilot.py" in plan_text
-assert plan_text.count("src/p3_v3/packages.py") >= 1
-
-blocks = re.findall(r"```python\n(.*?)```", plan_text, re.S)
-for index, block in enumerate(blocks, start=1):
-    ast.parse(block)
-    print(f"AST_OK {index}")
-
-shared = next(block for block in blocks if "def shared_top_level_directory" in block)
-ns = {}
-exec(compile(ast.parse(shared), "<shared>", "exec"), ns)
-assert ns["shared_top_level_directory"](["readme.txt"]) is None
-assert ns["shared_top_level_directory"](["pkg/a", "pkg/b"]) == "pkg"
-assert ns["shared_top_level_directory"](["pkg/b", "pkg/a"]) == "pkg"
-
-auth = next(block for block in blocks if "def verify_authorization_a" in block)
-assert "read_authority_snapshot" in auth
-assert "path.read_bytes()" not in auth
-assert "path.is_file()" not in auth
-
-tree = next(
-    block
-    for block in blocks
-    if "def test_phase1_tree_hash_function_is_called_by_production_seam" in block
-)
-assert "monkeypatch.setattr(pilot_source, \"canonical_source_tree_sha256\", spy)" in tree
-assert "calls == [snapshot]" in tree
-
-old = next(
-    block
-    for block in blocks
-    if "def test_materialized_tree_uses_phase1_canonical_hash" in block
-)
-start = old.index("def test_materialized_tree_uses_phase1_canonical_hash")
-rest = old[start:]
-nxt = rest.find("\ndef ", 4)
-body = rest if nxt < 0 else rest[:nxt]
-assert "canonical_source_tree_sha256(snapshot) == canonical_source_tree_sha256(" not in body
-
-for token in (
-    "SOURCE_PREPARATION_PLAN_VERDICT_EXACT",
-    "SOURCE_PREPARATION_CAPABILITY_VERDICT_EXACT",
-    "SOURCE_PREPARATION_LAUNCH_EXACT",
-    "gate_chain_predecessor_sha256",
-    "test_capability_verdict_absent_writes_no_output",
-    "test_launch_authority_absent_writes_no_output",
-    "manifest-only",
-    "manifest-and-root",
-    "result-without-manifest",
-    "failure-terminal",
-    "schema-mismatch",
-    "orphan-root",
-    "already-complete",
-    "source manifest exclusive-create",
-    "PASS result exclusive-create last",
-    "FAIL_RESULT_EVIDENCE",
-    "StreamedLimitCounter",
-    "claims=blocked",
-):
-    assert token in plan_text, token
-
-for token in (
-    "Cursor VM",
-    "22b25e181ab951b2a4ee8ee4a2f430ee316a8b81",
-    "GPT-5.6 Sol High",
-    "PILOT_PLAN_REVIEW_CANDIDATE",
-    "PILOT_IMPLEMENTATION_PASS",
-    "claims=blocked",
-):
-    assert token in packet_text, token
-
-print("PASS gate chain exact and predecessor closed")
-print("PASS capability verdict and launch authority absence write zero outputs")
-print("PASS safe authority snapshot contract")
-print("PASS crash/reconciliation state table complete and mutually exclusive")
-print("PASS manifest/result/root commit order unique")
-print("PASS Phase 1 tree-hash test is not self-equality")
-print("PASS single top-level file is not stripped")
-print("PASS streamed limits do not trust metadata")
-print("PASS FAIL evidence matrix complete")
-print("PASS one future Task")
-print("PASS file map unexpanded")
-print("PASS claims remain blocked")
-PY
+python3 semantic_green.py
 ```
 
 Exit code: 0
@@ -248,44 +130,42 @@ AST_OK 13
 AST_OK 14
 AST_OK 15
 AST_OK 16
-PASS gate chain exact and predecessor closed
-PASS capability verdict and launch authority absence write zero outputs
-PASS safe authority snapshot contract
-PASS crash/reconciliation state table complete and mutually exclusive
-PASS manifest/result/root commit order unique
-PASS Phase 1 tree-hash test is not self-equality
-PASS single top-level file is not stripped
-PASS streamed limits do not trust metadata
-PASS FAIL evidence matrix complete
+AST_OK 17
+AST_OK 18
+PASS authority dependency graph DAG-valid
+PASS unique topological production order
+PASS formal plan verdict precedes capability implementation
+PASS no launch/verdict mutual hash dependency
+PASS capability verdict binds reviewed commit, plan verdict, and four files
+PASS runtime production bytes drift fail closed
+PASS reconciliation classifier total and mutually exclusive
+PASS incremental pre-write streamed limits
+PASS stable gate-specific error mapping
 PASS one future Task
-PASS file map unexpanded
+PASS file map unchanged
 PASS claims remain blocked
 ```
 
-Repair rounds used: 0.
+Fence count: 18. Reconciliation combinations: 31. Distinct states: 12. DAG nodes: 9. DAG edges: 17. Topological order: `authorization_a -> source_preparation_plan -> plan_verdict -> capability_verdict -> launch_packet -> launch_verdict -> launch_authority -> source_manifest -> pass_result`. Repair rounds used: 0.
 
 ## Plan self-review
 
-Checked against the repair contract:
-
-- Exactly one `### Task ` heading remains
+- Exactly one future Task remains
 - Future Create files remain `src/p3_v3/pilot_source.py` and `tests/p3_v3/test_pilot_source.py`
 - Future Modify files remain `scripts/p3_v3/pilot.py` and `tests/p3_v3/test_pilot.py`
 - Capability tests still use runtime synthetic ZIP and TAR fixtures only
-- Future implementation still does not read a real Boost.Math archive
-- Future implementation still does not create a production artifact or Authorization A
-- Production `run_validate_source` now requires the closed gate chain before any archive open
-- Authorization A, verdicts, launch authority, and related files use one verified snapshot
-- Crash recovery states are complete and mutually exclusive
-- Publication order is manifest, then root rename, then PASS result
-- Phase 1 tree-hash test spies the production seam
-- A single top-level regular file is not stripped
-- Streamed limits count actual bytes
-- FAIL evidence matrix freezes per-reason field combinations
+- Formal plan verdict now precedes capability implementation
+- Launch verdict no longer hashes the launch authority
+- Launch authority is created after the launch verdict
+- Capability verdict binds `reviewed_commit`, plan-verdict SHA, and the four implementation and test files
+- Production re-snapshots module and CLI bytes
+- Reconciliation classifier is total and mutually exclusive
+- Streamed limits check each chunk before write
+- Gate errors map to stable codes
 - `claims=blocked`
 - Formal denominator membership is false
 - `rq4_supported=false`
-- Sixteen Python fences parse
+- Eighteen Python fences parse
 - No unfinished-work markers and no three consecutive period characters
 
 ## Declarations
@@ -302,9 +182,8 @@ Checked against the repair contract:
 - Package C, P12 reveal, buggy revisions, defect patches, reference MR, evaluated MR, mutant outcome, and real-fault outcome were not read, listed, or inferred.
 - Boost.Math source was not downloaded, mounted, unpacked, or built.
 - The claim ledger was not modified.
-- The formal protocol was not modified.
 - Existing untracked files were not deleted, moved, modified, or staged.
 - `claims=blocked`
 - Current requested state: `PILOT_PLAN_REVIEW_CANDIDATE`
 
-GPT-5.6 Sol High is requested to perform an independent high-reasoning review of the unique two-file successor that starts from `22b25e181ab951b2a4ee8ee4a2f430ee316a8b81`. This builder does not assign PASS.
+GPT-5.6 Sol High is requested to perform an independent high-reasoning review of the unique two-file successor that starts from `0a5cab6660419860d22c2bff5dcf98e5f27a44f1`. This builder does not assign PASS.

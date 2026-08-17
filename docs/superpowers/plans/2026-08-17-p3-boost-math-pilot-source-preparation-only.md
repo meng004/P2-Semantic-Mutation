@@ -4,7 +4,7 @@
 
 **Goal:** Define one later capability that can hash, extract, and identity-check a caller-supplied archive under a fail-closed extractor and the Phase 1 normalized-tree algorithm. This planning node writes the plan only. The later capability task uses runtime-generated synthetic ZIP and TAR fixtures. It does not read a real Boost.Math archive and does not create a production source manifest, preparation result, authorization A, or launch authority.
 
-**Architecture:** Keep confirmatory `p3-v3-*` schemas unchanged. Add `src/p3_v3/pilot_source.py` as the only new production module. Production `run_validate_source` first reads one verified snapshot of each machine authority in the closed gate chain: the source-preparation plan verdict, the capability implementation verdict, the separately reviewed launch authority, and Authorization A. Only after that chain validates may the module snapshot an archive, extract into new staging, validate the Phase 1 tree on staging, and publish in the frozen order manifest, then materialize root, then PASS result. Capability PASS still does not authorize real preparation.
+**Architecture:** Keep confirmatory `p3-v3-*` schemas unchanged. Add `src/p3_v3/pilot_source.py` as the only new production module. The formal source-preparation plan verdict is archived before any capability implementation. Production `run_validate_source` then reads one verified snapshot of each machine authority in a single acyclic topological order: plan, plan verdict, capability verdict plus reviewed production bytes, launch packet, launch verdict, launch authority, and Authorization A. Only after that chain validates may the module snapshot an archive, extract into new staging, validate the Phase 1 tree on staging, and publish in the frozen order manifest, then materialize root, then PASS result. Capability PASS still does not authorize real preparation.
 
 **Tech Stack:** Python 3.11 or newer, existing `src/p3_v3/artifacts.py` exact-object helpers including `read_regular_file_snapshot`, existing `SourceSnapshot`, `SourceSnapshotEntry`, and `canonical_source_tree_sha256` from `src/p3_v3/bridge_and_frames.py`, pytest with `PYTHONPATH=src`. Cursor VM has no `rtk`. Later implementation uses bare `python3`, `pytest`, `sha256sum`, `wc`, and `git`.
 
@@ -43,17 +43,21 @@ Frozen successor order. Any missing predecessor, hash mismatch, schema drift, or
 
 ```text
 G1_FOUNDATION_IMPLEMENTATION_PASS
--> source-preparation capability implementation
--> Sol High capability implementation review
--> formal capability implementation verdict archival
+-> independent source-preparation plan review
 -> formal source-preparation plan verdict archival
--> user explicit authorization A
--> separately reviewed production preparation launch packet
--> formal launch Sol High verdict archival
+-> capability implementation
+-> independent capability implementation review
+-> formal capability implementation verdict archival
+-> user Authorization A
+-> production launch packet
+-> independent launch-packet review
+-> launch Sol High verdict archival
 -> exclusive-create source-preparation-launch.json
--> production source identity/materialization
--> Sol High source-manifest/result review
+-> production source preparation
+-> independent manifest/result review
 ```
+
+Formal plan verdict archival must precede capability implementation. An unfrozen plan must not be implemented.
 
 Machine-verifiable production authorities, distinct from historical G1:
 
@@ -62,7 +66,7 @@ Machine-verifiable production authorities, distinct from historical G1:
 3. Separately reviewed production preparation launch authority.
 4. Authorization A.
 
-`G1_FOUNDATION_IMPLEMENTATION_PASS` remains the archived foundation implementation verdict. It is already PASS. It authorizes only later capability planning and later capability implementation work. It is not a substitute for the four production authorities above.
+`G1_FOUNDATION_IMPLEMENTATION_PASS` remains the archived foundation implementation verdict. It is already PASS. It authorizes later independent plan review only. It does not authorize capability implementation before the source-preparation plan verdict exists. It is not a substitute for the four production authorities above.
 
 Fail-closed rule: if any production authority is absent, has the wrong SHA-256, is not PASS, or fails exact-schema validation, `run_validate_source` must raise and must write no source manifest, no preparation result, and no materialize root.
 
@@ -146,7 +150,10 @@ def read_authority_snapshot(path: Path, context: str) -> tuple[bytes, str]:
 
 def parse_canonical_authority_object(raw: bytes, context: str) -> dict:
     try:
-        value = json.loads(raw.decode("utf-8"))
+        value = json.loads(
+            raw.decode("utf-8"),
+            parse_constant=lambda token: (_ for _ in ()).throw(ValueError(token)),
+        )
     except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
         raise EvidenceError("E_PILOT_SOURCE_IDENTITY", f"{context} is not JSON") from exc
     if not isinstance(value, dict) or canonical_json_bytes(value) != raw:
@@ -155,6 +162,19 @@ def parse_canonical_authority_object(raw: bytes, context: str) -> dict:
             f"{context} is not one canonical JSON object",
         )
     return value
+
+
+def map_gate_error(exc: EvidenceError, gate_code: str) -> EvidenceError:
+    if exc.code in {
+        "E_SCHEMA_KEYS",
+        "E_SCHEMA_TYPE",
+        "E_SHA256",
+        "E_CANONICAL_JSON",
+        "E_JSON",
+        "E_PILOT_SOURCE_IDENTITY",
+    }:
+        return EvidenceError(gate_code, str(exc))
+    return exc
 ```
 
 Replacement-race rule: if the path is replaced after the snapshot is taken, the producer still binds the already validated snapshot bytes, or it fail-closes. It must not reread the replaced path.
@@ -195,15 +215,18 @@ SOURCE_PREPARATION_PLAN_VERDICT_EXACT = {
 def validate_source_preparation_plan_verdict(
     value: object, markdown_plan_sha256: str
 ) -> dict:
-    validated = validate_exact_object(
-        value,
-        SOURCE_PREPARATION_PLAN_VERDICT_EXACT,
-        "source-preparation-plan-verdict",
-    )
-    validate_sha256(
-        validated["reviewed_plan_sha256"],
-        "source-preparation-plan-verdict.reviewed_plan_sha256",
-    )
+    try:
+        validated = validate_exact_object(
+            value,
+            SOURCE_PREPARATION_PLAN_VERDICT_EXACT,
+            "source-preparation-plan-verdict",
+        )
+        validate_sha256(
+            validated["reviewed_plan_sha256"],
+            "source-preparation-plan-verdict.reviewed_plan_sha256",
+        )
+    except EvidenceError as exc:
+        raise map_gate_error(exc, "E_PILOT_SOURCE_PREPARATION_PLAN_VERDICT") from exc
     if validated["reviewed_plan_path"] != SOURCE_PREPARATION_PLAN_PATH.as_posix():
         raise EvidenceError(
             "E_PILOT_SOURCE_PREPARATION_PLAN_VERDICT",
@@ -253,10 +276,23 @@ CANONICAL_SOURCE_PREPARATION_CAPABILITY_VERDICT_PATH = Path(
     "docs/review_20260817/"
     "boost_math_pilot_source_preparation_implementation_sol_high_review.md"
 )
+REVIEWED_PILOT_SOURCE_PATH = Path("src/p3_v3/pilot_source.py")
+REVIEWED_PILOT_CLI_PATH = Path("scripts/p3_v3/pilot.py")
+REVIEWED_TEST_PILOT_SOURCE_PATH = Path("tests/p3_v3/test_pilot_source.py")
+REVIEWED_TEST_PILOT_PATH = Path("tests/p3_v3/test_pilot.py")
 SOURCE_PREPARATION_CAPABILITY_VERDICT_EXACT = {
     "reviewed_plan_path": str,
     "reviewed_plan_sha256": str,
+    "reviewed_plan_verdict_sha256": str,
     "reviewed_commit": str,
+    "reviewed_pilot_source_path": str,
+    "reviewed_pilot_source_sha256": str,
+    "reviewed_pilot_cli_path": str,
+    "reviewed_pilot_cli_sha256": str,
+    "reviewed_test_pilot_source_path": str,
+    "reviewed_test_pilot_source_sha256": str,
+    "reviewed_test_pilot_path": str,
+    "reviewed_test_pilot_sha256": str,
     "verdict": str,
     "authorized_state": str,
     "claims": str,
@@ -264,26 +300,60 @@ SOURCE_PREPARATION_CAPABILITY_VERDICT_EXACT = {
 
 
 def validate_source_preparation_capability_verdict(
-    value: object, markdown_plan_sha256: str
+    value: object,
+    markdown_plan_sha256: str,
+    plan_verdict_sha256: str,
 ) -> dict:
-    validated = validate_exact_object(
-        value,
-        SOURCE_PREPARATION_CAPABILITY_VERDICT_EXACT,
-        "source-preparation-capability-verdict",
-    )
-    validate_sha256(
-        validated["reviewed_plan_sha256"],
-        "source-preparation-capability-verdict.reviewed_plan_sha256",
-    )
-    if validated["reviewed_plan_path"] != SOURCE_PREPARATION_PLAN_PATH.as_posix():
+    try:
+        validated = validate_exact_object(
+            value,
+            SOURCE_PREPARATION_CAPABILITY_VERDICT_EXACT,
+            "source-preparation-capability-verdict",
+        )
+    except EvidenceError as exc:
+        raise map_gate_error(exc, "E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT") from exc
+    commit = validated["reviewed_commit"]
+    if type(commit) is not str or __import__("re").fullmatch(r"[0-9a-f]{40}", commit) is None:
         raise EvidenceError(
             "E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT",
-            "reviewed plan path differs",
+            "reviewed_commit is not 40 lowercase hexadecimal characters",
         )
+    expected_paths = {
+        "reviewed_plan_path": SOURCE_PREPARATION_PLAN_PATH.as_posix(),
+        "reviewed_pilot_source_path": REVIEWED_PILOT_SOURCE_PATH.as_posix(),
+        "reviewed_pilot_cli_path": REVIEWED_PILOT_CLI_PATH.as_posix(),
+        "reviewed_test_pilot_source_path": REVIEWED_TEST_PILOT_SOURCE_PATH.as_posix(),
+        "reviewed_test_pilot_path": REVIEWED_TEST_PILOT_PATH.as_posix(),
+    }
+    for key, required in expected_paths.items():
+        if validated[key] != required:
+            raise EvidenceError(
+                "E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT",
+                f"{key} differs",
+            )
+    for key in (
+        "reviewed_plan_sha256",
+        "reviewed_plan_verdict_sha256",
+        "reviewed_pilot_source_sha256",
+        "reviewed_pilot_cli_sha256",
+        "reviewed_test_pilot_source_sha256",
+        "reviewed_test_pilot_sha256",
+    ):
+        try:
+            validate_sha256(validated[key], f"capability-verdict.{key}")
+        except EvidenceError as exc:
+            raise map_gate_error(
+                exc, "E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT"
+            ) from exc
     if validated["reviewed_plan_sha256"] != markdown_plan_sha256:
         raise EvidenceError(
             "E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT",
             "reviewed plan hash differs",
+        )
+    if validated["reviewed_plan_verdict_sha256"] != plan_verdict_sha256:
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT",
+            "reviewed plan verdict hash differs",
         )
     if validated["verdict"] != "PASS":
         raise EvidenceError(
@@ -303,9 +373,31 @@ def validate_source_preparation_capability_verdict(
             "claims are not blocked",
         )
     return validated
+
+
+def verify_reviewed_production_bytes(
+    capability_verdict: dict,
+) -> None:
+    observed_source, source_digest = read_authority_snapshot(
+        REVIEWED_PILOT_SOURCE_PATH, "reviewed-pilot-source"
+    )
+    observed_cli, cli_digest = read_authority_snapshot(
+        REVIEWED_PILOT_CLI_PATH, "reviewed-pilot-cli"
+    )
+    del observed_source, observed_cli
+    if source_digest != capability_verdict["reviewed_pilot_source_sha256"]:
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT",
+            "runtime pilot_source.py bytes differ from the reviewed snapshot",
+        )
+    if cli_digest != capability_verdict["reviewed_pilot_cli_sha256"]:
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT",
+            "runtime pilot CLI bytes differ from the reviewed snapshot",
+        )
 ```
 
-A missing file is `E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT_ABSENT`. Hash mismatch, schema drift, or non-PASS is `E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT`. Either case writes zero production outputs.
+A missing file is `E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT_ABSENT`. Hash mismatch, schema drift, reviewed-commit mismatch, implementation-file drift, or non-PASS is `E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT`. Either case writes zero production outputs. The capability verdict must bind the formal plan verdict SHA-256. Test-file hashes are review evidence. Production re-snapshots only the production module and CLI and fail-closes on byte drift. Canonical-JSON, extra-key, wrong-type, and bad-SHA failures must surface as this gate code, not as raw `E_SCHEMA_KEYS` or `E_CANONICAL_JSON`.
 
 ---
 
@@ -363,10 +455,11 @@ SOURCE_PREPARATION_LAUNCH_EXACT = {
     "artifact_sha256": str,
 }
 SOURCE_PREPARATION_LAUNCH_VERDICT_EXACT = {
-    "reviewed_launch_path": str,
-    "reviewed_launch_sha256": str,
     "reviewed_packet_path": str,
     "reviewed_packet_sha256": str,
+    "plan_verdict_sha256": str,
+    "capability_verdict_sha256": str,
+    "authorization_a_sha256": str,
     "verdict": str,
     "authorized_state": str,
     "claims": str,
@@ -383,9 +476,12 @@ def validate_source_preparation_launch(
     launch_verdict_sha256: str,
     authorization_a_sha256: str,
 ) -> dict:
-    validated = validate_exact_object(
-        value, SOURCE_PREPARATION_LAUNCH_EXACT, "source-preparation-launch"
-    )
+    try:
+        validated = validate_exact_object(
+            value, SOURCE_PREPARATION_LAUNCH_EXACT, "source-preparation-launch"
+        )
+    except EvidenceError as exc:
+        raise map_gate_error(exc, "E_PILOT_SOURCE_PREPARATION_LAUNCH") from exc
     if validated["schema_version"] != "p3-pilot-source-preparation-launch-v1":
         raise EvidenceError("E_PILOT_SOURCE_PREPARATION_LAUNCH", "schema differs")
     if validated["execution_class"] != "PILOT_ONLY":
@@ -430,23 +526,42 @@ def validate_source_preparation_launch(
 
 
 def validate_source_preparation_launch_verdict(
-    value: object, launch_sha256: str, packet_sha256: str
+    value: object,
+    *,
+    packet_sha256: str,
+    plan_verdict_sha256: str,
+    capability_verdict_sha256: str,
+    authorization_a_sha256: str,
 ) -> dict:
-    validated = validate_exact_object(
-        value,
-        SOURCE_PREPARATION_LAUNCH_VERDICT_EXACT,
-        "source-preparation-launch-verdict",
-    )
-    if validated["reviewed_launch_path"] != SOURCE_PREPARATION_LAUNCH_PATH.as_posix():
-        raise EvidenceError("E_PILOT_SOURCE_PREPARATION_LAUNCH", "launch path differs")
-    if validated["reviewed_launch_sha256"] != launch_sha256:
-        raise EvidenceError("E_PILOT_SOURCE_PREPARATION_LAUNCH", "launch hash differs")
+    try:
+        validated = validate_exact_object(
+            value,
+            SOURCE_PREPARATION_LAUNCH_VERDICT_EXACT,
+            "source-preparation-launch-verdict",
+        )
+    except EvidenceError as exc:
+        raise map_gate_error(exc, "E_PILOT_SOURCE_PREPARATION_LAUNCH") from exc
     if validated["reviewed_packet_path"] != (
         SOURCE_PREPARATION_LAUNCH_PACKET_PATH.as_posix()
     ):
         raise EvidenceError("E_PILOT_SOURCE_PREPARATION_LAUNCH", "packet path differs")
     if validated["reviewed_packet_sha256"] != packet_sha256:
         raise EvidenceError("E_PILOT_SOURCE_PREPARATION_LAUNCH", "packet hash differs")
+    if validated["plan_verdict_sha256"] != plan_verdict_sha256:
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_LAUNCH",
+            "plan verdict hash differs",
+        )
+    if validated["capability_verdict_sha256"] != capability_verdict_sha256:
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_LAUNCH",
+            "capability verdict hash differs",
+        )
+    if validated["authorization_a_sha256"] != authorization_a_sha256:
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_LAUNCH",
+            "authorization A hash differs",
+        )
     if validated["verdict"] != "PASS":
         raise EvidenceError("E_PILOT_SOURCE_PREPARATION_LAUNCH", "verdict is not PASS")
     if validated["authorized_state"] != "PILOT_SOURCE_PREPARATION_LAUNCH_FROZEN":
@@ -463,6 +578,8 @@ def validate_source_preparation_launch_verdict(
 ```
 
 A missing launch authority is `E_PILOT_SOURCE_PREPARATION_LAUNCH_ABSENT`. Hash mismatch, schema drift, or non-PASS is `E_PILOT_SOURCE_PREPARATION_LAUNCH`. Either case writes zero production outputs.
+
+The launch verdict reviews only the launch packet and the already frozen predecessors: plan verdict SHA-256, capability verdict SHA-256, and Authorization A SHA-256. It must not contain `reviewed_launch_path` or `reviewed_launch_sha256`. `source-preparation-launch.json` is exclusive-created only after that launch verdict is archived. No predecessor of the launch authority may cite the launch authority hash. Launch authority binds the capability verdict file SHA-256. Test-file hashes remain review evidence inside the capability verdict; production re-snapshots only `src/p3_v3/pilot_source.py` and `scripts/p3_v3/pilot.py`.
 
 ---
 
@@ -522,19 +639,81 @@ def verify_authorization_a(path: Path = AUTHORIZATION_A_PATH) -> tuple[bytes, st
 
 ---
 
-## Production Gate-Chain Read Order
+## Acyclic Authority Dependency Graph
 
-`run_validate_source` must read and validate the complete chain from snapshots before it opens the archive:
+Frozen directed edges mean "must exist before". The graph must be a DAG. Launch authority must not be a predecessor of the launch verdict.
+
+```python
+AUTHORITY_DEPENDENCY_EDGES = [
+    ("source_preparation_plan", "plan_verdict"),
+    ("plan_verdict", "capability_verdict"),
+    ("plan_verdict", "launch_packet"),
+    ("capability_verdict", "launch_packet"),
+    ("launch_packet", "launch_verdict"),
+    ("plan_verdict", "launch_verdict"),
+    ("capability_verdict", "launch_verdict"),
+    ("authorization_a", "launch_verdict"),
+    ("source_preparation_plan", "launch_authority"),
+    ("plan_verdict", "launch_authority"),
+    ("capability_verdict", "launch_authority"),
+    ("launch_packet", "launch_authority"),
+    ("launch_verdict", "launch_authority"),
+    ("authorization_a", "launch_authority"),
+    ("launch_authority", "source_manifest"),
+    ("authorization_a", "source_manifest"),
+    ("source_manifest", "pass_result"),
+]
+PROCESS_ORDER = [
+    "G1_FOUNDATION_IMPLEMENTATION_PASS",
+    "independent_source_preparation_plan_review",
+    "formal_source_preparation_plan_verdict_archival",
+    "capability_implementation",
+    "independent_capability_implementation_review",
+    "formal_capability_implementation_verdict_archival",
+    "user_authorization_a",
+    "production_launch_packet",
+    "independent_launch_packet_review",
+    "launch_sol_high_verdict_archival",
+    "exclusive_create_source_preparation_launch",
+    "production_source_preparation",
+    "independent_manifest_result_review",
+]
+
+
+def topological_authority_order(edges: list[tuple[str, str]]) -> list[str]:
+    nodes = sorted({node for edge in edges for node in edge})
+    incoming = {node: 0 for node in nodes}
+    outgoing: dict[str, list[str]] = {node: [] for node in nodes}
+    for start, end in edges:
+        outgoing[start].append(end)
+        incoming[end] += 1
+    ready = sorted(node for node, count in incoming.items() if count == 0)
+    order: list[str] = []
+    while ready:
+        node = ready.pop(0)
+        order.append(node)
+        for nxt in sorted(outgoing[node]):
+            incoming[nxt] -= 1
+            if incoming[nxt] == 0:
+                ready.append(nxt)
+                ready.sort()
+    if len(order) != len(nodes):
+        raise ValueError("authority dependency graph contains a cycle")
+    return order
+```
+
+The unique production snapshot order is the topological order of that DAG, with Authorization A readable first because it has in-degree zero together with the plan. Concrete production read sequence:
 
 1. Authorization A snapshot and exact-byte check.
 2. Source-preparation plan markdown snapshot.
 3. Source-preparation plan verdict snapshot, parsed and validated against the plan snapshot hash.
-4. Capability implementation verdict snapshot, parsed and validated against the same plan snapshot hash.
-5. Launch packet snapshot.
-6. Launch Sol High verdict snapshot, parsed and validated against the launch-packet snapshot hash after the launch object hash is known, or validated after step 7 if the verdict reviews the launch file.
-7. Launch authority snapshot, parsed and validated against every snapshot hash from steps 1 through 6.
+4. Capability implementation verdict snapshot, parsed and validated against the plan snapshot hash and the plan-verdict snapshot hash.
+5. Safe single-fd snapshots of `src/p3_v3/pilot_source.py` and `scripts/p3_v3/pilot.py`; require those digests to equal the capability verdict. Missing files or byte drift write zero production outputs.
+6. Launch packet snapshot.
+7. Launch verdict snapshot, parsed and validated against the packet, plan-verdict, capability-verdict, and Authorization A snapshot hashes. The launch verdict must not mention a launch-authority hash.
+8. Launch authority snapshot, parsed and validated against every snapshot hash from steps 1 through 7, including the launch-verdict snapshot hash.
 
-Practical order that keeps every hash available: steps 1 through 5, then launch authority, then launch verdict bound to that launch authority snapshot. Missing capability verdict or missing launch authority writes zero production outputs.
+Missing capability verdict, missing launch authority, schema drift, or runtime production-byte drift writes zero production outputs.
 
 Gate-chain predecessor set used by both the source manifest and every FAIL result:
 
@@ -801,6 +980,8 @@ Member-count, single-member, and total-uncompressed limits are enforced by actua
 ```python
 from __future__ import annotations
 
+from p3_v3.artifacts import EvidenceError
+
 
 class StreamedLimitCounter:
     def __init__(self, policy: dict) -> None:
@@ -809,23 +990,49 @@ class StreamedLimitCounter:
         self.max_total_uncompressed_bytes = policy["max_total_uncompressed_bytes"]
         self.member_count = 0
         self.total_bytes = 0
+        self._open = False
+        self._current_member_bytes = 0
 
-    def add_member(self, streamed_bytes: int) -> None:
-        self.member_count += 1
-        if self.member_count > self.max_member_count:
+    def begin_member(self) -> None:
+        if self._open:
+            raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "member is already open")
+        prospective_count = self.member_count + 1
+        if prospective_count > self.max_member_count:
             raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "member count exceeds policy")
-        if streamed_bytes > self.max_member_bytes:
+        self.member_count = prospective_count
+        self._current_member_bytes = 0
+        self._open = True
+
+    def consume_chunk(self, chunk_length: object) -> None:
+        if type(chunk_length) is not int or chunk_length < 0:
+            raise EvidenceError(
+                "E_PILOT_EXTRACT_UNSAFE",
+                "chunk length must be a nonnegative int",
+            )
+        if not self._open:
+            raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "no open member")
+        prospective_member = self._current_member_bytes + chunk_length
+        prospective_total = self.total_bytes + chunk_length
+        if prospective_member > self.max_member_bytes:
             raise EvidenceError(
                 "E_PILOT_EXTRACT_UNSAFE",
                 "streamed member bytes exceed policy",
             )
-        self.total_bytes += streamed_bytes
-        if self.total_bytes > self.max_total_uncompressed_bytes:
+        if prospective_total > self.max_total_uncompressed_bytes:
             raise EvidenceError(
                 "E_PILOT_EXTRACT_UNSAFE",
                 "streamed total bytes exceed policy",
             )
+        self._current_member_bytes = prospective_member
+        self.total_bytes = prospective_total
+
+    def end_member(self) -> None:
+        if not self._open:
+            raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "no open member")
+        self._open = False
 ```
+
+The extractor loop must use a fixed upper-bound chunk size. It must call `begin_member()` before any content, call `consume_chunk(len(chunk))` before writing that chunk to staging, and call `end_member()` after the member ends. A failed `consume_chunk` must not write that chunk. Archive metadata sizes may be used only to reject early. They must not replace the actual byte counter.
 
 Extraction writes into a newly created staging directory. The caller-supplied materialize root must not exist at the start of a fresh PASS attempt. Success atomically renames the staging directory onto that root only after the source manifest has been exclusive-created. Failure may delete only the staging directory created by that attempt. The extractor must not delete or replace a pre-existing materialize root.
 
@@ -978,26 +1185,147 @@ A source manifest by itself does not represent PASS. Only the closed pair of tha
 
 ## Reconciliation State Table
 
-The seven states are mutually exclusive. Exactly one row applies.
+First safely parse any existing manifest or result. If either durable object fails schema, self-hash, or predecessor checks, return exactly `INVALID_DURABLE_OBJECT`. That state is not mixed with presence states.
+
+M means manifest, R means result, D means materialize root. The twelve states below are mutually exclusive. Every reachable presence, status, and validity combination hits exactly one state.
 
 | State | Manifest | Result | Root | Action |
 |---|---|---|---|---|
-| fresh | absent | absent | absent | run the frozen publication order |
-| manifest-only | valid | absent | absent | verify the existing manifest, current gate chain, and the same archive snapshot; restage; revalidate tree, count, and bytes; rename; exclusive-create the PASS result |
-| manifest-and-root | valid | absent | present | safely capture the existing root; require tree hash, file count, and total bytes to equal the manifest; exclusive-create the PASS result; do not rename again |
-| result-without-manifest | absent | PASS | any | fail closed; do not invent a manifest |
-| failure-terminal | any | FAIL_INFRASTRUCTURE | any | treat as terminal; do not overwrite |
-| schema-mismatch | present or present | present or present | any | if either durable object fails schema, hash, or predecessor checks, fail closed; do not delete; do not overwrite |
-| orphan-root | absent | absent | present | unauthenticated orphan; fail closed; do not delete the root |
-| already-complete | valid | valid PASS | present | verify the closed pair or report already complete; do not create a second result |
+| `FRESH` | M0 | R0 | D0 | run the frozen publication order |
+| `ORPHAN_ROOT` | M0 | R0 | D1 | fail closed; do not delete the root |
+| `MANIFEST_ONLY` | valid M1 | R0 | D0 | verify the existing manifest, current gate chain, and the same archive snapshot; restage; revalidate tree, count, and bytes; rename; exclusive-create the PASS result |
+| `MANIFEST_AND_ROOT` | valid M1 | R0 | D1 | safely capture the existing root; require tree hash, file count, and total bytes to equal the manifest; exclusive-create the PASS result; do not rename again |
+| `FAILURE_TERMINAL` | M0 | valid FAIL | D0 | treat as terminal; do not overwrite |
+| `INVALID_FAILURE_ROOT` | M0 | valid FAIL | D1 | fail closed; do not delete the root or the FAIL result |
+| `INVALID_FAILURE_MANIFEST` | M1 | valid FAIL | D0 or D1 | fail closed; FAIL result plus manifest must not continue |
+| `INVALID_PASS_NO_MANIFEST` | M0 | valid PASS | D0 or D1 | fail closed; do not invent a manifest |
+| `INVALID_PASS_NO_ROOT` | valid M1 | valid PASS | D0 | fail closed; PASS without a root is incomplete |
+| `ALREADY_COMPLETE` | valid M1 | valid PASS | D1, and manifest, result, and root agree | re-verify root tree, count, and bytes; report already complete; do not create a second result |
+| `INVALID_CLOSED_PAIR` | valid M1 | valid PASS | D1, but pair or root disagrees | fail closed; do not delete or overwrite |
+| `INVALID_DURABLE_OBJECT` | any present durable object has invalid schema, hash, or predecessor | any | any | fail closed; do not delete or overwrite |
 
-Additional hard rules:
+```python
+from __future__ import annotations
 
-- PASS result exists and manifest is absent: fail closed, do not invent a manifest.
-- A failure result exists: terminal, do not overwrite.
-- Manifest or result schema, hash, or predecessor mismatch: fail closed, do not delete, do not overwrite.
-- Root exists and both manifest and result are absent: orphan, fail closed, do not delete the root.
-- Closed manifest plus PASS result: verify or report already complete, do not create a second result.
+RECONCILIATION_STATES = (
+    "FRESH",
+    "ORPHAN_ROOT",
+    "MANIFEST_ONLY",
+    "MANIFEST_AND_ROOT",
+    "FAILURE_TERMINAL",
+    "INVALID_FAILURE_ROOT",
+    "INVALID_FAILURE_MANIFEST",
+    "INVALID_PASS_NO_MANIFEST",
+    "INVALID_PASS_NO_ROOT",
+    "ALREADY_COMPLETE",
+    "INVALID_CLOSED_PAIR",
+    "INVALID_DURABLE_OBJECT",
+)
+
+
+def classify_reconciliation(
+    *,
+    manifest_present: bool,
+    result_present: bool,
+    root_present: bool,
+    manifest_valid: bool,
+    result_valid: bool,
+    result_status: str | None,
+    closed_pair_consistent: bool,
+) -> str:
+    if manifest_present and not manifest_valid:
+        return "INVALID_DURABLE_OBJECT"
+    if result_present and not result_valid:
+        return "INVALID_DURABLE_OBJECT"
+    if not manifest_present and not result_present and not root_present:
+        return "FRESH"
+    if not manifest_present and not result_present and root_present:
+        return "ORPHAN_ROOT"
+    if manifest_present and not result_present and not root_present:
+        return "MANIFEST_ONLY"
+    if manifest_present and not result_present and root_present:
+        return "MANIFEST_AND_ROOT"
+    if (
+        not manifest_present
+        and result_present
+        and result_status == "FAIL_INFRASTRUCTURE"
+    ):
+        if root_present:
+            return "INVALID_FAILURE_ROOT"
+        return "FAILURE_TERMINAL"
+    if manifest_present and result_present and result_status == "FAIL_INFRASTRUCTURE":
+        return "INVALID_FAILURE_MANIFEST"
+    if not manifest_present and result_present and result_status == "PASS":
+        return "INVALID_PASS_NO_MANIFEST"
+    if (
+        manifest_present
+        and result_present
+        and result_status == "PASS"
+        and not root_present
+    ):
+        return "INVALID_PASS_NO_ROOT"
+    if manifest_present and result_present and result_status == "PASS" and root_present:
+        if closed_pair_consistent:
+            return "ALREADY_COMPLETE"
+        return "INVALID_CLOSED_PAIR"
+    raise AssertionError("unclassified reconciliation combination")
+
+
+def enumerate_reconciliation_cases() -> list[tuple]:
+    cases: list[tuple] = []
+    for manifest_present in (False, True):
+        for result_present in (False, True):
+            for root_present in (False, True):
+                manifest_valids = (True,) if not manifest_present else (True, False)
+                result_valids = (True,) if not result_present else (True, False)
+                if not result_present:
+                    result_statuses = (None,)
+                else:
+                    result_statuses = ("FAIL_INFRASTRUCTURE", "PASS")
+                for manifest_valid in manifest_valids:
+                    for result_valid in result_valids:
+                        for result_status in result_statuses:
+                            need_pair = (
+                                manifest_present
+                                and result_present
+                                and root_present
+                                and manifest_valid
+                                and result_valid
+                                and result_status == "PASS"
+                            )
+                            consistents = (True, False) if need_pair else (True,)
+                            for closed_pair_consistent in consistents:
+                                state = classify_reconciliation(
+                                    manifest_present=manifest_present,
+                                    result_present=result_present,
+                                    root_present=root_present,
+                                    manifest_valid=manifest_valid,
+                                    result_valid=result_valid,
+                                    result_status=result_status,
+                                    closed_pair_consistent=closed_pair_consistent,
+                                )
+                                cases.append(
+                                    (
+                                        manifest_present,
+                                        result_present,
+                                        root_present,
+                                        manifest_valid,
+                                        result_valid,
+                                        result_status,
+                                        closed_pair_consistent,
+                                        state,
+                                    )
+                                )
+    return cases
+```
+
+Hard rules:
+
+- FAIL result and manifest together must fail closed.
+- PASS result missing a manifest or a root must fail closed.
+- `ALREADY_COMPLETE` must re-verify root tree hash, file count, and total bytes.
+- Invalid or orphan durable objects must not be deleted or overwritten.
+- Future tests must enumerate every combination through `enumerate_reconciliation_cases`.
 
 ---
 
@@ -1259,7 +1587,32 @@ REQUIRED_SOURCE_PREPARATION_TESTS = [
     "test_machine_plan_hash_mismatch_fails_closed",
     "test_capability_verdict_absent_writes_no_output",
     "test_launch_authority_absent_writes_no_output",
+    "test_runtime_production_bytes_drift_writes_no_output",
     "test_authority_snapshot_binds_validated_bytes_on_replacement_race",
+    "test_capability_verdict_requires_reviewed_commit",
+    "test_capability_verdict_binds_implementation_files",
+    "test_reconciliation_classifier_is_total_and_exclusive",
+    "test_streamed_chunk_exceeds_member_limit_before_write",
+    "test_streamed_chunks_exceed_total_limit",
+    "test_overlimit_chunk_is_not_written",
+    "test_streamed_chunk_length_rejects_bool_and_negative",
+    "test_member_count_checked_before_content",
+    "test_plan_verdict_rejects_noncanonical",
+    "test_plan_verdict_rejects_extra_key",
+    "test_plan_verdict_rejects_wrong_type",
+    "test_plan_verdict_rejects_bad_sha",
+    "test_capability_verdict_rejects_noncanonical",
+    "test_capability_verdict_rejects_extra_key",
+    "test_capability_verdict_rejects_wrong_type",
+    "test_capability_verdict_rejects_bad_sha",
+    "test_launch_verdict_rejects_noncanonical",
+    "test_launch_verdict_rejects_extra_key",
+    "test_launch_verdict_rejects_wrong_type",
+    "test_launch_verdict_rejects_bad_sha",
+    "test_launch_authority_rejects_noncanonical",
+    "test_launch_authority_rejects_extra_key",
+    "test_launch_authority_rejects_wrong_type",
+    "test_launch_authority_rejects_bad_sha",
     "test_archive_snapshot_rejects_symlink",
     "test_archive_snapshot_rejects_non_regular_file",
     "test_archive_snapshot_hashes_same_fd_bytes",
@@ -1415,6 +1768,82 @@ def test_single_top_level_file_is_not_stripped():
     assert shared_top_level_directory(["readme.txt"]) is None
     assert shared_top_level_directory(["pkg/a", "pkg/b"]) == "pkg"
     assert shared_top_level_directory(["pkg/b", "pkg/a"]) == "pkg"
+
+
+def test_reconciliation_classifier_is_total_and_exclusive():
+    from p3_v3.pilot_source import (
+        RECONCILIATION_STATES,
+        classify_reconciliation,
+        enumerate_reconciliation_cases,
+    )
+
+    cases = enumerate_reconciliation_cases()
+    observed = {case[-1] for case in cases}
+    assert observed == set(RECONCILIATION_STATES)
+    for case in cases:
+        again = classify_reconciliation(
+            manifest_present=case[0],
+            result_present=case[1],
+            root_present=case[2],
+            manifest_valid=case[3],
+            result_valid=case[4],
+            result_status=case[5],
+            closed_pair_consistent=case[6],
+        )
+        assert again == case[-1]
+
+
+def test_streamed_chunk_length_rejects_bool_and_negative():
+    from p3_v3.pilot_source import EXTRACTOR_POLICY_V1, StreamedLimitCounter
+
+    counter = StreamedLimitCounter(EXTRACTOR_POLICY_V1)
+    counter.begin_member()
+    with pytest.raises(EvidenceError, match="E_PILOT_EXTRACT_UNSAFE"):
+        counter.consume_chunk(True)
+    with pytest.raises(EvidenceError, match="E_PILOT_EXTRACT_UNSAFE"):
+        counter.consume_chunk(-1)
+
+
+def test_member_count_checked_before_content():
+    from p3_v3.pilot_source import EXTRACTOR_POLICY_V1, StreamedLimitCounter
+
+    policy = dict(EXTRACTOR_POLICY_V1)
+    policy["max_member_count"] = 1
+    counter = StreamedLimitCounter(policy)
+    counter.begin_member()
+    counter.end_member()
+    with pytest.raises(EvidenceError, match="E_PILOT_EXTRACT_UNSAFE"):
+        counter.begin_member()
+
+
+def test_runtime_production_bytes_drift_writes_no_output(tmp_path, monkeypatch):
+    import p3_v3.pilot_source as pilot_source
+
+    monkeypatch.setattr(
+        pilot_source,
+        "REVIEWED_PILOT_SOURCE_PATH",
+        tmp_path / "drifted-pilot-source.py",
+    )
+    (tmp_path / "drifted-pilot-source.py").write_text("drifted\n", encoding="utf-8")
+    monkeypatch.setattr(
+        pilot_source,
+        "SOURCE_MANIFEST_PATH",
+        tmp_path / "source-manifest.json",
+    )
+    monkeypatch.setattr(
+        pilot_source,
+        "SOURCE_PREPARATION_RESULT_PATH",
+        tmp_path / "source-preparation-result.json",
+    )
+    with pytest.raises(
+        EvidenceError, match="E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT"
+    ):
+        pilot_source.run_validate_source(
+            tmp_path / "missing.zip",
+            tmp_path / "materialize",
+        )
+    assert not (tmp_path / "source-manifest.json").exists()
+    assert not (tmp_path / "source-preparation-result.json").exists()
 
 
 def test_phase1_tree_hash_function_is_called_by_production_seam(tmp_path, monkeypatch):
