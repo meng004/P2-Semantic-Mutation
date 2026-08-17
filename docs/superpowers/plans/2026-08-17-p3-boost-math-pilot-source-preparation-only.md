@@ -1,12 +1,12 @@
 # Boost.Math PILOT_SOURCE_PREPARATION_ONLY Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. This document authorizes only the single future source-preparation capability task below. After that task, stop for independent review. Do not start production preparation. Do not create authorization A.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. This document authorizes only the single future source-preparation capability task below. After that task, stop for independent review. Do not start production preparation. Do not create authorization A. Do not create a source-preparation plan verdict, capability verdict, launch authority, launch packet, or launch verdict.
 
-**Goal:** Define one later capability that can hash, extract, and identity-check a caller-supplied archive under a fail-closed extractor and the Phase 1 normalized-tree algorithm. This planning node writes the plan only. The later capability task uses runtime-generated synthetic ZIP and TAR fixtures. It does not read a real Boost.Math archive and does not create a production source manifest or preparation result.
+**Goal:** Define one later capability that can hash, extract, and identity-check a caller-supplied archive under a fail-closed extractor and the Phase 1 normalized-tree algorithm. This planning node writes the plan only. The later capability task uses runtime-generated synthetic ZIP and TAR fixtures. It does not read a real Boost.Math archive and does not create a production source manifest, preparation result, authorization A, or launch authority.
 
-**Architecture:** Keep confirmatory `p3-v3-*` schemas unchanged. Add `src/p3_v3/pilot_source.py` as the only new production module. Bind that module to the archived foundation implementation verdict, the frozen machine plan, and a reserved authorization A path whose exact bytes are specified here and whose file is not created by this node or by the later capability task. Production outputs stay reserved for a later, separately authorized preparation node. After the single capability task, stop at an independent implementation review. Capability PASS still does not authorize real preparation.
+**Architecture:** Keep confirmatory `p3-v3-*` schemas unchanged. Add `src/p3_v3/pilot_source.py` as the only new production module. Production `run_validate_source` first reads one verified snapshot of each machine authority in the closed gate chain: the source-preparation plan verdict, the capability implementation verdict, the separately reviewed launch authority, and Authorization A. Only after that chain validates may the module snapshot an archive, extract into new staging, validate the Phase 1 tree on staging, and publish in the frozen order manifest, then materialize root, then PASS result. Capability PASS still does not authorize real preparation.
 
-**Tech Stack:** Python 3.11 or newer, existing `src/p3_v3/artifacts.py` exact-object helpers, existing `SourceSnapshot`, `SourceSnapshotEntry`, and `canonical_source_tree_sha256` from `src/p3_v3/bridge_and_frames.py`, pytest with `PYTHONPATH=src`. Cursor VM has no `rtk`. Later implementation uses bare `python3`, `pytest`, `sha256sum`, `wc`, and `git`.
+**Tech Stack:** Python 3.11 or newer, existing `src/p3_v3/artifacts.py` exact-object helpers including `read_regular_file_snapshot`, existing `SourceSnapshot`, `SourceSnapshotEntry`, and `canonical_source_tree_sha256` from `src/p3_v3/bridge_and_frames.py`, pytest with `PYTHONPATH=src`. Cursor VM has no `rtk`. Later implementation uses bare `python3`, `pytest`, `sha256sum`, `wc`, and `git`.
 
 ## Global Constraints
 
@@ -18,51 +18,53 @@
 - Process location remains `PILOT_EXECUTION_AWAITING_USER_AUTHORIZATION`.
 - The later capability task uses only runtime-generated synthetic ZIP and TAR fixtures.
 - The later capability task does not read a real Boost.Math archive.
-- The later capability task does not create `data/p3_v3/pilot/boost_math/source-manifest.json` or `data/p3_v3/pilot/boost_math/source-preparation-result.json`.
+- The later capability task does not create `data/p3_v3/pilot/boost_math/source-manifest.json`, `data/p3_v3/pilot/boost_math/source-preparation-result.json`, `data/p3_v3/pilot/boost_math/source-preparation-launch.json`, or `data/p3_v3/pilot/boost_math/user-auth-preparation.txt`.
 - After the later capability task, stop at an independent Sol High implementation review.
 - Capability implementation PASS still does not authorize real preparation.
-- Only a later explicit user authorization A and a separately reviewed production preparation launch packet may run production preparation.
+- Only later explicit Authorization A plus a separately reviewed and archived production launch authority may run production preparation.
 - `claims=blocked`.
 - Formal denominator membership is false.
 - `rq4_supported=false`.
 - The complete plan `docs/superpowers/plans/2026-08-15-p3-boost-math-pilot-only.md` remains unfrozen and is not execution authority.
 - This document contains no build, CMake configure, contract, site, MR, mutant, certification, execution, or evidence-closure implementation task.
-- This planning node does not create authorization A.
-- The later capability task does not create authorization A.
+- This planning node does not create authorization A or any reserved verdict or launch file.
+- The later capability task does not create authorization A or any reserved verdict or launch file.
 - `execution_class = PILOT_ONLY` and `denominator = PILOT_ONLY` on every durable pilot object defined here.
 - File count, directory names, and LOC cannot replace normalized tree identity.
 - The frozen build descriptor hash is an authority label only. A source manifest does not prove CMake configure, compile, test, or public behavior PASS.
+- A source manifest alone does not represent preparation PASS. Only a closed pair of that manifest and a valid PASS result represents preparation PASS.
 - Archive SHA-256 and archive bytes are observed at production time from one opened snapshot. This plan does not invent unknown fixed archive hash or byte values.
 
 ---
 
-## Three Independent Gates
+## Three Independent Gates Plus Launch Authority
 
-Frozen successor order. Any missing predecessor, hash mismatch, or non-PASS state fail-closes every later gate.
+Frozen successor order. Any missing predecessor, hash mismatch, schema drift, or non-PASS state fail-closes every later gate and writes zero production outputs.
 
 ```text
 G1_FOUNDATION_IMPLEMENTATION_PASS
 -> source-preparation capability implementation
 -> Sol High capability implementation review
 -> formal capability implementation verdict archival
+-> formal source-preparation plan verdict archival
 -> user explicit authorization A
 -> separately reviewed production preparation launch packet
+-> formal launch Sol High verdict archival
+-> exclusive-create source-preparation-launch.json
 -> production source identity/materialization
 -> Sol High source-manifest/result review
 ```
 
-Gate meanings:
+Machine-verifiable production authorities, distinct from historical G1:
 
-1. `G1_FOUNDATION_IMPLEMENTATION_PASS` is the current archived foundation implementation verdict. It is already PASS. It authorizes only later capability planning and later capability implementation review, not production preparation.
-2. Source-preparation capability implementation is the single task in this document. It implements and unit-tests the capability against synthetic fixtures. It writes no production preparation artifact.
-3. Sol High capability implementation review is an independent review of that capability. This planning node does not perform it.
-4. Formal capability implementation verdict archival is a later exclusive archival node. It is not the capability task and is not production preparation.
-5. User explicit authorization A is the reserved file defined below. Neither this node nor the capability task creates it.
-6. The production preparation launch packet is a later, separately reviewed document. This plan must not contain an executable production command that names a fictional archive path. The real production command appears only in that later packet.
-7. Production source identity and materialization is the only node that may exclusive-create the source manifest and preparation result.
-8. Sol High source-manifest and result review is an independent review of those production artifacts.
+1. Source-preparation plan formal verdict.
+2. Source-preparation capability implementation formal verdict.
+3. Separately reviewed production preparation launch authority.
+4. Authorization A.
 
-Fail-closed rule: if any earlier artifact is absent, has the wrong SHA-256, or is not PASS, the later gate must raise and must not write a successor production artifact.
+`G1_FOUNDATION_IMPLEMENTATION_PASS` remains the archived foundation implementation verdict. It is already PASS. It authorizes only later capability planning and later capability implementation work. It is not a substitute for the four production authorities above.
+
+Fail-closed rule: if any production authority is absent, has the wrong SHA-256, is not PASS, or fails exact-schema validation, `run_validate_source` must raise and must write no source manifest, no preparation result, and no materialize root.
 
 ---
 
@@ -92,43 +94,375 @@ These files are identity-checked only. This plan does not modify them.
 
 The 2026-08-15 complete pilot plan is a readable unfrozen reference. It is not current execution authority.
 
----
-
-## Implementation Verdict And Machine Plan Binding
-
-Frozen implementation verdict path:
+Historical foundation bindings remain identity labels only:
 
 ```text
 docs/review_20260817/boost_math_pilot_foundation_implementation_sol_high_review.md
-```
-
-Frozen implementation verdict SHA-256:
-
-```text
 e7e5e9519ae49eb08c450c4e16c56d7551528030916d9d8fe88f0ab91a7b1c9d
-```
-
-Required verdict literals after the file-hash check:
-
-- `verdict` equals `PASS`
-- `authorized_state` equals `PILOT_IMPLEMENTATION_PASS`
-- `claims` equals `blocked`
-- `reviewed_machine_plan_path` equals `data/p3_v3/pilot/boost_math/pilot-plan.json`
-- `reviewed_machine_plan_sha256` equals the frozen machine-plan hash below
-
-Frozen machine plan path:
-
-```text
 data/p3_v3/pilot/boost_math/pilot-plan.json
-```
-
-Frozen machine plan SHA-256:
-
-```text
 23d7fb802a2395d93a211862f205065ce1abd52e6ae2e74374aaf2bb624d4cf2
 ```
 
-Production code reads only those two paths. The production CLI must not accept an implementation-verdict path override or a machine-plan path override. Tests may monkeypatch the path constants onto temporary regular files. Monkeypatching a path does not skip the SHA-256 check or the PASS-state check. A missing file, a hash mismatch, or a non-PASS state is fail-closed and writes no source manifest and no preparation result.
+Those two hashes do not authorize production preparation and are not a substitute for the source-preparation plan verdict, capability verdict, or launch authority.
+
+---
+
+## Safe Authority Snapshot Contract
+
+Authorization A, the source-preparation plan verdict, the capability implementation verdict, the launch authority, the launch packet, the launch Sol High verdict, and the historical machine plan must not use `is_file` / `is_symlink` followed by `path.read_bytes`.
+
+Every authority read uses `read_regular_file_snapshot` from `src/p3_v3/artifacts.py`, or an equivalent anchored no-symlink single-fd snapshot. Parse, exact-schema validation, file SHA-256, and predecessor membership must all consume that same raw byte snapshot. After validation, the producer must not reopen the path.
+
+```python
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+
+from p3_v3.artifacts import (
+    EvidenceError,
+    canonical_json_bytes,
+    read_regular_file_snapshot,
+    validate_exact_object,
+    validate_sha256,
+)
+
+
+def read_authority_snapshot(path: Path, context: str) -> tuple[bytes, str]:
+    try:
+        raw, _mode = read_regular_file_snapshot(path, context)
+    except EvidenceError as exc:
+        if exc.code == "E_AUTHORITY_LOCK_PATH":
+            raise EvidenceError(
+                "E_PILOT_SOURCE_IDENTITY",
+                f"{context} authority snapshot is absent or unsafe",
+            ) from exc
+        raise
+    digest = hashlib.sha256(raw).hexdigest()
+    validate_sha256(digest, f"{context}.sha256")
+    return raw, digest
+
+
+def parse_canonical_authority_object(raw: bytes, context: str) -> dict:
+    try:
+        value = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
+        raise EvidenceError("E_PILOT_SOURCE_IDENTITY", f"{context} is not JSON") from exc
+    if not isinstance(value, dict) or canonical_json_bytes(value) != raw:
+        raise EvidenceError(
+            "E_PILOT_SOURCE_IDENTITY",
+            f"{context} is not one canonical JSON object",
+        )
+    return value
+```
+
+Replacement-race rule: if the path is replaced after the snapshot is taken, the producer still binds the already validated snapshot bytes, or it fail-closes. It must not reread the replaced path.
+
+---
+
+## Canonical Source-Preparation Plan Verdict Gate
+
+Frozen path, reserved, not created by this node or by the later capability task:
+
+```text
+docs/review_20260817/boost_math_pilot_source_preparation_sol_high_review.md
+```
+
+The file is one canonical JSON object with exactly one terminal LF. Extra text, Markdown prose, or a second object is `E_PILOT_SOURCE_PREPARATION_PLAN_VERDICT`. Exact keys and exact types:
+
+```python
+from pathlib import Path
+
+from p3_v3.artifacts import EvidenceError, validate_exact_object, validate_sha256
+
+CANONICAL_SOURCE_PREPARATION_PLAN_VERDICT_PATH = Path(
+    "docs/review_20260817/boost_math_pilot_source_preparation_sol_high_review.md"
+)
+SOURCE_PREPARATION_PLAN_PATH = Path(
+    "docs/superpowers/plans/"
+    "2026-08-17-p3-boost-math-pilot-source-preparation-only.md"
+)
+SOURCE_PREPARATION_PLAN_VERDICT_EXACT = {
+    "reviewed_plan_path": str,
+    "reviewed_plan_sha256": str,
+    "verdict": str,
+    "authorized_state": str,
+    "claims": str,
+}
+
+
+def validate_source_preparation_plan_verdict(
+    value: object, markdown_plan_sha256: str
+) -> dict:
+    validated = validate_exact_object(
+        value,
+        SOURCE_PREPARATION_PLAN_VERDICT_EXACT,
+        "source-preparation-plan-verdict",
+    )
+    validate_sha256(
+        validated["reviewed_plan_sha256"],
+        "source-preparation-plan-verdict.reviewed_plan_sha256",
+    )
+    if validated["reviewed_plan_path"] != SOURCE_PREPARATION_PLAN_PATH.as_posix():
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_PLAN_VERDICT",
+            "reviewed plan path differs",
+        )
+    if validated["reviewed_plan_sha256"] != markdown_plan_sha256:
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_PLAN_VERDICT",
+            "reviewed plan hash differs",
+        )
+    if validated["verdict"] != "PASS":
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_PLAN_VERDICT",
+            "verdict is not PASS",
+        )
+    if validated["authorized_state"] != "PILOT_SOURCE_PREPARATION_PLAN_FROZEN":
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_PLAN_VERDICT",
+            "authorized_state is not PILOT_SOURCE_PREPARATION_PLAN_FROZEN",
+        )
+    if validated["claims"] != "blocked":
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_PLAN_VERDICT",
+            "claims are not blocked",
+        )
+    return validated
+```
+
+A missing canonical file is `E_PILOT_SOURCE_PREPARATION_PLAN_VERDICT_ABSENT`. Hash mismatch, schema drift, or non-PASS is `E_PILOT_SOURCE_PREPARATION_PLAN_VERDICT`. Either case writes zero production outputs.
+
+---
+
+## Canonical Capability Implementation Verdict Gate
+
+Frozen path, reserved, not created by this node or by the later capability task:
+
+```text
+docs/review_20260817/boost_math_pilot_source_preparation_implementation_sol_high_review.md
+```
+
+```python
+from pathlib import Path
+
+from p3_v3.artifacts import EvidenceError, validate_exact_object, validate_sha256
+
+CANONICAL_SOURCE_PREPARATION_CAPABILITY_VERDICT_PATH = Path(
+    "docs/review_20260817/"
+    "boost_math_pilot_source_preparation_implementation_sol_high_review.md"
+)
+SOURCE_PREPARATION_CAPABILITY_VERDICT_EXACT = {
+    "reviewed_plan_path": str,
+    "reviewed_plan_sha256": str,
+    "reviewed_commit": str,
+    "verdict": str,
+    "authorized_state": str,
+    "claims": str,
+}
+
+
+def validate_source_preparation_capability_verdict(
+    value: object, markdown_plan_sha256: str
+) -> dict:
+    validated = validate_exact_object(
+        value,
+        SOURCE_PREPARATION_CAPABILITY_VERDICT_EXACT,
+        "source-preparation-capability-verdict",
+    )
+    validate_sha256(
+        validated["reviewed_plan_sha256"],
+        "source-preparation-capability-verdict.reviewed_plan_sha256",
+    )
+    if validated["reviewed_plan_path"] != SOURCE_PREPARATION_PLAN_PATH.as_posix():
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT",
+            "reviewed plan path differs",
+        )
+    if validated["reviewed_plan_sha256"] != markdown_plan_sha256:
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT",
+            "reviewed plan hash differs",
+        )
+    if validated["verdict"] != "PASS":
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT",
+            "verdict is not PASS",
+        )
+    if validated["authorized_state"] != (
+        "PILOT_SOURCE_PREPARATION_IMPLEMENTATION_PASS"
+    ):
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT",
+            "authorized_state is not PILOT_SOURCE_PREPARATION_IMPLEMENTATION_PASS",
+        )
+    if validated["claims"] != "blocked":
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT",
+            "claims are not blocked",
+        )
+    return validated
+```
+
+A missing file is `E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT_ABSENT`. Hash mismatch, schema drift, or non-PASS is `E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT`. Either case writes zero production outputs.
+
+---
+
+## Reviewed Production Launch Machine Authority
+
+Frozen path, reserved, exclusive-created only by a later launch archival node. This node and the later capability task must not create it:
+
+```text
+data/p3_v3/pilot/boost_math/source-preparation-launch.json
+```
+
+Related reserved paths, also not created here:
+
+```text
+docs/review_20260817/boost_math_pilot_source_preparation_launch_packet.md
+docs/review_20260817/boost_math_pilot_source_preparation_launch_sol_high_review.md
+```
+
+```python
+from pathlib import Path
+
+from p3_v3.artifacts import (
+    EvidenceError,
+    canonical_sha256,
+    validate_exact_object,
+    validate_sha256,
+)
+
+SOURCE_PREPARATION_LAUNCH_PATH = Path(
+    "data/p3_v3/pilot/boost_math/source-preparation-launch.json"
+)
+SOURCE_PREPARATION_LAUNCH_PACKET_PATH = Path(
+    "docs/review_20260817/boost_math_pilot_source_preparation_launch_packet.md"
+)
+SOURCE_PREPARATION_LAUNCH_VERDICT_PATH = Path(
+    "docs/review_20260817/"
+    "boost_math_pilot_source_preparation_launch_sol_high_review.md"
+)
+SOURCE_PREPARATION_LAUNCH_EXACT = {
+    "schema_version": str,
+    "execution_class": str,
+    "denominator": str,
+    "source_preparation_plan_path": str,
+    "source_preparation_plan_sha256": str,
+    "source_preparation_plan_verdict_path": str,
+    "source_preparation_plan_verdict_sha256": str,
+    "capability_implementation_verdict_path": str,
+    "capability_implementation_verdict_sha256": str,
+    "production_launch_packet_path": str,
+    "production_launch_packet_sha256": str,
+    "launch_sol_high_verdict_path": str,
+    "launch_sol_high_verdict_sha256": str,
+    "authorization_a_sha256": str,
+    "claims": str,
+    "artifact_sha256": str,
+}
+SOURCE_PREPARATION_LAUNCH_VERDICT_EXACT = {
+    "reviewed_launch_path": str,
+    "reviewed_launch_sha256": str,
+    "reviewed_packet_path": str,
+    "reviewed_packet_sha256": str,
+    "verdict": str,
+    "authorized_state": str,
+    "claims": str,
+}
+
+
+def validate_source_preparation_launch(
+    value: object,
+    *,
+    plan_sha256: str,
+    plan_verdict_sha256: str,
+    capability_verdict_sha256: str,
+    launch_packet_sha256: str,
+    launch_verdict_sha256: str,
+    authorization_a_sha256: str,
+) -> dict:
+    validated = validate_exact_object(
+        value, SOURCE_PREPARATION_LAUNCH_EXACT, "source-preparation-launch"
+    )
+    if validated["schema_version"] != "p3-pilot-source-preparation-launch-v1":
+        raise EvidenceError("E_PILOT_SOURCE_PREPARATION_LAUNCH", "schema differs")
+    if validated["execution_class"] != "PILOT_ONLY":
+        raise EvidenceError("E_PILOT_SOURCE_PREPARATION_LAUNCH", "class differs")
+    if validated["denominator"] != "PILOT_ONLY":
+        raise EvidenceError("E_PILOT_SOURCE_PREPARATION_LAUNCH", "denominator differs")
+    if validated["claims"] != "blocked":
+        raise EvidenceError("E_PILOT_SOURCE_PREPARATION_LAUNCH", "claims are not blocked")
+    expected = {
+        "source_preparation_plan_path": SOURCE_PREPARATION_PLAN_PATH.as_posix(),
+        "source_preparation_plan_sha256": plan_sha256,
+        "source_preparation_plan_verdict_path": (
+            CANONICAL_SOURCE_PREPARATION_PLAN_VERDICT_PATH.as_posix()
+        ),
+        "source_preparation_plan_verdict_sha256": plan_verdict_sha256,
+        "capability_implementation_verdict_path": (
+            CANONICAL_SOURCE_PREPARATION_CAPABILITY_VERDICT_PATH.as_posix()
+        ),
+        "capability_implementation_verdict_sha256": capability_verdict_sha256,
+        "production_launch_packet_path": (
+            SOURCE_PREPARATION_LAUNCH_PACKET_PATH.as_posix()
+        ),
+        "production_launch_packet_sha256": launch_packet_sha256,
+        "launch_sol_high_verdict_path": (
+            SOURCE_PREPARATION_LAUNCH_VERDICT_PATH.as_posix()
+        ),
+        "launch_sol_high_verdict_sha256": launch_verdict_sha256,
+        "authorization_a_sha256": authorization_a_sha256,
+    }
+    for key, required in expected.items():
+        if key.endswith("_sha256"):
+            validate_sha256(validated[key], f"source-preparation-launch.{key}")
+        if validated[key] != required:
+            raise EvidenceError(
+                "E_PILOT_SOURCE_PREPARATION_LAUNCH",
+                f"{key} differs from the verified snapshot chain",
+            )
+    body = {key: validated[key] for key in validated if key != "artifact_sha256"}
+    if validated["artifact_sha256"] != canonical_sha256(body):
+        raise EvidenceError("E_PILOT_SOURCE_PREPARATION_LAUNCH", "self-hash differs")
+    return validated
+
+
+def validate_source_preparation_launch_verdict(
+    value: object, launch_sha256: str, packet_sha256: str
+) -> dict:
+    validated = validate_exact_object(
+        value,
+        SOURCE_PREPARATION_LAUNCH_VERDICT_EXACT,
+        "source-preparation-launch-verdict",
+    )
+    if validated["reviewed_launch_path"] != SOURCE_PREPARATION_LAUNCH_PATH.as_posix():
+        raise EvidenceError("E_PILOT_SOURCE_PREPARATION_LAUNCH", "launch path differs")
+    if validated["reviewed_launch_sha256"] != launch_sha256:
+        raise EvidenceError("E_PILOT_SOURCE_PREPARATION_LAUNCH", "launch hash differs")
+    if validated["reviewed_packet_path"] != (
+        SOURCE_PREPARATION_LAUNCH_PACKET_PATH.as_posix()
+    ):
+        raise EvidenceError("E_PILOT_SOURCE_PREPARATION_LAUNCH", "packet path differs")
+    if validated["reviewed_packet_sha256"] != packet_sha256:
+        raise EvidenceError("E_PILOT_SOURCE_PREPARATION_LAUNCH", "packet hash differs")
+    if validated["verdict"] != "PASS":
+        raise EvidenceError("E_PILOT_SOURCE_PREPARATION_LAUNCH", "verdict is not PASS")
+    if validated["authorized_state"] != "PILOT_SOURCE_PREPARATION_LAUNCH_FROZEN":
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_LAUNCH",
+            "authorized_state is not PILOT_SOURCE_PREPARATION_LAUNCH_FROZEN",
+        )
+    if validated["claims"] != "blocked":
+        raise EvidenceError(
+            "E_PILOT_SOURCE_PREPARATION_LAUNCH",
+            "claims are not blocked",
+        )
+    return validated
+```
+
+A missing launch authority is `E_PILOT_SOURCE_PREPARATION_LAUNCH_ABSENT`. Hash mismatch, schema drift, or non-PASS is `E_PILOT_SOURCE_PREPARATION_LAUNCH`. Either case writes zero production outputs.
 
 ---
 
@@ -152,12 +486,11 @@ Frozen identity:
 - bytes: 38
 - LF: 1
 
-This planning node does not create that file. The later capability task does not create that file. Production CLI must not accept an authorization-path override. Tests may monkeypatch the frozen path constant onto a temporary regular file. Tests must still require the exact 38 bytes and the frozen SHA-256. A missing file is `E_PILOT_PREPARATION_AUTH_ABSENT`. Wrong bytes or a wrong hash is `E_PILOT_PREPARATION_AUTH`. Either authorization failure writes no source manifest and no preparation result, because preparation is not authorized.
+This planning node does not create that file. The later capability task does not create that file. Production CLI must not accept an authorization-path override. Tests may monkeypatch the frozen path constant onto a temporary regular file. Tests must still require the exact 38 bytes and the frozen SHA-256. A missing or unsafe snapshot is `E_PILOT_PREPARATION_AUTH_ABSENT`. Wrong bytes or a wrong hash is `E_PILOT_PREPARATION_AUTH`. Either authorization failure writes no source manifest, no preparation result, and no materialize root.
 
 ```python
 from __future__ import annotations
 
-import hashlib
 from pathlib import Path
 
 from p3_v3.artifacts import EvidenceError
@@ -169,21 +502,62 @@ AUTHORIZATION_A_SHA256 = (
 )
 
 
-def verify_authorization_a(path: Path = AUTHORIZATION_A_PATH) -> str:
-    if not path.is_file() or path.is_symlink():
-        raise EvidenceError(
-            "E_PILOT_PREPARATION_AUTH_ABSENT",
-            "authorization A is absent",
-        )
-    observed = path.read_bytes()
-    digest = hashlib.sha256(observed).hexdigest()
-    if observed != AUTHORIZATION_A_BYTES or digest != AUTHORIZATION_A_SHA256:
+def verify_authorization_a(path: Path = AUTHORIZATION_A_PATH) -> tuple[bytes, str]:
+    try:
+        raw, digest = read_authority_snapshot(path, "authorization-a")
+    except EvidenceError as exc:
+        if exc.code == "E_PILOT_SOURCE_IDENTITY":
+            raise EvidenceError(
+                "E_PILOT_PREPARATION_AUTH_ABSENT",
+                "authorization A is absent or unsafe",
+            ) from exc
+        raise
+    if raw != AUTHORIZATION_A_BYTES or digest != AUTHORIZATION_A_SHA256:
         raise EvidenceError(
             "E_PILOT_PREPARATION_AUTH",
             "authorization A bytes or hash differ",
         )
-    return digest
+    return raw, digest
 ```
+
+---
+
+## Production Gate-Chain Read Order
+
+`run_validate_source` must read and validate the complete chain from snapshots before it opens the archive:
+
+1. Authorization A snapshot and exact-byte check.
+2. Source-preparation plan markdown snapshot.
+3. Source-preparation plan verdict snapshot, parsed and validated against the plan snapshot hash.
+4. Capability implementation verdict snapshot, parsed and validated against the same plan snapshot hash.
+5. Launch packet snapshot.
+6. Launch Sol High verdict snapshot, parsed and validated against the launch-packet snapshot hash after the launch object hash is known, or validated after step 7 if the verdict reviews the launch file.
+7. Launch authority snapshot, parsed and validated against every snapshot hash from steps 1 through 6.
+
+Practical order that keeps every hash available: steps 1 through 5, then launch authority, then launch verdict bound to that launch authority snapshot. Missing capability verdict or missing launch authority writes zero production outputs.
+
+Gate-chain predecessor set used by both the source manifest and every FAIL result:
+
+```python
+def gate_chain_predecessor_sha256(
+    plan_sha256: str,
+    plan_verdict_sha256: str,
+    capability_verdict_sha256: str,
+    launch_sha256: str,
+    authorization_a_sha256: str,
+) -> list[str]:
+    return sorted(
+        [
+            plan_sha256,
+            plan_verdict_sha256,
+            capability_verdict_sha256,
+            launch_sha256,
+            authorization_a_sha256,
+        ]
+    )
+```
+
+PASS result predecessor equals that list plus the source-manifest file SHA-256, then sorted again.
 
 ---
 
@@ -236,11 +610,16 @@ The later implementation task must not modify:
 
 The later implementation task must not create any new artifact under `data/p3_v3/pilot/boost_math/`.
 
-Reserved production paths, exclusive-created only by a later separately authorized production preparation node:
+Reserved production paths, exclusive-created only by later separately authorized archival or production nodes:
 
 - `data/p3_v3/pilot/boost_math/source-manifest.json`
 - `data/p3_v3/pilot/boost_math/source-preparation-result.json`
+- `data/p3_v3/pilot/boost_math/source-preparation-launch.json`
 - `data/p3_v3/pilot/boost_math/user-auth-preparation.txt`
+- `docs/review_20260817/boost_math_pilot_source_preparation_sol_high_review.md`
+- `docs/review_20260817/boost_math_pilot_source_preparation_implementation_sol_high_review.md`
+- `docs/review_20260817/boost_math_pilot_source_preparation_launch_packet.md`
+- `docs/review_20260817/boost_math_pilot_source_preparation_launch_sol_high_review.md`
 
 ---
 
@@ -411,31 +790,75 @@ The extractor must reject all of the following and raise `E_PILOT_EXTRACT_UNSAFE
 - Unicode casefold collision
 - target-root escape
 - member count above `max_member_count`
-- one member above `max_member_bytes`
-- total uncompressed bytes above `max_total_uncompressed_bytes`
+- one member whose streamed bytes exceed `max_member_bytes`
+- total streamed uncompressed bytes above `max_total_uncompressed_bytes`
 - unsupported archive format
 - corrupt archive
 - archive format ambiguity
 
-Extraction writes into a newly created staging directory. The caller-supplied materialize root must not exist at start. Success atomically renames the staging directory onto that root. Failure may delete only the staging directory created by that attempt. The extractor must not delete or replace a pre-existing materialize root.
+Member-count, single-member, and total-uncompressed limits are enforced by actual streamed read and write byte counts. Archive metadata sizes are not trusted as the limit authority.
 
-`strip_single_top_level_directory` applies only when every accepted member shares one nonempty top-level directory. Otherwise the payload root is the extraction root. The decision must be independent of member order.
+```python
+from __future__ import annotations
+
+
+class StreamedLimitCounter:
+    def __init__(self, policy: dict) -> None:
+        self.max_member_count = policy["max_member_count"]
+        self.max_member_bytes = policy["max_member_bytes"]
+        self.max_total_uncompressed_bytes = policy["max_total_uncompressed_bytes"]
+        self.member_count = 0
+        self.total_bytes = 0
+
+    def add_member(self, streamed_bytes: int) -> None:
+        self.member_count += 1
+        if self.member_count > self.max_member_count:
+            raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "member count exceeds policy")
+        if streamed_bytes > self.max_member_bytes:
+            raise EvidenceError(
+                "E_PILOT_EXTRACT_UNSAFE",
+                "streamed member bytes exceed policy",
+            )
+        self.total_bytes += streamed_bytes
+        if self.total_bytes > self.max_total_uncompressed_bytes:
+            raise EvidenceError(
+                "E_PILOT_EXTRACT_UNSAFE",
+                "streamed total bytes exceed policy",
+            )
+```
+
+Extraction writes into a newly created staging directory. The caller-supplied materialize root must not exist at the start of a fresh PASS attempt. Success atomically renames the staging directory onto that root only after the source manifest has been exclusive-created. Failure may delete only the staging directory created by that attempt. The extractor must not delete or replace a pre-existing materialize root.
+
+`strip_single_top_level_directory` applies only when every accepted member shares one nonempty top-level directory component that is actually a directory layer. A single top-level regular file must return `None` and must not be stripped. The decision must be independent of member order.
 
 ```python
 from __future__ import annotations
 
 
 def shared_top_level_directory(member_names: list[str]) -> str | None:
-    tops: set[str] = set()
+    records: list[tuple[str, bool]] = []
     for name in member_names:
-        first = name.split("/", 1)[0]
+        first, separator, remainder = name.partition("/")
         if not first:
             return None
-        tops.add(first)
+        is_directory_layer = bool(separator) or name.endswith("/")
+        records.append((first, is_directory_layer))
+    tops = {first for first, _is_directory_layer in records}
     if len(tops) != 1:
         return None
-    return next(iter(tops))
+    top = next(iter(tops))
+    has_directory_layer = any(
+        first == top and is_directory_layer for first, is_directory_layer in records
+    )
+    has_file_named_top = any(
+        first == top and not is_directory_layer for first, is_directory_layer in records
+    )
+    if has_file_named_top or not has_directory_layer:
+        return None
+    return top
 ```
+
+`shared_top_level_directory(["readme.txt"])` must return `None`. `shared_top_level_directory(["pkg/a", "pkg/b"])` and `shared_top_level_directory(["pkg/b", "pkg/a"])` must both return `pkg`.
 
 ---
 
@@ -458,10 +881,9 @@ Materialized tree capture must:
 - read each regular file through one regular-file snapshot, reusing `read_regular_file_snapshot` from `src/p3_v3/artifacts.py`;
 - project mode only to `100644` or `100755`;
 - build a complete `SourceSnapshot`;
-- call `canonical_source_tree_sha256(snapshot)`;
+- call `canonical_source_tree_sha256(snapshot)` on the production tree-validation seam;
+- use that returned hash for the frozen-hash comparison;
 - require the result to equal `93a62859d7fdd6b2068e494bbe6e3e27180b874cbd27055ac27f941e507a90d8` on the production seam.
-
-A tree-hash mismatch after a successful extract is `E_PILOT_SOURCE_TREE_MISMATCH` and, when authorization A was already valid, writes a `FAIL_INFRASTRUCTURE` result whose `failure_reason` is `SOURCE_TREE_MISMATCH`. File count, directory names, and LOC are not a substitute for that hash.
 
 ```python
 from __future__ import annotations
@@ -517,17 +939,65 @@ def capture_materialized_tree(payload_root: Path) -> SourceSnapshot:
     return SourceSnapshot(entries=tuple(entries))
 
 
-def require_frozen_tree(snapshot: SourceSnapshot) -> str:
+def validate_materialized_tree_with_phase1(snapshot: SourceSnapshot) -> str:
+    if type(snapshot) is not SourceSnapshot:
+        raise EvidenceError("E_PILOT_SOURCE_TREE_MISMATCH", "snapshot type differs")
     observed = canonical_source_tree_sha256(snapshot)
     if observed != FROZEN_NORMALIZED_SOURCE_TREE_SHA256:
         raise EvidenceError(
             "E_PILOT_SOURCE_TREE_MISMATCH",
-            "materialized tree hash differs from frozen normalized tree",
+            observed,
         )
     return observed
 ```
 
-Capability-unit tests use synthetic trees. Those trees will not equal the frozen Boost.Math hash. `test_materialized_tree_uses_phase1_canonical_hash` must prove that capture calls `canonical_source_tree_sha256` on a `SourceSnapshot`. `test_wrong_materialized_tree_writes_failure_result` must prove that a non-frozen tree writes `SOURCE_TREE_MISMATCH` and does not write a source manifest. Tests may monkeypatch output-path constants onto `tmp_path`. Tests must not write production files under `data/p3_v3/pilot/boost_math/`.
+The production seam is `validate_materialized_tree_with_phase1`. It must receive the `SourceSnapshot` produced by `capture_materialized_tree`, call Phase 1 `canonical_source_tree_sha256` exactly, use that return value for the frozen-hash comparison, and must not call a second tree-hash implementation.
+
+Capability-unit tests use synthetic trees. Those trees will not equal the frozen Boost.Math hash unless a test spies the Phase 1 function. `test_wrong_materialized_tree_writes_failure_result` must prove that a non-frozen tree writes `SOURCE_TREE_MISMATCH`, records the actual observed hash, and does not write a source manifest or materialize root. Tests may monkeypatch output-path constants onto `tmp_path`. Tests must not write production files under `data/p3_v3/pilot/boost_math/`.
+
+---
+
+## Crash-Safe Publication Order
+
+Fresh PASS attempt, after the complete gate chain and Authorization A have validated and after output reconciliation says a fresh attempt is legal:
+
+1. Verify every authority snapshot, Authorization A, and the initial output state.
+2. Obtain one stable `ArchiveSnapshot` from a single archive fd.
+3. Unpack only into a newly created staging directory.
+4. On that staging payload, finish a complete `SourceSnapshot`, Phase 1 tree hash, file count, and total bytes.
+5. On tree mismatch or extraction failure: delete only that staging directory; do not create a materialize root; do not create a source manifest; then exclusive-create the FAIL result last, if and only if the gate chain was already valid.
+6. On success, construct the PASS manifest object and the PASS result object in memory and validate both before any durable write.
+7. Frozen publication order:
+   1. source manifest exclusive-create
+   2. atomic rename of the validated staging directory onto the materialize root
+   3. PASS result exclusive-create last
+
+A source manifest by itself does not represent PASS. Only the closed pair of that manifest and a valid PASS result represents preparation PASS. The PASS result is always the final PASS commit point.
+
+---
+
+## Reconciliation State Table
+
+The seven states are mutually exclusive. Exactly one row applies.
+
+| State | Manifest | Result | Root | Action |
+|---|---|---|---|---|
+| fresh | absent | absent | absent | run the frozen publication order |
+| manifest-only | valid | absent | absent | verify the existing manifest, current gate chain, and the same archive snapshot; restage; revalidate tree, count, and bytes; rename; exclusive-create the PASS result |
+| manifest-and-root | valid | absent | present | safely capture the existing root; require tree hash, file count, and total bytes to equal the manifest; exclusive-create the PASS result; do not rename again |
+| result-without-manifest | absent | PASS | any | fail closed; do not invent a manifest |
+| failure-terminal | any | FAIL_INFRASTRUCTURE | any | treat as terminal; do not overwrite |
+| schema-mismatch | present or present | present or present | any | if either durable object fails schema, hash, or predecessor checks, fail closed; do not delete; do not overwrite |
+| orphan-root | absent | absent | present | unauthenticated orphan; fail closed; do not delete the root |
+| already-complete | valid | valid PASS | present | verify the closed pair or report already complete; do not create a second result |
+
+Additional hard rules:
+
+- PASS result exists and manifest is absent: fail closed, do not invent a manifest.
+- A failure result exists: terminal, do not overwrite.
+- Manifest or result schema, hash, or predecessor mismatch: fail closed, do not delete, do not overwrite.
+- Root exists and both manifest and result are absent: orphan, fail closed, do not delete the root.
+- Closed manifest plus PASS result: verify or report already complete, do not create a second result.
 
 ---
 
@@ -567,14 +1037,13 @@ Required literals after `validate_exact_object(value, PILOT_SOURCE_MANIFEST_EXAC
 - `archive_format` is `ZIP` or `TAR`
 - `authorization_a_sha256` equals `502c6407aa368a26948db10cc1ca0d1c91f66c8bfe702aa02f01f275c9df04b6`
 - `extractor_policy_sha256` equals `e482ea272a6836099b9dc52deab7d799e24c571c9433fdafe2cff6de48bbb229`
-- `predecessor_sha256` equals the sorted list of exactly these three hashes:
-  - machine plan file SHA-256 `23d7fb802a2395d93a211862f205065ce1abd52e6ae2e74374aaf2bb624d4cf2`
-  - implementation verdict file SHA-256 `e7e5e9519ae49eb08c450c4e16c56d7551528030916d9d8fe88f0ab91a7b1c9d`
-  - authorization A SHA-256 `502c6407aa368a26948db10cc1ca0d1c91f66c8bfe702aa02f01f275c9df04b6`
+- `predecessor_sha256` equals `gate_chain_predecessor_sha256` of the verified snapshots of the source-preparation plan, the source-preparation plan verdict, the capability implementation verdict, the launch authority, and Authorization A
 - `artifact_sha256` is `canonical_sha256` of the object with that field removed
-- `archive_bytes > 0`
-- `materialized_file_count > 0`
-- `materialized_total_bytes >= 0`
+- `archive_bytes > 0` and `type(archive_bytes) is int`
+- `materialized_file_count > 0` and `type(materialized_file_count) is int`
+- `materialized_total_bytes >= 0` and `type(materialized_total_bytes) is int`
+
+A `bool` must not pass exact-type validation for `archive_bytes`, `materialized_file_count`, or `materialized_total_bytes`. Every non-`None` SHA field must pass `validate_sha256`.
 
 `archive_sha256` and `archive_bytes` are copied from the `ArchiveSnapshot` that was actually opened. This plan does not invent those production values.
 
@@ -627,6 +1096,8 @@ Required rules after `validate_exact_object(value, PILOT_SOURCE_PREPARATION_RESU
 - subject identity fields equal the frozen labels
 - `terminal_status` is `PASS` or `FAIL_INFRASTRUCTURE`
 - `artifact_sha256` is `canonical_sha256` of the object with that field removed
+- every non-`None` SHA field passes `validate_sha256`
+- `archive_bytes` is `int` or `None`, never `bool`
 
 PASS rules:
 
@@ -634,34 +1105,46 @@ PASS rules:
 - `source_manifest_sha256` is a nonempty SHA-256
 - `archive_sha256`, `archive_bytes`, and `materialized_tree_sha256` are nonempty
 - `materialized_tree_sha256` equals `93a62859d7fdd6b2068e494bbe6e3e27180b874cbd27055ac27f941e507a90d8`
-- `predecessor_sha256` equals the sorted list of the machine-plan hash, the implementation-verdict hash, the authorization A hash, and the source-manifest file SHA-256
+- `predecessor_sha256` equals the source-manifest predecessors plus the source-manifest file SHA-256, sorted
 
-FAIL_INFRASTRUCTURE rules:
+Authorization missing or invalid, or any gate-chain authority missing, hash-mismatched, drifted, or non-PASS: create no result, because preparation is not authorized.
 
-- `source_manifest_sha256 is None`
-- `failure_reason` is exactly one of:
-  - `ARCHIVE_UNSAFE`
-  - `ARCHIVE_FORMAT_UNSUPPORTED`
-  - `EXTRACTION_UNSAFE`
-  - `SOURCE_TREE_MISMATCH`
-- `predecessor_sha256` equals the sorted list of only the machine-plan hash, the implementation-verdict hash, and the authorization A hash
+---
 
-Authorization missing or invalid: create no result, because preparation is not authorized. Implementation-verdict or machine-plan absence, hash mismatch, or non-PASS state: raise `E_PILOT_SOURCE_IDENTITY` and create no result. If either reserved output path already exists: raise `E_PILOT_SOURCE_OUTPUT_EXISTS`, do not overwrite, and do not create a second result. Both production outputs are exclusive-create.
+## FAIL Result Evidence Matrix
+
+`FAIL_RESULT_EVIDENCE` is exact. Each `failure_reason` freezes field presence, root existence, and manifest existence. Fields that were never obtained from a stable archive snapshot must be `None`. A failure result must not claim a source manifest. `source_manifest_sha256` is `None` on every FAIL row. FAIL predecessor is the gate-chain set only.
+
+| failure_reason | archive_sha256 | archive_bytes | materialized_tree_sha256 | source_manifest_sha256 | materialize root | source manifest | predecessor |
+|---|---|---|---|---|---|---|---|
+| `ARCHIVE_UNSAFE` | `None` | `None` | `None` | `None` | must be absent for this attempt | must be absent | gate chain |
+| `ARCHIVE_FORMAT_UNSUPPORTED` | observed pair if a stable snapshot existed, else `None` | same pairing rule | `None` | `None` | must be absent | must be absent | gate chain |
+| `EXTRACTION_UNSAFE` | observed snapshot pair, required | observed snapshot pair, required | `None`; must not invent a tree hash | `None` | must be absent | must be absent | gate chain |
+| `SOURCE_TREE_MISMATCH` | observed snapshot pair, required | observed snapshot pair, required | actual mismatched tree hash, required | `None` | must be absent | must be absent | gate chain |
+
+Pairing rule: `archive_sha256` and `archive_bytes` are both `None` or both present. A present pair must equal the stable `ArchiveSnapshot`. `SOURCE_TREE_MISMATCH` must record the actual observed `canonical_source_tree_sha256` return value, not the frozen expected hash.
 
 Error-code mapping:
 
 | Code | When | Writes result |
 |---|---|---|
-| `E_PILOT_PREPARATION_AUTH_ABSENT` | authorization file absent | no |
+| `E_PILOT_PREPARATION_AUTH_ABSENT` | authorization snapshot absent or unsafe | no |
 | `E_PILOT_PREPARATION_AUTH` | authorization bytes or hash differ | no |
-| `E_PILOT_SOURCE_IDENTITY` | verdict or plan missing, hash mismatch, or non-PASS; subject label mismatch | no |
-| `E_PILOT_SOURCE_OUTPUT_EXISTS` | reserved output already exists | no |
+| `E_PILOT_SOURCE_PREPARATION_PLAN_VERDICT_ABSENT` | plan verdict missing | no |
+| `E_PILOT_SOURCE_PREPARATION_PLAN_VERDICT` | plan verdict hash, schema, or PASS check fails | no |
+| `E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT_ABSENT` | capability verdict missing | no |
+| `E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT` | capability verdict hash, schema, or PASS check fails | no |
+| `E_PILOT_SOURCE_PREPARATION_LAUNCH_ABSENT` | launch authority missing | no |
+| `E_PILOT_SOURCE_PREPARATION_LAUNCH` | launch authority hash, schema, or PASS check fails | no |
+| `E_PILOT_SOURCE_IDENTITY` | subject label mismatch or unsafe authority snapshot mapping | no |
+| `E_PILOT_SOURCE_OUTPUT_EXISTS` | durable objects forbid a fresh write after reconciliation | no |
+| `E_PILOT_SOURCE_ORPHAN_ROOT` | root exists without manifest and result | no |
 | `E_PILOT_ARCHIVE_UNSAFE` | snapshot rejects the archive path or identity | yes, `ARCHIVE_UNSAFE` |
 | `E_PILOT_ARCHIVE_FORMAT` | unsupported, corrupt, or ambiguous format | yes, `ARCHIVE_FORMAT_UNSUPPORTED` |
 | `E_PILOT_EXTRACT_UNSAFE` | extractor policy violation | yes, `EXTRACTION_UNSAFE` |
 | `E_PILOT_SOURCE_TREE_MISMATCH` | materialized tree hash differs | yes, `SOURCE_TREE_MISMATCH` |
 
-Result writes in the last four rows happen only after authorization A, the implementation verdict, and the machine plan have already validated, and only to the result path constant (production or a test monkeypatch). They still do not write a source manifest.
+Result writes in the last four rows happen only after the complete gate chain and Authorization A have validated. They still do not write a source manifest or a materialize root.
 
 ---
 
@@ -688,6 +1171,9 @@ The parser must not accept:
 - implementation verdict path
 - machine plan path
 - extractor policy override
+- launch authority path
+- plan verdict path
+- capability verdict path
 
 All of those authority paths, output paths, and frozen identities are module constants in `src/p3_v3/pilot_source.py`.
 
@@ -726,6 +1212,7 @@ The later implementation task must not:
 - interpret a source manifest as build PASS or scientific PASS;
 - interpret a capability unit test as production preparation;
 - create authorization A;
+- create a plan verdict, capability verdict, launch authority, launch packet, or launch verdict;
 - enter production preparation automatically;
 - create any file under `data/p3_v3/pilot/boost_math/`.
 
@@ -736,12 +1223,12 @@ The later implementation task must not:
 **Files:**
 - Create: `src/p3_v3/pilot_source.py`, `tests/p3_v3/test_pilot_source.py`
 - Modify: `scripts/p3_v3/pilot.py`, `tests/p3_v3/test_pilot.py`
-- Do not create: `data/p3_v3/pilot/boost_math/user-auth-preparation.txt`, `data/p3_v3/pilot/boost_math/source-manifest.json`, `data/p3_v3/pilot/boost_math/source-preparation-result.json`
+- Do not create: `data/p3_v3/pilot/boost_math/user-auth-preparation.txt`, `data/p3_v3/pilot/boost_math/source-manifest.json`, `data/p3_v3/pilot/boost_math/source-preparation-result.json`, `data/p3_v3/pilot/boost_math/source-preparation-launch.json`, `docs/review_20260817/boost_math_pilot_source_preparation_sol_high_review.md`, `docs/review_20260817/boost_math_pilot_source_preparation_implementation_sol_high_review.md`
 
 **Interfaces:**
-- Consumes: `validate_exact_object(value, schema, context)`, `canonical_sha256`, `validate_sha256`, `write_canonical_json`, `read_canonical_json`, `read_regular_file_snapshot`, `EvidenceError`, `SourceSnapshot`, `SourceSnapshotEntry`, `canonical_source_tree_sha256`, the frozen implementation verdict, and the frozen machine plan
-- Produces: `ArchiveSnapshot`, `read_production_archive_bytes`, `EXTRACTOR_POLICY_V1`, source-manifest and preparation-result validators, a fail-closed extractor, a `validate-source` CLI verb, and synthetic-fixture unit tests
-- Does not produce: a production source manifest, a production preparation result, authorization A, a freeze, an execution plan, a claim-ledger write, or a production launch packet
+- Consumes: `validate_exact_object(value, schema, context)`, `canonical_sha256`, `validate_sha256`, `write_canonical_json`, `read_canonical_json`, `read_regular_file_snapshot`, `EvidenceError`, `SourceSnapshot`, `SourceSnapshotEntry`, `canonical_source_tree_sha256`
+- Produces: `ArchiveSnapshot`, `read_production_archive_bytes`, `EXTRACTOR_POLICY_V1`, gate-chain validators, source-manifest and preparation-result validators, a fail-closed extractor, reconciliation, a `validate-source` CLI verb, and synthetic-fixture unit tests
+- Does not produce: a production source manifest, a production preparation result, authorization A, a launch authority, a freeze, an execution plan, a claim-ledger write, or a production launch packet
 
 User authorization required: no. Gate: capability implementation only. This planning node does not start the gate. Capability PASS does not authorize production preparation.
 
@@ -770,6 +1257,9 @@ REQUIRED_SOURCE_PREPARATION_TESTS = [
     "test_authorization_wrong_bytes_writes_no_output",
     "test_implementation_verdict_hash_mismatch_fails_closed",
     "test_machine_plan_hash_mismatch_fails_closed",
+    "test_capability_verdict_absent_writes_no_output",
+    "test_launch_authority_absent_writes_no_output",
+    "test_authority_snapshot_binds_validated_bytes_on_replacement_race",
     "test_archive_snapshot_rejects_symlink",
     "test_archive_snapshot_rejects_non_regular_file",
     "test_archive_snapshot_hashes_same_fd_bytes",
@@ -785,14 +1275,25 @@ REQUIRED_SOURCE_PREPARATION_TESTS = [
     "test_extractor_rejects_duplicate_normalized_path",
     "test_extractor_rejects_member_limit",
     "test_extractor_rejects_total_bytes_limit",
+    "test_streamed_member_bytes_cannot_exceed_declared_policy_limit",
     "test_single_top_level_selection_is_order_invariant",
+    "test_single_top_level_file_is_not_stripped",
     "test_materialized_tree_uses_phase1_canonical_hash",
+    "test_phase1_tree_hash_function_is_called_by_production_seam",
     "test_wrong_materialized_tree_writes_failure_result",
     "test_source_manifest_exact_keys",
     "test_source_manifest_predecessors_are_exact",
     "test_source_manifest_cannot_validate_as_pilot_plan",
     "test_pass_result_binds_source_manifest",
     "test_outputs_are_exclusive",
+    "test_crash_after_manifest_publication",
+    "test_crash_after_materialize_root_rename",
+    "test_manifest_only_recovery",
+    "test_manifest_and_root_recovery",
+    "test_tampered_manifest_refuses_recovery",
+    "test_orphan_root_without_manifest_refuses_recovery",
+    "test_result_is_always_the_final_pass_commit_point",
+    "test_tree_mismatch_leaves_materialize_root_and_manifest_absent",
     "test_validate_source_cli_has_no_authority_overrides",
     "test_capability_implementation_creates_no_production_artifact",
 ]
@@ -808,6 +1309,7 @@ from pathlib import Path
 import pytest
 
 from p3_v3.artifacts import EvidenceError
+from p3_v3.bridge_and_frames import SourceSnapshot
 
 
 def test_authorization_absent_writes_no_output(tmp_path, monkeypatch):
@@ -835,6 +1337,65 @@ def test_authorization_absent_writes_no_output(tmp_path, monkeypatch):
         )
     assert not (tmp_path / "source-manifest.json").exists()
     assert not (tmp_path / "source-preparation-result.json").exists()
+    assert not (tmp_path / "materialize").exists()
+
+
+def test_capability_verdict_absent_writes_no_output(tmp_path, monkeypatch):
+    import p3_v3.pilot_source as pilot_source
+
+    monkeypatch.setattr(
+        pilot_source,
+        "CANONICAL_SOURCE_PREPARATION_CAPABILITY_VERDICT_PATH",
+        tmp_path / "missing-capability-verdict.md",
+    )
+    monkeypatch.setattr(
+        pilot_source,
+        "SOURCE_MANIFEST_PATH",
+        tmp_path / "source-manifest.json",
+    )
+    monkeypatch.setattr(
+        pilot_source,
+        "SOURCE_PREPARATION_RESULT_PATH",
+        tmp_path / "source-preparation-result.json",
+    )
+    with pytest.raises(
+        EvidenceError, match="E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT_ABSENT"
+    ):
+        pilot_source.run_validate_source(
+            tmp_path / "missing.zip",
+            tmp_path / "materialize",
+        )
+    assert not (tmp_path / "source-manifest.json").exists()
+    assert not (tmp_path / "source-preparation-result.json").exists()
+
+
+def test_launch_authority_absent_writes_no_output(tmp_path, monkeypatch):
+    import p3_v3.pilot_source as pilot_source
+
+    monkeypatch.setattr(
+        pilot_source,
+        "SOURCE_PREPARATION_LAUNCH_PATH",
+        tmp_path / "missing-launch.json",
+    )
+    monkeypatch.setattr(
+        pilot_source,
+        "SOURCE_MANIFEST_PATH",
+        tmp_path / "source-manifest.json",
+    )
+    monkeypatch.setattr(
+        pilot_source,
+        "SOURCE_PREPARATION_RESULT_PATH",
+        tmp_path / "source-preparation-result.json",
+    )
+    with pytest.raises(
+        EvidenceError, match="E_PILOT_SOURCE_PREPARATION_LAUNCH_ABSENT"
+    ):
+        pilot_source.run_validate_source(
+            tmp_path / "missing.zip",
+            tmp_path / "materialize",
+        )
+    assert not (tmp_path / "source-manifest.json").exists()
+    assert not (tmp_path / "source-preparation-result.json").exists()
 
 
 def test_archive_snapshot_hashes_same_fd_bytes(tmp_path):
@@ -848,23 +1409,55 @@ def test_archive_snapshot_hashes_same_fd_bytes(tmp_path):
     assert snapshot.archive_format == "ZIP"
 
 
-def test_materialized_tree_uses_phase1_canonical_hash(tmp_path):
-    from p3_v3.bridge_and_frames import (
-        SourceSnapshot,
-        SourceSnapshotEntry,
-        canonical_source_tree_sha256,
-    )
-    from p3_v3.pilot_source import capture_materialized_tree
+def test_single_top_level_file_is_not_stripped():
+    from p3_v3.pilot_source import shared_top_level_directory
+
+    assert shared_top_level_directory(["readme.txt"]) is None
+    assert shared_top_level_directory(["pkg/a", "pkg/b"]) == "pkg"
+    assert shared_top_level_directory(["pkg/b", "pkg/a"]) == "pkg"
+
+
+def test_phase1_tree_hash_function_is_called_by_production_seam(tmp_path, monkeypatch):
+    import p3_v3.pilot_source as pilot_source
+    from p3_v3.bridge_and_frames import SourceSnapshot
 
     payload = tmp_path / "payload"
     payload.mkdir()
     (payload / "readme.txt").write_bytes(b"synthetic\n")
-    snapshot = capture_materialized_tree(payload)
-    assert isinstance(snapshot, SourceSnapshot)
-    assert all(isinstance(item, SourceSnapshotEntry) for item in snapshot.entries)
-    assert canonical_source_tree_sha256(snapshot) == canonical_source_tree_sha256(
-        snapshot
-    )
+    snapshot = pilot_source.capture_materialized_tree(payload)
+    calls: list[object] = []
+
+    def spy(value):
+        calls.append(value)
+        return pilot_source.FROZEN_NORMALIZED_SOURCE_TREE_SHA256
+
+    monkeypatch.setattr(pilot_source, "canonical_source_tree_sha256", spy)
+    observed = pilot_source.validate_materialized_tree_with_phase1(snapshot)
+    assert calls == [snapshot]
+    assert type(calls[0]) is SourceSnapshot
+    assert observed == pilot_source.FROZEN_NORMALIZED_SOURCE_TREE_SHA256
+
+
+def test_materialized_tree_uses_phase1_canonical_hash(tmp_path, monkeypatch):
+    import p3_v3.pilot_source as pilot_source
+    from p3_v3.bridge_and_frames import canonical_source_tree_sha256 as phase1
+
+    payload = tmp_path / "payload"
+    payload.mkdir()
+    (payload / "readme.txt").write_bytes(b"synthetic\n")
+    snapshot = pilot_source.capture_materialized_tree(payload)
+    seen: list[str] = []
+
+    def spy(value):
+        digest = phase1(value)
+        seen.append(digest)
+        return digest
+
+    monkeypatch.setattr(pilot_source, "canonical_source_tree_sha256", spy)
+    with pytest.raises(EvidenceError, match="E_PILOT_SOURCE_TREE_MISMATCH"):
+        pilot_source.validate_materialized_tree_with_phase1(snapshot)
+    assert seen == [phase1(snapshot)]
+    assert seen[0] != pilot_source.FROZEN_NORMALIZED_SOURCE_TREE_SHA256
 
 
 def test_validate_source_cli_has_no_authority_overrides():
@@ -880,6 +1473,9 @@ def test_validate_source_cli_has_no_authority_overrides():
         "--implementation-verdict",
         "--machine-plan",
         "--extractor-policy",
+        "--launch-authority",
+        "--plan-verdict",
+        "--capability-verdict",
     ]
     for flag in forbidden:
         with pytest.raises(SystemExit):
@@ -917,7 +1513,7 @@ Expected: exit 1 because `p3_v3.pilot_source` does not yet exist.
 
 - [ ] **Step 4: Write the minimal implementation**
 
-`src/p3_v3/pilot_source.py` must define the constants, `ArchiveSnapshot`, `read_production_archive_bytes`, `EXTRACTOR_POLICY_V1`, authorization verification, extractor, tree capture, `PILOT_SOURCE_MANIFEST_EXACT`, `PILOT_SOURCE_PREPARATION_RESULT_EXACT`, validators, and `run_validate_source(archive, materialize_root)`.
+`src/p3_v3/pilot_source.py` must define the constants, authority snapshot helpers, gate-chain validators, `ArchiveSnapshot`, `read_production_archive_bytes`, `EXTRACTOR_POLICY_V1`, streamed limit counter, authorization verification, extractor, tree capture, `validate_materialized_tree_with_phase1`, `PILOT_SOURCE_MANIFEST_EXACT`, `PILOT_SOURCE_PREPARATION_RESULT_EXACT`, reconciliation, and `run_validate_source(archive, materialize_root)`.
 
 `scripts/p3_v3/pilot.py` gains only the `validate-source` verb specified above. It calls `run_validate_source` with the two parsed paths and no other caller-supplied authority.
 
@@ -958,7 +1554,7 @@ Expected: exit 0. Existing confirmatory tests must keep passing. `test_pilot_cli
 
 - [ ] **Step 7: Stop for independent implementation review**
 
-Stage only the approved Create and Modify paths. Do not create authorization A. Do not create a production source manifest. Do not create a production preparation result. Do not enter production preparation. Requested state after this task is an independent capability implementation review candidate. Task 1 PASS does not authorize real preparation.
+Stage only the approved Create and Modify paths. Do not create authorization A. Do not create a production source manifest. Do not create a production preparation result. Do not create launch authority. Do not enter production preparation. Requested state after this task is an independent capability implementation review candidate. Task 1 PASS does not authorize real preparation.
 
 ---
 
@@ -974,7 +1570,8 @@ Stop immediately if implementation would require:
 
 - modifying a file outside the approved map;
 - creating authorization A;
-- creating a production source manifest or preparation result;
+- creating a production source manifest, preparation result, or launch authority;
+- creating a reserved verdict file;
 - reading a real Boost.Math archive;
 - designing contract, site, MR, mutant, certification, execution, or evidence-closure procedures;
 - changing an authority, protocol, ledger, or Frame file;

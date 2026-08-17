@@ -1,16 +1,22 @@
-# Boost.Math PILOT_SOURCE_PREPARATION_ONLY Plan Review Packet — P1SP1
+# Boost.Math PILOT_SOURCE_PREPARATION_ONLY Plan Review Packet — P1SP1R1
 
-- Node name: `P1SP1_BOOST_MATH_PILOT_SOURCE_PREPARATION_ONLY_PLAN`
-- Packet title: source-preparation-only plan candidate
+- Node name: `P1SP1R1_BOOST_MATH_PILOT_SOURCE_PREPARATION_PLAN_GATE_AND_RECOVERY_REPAIR`
+- Packet title: gate-chain, snapshot, recovery, and FAIL-matrix repair
 - Builder identity: Cursor VM
-- Starting commit: `07205db811e4b66085a05ef85a0e17ae085028f8`
-- Ending commit: this node does not write an ending-commit token. The ending commit is the unique successor on `origin/main` that adds only the two files listed below.
+- Starting commit: `22b25e181ab951b2a4ee8ee4a2f430ee316a8b81`
+- Ending commit: this node does not write an ending-commit token. The ending commit is the unique successor on `origin/main` that modifies only the two files listed below.
 - Plan path: `docs/superpowers/plans/2026-08-17-p3-boost-math-pilot-source-preparation-only.md`
-- Plan SHA-256: `7ea27e5a001e856d59502a0db0b0bf9d21bcac5ccd1240aff8a9069bbf7d916c`
-- Plan bytes: 40898
-- Plan LF count: 988
+- Old plan SHA-256: `7ea27e5a001e856d59502a0db0b0bf9d21bcac5ccd1240aff8a9069bbf7d916c`
+- Old plan bytes: 40898
+- Old plan LF count: 988
+- New plan SHA-256: `5f59a5d475f358f5901af88043126dc9b2ecb830f9b80c384105a4c87e338442`
+- New plan bytes: 67506
+- New plan LF count: 1585
 - Packet path: `docs/review_20260817/boost_math_pilot_source_preparation_plan_review_packet.md`
-- Packet SHA-256, bytes, and LF: recorded by the post-write `sha256sum` and `wc` commands in this node; this packet does not self-hash
+- Old packet SHA-256: `a3baef78a1fb3a105eb09f2792b246cdb3b4c8611839e1dfc38644987be06e6a`
+- Old packet bytes: 12052
+- Old packet LF count: 274
+- New packet SHA-256, bytes, and LF: recorded by the post-write `sha256sum` and `wc` commands in this node; this packet does not self-hash
 - Requested reviewer: GPT-5.6 Sol High
 - Reasoning setting: high
 - Requested state: `PILOT_PLAN_REVIEW_CANDIDATE`
@@ -18,31 +24,55 @@
 - Process location remains: `PILOT_EXECUTION_AWAITING_USER_AUTHORIZATION`
 - This packet is not an independent PASS.
 - This packet does not record an independent review PASS and does not speak for the reviewer.
+- No formal Sol High verdict was created.
 - Authorization A was not created.
 - Implementation, pytest, build, and production were not run.
 - `claims=blocked`
 
-This node creates only a source-preparation plan candidate. It is not user preparation authorization. Formal status remains `PILOT_IMPLEMENTATION_PASS`.
+This node repairs only the source-preparation plan and this packet. It is not user preparation authorization. Formal status remains `PILOT_IMPLEMENTATION_PASS`.
 
 ## File change list
 
-This node creates only:
+This node modifies only:
 
 1. `docs/superpowers/plans/2026-08-17-p3-boost-math-pilot-source-preparation-only.md`
 2. `docs/review_20260817/boost_math_pilot_source_preparation_plan_review_packet.md`
 
 No other file was created or modified. In particular:
 
+- no formal Sol High verdict was created
 - `data/p3_v3/pilot/boost_math/user-auth-preparation.txt` was not created
 - `data/p3_v3/pilot/boost_math/source-manifest.json` was not created
 - `data/p3_v3/pilot/boost_math/source-preparation-result.json` was not created
+- `data/p3_v3/pilot/boost_math/source-preparation-launch.json` was not created
 - `docs/superpowers/plans/2026-08-15-p3-boost-math-pilot-only.md` remains an unfrozen candidate and was not edited
 - the claim ledger was not edited
 - no source, test, protocol, Frame, or Boost.Math source file was created or modified
 
+## Repair line index
+
+Line numbers refer to the new plan.
+
+| Repair | Anchors | Lines |
+|---|---|---|
+| Safe authority snapshot | `read_authority_snapshot`, `parse_canonical_authority_object` | 119–164 |
+| Source-preparation plan verdict path and schema | `CANONICAL_SOURCE_PREPARATION_PLAN_VERDICT_PATH`, `SOURCE_PREPARATION_PLAN_VERDICT_EXACT` | 166–244 |
+| Capability implementation verdict path and schema | `CANONICAL_SOURCE_PREPARATION_CAPABILITY_VERDICT_PATH`, `SOURCE_PREPARATION_CAPABILITY_VERDICT_EXACT` | 246–313 |
+| Launch authority path and schema | `SOURCE_PREPARATION_LAUNCH_PATH`, `SOURCE_PREPARATION_LAUNCH_EXACT` | 315–457 |
+| Authorization A snapshot | `verify_authorization_a`, `read_authority_snapshot` | 459–527 |
+| Gate-chain predecessor | `gate_chain_predecessor_sha256` | 529–562 |
+| Streamed extractor limits | `StreamedLimitCounter` | 805–834 |
+| Top-level directory vs file | `shared_top_level_directory` | 838–859 |
+| Crash-safe publication order | `Crash-Safe Publication Order` | 960–977 |
+| Reconciliation state table | `Reconciliation State Table` | 979–1002 |
+| FAIL evidence matrix | `FAIL_RESULT_EVIDENCE` | 1114–1132 |
+| Phase 1 tree-hash spy | `test_phase1_tree_hash_function_is_called_by_production_seam` | 1420–1438 |
+| Single top-level file | `test_single_top_level_file_is_not_stripped` | 1412–1418 |
+| Unique future task | `Task 1: Pilot Source-Preparation Capability On Synthetic Fixtures` | 1221 |
+
 ## Authority input hashes
 
-Checked 17/17 OK against `07205db811e4b66085a05ef85a0e17ae085028f8`.
+Unchanged from `22b25e181ab951b2a4ee8ee4a2f430ee316a8b81`. Rechecked 17/17 OK.
 
 | Path | SHA-256 |
 |---|---|
@@ -66,38 +96,27 @@ Checked 17/17 OK against `07205db811e4b66085a05ef85a0e17ae085028f8`.
 
 ## RED
 
-Command, run against `07205db811e4b66085a05ef85a0e17ae085028f8` before either new file existed:
-
-```text
-python3 - <<'PY'
-from pathlib import Path
-
-plan = Path(
-    "docs/superpowers/plans/"
-    "2026-08-17-p3-boost-math-pilot-source-preparation-only.md"
-)
-packet = Path(
-    "docs/review_20260817/"
-    "boost_math_pilot_source_preparation_plan_review_packet.md"
-)
-assert plan.is_file()
-assert packet.is_file()
-PY
-```
+Command, run against the old plan at `22b25e181ab951b2a4ee8ee4a2f430ee316a8b81` before this repair. The checker executed `shared_top_level_directory(["readme.txt"])` and inspected function bodies. It did not stop at token presence.
 
 Exit code: 1
 
 ```text
-Traceback (most recent call last):
-  File "<stdin>", line 11, in <module>
-AssertionError
+SEMANTIC_RED_FAILURES
+- no canonical source-preparation plan verdict gate (missing CANONICAL_SOURCE_PREPARATION_PLAN_VERDICT_PATH and SOURCE_PREPARATION_PLAN_VERDICT_EXACT)
+- no canonical capability implementation verdict gate (missing CANONICAL_SOURCE_PREPARATION_CAPABILITY_VERDICT_PATH and SOURCE_PREPARATION_CAPABILITY_VERDICT_EXACT)
+- no reviewed production-launch machine authority (missing source-preparation-launch.json exact schema)
+- predecessor binds only foundation verdict, machine plan, and Authorization A; not plan verdict, capability verdict, or launch
+- no manifest-only / materialized-root-only crash recovery state machine
+- Authorization A still uses is_file/is_symlink then path.read_bytes
+- Phase 1 tree-hash test is self-equality without spy or monkeypatch
+- single top-level regular file is treated as a top-level directory; shared_top_level_directory(['readme.txt']) returned 'readme.txt'
+- FAIL result does not freeze per-failure_reason field combinations (archive pair, materialized_tree_sha256, root/manifest existence)
+RED_ITEM_COUNT=9
 ```
-
-Failure location: first assertion, `assert plan.is_file()`.
 
 ## GREEN
 
-Command, run after both files were written:
+Command, run after both repaired files were written. The validator parses every Python fence, executes `shared_top_level_directory`, and checks gate, recovery, snapshot, spy, and FAIL-matrix contracts.
 
 ```text
 python3 - <<'PY'
@@ -113,85 +132,99 @@ packet = Path(
     "docs/review_20260817/"
     "boost_math_pilot_source_preparation_plan_review_packet.md"
 )
-
 plan_text = plan.read_text(encoding="utf-8")
 packet_text = packet.read_text(encoding="utf-8")
-
-required = [
-    "PILOT_SOURCE_PREPARATION_ONLY",
-    "PILOT_IMPLEMENTATION_PASS",
-    "PILOT_PLAN_REVIEW_CANDIDATE",
-    "PILOT_EXECUTION_AWAITING_USER_AUTHORIZATION",
-    "p3-pilot-source-manifest-v1",
-    "p3-pilot-source-preparation-result-v1",
-    "PILOT_SOURCE_MANIFEST_EXACT",
-    "PILOT_SOURCE_PREPARATION_RESULT_EXACT",
-    "ArchiveSnapshot",
-    "read_production_archive_bytes",
-    "EXTRACTOR_POLICY_V1",
-    "canonical_source_tree_sha256",
-    "SourceSnapshot",
-    "SourceSnapshotEntry",
-    "validate-source",
-    "user-auth-preparation.txt",
-    "AUTHORIZE_BOOSTMATH_PILOT_PREPARATION",
-    "502c6407aa368a26948db10cc1ca0d1c91f66c8bfe702aa02f01f275c9df04b6",
-    "e7e5e9519ae49eb08c450c4e16c56d7551528030916d9d8fe88f0ab91a7b1c9d",
-    "23d7fb802a2395d93a211862f205065ce1abd52e6ae2e74374aaf2bb624d4cf2",
-    "93a62859d7fdd6b2068e494bbe6e3e27180b874cbd27055ac27f941e507a90d8",
-    "68d2e0fd34b845bb0df22b29003f26259d5655d2ec80c18895ff36904db2d95d",
-    "E_PILOT_PREPARATION_AUTH_ABSENT",
-    "E_PILOT_PREPARATION_AUTH",
-    "E_PILOT_ARCHIVE_UNSAFE",
-    "E_PILOT_ARCHIVE_FORMAT",
-    "E_PILOT_EXTRACT_UNSAFE",
-    "E_PILOT_SOURCE_TREE_MISMATCH",
-    "E_PILOT_SOURCE_IDENTITY",
-    "E_PILOT_SOURCE_OUTPUT_EXISTS",
-    "test_authorization_absent_writes_no_output",
-    "test_archive_snapshot_hashes_same_fd_bytes",
-    "test_materialized_tree_uses_phase1_canonical_hash",
-    "test_validate_source_cli_has_no_authority_overrides",
-    "claims=blocked",
-]
-for token in required:
-    assert token in plan_text, token
-
-assert plan_text.count("### Task ") == 1
-assert "src/p3_v3/pilot_source.py" in plan_text
-assert "tests/p3_v3/test_pilot_source.py" in plan_text
-assert "docs/review_20260817/boost_math_pilot_foundation_implementation_sol_high_review.md" in plan_text
-assert "data/p3_v3/pilot/boost_math/source-manifest.json" in plan_text
-assert "data/p3_v3/pilot/boost_math/source-preparation-result.json" in plan_text
 
 for token in ("T" + "BD", "T" + "ODO", "." * 3):
     assert token not in plan_text, token
     assert token not in packet_text, token
 
-for index, block in enumerate(
-    re.findall(r"```python\n(.*?)```", plan_text, re.S),
-    start=1,
-):
+assert plan_text.count("### Task ") == 1
+assert "src/p3_v3/pilot_source.py" in plan_text
+assert "tests/p3_v3/test_pilot_source.py" in plan_text
+assert "scripts/p3_v3/pilot.py" in plan_text
+assert "tests/p3_v3/test_pilot.py" in plan_text
+assert plan_text.count("src/p3_v3/packages.py") >= 1
+
+blocks = re.findall(r"```python\n(.*?)```", plan_text, re.S)
+for index, block in enumerate(blocks, start=1):
     ast.parse(block)
     print(f"AST_OK {index}")
 
-packet_required = [
+shared = next(block for block in blocks if "def shared_top_level_directory" in block)
+ns = {}
+exec(compile(ast.parse(shared), "<shared>", "exec"), ns)
+assert ns["shared_top_level_directory"](["readme.txt"]) is None
+assert ns["shared_top_level_directory"](["pkg/a", "pkg/b"]) == "pkg"
+assert ns["shared_top_level_directory"](["pkg/b", "pkg/a"]) == "pkg"
+
+auth = next(block for block in blocks if "def verify_authorization_a" in block)
+assert "read_authority_snapshot" in auth
+assert "path.read_bytes()" not in auth
+assert "path.is_file()" not in auth
+
+tree = next(
+    block
+    for block in blocks
+    if "def test_phase1_tree_hash_function_is_called_by_production_seam" in block
+)
+assert "monkeypatch.setattr(pilot_source, \"canonical_source_tree_sha256\", spy)" in tree
+assert "calls == [snapshot]" in tree
+
+old = next(
+    block
+    for block in blocks
+    if "def test_materialized_tree_uses_phase1_canonical_hash" in block
+)
+start = old.index("def test_materialized_tree_uses_phase1_canonical_hash")
+rest = old[start:]
+nxt = rest.find("\ndef ", 4)
+body = rest if nxt < 0 else rest[:nxt]
+assert "canonical_source_tree_sha256(snapshot) == canonical_source_tree_sha256(" not in body
+
+for token in (
+    "SOURCE_PREPARATION_PLAN_VERDICT_EXACT",
+    "SOURCE_PREPARATION_CAPABILITY_VERDICT_EXACT",
+    "SOURCE_PREPARATION_LAUNCH_EXACT",
+    "gate_chain_predecessor_sha256",
+    "test_capability_verdict_absent_writes_no_output",
+    "test_launch_authority_absent_writes_no_output",
+    "manifest-only",
+    "manifest-and-root",
+    "result-without-manifest",
+    "failure-terminal",
+    "schema-mismatch",
+    "orphan-root",
+    "already-complete",
+    "source manifest exclusive-create",
+    "PASS result exclusive-create last",
+    "FAIL_RESULT_EVIDENCE",
+    "StreamedLimitCounter",
+    "claims=blocked",
+):
+    assert token in plan_text, token
+
+for token in (
     "Cursor VM",
-    "07205db811e4b66085a05ef85a0e17ae085028f8",
+    "22b25e181ab951b2a4ee8ee4a2f430ee316a8b81",
     "GPT-5.6 Sol High",
     "PILOT_PLAN_REVIEW_CANDIDATE",
     "PILOT_IMPLEMENTATION_PASS",
     "claims=blocked",
-]
-for token in packet_required:
+):
     assert token in packet_text, token
 
-print("PASS source-preparation-only scope")
-print("PASS exact source and result schemas")
-print("PASS authorization and predecessor gates")
-print("PASS single-snapshot archive contract")
-print("PASS Phase 1 normalized-tree reuse")
-print("PASS one future implementation task")
+print("PASS gate chain exact and predecessor closed")
+print("PASS capability verdict and launch authority absence write zero outputs")
+print("PASS safe authority snapshot contract")
+print("PASS crash/reconciliation state table complete and mutually exclusive")
+print("PASS manifest/result/root commit order unique")
+print("PASS Phase 1 tree-hash test is not self-equality")
+print("PASS single top-level file is not stripped")
+print("PASS streamed limits do not trust metadata")
+print("PASS FAIL evidence matrix complete")
+print("PASS one future Task")
+print("PASS file map unexpanded")
 print("PASS claims remain blocked")
 PY
 ```
@@ -209,12 +242,23 @@ AST_OK 7
 AST_OK 8
 AST_OK 9
 AST_OK 10
-PASS source-preparation-only scope
-PASS exact source and result schemas
-PASS authorization and predecessor gates
-PASS single-snapshot archive contract
-PASS Phase 1 normalized-tree reuse
-PASS one future implementation task
+AST_OK 11
+AST_OK 12
+AST_OK 13
+AST_OK 14
+AST_OK 15
+AST_OK 16
+PASS gate chain exact and predecessor closed
+PASS capability verdict and launch authority absence write zero outputs
+PASS safe authority snapshot contract
+PASS crash/reconciliation state table complete and mutually exclusive
+PASS manifest/result/root commit order unique
+PASS Phase 1 tree-hash test is not self-equality
+PASS single top-level file is not stripped
+PASS streamed limits do not trust metadata
+PASS FAIL evidence matrix complete
+PASS one future Task
+PASS file map unexpanded
 PASS claims remain blocked
 ```
 
@@ -222,45 +266,37 @@ Repair rounds used: 0.
 
 ## Plan self-review
 
-Checked against the node contract:
+Checked against the repair contract:
 
-- Title is `Boost.Math PILOT_SOURCE_PREPARATION_ONLY Implementation Plan`
-- Exactly one `### Task ` heading: `Task 1: Pilot Source-Preparation Capability On Synthetic Fixtures`
-- Future Create files: `src/p3_v3/pilot_source.py`, `tests/p3_v3/test_pilot_source.py`
-- Future Modify files: `scripts/p3_v3/pilot.py`, `tests/p3_v3/test_pilot.py`
-- Future implementation uses runtime synthetic ZIP and TAR fixtures only
-- Future implementation does not read a real Boost.Math archive
-- Future implementation does not create a production source manifest or preparation result
-- Implementation stop is an independent review
-- Implementation PASS still does not authorize real preparation
-- Production preparation requires later user authorization A and a separately reviewed launch packet
-- Authorization A exact bytes and hash are written in the plan; the file was not created
-- Three independent gates are frozen in the required order
-- Implementation verdict hash `e7e5e9519ae49eb08c450c4e16c56d7551528030916d9d8fe88f0ab91a7b1c9d` is bound
-- Machine plan hash `23d7fb802a2395d93a211862f205065ce1abd52e6ae2e74374aaf2bb624d4cf2` is bound
-- `PILOT_SOURCE_MANIFEST_EXACT` and `PILOT_SOURCE_PREPARATION_RESULT_EXACT` are exact
-- `ArchiveSnapshot` and `read_production_archive_bytes` use one opened descriptor
-- `EXTRACTOR_POLICY_V1` is exact
-- Phase 1 `SourceSnapshot`, `SourceSnapshotEntry`, and `canonical_source_tree_sha256` are reused
-- `validate-source` accepts only `--archive` and `--materialize-root`
-- No executable production command with a fictional archive path is present
-- No build, CMake, contract, site, MR, mutant, certification, execution, or evidence-closure task is present
+- Exactly one `### Task ` heading remains
+- Future Create files remain `src/p3_v3/pilot_source.py` and `tests/p3_v3/test_pilot_source.py`
+- Future Modify files remain `scripts/p3_v3/pilot.py` and `tests/p3_v3/test_pilot.py`
+- Capability tests still use runtime synthetic ZIP and TAR fixtures only
+- Future implementation still does not read a real Boost.Math archive
+- Future implementation still does not create a production artifact or Authorization A
+- Production `run_validate_source` now requires the closed gate chain before any archive open
+- Authorization A, verdicts, launch authority, and related files use one verified snapshot
+- Crash recovery states are complete and mutually exclusive
+- Publication order is manifest, then root rename, then PASS result
+- Phase 1 tree-hash test spies the production seam
+- A single top-level regular file is not stripped
+- Streamed limits count actual bytes
+- FAIL evidence matrix freezes per-reason field combinations
 - `claims=blocked`
 - Formal denominator membership is false
 - `rq4_supported=false`
-- The complete 2026-08-15 plan remains unfrozen
-- Ten Python fences parse
+- Sixteen Python fences parse
 - No unfinished-work markers and no three consecutive period characters
 
 ## Declarations
 
 - The complete 2026-08-15 pilot plan remains unfrozen.
 - Foundation state remains `PILOT_IMPLEMENTATION_PASS`.
-- This source-preparation plan is a review candidate and is not frozen by this packet.
+- This source-preparation plan remains a review candidate and is not frozen by this packet.
 - This packet is not an independent PASS.
-- If an independent review later PASSes this plan, the next node is still not production preparation and is still not authorization A.
-- Future implementation must not start until that independent plan review PASSes and a later implementation node is separately authorized.
-- Production preparation must not start until authorization A exists and a separately reviewed launch packet exists.
+- No formal Sol High verdict was created.
+- Future implementation must not start until an independent plan review PASSes and a later implementation node is separately authorized.
+- Production preparation must not start until Authorization A exists and a separately reviewed launch authority exists.
 - No production path was executed.
 - No pytest, implementation, build, preflight, profiling, mutant, or MR command was run.
 - Package C, P12 reveal, buggy revisions, defect patches, reference MR, evaluated MR, mutant outcome, and real-fault outcome were not read, listed, or inferred.
@@ -271,4 +307,4 @@ Checked against the node contract:
 - `claims=blocked`
 - Current requested state: `PILOT_PLAN_REVIEW_CANDIDATE`
 
-GPT-5.6 Sol High is requested to perform an independent high-reasoning review of the unique two-file successor that starts from `07205db811e4b66085a05ef85a0e17ae085028f8`. This builder does not assign PASS.
+GPT-5.6 Sol High is requested to perform an independent high-reasoning review of the unique two-file successor that starts from `22b25e181ab951b2a4ee8ee4a2f430ee316a8b81`. This builder does not assign PASS.
