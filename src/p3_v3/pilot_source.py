@@ -692,7 +692,7 @@ class ArchiveSnapshot:
 
 
 def detect_archive_format(raw: bytes) -> str:
-    zip_magic = raw.startswith(b"PK\x03\x04") or raw.startswith(b"PK\x05\x06")
+    zip_magic = raw.startswith((b"PK\x03\x04", b"PK\x05\x06"))
     tar_magic = len(raw) >= 262 and raw[257:262] == b"ustar"
     if zip_magic and tar_magic:
         raise EvidenceError(
@@ -844,9 +844,8 @@ def _reject_member_name(name: str) -> str:
         raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "NUL in member path")
     if "\\" in name:
         raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "backslash in member path")
-    if name.startswith("/") or name.startswith("/") or (
-        len(name) >= 2 and name[0].isalpha() and name[1] == ":"
-    ):
+    windows_absolute = len(name) >= 2 and name[0].isalpha() and name[1] == ":"
+    if name.startswith("/") or windows_absolute:
         raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "absolute member path")
     parts = name.split("/")
     if any(part == ".." for part in parts):
@@ -890,9 +889,15 @@ def extract_archive_to_staging(snapshot: ArchiveSnapshot, staging: Path) -> Path
     if canonical_sha256(EXTRACTOR_POLICY_V1) != EXTRACTOR_POLICY_SHA256:
         raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "extractor policy hash differs")
     staging = Path(staging)
-    if staging.exists():
-        raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "staging already exists")
-    staging.mkdir(parents=True)
+    try:
+        os.mkdir(staging)
+    except FileExistsError as exc:
+        raise EvidenceError(
+            "E_PILOT_SOURCE_OUTPUT_EXISTS",
+            "pre-existing staging must be preserved",
+        ) from exc
+    except OSError as exc:
+        raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "staging cannot be created") from exc
     counter = StreamedLimitCounter(EXTRACTOR_POLICY_V1)
     try:
         if snapshot.archive_format == "ZIP":
@@ -904,6 +909,9 @@ def extract_archive_to_staging(snapshot: ArchiveSnapshot, staging: Path) -> Path
     except EvidenceError:
         shutil.rmtree(staging, ignore_errors=True)
         raise
+    except (zipfile.BadZipFile, tarfile.TarError, OSError) as exc:
+        shutil.rmtree(staging, ignore_errors=True)
+        raise EvidenceError("E_PILOT_ARCHIVE_FORMAT", "archive is corrupt") from exc
     return staging
 
 
@@ -971,46 +979,46 @@ def _extract_zip(raw: bytes, staging: Path, counter: StreamedLimitCounter) -> No
 
 def _extract_tar(raw: bytes, staging: Path, counter: StreamedLimitCounter) -> None:
     try:
-        archive = tarfile.open(fileobj=io.BytesIO(raw), mode="r:")
+        with tarfile.open(fileobj=io.BytesIO(raw), mode="r:") as archive:
+            members = archive.getmembers()
+            names = [member.name for member in members]
+            file_names = [
+                member.name
+                for member in members
+                if member.isfile() or (not member.isdir() and member.size >= 0)
+            ]
+            _collect_and_check_names(names)
+            _normalized, strip = _collect_and_check_names(
+                [name for name in file_names if not name.endswith("/")]
+            )
+            del _normalized
+            for member in members:
+                if member.issym() or member.type == tarfile.SYMTYPE:
+                    raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "tar symlink")
+                if member.islnk() or member.type == tarfile.LNKTYPE:
+                    raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "tar hardlink")
+                if (
+                    member.ischr()
+                    or member.isblk()
+                    or member.isfifo()
+                    or member.type in {tarfile.CHRTYPE, tarfile.BLKTYPE, tarfile.FIFOTYPE}
+                ):
+                    raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "tar special node")
+                if member.type not in {tarfile.REGTYPE, tarfile.AREGTYPE, tarfile.DIRTYPE}:
+                    raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "tar unsupported member")
+                if member.isdir():
+                    continue
+                relative = _stripped_relative(_reject_member_name(member.name), strip)
+                dest = _safe_staging_dest(staging, relative)
+                extracted = archive.extractfile(member)
+                if extracted is None:
+                    raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "tar member has no content")
+                counter.begin_member()
+                with extracted:
+                    _write_streamed_member(extracted, dest, counter)
+                counter.end_member()
     except tarfile.TarError as exc:
         raise EvidenceError("E_PILOT_ARCHIVE_FORMAT", "corrupt tar") from exc
-    members = archive.getmembers()
-    names = [member.name for member in members]
-    file_names = [
-        member.name
-        for member in members
-        if member.isfile() or (not member.isdir() and member.size >= 0)
-    ]
-    _collect_and_check_names(names)
-    _normalized, strip = _collect_and_check_names(
-        [name for name in file_names if not name.endswith("/")]
-    )
-    del _normalized
-    for member in members:
-        if member.issym() or member.type == tarfile.SYMTYPE:
-            raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "tar symlink")
-        if member.islnk() or member.type == tarfile.LNKTYPE:
-            raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "tar hardlink")
-        if (
-            member.ischr()
-            or member.isblk()
-            or member.isfifo()
-            or member.type in {tarfile.CHRTYPE, tarfile.BLKTYPE, tarfile.FIFOTYPE}
-        ):
-            raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "tar special node")
-        if member.type not in {tarfile.REGTYPE, tarfile.AREGTYPE, tarfile.DIRTYPE}:
-            raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "tar unsupported member")
-        if member.isdir():
-            continue
-        relative = _stripped_relative(_reject_member_name(member.name), strip)
-        dest = _safe_staging_dest(staging, relative)
-        extracted = archive.extractfile(member)
-        if extracted is None:
-            raise EvidenceError("E_PILOT_EXTRACT_UNSAFE", "tar member has no content")
-        counter.begin_member()
-        with extracted:
-            _write_streamed_member(extracted, dest, counter)
-        counter.end_member()
 
 
 def _projected_mode(mode: int) -> str:
@@ -1292,10 +1300,49 @@ def validate_pilot_source_preparation_result(
             raise EvidenceError("E_PILOT_SOURCE_RESULT", "FAIL must carry a reason")
         if validated["source_manifest_sha256"] is not None:
             raise EvidenceError("E_PILOT_SOURCE_RESULT", "FAIL must not claim a manifest")
+        _validate_fail_evidence_matrix(validated)
     body = {key: validated[key] for key in validated if key != "artifact_sha256"}
     if validated["artifact_sha256"] != canonical_sha256(body):
         raise EvidenceError("E_PILOT_SOURCE_RESULT", "self-hash differs")
     return validated
+
+
+_FAIL_REASONS = {
+    "ARCHIVE_UNSAFE",
+    "ARCHIVE_FORMAT_UNSUPPORTED",
+    "EXTRACTION_UNSAFE",
+    "SOURCE_TREE_MISMATCH",
+}
+
+
+def _archive_pair_state(archive_sha256: object, archive_bytes: object) -> str:
+    if archive_sha256 is None and archive_bytes is None:
+        return "none"
+    if archive_sha256 is not None and type(archive_bytes) is int:
+        return "both"
+    return "half"
+
+
+def _validate_fail_evidence_matrix(validated: dict) -> None:
+    reason = validated["failure_reason"]
+    if reason not in _FAIL_REASONS:
+        raise EvidenceError("E_PILOT_SOURCE_RESULT", "unknown failure_reason")
+    pair = _archive_pair_state(validated["archive_sha256"], validated["archive_bytes"])
+    tree = validated["materialized_tree_sha256"]
+    if reason == "ARCHIVE_UNSAFE" and (pair != "none" or tree is not None):
+        raise EvidenceError("E_PILOT_SOURCE_RESULT", "ARCHIVE_UNSAFE evidence differs")
+    if reason == "ARCHIVE_FORMAT_UNSUPPORTED" and (pair == "half" or tree is not None):
+        raise EvidenceError(
+            "E_PILOT_SOURCE_RESULT",
+            "ARCHIVE_FORMAT_UNSUPPORTED evidence differs",
+        )
+    if reason == "EXTRACTION_UNSAFE" and (pair != "both" or tree is not None):
+        raise EvidenceError("E_PILOT_SOURCE_RESULT", "EXTRACTION_UNSAFE evidence differs")
+    if reason == "SOURCE_TREE_MISMATCH" and (pair != "both" or tree is None):
+        raise EvidenceError(
+            "E_PILOT_SOURCE_RESULT",
+            "SOURCE_TREE_MISMATCH evidence differs",
+        )
 
 
 @dataclass(frozen=True)
@@ -1416,54 +1463,119 @@ def verify_production_gate_chain() -> _GateChain:
     )
 
 
-def _optional_durable(path: Path) -> tuple[bool, bool, dict | None, str | None]:
-    if not Path(path).exists():
-        return False, True, None, None
+@dataclass(frozen=True)
+class _DurableSnapshot:
+    present: bool
+    valid: bool
+    value: dict | None
+    digest: str | None
+    raw: bytes | None
+    status: str | None
+
+
+def _absent_durable() -> _DurableSnapshot:
+    return _DurableSnapshot(
+        present=False,
+        valid=True,
+        value=None,
+        digest=None,
+        raw=None,
+        status=None,
+    )
+
+
+def _load_manifest_snapshot(chain: _GateChain) -> _DurableSnapshot:
+    path = Path(SOURCE_MANIFEST_PATH)
+    if not path.exists():
+        return _absent_durable()
+    raw, digest = read_authority_snapshot(path, "source-manifest")
     try:
-        raw, _digest = read_authority_snapshot(path, path.name)
-        value = parse_canonical_authority_object(raw, path.name)
-        if path.name == SOURCE_MANIFEST_PATH.name or path.name.endswith(
-            "source-manifest.json"
-        ):
-            validate_pilot_source_manifest(value)
-            return True, True, value, None
-        validated = validate_pilot_source_preparation_result(value)
-        return True, True, validated, validated["terminal_status"]
-    except EvidenceError:
-        return True, False, None, None
+        value = parse_canonical_authority_object(raw, "source-manifest")
+        validated = validate_pilot_source_manifest(
+            value, expected_predecessors=chain.predecessors()
+        )
+    except EvidenceError as exc:
+        if exc.code == "E_PILOT_SOURCE_MANIFEST":
+            raise
+        raise EvidenceError(
+            "E_PILOT_SOURCE_OUTPUT_EXISTS",
+            "invalid durable source manifest",
+        ) from exc
+    return _DurableSnapshot(
+        present=True,
+        valid=True,
+        value=validated,
+        digest=digest,
+        raw=raw,
+        status=None,
+    )
 
 
-def _inspect_state(materialize_root: Path) -> str:
-    manifest_present, manifest_valid, manifest, _status = _optional_durable(
-        SOURCE_MANIFEST_PATH
+def _load_result_snapshot(
+    chain: _GateChain, manifest: _DurableSnapshot
+) -> _DurableSnapshot:
+    path = Path(SOURCE_PREPARATION_RESULT_PATH)
+    if not path.exists():
+        return _absent_durable()
+    raw, digest = read_authority_snapshot(path, "source-preparation-result")
+    try:
+        value = parse_canonical_authority_object(raw, "source-preparation-result")
+        status = value.get("terminal_status") if isinstance(value, dict) else None
+        if status == "PASS":
+            if not manifest.present or manifest.digest is None:
+                expected = None
+            else:
+                expected = sorted([*chain.predecessors(), manifest.digest])
+        else:
+            expected = chain.predecessors()
+        validated = validate_pilot_source_preparation_result(
+            value, expected_predecessors=expected
+        )
+    except EvidenceError as exc:
+        if exc.code == "E_PILOT_SOURCE_RESULT":
+            raise
+        raise EvidenceError(
+            "E_PILOT_SOURCE_OUTPUT_EXISTS",
+            "invalid durable source-preparation result",
+        ) from exc
+    return _DurableSnapshot(
+        present=True,
+        valid=True,
+        value=validated,
+        digest=digest,
+        raw=raw,
+        status=validated["terminal_status"],
     )
-    result_present, result_valid, result, result_status = _optional_durable(
-        SOURCE_PREPARATION_RESULT_PATH
-    )
+
+
+def _inspect_state(
+    chain: _GateChain, materialize_root: Path
+) -> tuple[str, _DurableSnapshot, _DurableSnapshot]:
+    manifest = _load_manifest_snapshot(chain)
+    result = _load_result_snapshot(chain, manifest)
     root_present = Path(materialize_root).exists()
     closed = True
     if (
-        manifest_present
-        and result_present
+        manifest.present
+        and result.present
         and root_present
-        and manifest_valid
-        and result_valid
-        and result_status == "PASS"
-        and manifest is not None
-        and result is not None
+        and manifest.valid
+        and result.valid
+        and result.status == "PASS"
+        and manifest.value is not None
+        and result.value is not None
     ):
-        closed = result.get("source_manifest_sha256") == hashlib.sha256(
-            Path(SOURCE_MANIFEST_PATH).read_bytes()
-        ).hexdigest()
-    return classify_reconciliation(
-        manifest_present=manifest_present,
-        result_present=result_present,
+        closed = result.value["source_manifest_sha256"] == manifest.digest
+    state = classify_reconciliation(
+        manifest_present=manifest.present,
+        result_present=result.present,
         root_present=root_present,
-        manifest_valid=manifest_valid,
-        result_valid=result_valid,
-        result_status=result_status,
+        manifest_valid=manifest.valid,
+        result_valid=result.valid,
+        result_status=result.status,
         closed_pair_consistent=closed,
     )
+    return state, manifest, result
 
 
 def _finish_artifact(value: dict) -> dict:
@@ -1524,6 +1636,53 @@ def _write_fail_result(
     write_canonical_json(SOURCE_PREPARATION_RESULT_PATH, result, exclusive=True)
 
 
+def _tree_metrics(tree: SourceSnapshot) -> tuple[int, int]:
+    return len(tree.entries), sum(len(entry.content) for entry in tree.entries)
+
+
+def _require_tree_matches_manifest(tree: SourceSnapshot, tree_hash: str, manifest: dict) -> None:
+    file_count, total_bytes = _tree_metrics(tree)
+    if tree_hash != manifest["normalized_source_tree_sha256"]:
+        raise EvidenceError("E_PILOT_SOURCE_TREE_MISMATCH", tree_hash)
+    if file_count != manifest["materialized_file_count"]:
+        raise EvidenceError("E_PILOT_SOURCE_MANIFEST", "materialized file count differs")
+    if total_bytes != manifest["materialized_total_bytes"]:
+        raise EvidenceError("E_PILOT_SOURCE_MANIFEST", "materialized total bytes differ")
+
+
+def _pass_result_object(
+    chain: _GateChain,
+    snapshot: ArchiveSnapshot,
+    tree_hash: str,
+    manifest_sha256: str,
+) -> dict:
+    predecessors = sorted([*chain.predecessors(), manifest_sha256])
+    result = _finish_artifact(
+        {
+            "schema_version": "p3-pilot-source-preparation-result-v1",
+            "execution_class": "PILOT_ONLY",
+            "denominator": "PILOT_ONLY",
+            "p12_item_id": P12_ITEM_ID,
+            "neutral_snapshot_id": NEUTRAL_SNAPSHOT_ID,
+            "normalized_source_tree_sha256": FROZEN_NORMALIZED_SOURCE_TREE_SHA256,
+            "controlled_subject_id": CONTROLLED_SUBJECT_ID,
+            "controlled_subject_source_id": CONTROLLED_SUBJECT_SOURCE_ID,
+            "predecessor_sha256": predecessors,
+            "terminal_status": "PASS",
+            "failure_reason": None,
+            "source_manifest_sha256": manifest_sha256,
+            "archive_sha256": snapshot.sha256,
+            "archive_bytes": snapshot.size,
+            "materialized_tree_sha256": tree_hash,
+            "artifact_sha256": "",
+        }
+    )
+    validate_pilot_source_preparation_result(
+        result, expected_predecessors=predecessors
+    )
+    return result
+
+
 def _publish_pass(
     chain: _GateChain,
     snapshot: ArchiveSnapshot,
@@ -1556,40 +1715,31 @@ def _publish_pass(
         }
     )
     validate_pilot_source_manifest(manifest, expected_predecessors=predecessors)
+    manifest_bytes = canonical_json_bytes(manifest)
+    manifest_sha256 = hashlib.sha256(manifest_bytes).hexdigest()
+    result = _pass_result_object(chain, snapshot, tree_hash, manifest_sha256)
     write_canonical_json(SOURCE_MANIFEST_PATH, manifest, exclusive=True)
-    manifest_sha256 = hashlib.sha256(Path(SOURCE_MANIFEST_PATH).read_bytes()).hexdigest()
     os.replace(staging, materialize_root)
-    result = _finish_artifact(
-        {
-            "schema_version": "p3-pilot-source-preparation-result-v1",
-            "execution_class": "PILOT_ONLY",
-            "denominator": "PILOT_ONLY",
-            "p12_item_id": P12_ITEM_ID,
-            "neutral_snapshot_id": NEUTRAL_SNAPSHOT_ID,
-            "normalized_source_tree_sha256": FROZEN_NORMALIZED_SOURCE_TREE_SHA256,
-            "controlled_subject_id": CONTROLLED_SUBJECT_ID,
-            "controlled_subject_source_id": CONTROLLED_SUBJECT_SOURCE_ID,
-            "predecessor_sha256": sorted([*predecessors, manifest_sha256]),
-            "terminal_status": "PASS",
-            "failure_reason": None,
-            "source_manifest_sha256": manifest_sha256,
-            "archive_sha256": snapshot.sha256,
-            "archive_bytes": snapshot.size,
-            "materialized_tree_sha256": tree_hash,
-            "artifact_sha256": "",
-        }
-    )
-    validate_pilot_source_preparation_result(
-        result, expected_predecessors=sorted([*predecessors, manifest_sha256])
-    )
     write_canonical_json(SOURCE_PREPARATION_RESULT_PATH, result, exclusive=True)
 
 
-def _fresh_prepare(archive: Path, materialize_root: Path, chain: _GateChain) -> None:
-    staging = Path(str(Path(materialize_root)) + ".staging")
+def _staging_path(materialize_root: Path) -> Path:
+    return Path(str(Path(materialize_root)) + ".staging")
+
+
+def _reject_preexisting_staging(staging: Path) -> None:
     if staging.exists():
-        shutil.rmtree(staging)
+        raise EvidenceError(
+            "E_PILOT_SOURCE_OUTPUT_EXISTS",
+            "pre-existing staging must be preserved",
+        )
+
+
+def _fresh_prepare(archive: Path, materialize_root: Path, chain: _GateChain) -> None:
+    staging = _staging_path(materialize_root)
+    _reject_preexisting_staging(staging)
     snapshot: ArchiveSnapshot | None = None
+    owned_staging = False
     try:
         snapshot = read_production_archive_bytes(archive)
     except EvidenceError as exc:
@@ -1600,41 +1750,132 @@ def _fresh_prepare(archive: Path, materialize_root: Path, chain: _GateChain) -> 
         raise
     try:
         extract_archive_to_staging(snapshot, staging)
+        owned_staging = True
         tree = capture_materialized_tree(staging)
         try:
             tree_hash = validate_materialized_tree_with_phase1(tree)
         except EvidenceError as exc:
             if exc.code == "E_PILOT_SOURCE_TREE_MISMATCH":
-                shutil.rmtree(staging, ignore_errors=True)
-                _write_fail_result(chain, "SOURCE_TREE_MISMATCH", snapshot, str(exc)[len(exc.code) + 2 :])
+                if owned_staging:
+                    shutil.rmtree(staging, ignore_errors=True)
+                _write_fail_result(
+                    chain,
+                    "SOURCE_TREE_MISMATCH",
+                    snapshot,
+                    str(exc)[len(exc.code) + 2 :],
+                )
             raise
         _publish_pass(chain, snapshot, tree, tree_hash, Path(materialize_root), staging)
     except EvidenceError as exc:
         if exc.code == "E_PILOT_EXTRACT_UNSAFE":
-            shutil.rmtree(staging, ignore_errors=True)
+            if owned_staging:
+                shutil.rmtree(staging, ignore_errors=True)
             _write_fail_result(chain, "EXTRACTION_UNSAFE", snapshot, None)
         raise
+
+
+def _require_matching_archive(archive: Path, manifest: dict) -> ArchiveSnapshot:
+    snapshot = read_production_archive_bytes(archive)
+    if (
+        snapshot.sha256 != manifest["archive_sha256"]
+        or snapshot.size != manifest["archive_bytes"]
+        or snapshot.archive_format != manifest["archive_format"]
+    ):
+        raise EvidenceError("E_PILOT_SOURCE_MANIFEST", "archive snapshot differs")
+    return snapshot
+
+
+def _recover_manifest_only(
+    archive: Path,
+    materialize_root: Path,
+    chain: _GateChain,
+    manifest_snap: _DurableSnapshot,
+) -> None:
+    if manifest_snap.value is None or manifest_snap.digest is None:
+        raise EvidenceError("E_PILOT_SOURCE_MANIFEST", "manifest snapshot is absent")
+    staging = _staging_path(materialize_root)
+    _reject_preexisting_staging(staging)
+    snapshot = _require_matching_archive(archive, manifest_snap.value)
+    extract_archive_to_staging(snapshot, staging)
+    try:
+        tree = capture_materialized_tree(staging)
+        tree_hash = validate_materialized_tree_with_phase1(tree)
+        _require_tree_matches_manifest(tree, tree_hash, manifest_snap.value)
+        result = _pass_result_object(chain, snapshot, tree_hash, manifest_snap.digest)
+        os.replace(staging, materialize_root)
+        write_canonical_json(SOURCE_PREPARATION_RESULT_PATH, result, exclusive=True)
+    except EvidenceError:
+        shutil.rmtree(staging, ignore_errors=True)
+        raise
+
+
+def _recover_manifest_and_root(
+    archive: Path,
+    materialize_root: Path,
+    chain: _GateChain,
+    manifest_snap: _DurableSnapshot,
+) -> None:
+    if manifest_snap.value is None or manifest_snap.digest is None:
+        raise EvidenceError("E_PILOT_SOURCE_MANIFEST", "manifest snapshot is absent")
+    snapshot = _require_matching_archive(archive, manifest_snap.value)
+    tree = capture_materialized_tree(Path(materialize_root))
+    tree_hash = validate_materialized_tree_with_phase1(tree)
+    _require_tree_matches_manifest(tree, tree_hash, manifest_snap.value)
+    result = _pass_result_object(chain, snapshot, tree_hash, manifest_snap.digest)
+    write_canonical_json(SOURCE_PREPARATION_RESULT_PATH, result, exclusive=True)
+
+
+def _revalidate_already_complete(
+    archive: Path,
+    materialize_root: Path,
+    chain: _GateChain,
+    manifest_snap: _DurableSnapshot,
+    result_snap: _DurableSnapshot,
+) -> None:
+    if manifest_snap.value is None or manifest_snap.digest is None:
+        raise EvidenceError("E_PILOT_SOURCE_MANIFEST", "manifest snapshot is absent")
+    if result_snap.value is None:
+        raise EvidenceError("E_PILOT_SOURCE_RESULT", "result snapshot is absent")
+    if manifest_snap.value["predecessor_sha256"] != chain.predecessors():
+        raise EvidenceError("E_PILOT_SOURCE_MANIFEST", "predecessors differ")
+    expected = sorted([*chain.predecessors(), manifest_snap.digest])
+    if result_snap.value["predecessor_sha256"] != expected:
+        raise EvidenceError("E_PILOT_SOURCE_RESULT", "predecessors differ")
+    if result_snap.value["source_manifest_sha256"] != manifest_snap.digest:
+        raise EvidenceError("E_PILOT_SOURCE_RESULT", "PASS must bind the source manifest")
+    snapshot = _require_matching_archive(archive, manifest_snap.value)
+    if (
+        result_snap.value["archive_sha256"] != snapshot.sha256
+        or result_snap.value["archive_bytes"] != snapshot.size
+    ):
+        raise EvidenceError("E_PILOT_SOURCE_RESULT", "PASS archive fields differ")
+    tree = capture_materialized_tree(Path(materialize_root))
+    tree_hash = validate_materialized_tree_with_phase1(tree)
+    _require_tree_matches_manifest(tree, tree_hash, manifest_snap.value)
+    if result_snap.value["materialized_tree_sha256"] != tree_hash:
+        raise EvidenceError("E_PILOT_SOURCE_RESULT", "PASS tree hash differs")
 
 
 def run_validate_source(archive: Path, materialize_root: Path) -> None:
     """Run the unique authority chain, then exclusive-create manifest, root, and PASS result."""
 
     chain = verify_production_gate_chain()
-    state = _inspect_state(Path(materialize_root))
+    root = Path(materialize_root)
+    _reject_preexisting_staging(_staging_path(root))
+    state, manifest_snap, result_snap = _inspect_state(chain, root)
     if state == "FRESH":
-        _fresh_prepare(Path(archive), Path(materialize_root), chain)
+        _fresh_prepare(Path(archive), root, chain)
         return
     if state == "MANIFEST_ONLY":
-        raise EvidenceError(
-            "E_PILOT_SOURCE_OUTPUT_EXISTS",
-            "manifest-only recovery is reserved for a later authorized attempt",
-        )
+        _recover_manifest_only(Path(archive), root, chain, manifest_snap)
+        return
     if state == "MANIFEST_AND_ROOT":
-        raise EvidenceError(
-            "E_PILOT_SOURCE_OUTPUT_EXISTS",
-            "manifest-and-root recovery is reserved for a later authorized attempt",
-        )
+        _recover_manifest_and_root(Path(archive), root, chain, manifest_snap)
+        return
     if state == "ALREADY_COMPLETE":
+        _revalidate_already_complete(
+            Path(archive), root, chain, manifest_snap, result_snap
+        )
         return
     if state == "ORPHAN_ROOT":
         raise EvidenceError("E_PILOT_SOURCE_ORPHAN_ROOT", "materialize root is orphaned")

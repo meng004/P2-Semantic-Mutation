@@ -9,9 +9,12 @@ from pathlib import Path
 
 import pytest
 
-from p3_v3.artifacts import EvidenceError, canonical_json_bytes, write_canonical_json
-from p3_v3.bridge_and_frames import SourceSnapshot
-
+from p3_v3.artifacts import (
+    EvidenceError,
+    canonical_json_bytes,
+    canonical_sha256,
+    write_canonical_json,
+)
 
 REQUIRED_SOURCE_PREPARATION_TESTS = [
     "test_authorization_absent_writes_no_output",
@@ -124,7 +127,7 @@ def _file_sha256(path: Path) -> str:
 
 
 def _install_capability_verdict(monkeypatch, tmp_path: Path) -> Path:
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     plan_sha256 = _file_sha256(pilot_source.SOURCE_PREPARATION_PLAN_PATH)
     plan_verdict_sha256 = _file_sha256(
@@ -158,7 +161,7 @@ def _install_capability_verdict(monkeypatch, tmp_path: Path) -> Path:
 
 
 def _install_launch_predecessors(monkeypatch, tmp_path: Path) -> None:
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     _install_capability_verdict(monkeypatch, tmp_path)
     auth = tmp_path / "user-auth-preparation.txt"
@@ -188,8 +191,169 @@ def _install_launch_predecessors(monkeypatch, tmp_path: Path) -> None:
     )
 
 
+def _install_full_authority_chain(monkeypatch, tmp_path: Path) -> dict:
+    from p3_v3 import pilot_source
+
+    _install_launch_predecessors(monkeypatch, tmp_path)
+    _patch_outputs(monkeypatch, pilot_source, tmp_path)
+    plan_sha256 = _file_sha256(pilot_source.SOURCE_PREPARATION_PLAN_PATH)
+    plan_verdict_sha256 = _file_sha256(
+        pilot_source.CANONICAL_SOURCE_PREPARATION_PLAN_VERDICT_PATH
+    )
+    capability_sha256 = _file_sha256(
+        pilot_source.CANONICAL_SOURCE_PREPARATION_CAPABILITY_VERDICT_PATH
+    )
+    packet_sha256 = _file_sha256(pilot_source.SOURCE_PREPARATION_LAUNCH_PACKET_PATH)
+    launch_verdict_sha256 = _file_sha256(
+        pilot_source.SOURCE_PREPARATION_LAUNCH_VERDICT_PATH
+    )
+    body = {
+        "schema_version": "p3-pilot-source-preparation-launch-v1",
+        "execution_class": "PILOT_ONLY",
+        "denominator": "PILOT_ONLY",
+        "source_preparation_plan_path": (
+            pilot_source.SOURCE_PREPARATION_PLAN_PATH.as_posix()
+        ),
+        "source_preparation_plan_sha256": plan_sha256,
+        "source_preparation_plan_verdict_path": (
+            pilot_source.CANONICAL_SOURCE_PREPARATION_PLAN_VERDICT_PATH.as_posix()
+        ),
+        "source_preparation_plan_verdict_sha256": plan_verdict_sha256,
+        "capability_implementation_verdict_path": (
+            pilot_source.CANONICAL_SOURCE_PREPARATION_CAPABILITY_VERDICT_PATH.as_posix()
+        ),
+        "capability_implementation_verdict_sha256": capability_sha256,
+        "production_launch_packet_path": (
+            pilot_source.SOURCE_PREPARATION_LAUNCH_PACKET_PATH.as_posix()
+        ),
+        "production_launch_packet_sha256": packet_sha256,
+        "launch_sol_high_verdict_path": (
+            pilot_source.SOURCE_PREPARATION_LAUNCH_VERDICT_PATH.as_posix()
+        ),
+        "launch_sol_high_verdict_sha256": launch_verdict_sha256,
+        "authorization_a_sha256": pilot_source.AUTHORIZATION_A_SHA256,
+        "claims": "blocked",
+    }
+    body["artifact_sha256"] = canonical_sha256(body)
+    launch_path = tmp_path / "source-preparation-launch.json"
+    write_canonical_json(launch_path, body, exclusive=True)
+    monkeypatch.setattr(pilot_source, "SOURCE_PREPARATION_LAUNCH_PATH", launch_path)
+    predecessors = pilot_source.gate_chain_predecessor_sha256(
+        plan_sha256,
+        plan_verdict_sha256,
+        capability_sha256,
+        _file_sha256(launch_path),
+        pilot_source.AUTHORIZATION_A_SHA256,
+    )
+    return {"predecessors": predecessors}
+
+
+def _force_frozen_tree_hash(monkeypatch) -> None:
+    from p3_v3 import pilot_source
+
+    monkeypatch.setattr(
+        pilot_source,
+        "canonical_source_tree_sha256",
+        lambda snapshot: pilot_source.FROZEN_NORMALIZED_SOURCE_TREE_SHA256,
+    )
+
+
+def _canonical_manifest(
+    *,
+    predecessors: list[str],
+    archive_sha256: str,
+    archive_bytes: int,
+    archive_format: str,
+    file_count: int,
+    total_bytes: int,
+) -> dict:
+    from p3_v3 import pilot_source
+
+    value = {
+        "schema_version": "p3-pilot-source-manifest-v1",
+        "execution_class": "PILOT_ONLY",
+        "denominator": "PILOT_ONLY",
+        "p12_item_id": pilot_source.P12_ITEM_ID,
+        "neutral_snapshot_id": pilot_source.NEUTRAL_SNAPSHOT_ID,
+        "normalized_source_tree_sha256": (
+            pilot_source.FROZEN_NORMALIZED_SOURCE_TREE_SHA256
+        ),
+        "controlled_subject_id": pilot_source.CONTROLLED_SUBJECT_ID,
+        "controlled_subject_source_id": pilot_source.CONTROLLED_SUBJECT_SOURCE_ID,
+        "predecessor_sha256": list(predecessors),
+        "archive_sha256": archive_sha256,
+        "archive_bytes": archive_bytes,
+        "archive_format": archive_format,
+        "build_descriptor_sha256": pilot_source.BUILD_DESCRIPTOR_SHA256,
+        "authorization_a_sha256": pilot_source.AUTHORIZATION_A_SHA256,
+        "extractor_policy_sha256": pilot_source.EXTRACTOR_POLICY_SHA256,
+        "materialized_file_count": file_count,
+        "materialized_total_bytes": total_bytes,
+        "artifact_sha256": "",
+    }
+    value["artifact_sha256"] = canonical_sha256(
+        {key: value[key] for key in value if key != "artifact_sha256"}
+    )
+    return value
+
+
+def _canonical_result(
+    *,
+    predecessors: list[str],
+    terminal_status: str,
+    failure_reason: str | None,
+    source_manifest_sha256: str | None,
+    archive_sha256: str | None,
+    archive_bytes: int | None,
+    materialized_tree_sha256: str | None,
+) -> dict:
+    from p3_v3 import pilot_source
+
+    value = {
+        "schema_version": "p3-pilot-source-preparation-result-v1",
+        "execution_class": "PILOT_ONLY",
+        "denominator": "PILOT_ONLY",
+        "p12_item_id": pilot_source.P12_ITEM_ID,
+        "neutral_snapshot_id": pilot_source.NEUTRAL_SNAPSHOT_ID,
+        "normalized_source_tree_sha256": (
+            pilot_source.FROZEN_NORMALIZED_SOURCE_TREE_SHA256
+        ),
+        "controlled_subject_id": pilot_source.CONTROLLED_SUBJECT_ID,
+        "controlled_subject_source_id": pilot_source.CONTROLLED_SUBJECT_SOURCE_ID,
+        "predecessor_sha256": list(predecessors),
+        "terminal_status": terminal_status,
+        "failure_reason": failure_reason,
+        "source_manifest_sha256": source_manifest_sha256,
+        "archive_sha256": archive_sha256,
+        "archive_bytes": archive_bytes,
+        "materialized_tree_sha256": materialized_tree_sha256,
+        "artifact_sha256": "",
+    }
+    value["artifact_sha256"] = canonical_sha256(
+        {key: value[key] for key in value if key != "artifact_sha256"}
+    )
+    return value
+
+
+def _synthetic_tree_metrics(tmp_path: Path, members: dict[str, bytes]) -> tuple:
+    from p3_v3 import pilot_source
+
+    archive = _write_zip(tmp_path / "synthetic-source.zip", members)
+    snapshot = pilot_source.read_production_archive_bytes(archive)
+    probe = tmp_path / "probe-tree"
+    pilot_source.extract_archive_to_staging(snapshot, probe)
+    tree = pilot_source.capture_materialized_tree(probe)
+    return (
+        archive,
+        snapshot,
+        tree,
+        len(tree.entries),
+        sum(len(entry.content) for entry in tree.entries),
+    )
+
+
 def test_authorization_absent_writes_no_output(tmp_path, monkeypatch):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     _install_capability_verdict(monkeypatch, tmp_path)
     monkeypatch.setattr(
@@ -218,7 +382,7 @@ def test_authorization_absent_writes_no_output(tmp_path, monkeypatch):
 
 
 def test_authorization_wrong_bytes_writes_no_output(tmp_path, monkeypatch):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     _install_capability_verdict(monkeypatch, tmp_path)
     auth = tmp_path / "user-auth-preparation.txt"
@@ -232,7 +396,7 @@ def test_authorization_wrong_bytes_writes_no_output(tmp_path, monkeypatch):
 
 
 def test_implementation_verdict_hash_mismatch_fails_closed(tmp_path, monkeypatch):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     verdict = {
         "reviewed_plan_path": pilot_source.SOURCE_PREPARATION_PLAN_PATH.as_posix(),
@@ -260,7 +424,7 @@ def test_implementation_verdict_hash_mismatch_fails_closed(tmp_path, monkeypatch
 
 
 def test_machine_plan_hash_mismatch_fails_closed():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     verdict = {
         "reviewed_plan_path": pilot_source.SOURCE_PREPARATION_PLAN_PATH.as_posix(),
@@ -274,7 +438,7 @@ def test_machine_plan_hash_mismatch_fails_closed():
 
 
 def test_capability_verdict_absent_writes_no_output(tmp_path, monkeypatch):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     monkeypatch.setattr(
         pilot_source,
@@ -303,7 +467,7 @@ def test_capability_verdict_absent_writes_no_output(tmp_path, monkeypatch):
 
 
 def test_launch_authority_absent_writes_no_output(tmp_path, monkeypatch):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     _install_launch_predecessors(monkeypatch, tmp_path)
     monkeypatch.setattr(
@@ -333,7 +497,7 @@ def test_launch_authority_absent_writes_no_output(tmp_path, monkeypatch):
 
 
 def test_runtime_production_bytes_drift_writes_no_output(tmp_path, monkeypatch):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     _install_capability_verdict(monkeypatch, tmp_path)
     monkeypatch.setattr(
@@ -364,7 +528,7 @@ def test_runtime_production_bytes_drift_writes_no_output(tmp_path, monkeypatch):
 
 
 def test_authority_snapshot_binds_validated_bytes_on_replacement_race(tmp_path):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     path = tmp_path / "authority.json"
     first = {"schema_version": "race-v1", "value": "before"}
@@ -377,7 +541,7 @@ def test_authority_snapshot_binds_validated_bytes_on_replacement_race(tmp_path):
 
 
 def test_capability_verdict_requires_reviewed_commit():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     verdict = {
         "reviewed_plan_path": pilot_source.SOURCE_PREPARATION_PLAN_PATH.as_posix(),
@@ -405,7 +569,7 @@ def test_capability_verdict_requires_reviewed_commit():
 
 
 def test_capability_verdict_binds_implementation_files():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     verdict = {
         "reviewed_plan_path": pilot_source.SOURCE_PREPARATION_PLAN_PATH.as_posix(),
@@ -555,7 +719,7 @@ def test_member_count_checked_before_content():
 
 
 def _plan_verdict_valid():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     return {
         "reviewed_plan_path": pilot_source.SOURCE_PREPARATION_PLAN_PATH.as_posix(),
@@ -567,7 +731,7 @@ def _plan_verdict_valid():
 
 
 def test_plan_verdict_rejects_noncanonical():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     raw = b'{"authorized_state":"PILOT_SOURCE_PREPARATION_PLAN_FROZEN","claims":"blocked","reviewed_plan_path":"docs/superpowers/plans/2026-08-17-p3-boost-math-pilot-source-preparation-only.md","reviewed_plan_sha256":"' + b"0" * 64 + b'","verdict":"PASS"} \n'
     with pytest.raises(EvidenceError, match="E_PILOT_SOURCE_PREPARATION_PLAN_VERDICT"):
@@ -576,7 +740,7 @@ def test_plan_verdict_rejects_noncanonical():
 
 
 def test_plan_verdict_rejects_extra_key():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     value = dict(_plan_verdict_valid())
     value["extra"] = "no"
@@ -585,7 +749,7 @@ def test_plan_verdict_rejects_extra_key():
 
 
 def test_plan_verdict_rejects_wrong_type():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     value = dict(_plan_verdict_valid())
     value["claims"] = False
@@ -594,7 +758,7 @@ def test_plan_verdict_rejects_wrong_type():
 
 
 def test_plan_verdict_rejects_bad_sha():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     value = dict(_plan_verdict_valid())
     value["reviewed_plan_sha256"] = "not-a-sha"
@@ -623,7 +787,7 @@ def _capability_verdict_valid():
 
 
 def test_capability_verdict_rejects_noncanonical():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     raw = canonical_json_bytes(_capability_verdict_valid())[:-1] + b" \n"
     with pytest.raises(EvidenceError, match="E_PILOT_SOURCE_PREPARATION_CAPABILITY_VERDICT"):
@@ -634,7 +798,7 @@ def test_capability_verdict_rejects_noncanonical():
 
 
 def test_capability_verdict_rejects_extra_key():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     value = dict(_capability_verdict_valid())
     value["extra"] = "no"
@@ -645,7 +809,7 @@ def test_capability_verdict_rejects_extra_key():
 
 
 def test_capability_verdict_rejects_wrong_type():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     value = dict(_capability_verdict_valid())
     value["claims"] = 1
@@ -656,7 +820,7 @@ def test_capability_verdict_rejects_wrong_type():
 
 
 def test_capability_verdict_rejects_bad_sha():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     value = dict(_capability_verdict_valid())
     value["reviewed_plan_sha256"] = "zz"
@@ -680,7 +844,7 @@ def _launch_verdict_valid():
 
 
 def test_launch_verdict_rejects_noncanonical():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     raw = canonical_json_bytes(_launch_verdict_valid())[:-1] + b" \n"
     with pytest.raises(EvidenceError, match="E_PILOT_SOURCE_PREPARATION_LAUNCH"):
@@ -695,7 +859,7 @@ def test_launch_verdict_rejects_noncanonical():
 
 
 def test_launch_verdict_rejects_extra_key():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     value = dict(_launch_verdict_valid())
     value["extra"] = "no"
@@ -710,7 +874,7 @@ def test_launch_verdict_rejects_extra_key():
 
 
 def test_launch_verdict_rejects_wrong_type():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     value = dict(_launch_verdict_valid())
     value["verdict"] = True
@@ -725,7 +889,7 @@ def test_launch_verdict_rejects_wrong_type():
 
 
 def test_launch_verdict_rejects_bad_sha():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     value = dict(_launch_verdict_valid())
     value["reviewed_packet_sha256"] = "bad"
@@ -761,7 +925,7 @@ def _launch_authority_valid():
 
 
 def test_launch_authority_rejects_noncanonical():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     raw = canonical_json_bytes(_launch_authority_valid())[:-1] + b" \n"
     with pytest.raises(EvidenceError, match="E_PILOT_SOURCE_PREPARATION_LAUNCH"):
@@ -778,7 +942,7 @@ def test_launch_authority_rejects_noncanonical():
 
 
 def test_launch_authority_rejects_extra_key():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     value = dict(_launch_authority_valid())
     value["extra"] = "no"
@@ -795,7 +959,7 @@ def test_launch_authority_rejects_extra_key():
 
 
 def test_launch_authority_rejects_wrong_type():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     value = dict(_launch_authority_valid())
     value["claims"] = 0
@@ -812,7 +976,7 @@ def test_launch_authority_rejects_wrong_type():
 
 
 def test_launch_authority_rejects_bad_sha():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     value = dict(_launch_authority_valid())
     value["source_preparation_plan_sha256"] = "bad"
@@ -860,7 +1024,7 @@ def test_archive_snapshot_hashes_same_fd_bytes(tmp_path):
 
 
 def test_archive_snapshot_rejects_identity_change(tmp_path, monkeypatch):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     archive = tmp_path / "fixture.zip"
     archive.write_bytes(b"PK\x03\x04" + b"synthetic-zip-bytes")
@@ -902,7 +1066,7 @@ def test_archive_format_uses_bytes_not_suffix(tmp_path):
 
 
 def test_zip_rejects_parent_traversal(tmp_path):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     archive = tmp_path / "bad.zip"
     with zipfile.ZipFile(archive, "w") as handle:
@@ -913,7 +1077,7 @@ def test_zip_rejects_parent_traversal(tmp_path):
 
 
 def test_zip_rejects_symlink(tmp_path):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     archive = tmp_path / "link.zip"
     with zipfile.ZipFile(archive, "w") as handle:
@@ -927,7 +1091,7 @@ def test_zip_rejects_symlink(tmp_path):
 
 
 def test_zip_rejects_encrypted_member(tmp_path):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     archive = tmp_path / "enc.zip"
     with zipfile.ZipFile(archive, "w") as handle:
@@ -957,7 +1121,7 @@ def test_zip_rejects_encrypted_member(tmp_path):
 
 
 def test_tar_rejects_parent_traversal(tmp_path):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     archive = tmp_path / "bad.tar"
     with tarfile.open(archive, "w") as handle:
@@ -971,7 +1135,7 @@ def test_tar_rejects_parent_traversal(tmp_path):
 
 
 def test_tar_rejects_symlink(tmp_path):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     archive = tmp_path / "link.tar"
     with tarfile.open(archive, "w") as handle:
@@ -985,7 +1149,7 @@ def test_tar_rejects_symlink(tmp_path):
 
 
 def test_tar_rejects_hardlink(tmp_path):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     archive = tmp_path / "hard.tar"
     with tarfile.open(archive, "w") as handle:
@@ -1003,7 +1167,7 @@ def test_tar_rejects_hardlink(tmp_path):
 
 
 def test_extractor_rejects_casefold_collision(tmp_path):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     archive = tmp_path / "case.zip"
     _write_zip(archive, {"Foo.txt": b"a", "foo.txt": b"b"})
@@ -1013,7 +1177,7 @@ def test_extractor_rejects_casefold_collision(tmp_path):
 
 
 def test_extractor_rejects_duplicate_normalized_path(tmp_path):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     archive = tmp_path / "dup.zip"
     with zipfile.ZipFile(archive, "w") as handle:
@@ -1025,7 +1189,7 @@ def test_extractor_rejects_duplicate_normalized_path(tmp_path):
 
 
 def test_extractor_rejects_member_limit(tmp_path, monkeypatch):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     policy = dict(pilot_source.EXTRACTOR_POLICY_V1)
     policy["max_member_count"] = 1
@@ -1038,7 +1202,7 @@ def test_extractor_rejects_member_limit(tmp_path, monkeypatch):
 
 
 def test_extractor_rejects_total_bytes_limit(tmp_path, monkeypatch):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     policy = dict(pilot_source.EXTRACTOR_POLICY_V1)
     policy["max_total_uncompressed_bytes"] = 3
@@ -1051,7 +1215,7 @@ def test_extractor_rejects_total_bytes_limit(tmp_path, monkeypatch):
 
 
 def test_streamed_member_bytes_cannot_exceed_declared_policy_limit(tmp_path, monkeypatch):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     policy = dict(pilot_source.EXTRACTOR_POLICY_V1)
     policy["max_member_bytes"] = 2
@@ -1079,7 +1243,7 @@ def test_single_top_level_file_is_not_stripped():
 
 
 def test_materialized_tree_uses_phase1_canonical_hash(tmp_path, monkeypatch):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
     from p3_v3.bridge_and_frames import canonical_source_tree_sha256 as phase1
 
     payload = tmp_path / "payload"
@@ -1101,7 +1265,7 @@ def test_materialized_tree_uses_phase1_canonical_hash(tmp_path, monkeypatch):
 
 
 def test_phase1_tree_hash_function_is_called_by_production_seam(tmp_path, monkeypatch):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
     from p3_v3.bridge_and_frames import SourceSnapshot
 
     payload = tmp_path / "payload"
@@ -1122,7 +1286,7 @@ def test_phase1_tree_hash_function_is_called_by_production_seam(tmp_path, monkey
 
 
 def _install_minimal_fail_closed_chain(monkeypatch, tmp_path: Path) -> None:
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     _patch_outputs(monkeypatch, pilot_source, tmp_path)
     monkeypatch.setattr(pilot_source, "AUTHORIZATION_A_PATH", tmp_path / "missing-auth.txt")
@@ -1139,24 +1303,39 @@ def _install_minimal_fail_closed_chain(monkeypatch, tmp_path: Path) -> None:
 
 
 def test_wrong_materialized_tree_writes_failure_result(tmp_path, monkeypatch):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
-    _install_minimal_fail_closed_chain(monkeypatch, tmp_path)
-    with pytest.raises(EvidenceError):
-        pilot_source.run_validate_source(tmp_path / "missing.zip", tmp_path / "materialize")
+    _install_full_authority_chain(monkeypatch, tmp_path)
+    archive, snapshot, tree, _count, _total = _synthetic_tree_metrics(
+        tmp_path, {"pkg/readme.txt": b"synthetic-mismatch\n"}
+    )
+    observed = __import__(
+        "p3_v3.bridge_and_frames", fromlist=["canonical_source_tree_sha256"]
+    ).canonical_source_tree_sha256(tree)
+    materialize = tmp_path / "materialize"
+    with pytest.raises(EvidenceError, match="E_PILOT_SOURCE_TREE_MISMATCH"):
+        pilot_source.run_validate_source(archive, materialize)
+    result_path = tmp_path / "source-preparation-result.json"
+    assert result_path.is_file()
+    result = __import__("json").loads(result_path.read_text(encoding="utf-8"))
+    assert result["failure_reason"] == "SOURCE_TREE_MISMATCH"
+    assert result["archive_sha256"] == snapshot.sha256
+    assert result["archive_bytes"] == snapshot.size
+    assert result["materialized_tree_sha256"] == observed
+    assert result["source_manifest_sha256"] is None
     assert not (tmp_path / "source-manifest.json").exists()
-    assert not (tmp_path / "materialize").exists()
+    assert not materialize.exists()
 
 
 def test_source_manifest_exact_keys():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     with pytest.raises(EvidenceError, match="E_SCHEMA_KEYS"):
         pilot_source.validate_pilot_source_manifest({"schema_version": "x"})
 
 
 def test_source_manifest_predecessors_are_exact():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     expected = pilot_source.gate_chain_predecessor_sha256(
         "0" * 64, "1" * 64, "2" * 64, "3" * 64, "4" * 64
@@ -1179,7 +1358,7 @@ def test_source_manifest_cannot_validate_as_pilot_plan():
 
 
 def test_pass_result_binds_source_manifest():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     with pytest.raises(EvidenceError):
         pilot_source.validate_pilot_source_preparation_result(
@@ -1204,18 +1383,26 @@ def test_pass_result_binds_source_manifest():
         )
 
 
-def test_outputs_are_exclusive(tmp_path):
-    import p3_v3.pilot_source as pilot_source
+def test_outputs_are_exclusive(tmp_path, monkeypatch):
+    from p3_v3 import pilot_source
 
-    path = tmp_path / "source-manifest.json"
-    write_canonical_json(path, {"marker": "one"}, exclusive=True)
-    with pytest.raises(EvidenceError, match="E_EXISTS"):
-        write_canonical_json(path, {"marker": "two"}, exclusive=True)
-    assert "exclusive" in pilot_source.run_validate_source.__doc__.lower() or True
+    _install_full_authority_chain(monkeypatch, tmp_path)
+    manifest = tmp_path / "source-manifest.json"
+    result = tmp_path / "source-preparation-result.json"
+    write_canonical_json(manifest, {"marker": "one"}, exclusive=True)
+    write_canonical_json(result, {"marker": "result"}, exclusive=True)
+    before_manifest = manifest.read_bytes()
+    before_result = result.read_bytes()
+    archive = tmp_path / "synthetic.zip"
+    archive.write_bytes(b"PK\x03\x04" + b"unused")
+    with pytest.raises(EvidenceError, match="E_PILOT_SOURCE_OUTPUT_EXISTS"):
+        pilot_source.run_validate_source(archive, tmp_path / "materialize")
+    assert manifest.read_bytes() == before_manifest
+    assert result.read_bytes() == before_result
 
 
 def test_crash_after_manifest_publication():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     state = pilot_source.classify_reconciliation(
         manifest_present=True,
@@ -1230,7 +1417,7 @@ def test_crash_after_manifest_publication():
 
 
 def test_crash_after_materialize_root_rename():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     state = pilot_source.classify_reconciliation(
         manifest_present=True,
@@ -1245,7 +1432,7 @@ def test_crash_after_materialize_root_rename():
 
 
 def test_manifest_only_recovery():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     assert (
         pilot_source.classify_reconciliation(
@@ -1262,7 +1449,7 @@ def test_manifest_only_recovery():
 
 
 def test_manifest_and_root_recovery():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     assert (
         pilot_source.classify_reconciliation(
@@ -1279,7 +1466,7 @@ def test_manifest_and_root_recovery():
 
 
 def test_tampered_manifest_refuses_recovery():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     assert (
         pilot_source.classify_reconciliation(
@@ -1296,7 +1483,7 @@ def test_tampered_manifest_refuses_recovery():
 
 
 def test_orphan_root_without_manifest_refuses_recovery():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     assert (
         pilot_source.classify_reconciliation(
@@ -1313,7 +1500,7 @@ def test_orphan_root_without_manifest_refuses_recovery():
 
 
 def test_result_is_always_the_final_pass_commit_point():
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     assert (
         pilot_source.classify_reconciliation(
@@ -1330,7 +1517,7 @@ def test_result_is_always_the_final_pass_commit_point():
 
 
 def test_tree_mismatch_leaves_materialize_root_and_manifest_absent(tmp_path, monkeypatch):
-    import p3_v3.pilot_source as pilot_source
+    from p3_v3 import pilot_source
 
     _install_minimal_fail_closed_chain(monkeypatch, tmp_path)
     with pytest.raises(EvidenceError):
@@ -1383,3 +1570,375 @@ def test_capability_implementation_creates_no_production_artifact():
     ]
     for path in production:
         assert not path.exists()
+
+
+def test_preexisting_staging_is_preserved_and_attempt_fails_closed(tmp_path, monkeypatch):
+    from p3_v3 import pilot_source
+
+    _install_full_authority_chain(monkeypatch, tmp_path)
+    materialize = tmp_path / "materialize"
+    staging = Path(str(materialize) + ".staging")
+    staging.mkdir()
+    sentinel = staging / "sentinel"
+    sentinel.write_bytes(b"keep-staging\n")
+    calls: list[str] = []
+
+    def forbidden(path):
+        calls.append(str(path))
+        raise AssertionError("archive snapshot started")
+
+    monkeypatch.setattr(pilot_source, "read_production_archive_bytes", forbidden)
+    with pytest.raises(EvidenceError, match="E_PILOT_SOURCE_OUTPUT_EXISTS"):
+        pilot_source.run_validate_source(tmp_path / "unused.zip", materialize)
+    assert sentinel.is_file()
+    assert sentinel.read_bytes() == b"keep-staging\n"
+    assert staging.is_dir()
+    assert calls == []
+    assert not (tmp_path / "source-manifest.json").exists()
+    assert not (tmp_path / "source-preparation-result.json").exists()
+
+
+def test_manifest_only_recovery_replays_same_archive_and_finishes_pass(
+    tmp_path, monkeypatch
+):
+    from p3_v3 import pilot_source
+
+    chain = _install_full_authority_chain(monkeypatch, tmp_path)
+    _force_frozen_tree_hash(monkeypatch)
+    archive, snapshot, _tree, file_count, total_bytes = _synthetic_tree_metrics(
+        tmp_path, {"pkg/a.txt": b"hello\n"}
+    )
+    manifest = _canonical_manifest(
+        predecessors=chain["predecessors"],
+        archive_sha256=snapshot.sha256,
+        archive_bytes=snapshot.size,
+        archive_format=snapshot.archive_format,
+        file_count=file_count,
+        total_bytes=total_bytes,
+    )
+    manifest_path = tmp_path / "source-manifest.json"
+    write_canonical_json(manifest_path, manifest, exclusive=True)
+    before = manifest_path.read_bytes()
+    materialize = tmp_path / "materialize"
+    pilot_source.run_validate_source(archive, materialize)
+    assert manifest_path.read_bytes() == before
+    assert materialize.is_dir()
+    assert (materialize / "a.txt").read_bytes() == b"hello\n"
+    result_path = tmp_path / "source-preparation-result.json"
+    result = __import__("json").loads(result_path.read_text(encoding="utf-8"))
+    assert result["terminal_status"] == "PASS"
+    assert result["source_manifest_sha256"] == _sha256_bytes(before)
+    assert result["predecessor_sha256"] == sorted(
+        [*chain["predecessors"], _sha256_bytes(before)]
+    )
+
+
+def test_manifest_and_root_recovery_verifies_root_and_finishes_without_rename(
+    tmp_path, monkeypatch
+):
+    from p3_v3 import pilot_source
+
+    chain = _install_full_authority_chain(monkeypatch, tmp_path)
+    _force_frozen_tree_hash(monkeypatch)
+    archive, snapshot, _tree, file_count, total_bytes = _synthetic_tree_metrics(
+        tmp_path, {"pkg/a.txt": b"hello\n"}
+    )
+    manifest = _canonical_manifest(
+        predecessors=chain["predecessors"],
+        archive_sha256=snapshot.sha256,
+        archive_bytes=snapshot.size,
+        archive_format=snapshot.archive_format,
+        file_count=file_count,
+        total_bytes=total_bytes,
+    )
+    write_canonical_json(tmp_path / "source-manifest.json", manifest, exclusive=True)
+    materialize = tmp_path / "materialize"
+    materialize.mkdir()
+    (materialize / "a.txt").write_bytes(b"hello\n")
+    inode = materialize.stat().st_ino
+    payload = (materialize / "a.txt").read_bytes()
+    archive_calls: list[str] = []
+    original = pilot_source.extract_archive_to_staging
+
+    def no_extract(snapshot_obj, staging):
+        archive_calls.append(str(staging))
+        return original(snapshot_obj, staging)
+
+    monkeypatch.setattr(pilot_source, "extract_archive_to_staging", no_extract)
+    pilot_source.run_validate_source(archive, materialize)
+    assert materialize.stat().st_ino == inode
+    assert (materialize / "a.txt").read_bytes() == payload
+    assert archive_calls == []
+    result = __import__("json").loads(
+        (tmp_path / "source-preparation-result.json").read_text(encoding="utf-8")
+    )
+    assert result["terminal_status"] == "PASS"
+    assert not Path(str(materialize) + ".staging").exists()
+
+
+def test_manifest_and_root_recovery_rejects_root_mismatch(tmp_path, monkeypatch):
+    from p3_v3 import pilot_source
+
+    chain = _install_full_authority_chain(monkeypatch, tmp_path)
+    _force_frozen_tree_hash(monkeypatch)
+    archive, snapshot, _tree, file_count, total_bytes = _synthetic_tree_metrics(
+        tmp_path, {"pkg/a.txt": b"hello\n"}
+    )
+    manifest = _canonical_manifest(
+        predecessors=chain["predecessors"],
+        archive_sha256=snapshot.sha256,
+        archive_bytes=snapshot.size,
+        archive_format=snapshot.archive_format,
+        file_count=file_count,
+        total_bytes=total_bytes,
+    )
+    manifest_path = tmp_path / "source-manifest.json"
+    write_canonical_json(manifest_path, manifest, exclusive=True)
+    before = manifest_path.read_bytes()
+    materialize = tmp_path / "materialize"
+    materialize.mkdir()
+    (materialize / "a.txt").write_bytes(b"DIFFERENT\n")
+    inode = materialize.stat().st_ino
+    with pytest.raises(EvidenceError, match="E_PILOT_SOURCE_TREE_MISMATCH|E_PILOT_SOURCE_MANIFEST"):
+        pilot_source.run_validate_source(archive, materialize)
+    assert manifest_path.read_bytes() == before
+    assert materialize.stat().st_ino == inode
+    assert (materialize / "a.txt").read_bytes() == b"DIFFERENT\n"
+    assert not (tmp_path / "source-preparation-result.json").exists()
+
+
+def test_already_complete_revalidates_root(tmp_path, monkeypatch):
+    from p3_v3 import pilot_source
+
+    chain = _install_full_authority_chain(monkeypatch, tmp_path)
+    _force_frozen_tree_hash(monkeypatch)
+    archive, snapshot, _tree, file_count, total_bytes = _synthetic_tree_metrics(
+        tmp_path, {"pkg/a.txt": b"hello\n"}
+    )
+    manifest = _canonical_manifest(
+        predecessors=chain["predecessors"],
+        archive_sha256=snapshot.sha256,
+        archive_bytes=snapshot.size,
+        archive_format=snapshot.archive_format,
+        file_count=file_count,
+        total_bytes=total_bytes,
+    )
+    manifest_path = tmp_path / "source-manifest.json"
+    write_canonical_json(manifest_path, manifest, exclusive=True)
+    manifest_bytes = manifest_path.read_bytes()
+    materialize = tmp_path / "materialize"
+    materialize.mkdir()
+    (materialize / "a.txt").write_bytes(b"hello\n")
+    (materialize / "extra.txt").write_bytes(b"tamper\n")
+    result = _canonical_result(
+        predecessors=sorted([*chain["predecessors"], _sha256_bytes(manifest_bytes)]),
+        terminal_status="PASS",
+        failure_reason=None,
+        source_manifest_sha256=_sha256_bytes(manifest_bytes),
+        archive_sha256=snapshot.sha256,
+        archive_bytes=snapshot.size,
+        materialized_tree_sha256=pilot_source.FROZEN_NORMALIZED_SOURCE_TREE_SHA256,
+    )
+    result_path = tmp_path / "source-preparation-result.json"
+    write_canonical_json(result_path, result, exclusive=True)
+    before_result = result_path.read_bytes()
+    with pytest.raises(EvidenceError):
+        pilot_source.run_validate_source(archive, materialize)
+    assert manifest_path.read_bytes() == manifest_bytes
+    assert result_path.read_bytes() == before_result
+    assert (materialize / "extra.txt").is_file()
+
+
+def test_durable_manifest_predecessor_drift_is_invalid(tmp_path, monkeypatch):
+    from p3_v3 import pilot_source
+
+    chain = _install_full_authority_chain(monkeypatch, tmp_path)
+    drifted = ["a" * 64, "b" * 64, "c" * 64, "d" * 64, "e" * 64]
+    assert drifted != chain["predecessors"]
+    archive, snapshot, _tree, file_count, total_bytes = _synthetic_tree_metrics(
+        tmp_path, {"pkg/a.txt": b"hello\n"}
+    )
+    manifest = _canonical_manifest(
+        predecessors=drifted,
+        archive_sha256=snapshot.sha256,
+        archive_bytes=snapshot.size,
+        archive_format=snapshot.archive_format,
+        file_count=file_count,
+        total_bytes=total_bytes,
+    )
+    pilot_source.validate_pilot_source_manifest(manifest)
+    manifest_path = tmp_path / "source-manifest.json"
+    write_canonical_json(manifest_path, manifest, exclusive=True)
+    before = manifest_path.read_bytes()
+    with pytest.raises(EvidenceError, match="E_PILOT_SOURCE_MANIFEST"):
+        pilot_source.run_validate_source(archive, tmp_path / "materialize")
+    assert manifest_path.read_bytes() == before
+    assert not (tmp_path / "source-preparation-result.json").exists()
+    assert not (tmp_path / "materialize").exists()
+
+
+def test_durable_result_predecessor_drift_is_invalid(tmp_path, monkeypatch):
+    from p3_v3 import pilot_source
+
+    chain = _install_full_authority_chain(monkeypatch, tmp_path)
+    drifted = ["1" * 64]
+    fail = _canonical_result(
+        predecessors=drifted,
+        terminal_status="FAIL_INFRASTRUCTURE",
+        failure_reason="ARCHIVE_UNSAFE",
+        source_manifest_sha256=None,
+        archive_sha256=None,
+        archive_bytes=None,
+        materialized_tree_sha256=None,
+    )
+    with pytest.raises(EvidenceError, match="E_PILOT_SOURCE_RESULT"):
+        pilot_source.validate_pilot_source_preparation_result(
+            fail, expected_predecessors=chain["predecessors"]
+        )
+    pass_result = _canonical_result(
+        predecessors=drifted,
+        terminal_status="PASS",
+        failure_reason=None,
+        source_manifest_sha256="2" * 64,
+        archive_sha256="3" * 64,
+        archive_bytes=1,
+        materialized_tree_sha256=pilot_source.FROZEN_NORMALIZED_SOURCE_TREE_SHA256,
+    )
+    with pytest.raises(EvidenceError, match="E_PILOT_SOURCE_RESULT"):
+        pilot_source.validate_pilot_source_preparation_result(
+            pass_result,
+            expected_predecessors=sorted([*chain["predecessors"], "2" * 64]),
+        )
+    result_path = tmp_path / "source-preparation-result.json"
+    write_canonical_json(result_path, fail, exclusive=True)
+    before = result_path.read_bytes()
+    with pytest.raises(EvidenceError, match="E_PILOT_SOURCE_RESULT"):
+        pilot_source.run_validate_source(tmp_path / "unused.zip", tmp_path / "materialize")
+    assert result_path.read_bytes() == before
+
+
+@pytest.mark.parametrize(
+    ("reason", "archive_sha256", "archive_bytes", "tree_hash", "allowed"),
+    [
+        ("ARCHIVE_UNSAFE", None, None, None, True),
+        ("ARCHIVE_UNSAFE", "0" * 64, 1, None, False),
+        ("ARCHIVE_FORMAT_UNSUPPORTED", None, None, None, True),
+        ("ARCHIVE_FORMAT_UNSUPPORTED", "0" * 64, 4, None, True),
+        ("ARCHIVE_FORMAT_UNSUPPORTED", "0" * 64, None, None, False),
+        ("ARCHIVE_FORMAT_UNSUPPORTED", None, 4, None, False),
+        ("EXTRACTION_UNSAFE", "0" * 64, 4, None, True),
+        ("EXTRACTION_UNSAFE", None, None, None, False),
+        ("EXTRACTION_UNSAFE", "0" * 64, 4, "1" * 64, False),
+        ("SOURCE_TREE_MISMATCH", "0" * 64, 4, "2" * 64, True),
+        ("SOURCE_TREE_MISMATCH", None, None, "2" * 64, False),
+        ("SOURCE_TREE_MISMATCH", "0" * 64, 4, None, False),
+        ("NOT_A_REASON", None, None, None, False),
+    ],
+)
+def test_fail_result_evidence_matrix_is_exact(
+    reason, archive_sha256, archive_bytes, tree_hash, allowed
+):
+    from p3_v3 import pilot_source
+
+    predecessors = ["a" * 64, "b" * 64, "c" * 64, "d" * 64, "e" * 64]
+    value = _canonical_result(
+        predecessors=predecessors,
+        terminal_status="FAIL_INFRASTRUCTURE",
+        failure_reason=reason,
+        source_manifest_sha256=None,
+        archive_sha256=archive_sha256,
+        archive_bytes=archive_bytes,
+        materialized_tree_sha256=tree_hash,
+    )
+    if allowed:
+        validated = pilot_source.validate_pilot_source_preparation_result(
+            value, expected_predecessors=predecessors
+        )
+        assert validated["failure_reason"] == reason
+    else:
+        with pytest.raises(EvidenceError, match="E_PILOT_SOURCE_RESULT"):
+            pilot_source.validate_pilot_source_preparation_result(
+                value, expected_predecessors=predecessors
+            )
+    claimed = _canonical_result(
+        predecessors=predecessors,
+        terminal_status="FAIL_INFRASTRUCTURE",
+        failure_reason="ARCHIVE_UNSAFE",
+        source_manifest_sha256="f" * 64,
+        archive_sha256=None,
+        archive_bytes=None,
+        materialized_tree_sha256=None,
+    )
+    with pytest.raises(EvidenceError, match="E_PILOT_SOURCE_RESULT"):
+        pilot_source.validate_pilot_source_preparation_result(
+            claimed, expected_predecessors=predecessors
+        )
+
+
+def test_manifest_digest_uses_validated_snapshot_bytes(tmp_path, monkeypatch):
+    from p3_v3 import pilot_source
+
+    chain = _install_full_authority_chain(monkeypatch, tmp_path)
+    _force_frozen_tree_hash(monkeypatch)
+    archive, snapshot, _tree, file_count, total_bytes = _synthetic_tree_metrics(
+        tmp_path, {"pkg/a.txt": b"hello\n"}
+    )
+    manifest = _canonical_manifest(
+        predecessors=chain["predecessors"],
+        archive_sha256=snapshot.sha256,
+        archive_bytes=snapshot.size,
+        archive_format=snapshot.archive_format,
+        file_count=file_count,
+        total_bytes=total_bytes,
+    )
+    manifest_path = tmp_path / "source-manifest.json"
+    write_canonical_json(manifest_path, manifest, exclusive=True)
+    original = manifest_path.read_bytes()
+    materialize = tmp_path / "materialize"
+    materialize.mkdir()
+    (materialize / "a.txt").write_bytes(b"hello\n")
+    result = _canonical_result(
+        predecessors=sorted([*chain["predecessors"], _sha256_bytes(original)]),
+        terminal_status="PASS",
+        failure_reason=None,
+        source_manifest_sha256=_sha256_bytes(original),
+        archive_sha256=snapshot.sha256,
+        archive_bytes=snapshot.size,
+        materialized_tree_sha256=pilot_source.FROZEN_NORMALIZED_SOURCE_TREE_SHA256,
+    )
+    write_canonical_json(tmp_path / "source-preparation-result.json", result, exclusive=True)
+    original_read = pilot_source.read_authority_snapshot
+
+    def replace_after_snapshot(path, context):
+        raw, digest = original_read(path, context)
+        if Path(path) == manifest_path:
+            Path(path).write_bytes(b"replaced-manifest-bytes\n")
+        return raw, digest
+
+    monkeypatch.setattr(pilot_source, "read_authority_snapshot", replace_after_snapshot)
+    pilot_source.run_validate_source(archive, materialize)
+    assert manifest_path.read_bytes() == b"replaced-manifest-bytes\n"
+    result_after = __import__("json").loads(
+        (tmp_path / "source-preparation-result.json").read_text(encoding="utf-8")
+    )
+    assert result_after["source_manifest_sha256"] == _sha256_bytes(original)
+
+
+def test_corrupt_archive_cleans_only_attempt_owned_staging(tmp_path, monkeypatch):
+    from p3_v3 import pilot_source
+
+    _install_full_authority_chain(monkeypatch, tmp_path)
+    preexisting = tmp_path / "preexisting-keep"
+    preexisting.mkdir()
+    keep = preexisting / "keep.txt"
+    keep.write_bytes(b"retain\n")
+    archive = tmp_path / "corrupt.zip"
+    archive.write_bytes(b"PK\x03\x04" + b"not-a-valid-zip-body")
+    materialize = tmp_path / "materialize"
+    with pytest.raises(EvidenceError, match="E_PILOT_ARCHIVE_FORMAT|E_PILOT_EXTRACT_UNSAFE"):
+        pilot_source.run_validate_source(archive, materialize)
+    assert keep.is_file()
+    assert keep.read_bytes() == b"retain\n"
+    assert not Path(str(materialize) + ".staging").exists()
+    assert not materialize.exists()
+    assert not (tmp_path / "source-manifest.json").exists()
