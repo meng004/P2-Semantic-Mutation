@@ -293,3 +293,46 @@ def test_write_plan_hashes_the_validated_verdict_snapshot(tmp_path, monkeypatch)
         written["sol_high_plan_verdict_sha256"]
         == validated_verdict_sha256
     )
+
+def test_build_preflight_cli_accepts_only_frozen_roots():
+    import scripts.p3_v3.pilot as pilot_cli
+
+    parser = pilot_cli.build_parser()
+    args = parser.parse_args(
+        [
+            "build-preflight",
+            "--source-root",
+            "/tmp/p3-boost-math-pilot-production-source",
+            "--build-root",
+            "/tmp/p3-boost-math-pilot-build-preflight",
+        ]
+    )
+    assert args.command == "build-preflight"
+    assert args.source_root == "/tmp/p3-boost-math-pilot-production-source"
+    assert args.build_root == "/tmp/p3-boost-math-pilot-build-preflight"
+
+
+def test_build_preflight_cli_rejects_overrides():
+    import scripts.p3_v3.pilot as pilot_cli
+
+    parser = pilot_cli.build_parser()
+    forbidden = [
+        ["build-preflight", "--authorization", "x"],
+        ["build-preflight", "--intent", "x"],
+        ["build-preflight", "--output", "x"],
+        ["build-preflight", "--expected-hash", "x"],
+        ["build-preflight", "--timeout", "1"],
+        ["build-preflight", "--job-count", "3"],
+        ["build-preflight", "--harness", "x"],
+        ["build-preflight", "--compiler", "x"],
+        ["build-preflight", "--cmake-argv", "x"],
+        ["build-preflight", "--mutant", "x"],
+        ["build-preflight", "--mr", "x"],
+        ["build-preflight", "--execution-plan", "x"],
+    ]
+    for argv in forbidden:
+        try:
+            parser.parse_args(argv)
+        except SystemExit:
+            continue
+        raise AssertionError(f"override was accepted: {argv}")

@@ -25,6 +25,9 @@ def build_parser() -> argparse.ArgumentParser:
     source = sub.add_parser("validate-source")
     source.add_argument("--archive", required=True)
     source.add_argument("--materialize-root", required=True)
+    preflight = sub.add_parser("build-preflight")
+    preflight.add_argument("--source-root", required=True)
+    preflight.add_argument("--build-root", required=True)
     return parser
 
 
@@ -40,6 +43,10 @@ def main(argv: list[str] | None = None) -> int:
             from p3_v3.pilot_source import run_validate_source
 
             run_validate_source(Path(args.archive), Path(args.materialize_root))
+        elif args.command == "build-preflight":
+            from p3_v3.pilot_build import run_build_preflight
+
+            run_build_preflight(Path(args.source_root), Path(args.build_root))
         else:
             raise EvidenceError("E_CLI_COMMAND", f"unsupported command: {args.command}")
     except EvidenceError as exc:
