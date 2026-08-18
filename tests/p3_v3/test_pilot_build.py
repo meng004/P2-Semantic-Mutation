@@ -2252,3 +2252,176 @@ def test_benign_include_environment_is_not_system_boost():
         pilot_build.reject_system_boost_environment(
             {"BOOST_ROOT": "/opt/boost"}
         )
+
+
+def test_dedicated_boost_environment_is_fail_closed_without_value_marker():
+    import p3_v3.pilot_build as pilot_build
+
+    pilot_build.reject_system_boost_environment(
+        {"CPATH": "/opt/project/include"}
+    )
+    pilot_build.reject_system_boost_environment(
+        {"CPLUS_INCLUDE_PATH": "/workspace/project/include"}
+    )
+    for env in (
+        {"BOOST_ROOT": "/opt/vendor"},
+        {"BOOST_INCLUDEDIR": "/opt/vendor/include"},
+        {"Boost_DIR": "/opt/vendor/cmake"},
+    ):
+        with pytest.raises(EvidenceError, match="SYSTEM_BOOST_FALLBACK"):
+            pilot_build.reject_system_boost_environment(env)
+
+
+def test_final_none_snapshot_preserves_previous_cumulative_output(
+    tmp_path, monkeypatch
+):
+    import p3_v3.pilot_build as pilot_build
+
+    earlier_out = b"EARLIER_STDOUT"
+    earlier_err = b"EARLIER_STDERR"
+
+    class FakeProc:
+        pid = 424242
+        returncode = None
+        calls = 0
+
+        def communicate(self, timeout=None):
+            self.calls += 1
+            if self.calls == 1:
+                raise subprocess.TimeoutExpired(
+                    ["fake-none-snapshot"],
+                    1,
+                    output=earlier_out,
+                    stderr=earlier_err,
+                )
+            return (None, None)
+
+        def poll(self):
+            return None
+
+        def wait(self, timeout=None):
+            return None
+
+    _patch_fake_child_identity(monkeypatch, pilot_build)
+    spec = {
+        "job_id": "CMAKE_CONFIGURE",
+        "job_kind": "CMAKE_CONFIGURE",
+        "dependency_job_ids": [],
+        "argv": ["fake-none-snapshot"],
+        "timeout_seconds": 900,
+    }
+    result = pilot_build.execute_job(
+        spec,
+        env={"PATH": "/usr/bin"},
+        log_root=tmp_path / "logs",
+        popen=lambda *args, **kwargs: FakeProc(),
+        timeout_seconds=1,
+    )
+    raw_out = (tmp_path / "logs" / "CMAKE_CONFIGURE.stdout").read_bytes()
+    raw_err = (tmp_path / "logs" / "CMAKE_CONFIGURE.stderr").read_bytes()
+    assert result["timeout_seconds"] == 900
+    assert isinstance(result["timeout_seconds"], int)
+    assert raw_out == earlier_out
+    assert raw_err == earlier_err
+    assert raw_out != b""
+    assert raw_err != b""
+    assert result["stdout_bytes"] == len(earlier_out)
+    assert result["stderr_bytes"] == len(earlier_err)
+    assert result["stdout_sha256"] == _sha256_bytes(earlier_out)
+    assert result["stderr_sha256"] == _sha256_bytes(earlier_err)
+
+
+def test_process_group_membership_uses_pgrp_not_session(tmp_path, monkeypatch):
+    import p3_v3.pilot_build as pilot_build
+
+    session_only = tmp_path / "11"
+    session_only.mkdir()
+    (session_only / "stat").write_text(
+        "11 (sleep) S 1 999 4242 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n",
+        encoding="utf-8",
+    )
+    pgrp_member = tmp_path / "22"
+    pgrp_member.mkdir()
+    (pgrp_member / "stat").write_text(
+        "22 (sleep) S 1 4242 777 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n",
+        encoding="utf-8",
+    )
+    original_iterdir = Path.iterdir
+
+    def iter_session_only(self):
+        if str(self) == "/proc":
+            return iter([session_only])
+        return original_iterdir(self)
+
+    monkeypatch.setattr(pilot_build.Path, "iterdir", iter_session_only)
+    assert pilot_build.process_group_has_members(4242) is False
+
+    def iter_pgrp_member(self):
+        if str(self) == "/proc":
+            return iter([pgrp_member])
+        return original_iterdir(self)
+
+    monkeypatch.setattr(pilot_build.Path, "iterdir", iter_pgrp_member)
+    assert pilot_build.process_group_has_members(4242) is True
+
+
+def test_preexisting_identity_collision_is_started_failure_and_reaped(tmp_path):
+    import time
+    from p3_v3.artifacts import write_canonical_json
+    import p3_v3.pilot_build as pilot_build
+
+    log_root = tmp_path / "logs"
+    log_root.mkdir()
+    identity = log_root / "CMAKE_CONFIGURE.identity.json"
+    payload = {
+        "job_id": "CMAKE_CONFIGURE",
+        "pid": 1,
+        "pgid": 1,
+        "starttime": "1",
+        "argv_sha256": "0" * 64,
+    }
+    write_canonical_json(identity, payload, exclusive=True)
+    before = identity.read_bytes()
+    inode = identity.stat().st_ino
+    seen: dict[str, int] = {}
+
+    def wrapping_popen(*args, **kwargs):
+        proc = subprocess.Popen(*args, **kwargs)
+        seen["pid"] = proc.pid
+        seen["pgid"] = os.getpgid(proc.pid)
+        return proc
+
+    spec = {
+        "job_id": "CMAKE_CONFIGURE",
+        "job_kind": "CMAKE_CONFIGURE",
+        "dependency_job_ids": [],
+        "argv": ["python3", "-c", "import time; time.sleep(30)"],
+        "timeout_seconds": 900,
+    }
+    result = pilot_build.execute_job(
+        spec,
+        env=dict(os.environ),
+        log_root=log_root,
+        popen=wrapping_popen,
+        timeout_seconds=5,
+    )
+    assert result["process_started"] is True
+    assert result["terminal_status"] == "FAIL_INFRASTRUCTURE"
+    assert result["failure_reason"] == "PROCESS_IDENTITY_PUBLICATION_FAILURE"
+    assert result["infrastructure_phase"] == "POST_PROCESS"
+    assert result["process_group_terminated"] is True
+    identities = sorted(log_root.glob("*.identity.json"))
+    assert identities == [identity]
+    assert identity.read_bytes() == before
+    assert identity.stat().st_ino == inode
+    deadline = time.monotonic() + 3
+    gone = False
+    while time.monotonic() < deadline:
+        try:
+            os.kill(seen["pid"], 0)
+        except ProcessLookupError:
+            gone = True
+            break
+        time.sleep(0.05)
+    assert gone is True
+    assert pilot_build.process_group_has_members(seen["pgid"]) is False

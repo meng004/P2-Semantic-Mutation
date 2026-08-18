@@ -230,15 +230,18 @@ DISCONNECTED_ENVIRONMENT = {
     "FETCHCONTENT_FULLY_DISCONNECTED": "ON",
     "FETCHCONTENT_UPDATES_DISCONNECTED": "ON",
 }
-FORBIDDEN_BOOST_ENV = (
+DEDICATED_BOOST_ENV = (
     "BOOST_ROOT",
     "BOOST_INCLUDEDIR",
     "Boost_DIR",
+)
+AGGREGATE_PATH_ENV = (
     "CMAKE_PREFIX_PATH",
     "CMAKE_INCLUDE_PATH",
     "CPATH",
     "CPLUS_INCLUDE_PATH",
 )
+FORBIDDEN_BOOST_ENV = DEDICATED_BOOST_ENV + AGGREGATE_PATH_ENV
 NETWORK_MARKERS = (
     b"Downloading ",
     b"Cloning into",
@@ -594,7 +597,13 @@ def require_frozen_source_tree(source_root: Path) -> str:
 
 
 def reject_system_boost_environment(env: dict[str, str]) -> None:
-    for key in FORBIDDEN_BOOST_ENV:
+    for key in DEDICATED_BOOST_ENV:
+        if env.get(key):
+            raise EvidenceError(
+                "E_PILOT_SYSTEM_BOOST",
+                "SYSTEM_BOOST_FALLBACK",
+            )
+    for key in AGGREGATE_PATH_ENV:
         value = env.get(key)
         if not value:
             continue
@@ -1000,14 +1009,8 @@ def terminate_and_reap_process_group(
     if proc is not None:
         try:
             received_out, received_err = proc.communicate(timeout=5)
-            if received_out is not None:
-                final_stdout_snapshot = received_out
-            else:
-                final_stdout_snapshot = b""
-            if received_err is not None:
-                final_stderr_snapshot = received_err
-            else:
-                final_stderr_snapshot = b""
+            final_stdout_snapshot = received_out
+            final_stderr_snapshot = received_err
         except Exception:
             final_stdout_snapshot = None
             final_stderr_snapshot = None
