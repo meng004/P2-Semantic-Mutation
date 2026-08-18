@@ -1,0 +1,1 @@
+{"authorized_state":"PILOT_BUILD_PREFLIGHT_PLAN_FROZEN","claims":"blocked","reviewed_plan_path":"docs/superpowers/plans/2026-08-17-p3-boost-math-pilot-build-preflight-only.md","reviewed_plan_sha256":"4906f3911d0ed0c0d53f0b3101fc718ad64c264d21e758a2d1ed7f8c33bd0b03","verdict":"PASS"}
