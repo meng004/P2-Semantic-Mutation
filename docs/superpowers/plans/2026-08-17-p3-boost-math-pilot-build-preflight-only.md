@@ -472,7 +472,7 @@ Result validator conservation:
 - `terminal_count == 3`
 - `started_count` equals the number of jobs with `process_started=true`
 - `not_started_count` equals the number of `NOT_STARTED` jobs
-- job id, order, argv, dependencies, and timeouts equal `JOB_SPECS`
+- job id, order, dependencies, and timeouts equal the frozen templates; argv equals the intent-bound resolved cmake/compiler argv
 - configure not PASS implies build and smoke `NOT_STARTED`
 - build not PASS implies smoke `NOT_STARTED`
 - aggregate `terminal_status` and `failure_reason` equal the first non-PASS job
@@ -482,20 +482,21 @@ Result validator conservation:
 
 ## Crash, Timeout, and No-Retry Reconciliation
 
-Child processes start in an independent process group or session. A job timeout sends `SIGKILL` to the process group and then waits and reaps. The runner keeps an internal outer deadline of 7200 seconds. Shell `timeout 2h` is not the only deadline.
+Child processes start in an independent process group or session. A job timeout sends `SIGKILL` to the process group and then waits and reaps. After `Popen` succeeds, every path is inside a `try`/`finally` that kills and reaps the process group. The runner keeps an internal outer deadline of 7200 seconds. The future shell watchdog is `timeout 2h5m`, later than that deadline, so a terminal result can still be written.
 
 After intent creation, every catchable exception normalizes to one terminal result. Production must not delete or overwrite intent, result, harness, or build root.
 
 Reconciliation states are mutually exclusive and complete:
 
-| State | Intent | Result | Live producer | Action |
-|---|---|---|---|---|
-| `FRESH` | absent | absent | no | start one new attempt |
-| `INTENT_LIVE` | valid | absent | yes | refuse; do not start another child |
-| `INTENT_ONLY_ORPHAN` | valid | absent | no | write `FAIL_INFRASTRUCTURE/ORPHANED_INTENT_NO_PROCESS` for configure; dependents `NOT_STARTED`; start no child |
-| `RESULT_TERMINAL` | valid | valid | any | refuse; do not rerun |
-| `RESULT_WITHOUT_INTENT` | absent | present | any | refuse |
-| `INVALID_DURABLE` | any other combination |  |  | refuse |
+| State | Intent | Result | Live producer | Live child | Pair | Action |
+|---|---|---|---|---|---|---|
+| `FRESH` | absent | absent | no | no | n/a | start one new attempt |
+| `INTENT_PRODUCER_LIVE` | valid | absent | yes | any | n/a | refuse; do not start another child |
+| `INTENT_CHILD_LIVE` | valid | absent | no | yes | n/a | refuse; do not orphan-terminalize; do not start another child |
+| `INTENT_ONLY_ORPHAN` | valid | absent | no | no | n/a | write `FAIL_INFRASTRUCTURE/ORPHANED_INTENT_NO_PROCESS`; start no child |
+| `RESULT_TERMINAL` | valid | valid | any | any | yes | refuse; do not rerun |
+| `RESULT_WITHOUT_INTENT` | absent | present | any | any | n/a | refuse |
+| `INVALID_DURABLE` | any other combination, including a mismatched intent/result pair |  |  |  |  | refuse |
 
 Source drift after a child, harness publication failure, and log or result publication failure have explicit terminal reasons. They must not leave an intent that cannot be reviewed.
 
@@ -505,27 +506,33 @@ Source drift after a child, harness publication failure, and log or result publi
 
 Keep the three-job DAG. Do not add a fourth job.
 
-`CMAKE_CONFIGURE` argv now also freezes `-G Unix Makefiles`. Timeouts remain 900 / 3600 / 1800. Outer deadline remains 7200. Parallelism remains 4.
+`CMAKE_CONFIGURE` argv is the frozen template plus the resolved cmake executable and `-DCMAKE_CXX_COMPILER=<resolved-path>`. `BASELINE_BUILD` uses the same resolved cmake path. Timeouts remain 900 / 3600 / 1800. The internal outer deadline remains 7200. Parallelism remains 4. Unbound `CXX` / `CC` / toolchain overrides are rejected.
 
 If the resolved C++ compiler is absent, `CMAKE_CONFIGURE` is `FAIL_INFRASTRUCTURE/MISSING_DEPENDENCY` with `infrastructure_phase=PRE_PROCESS`. Do not install a compiler, change the harness, or retry.
 
-`BASELINE_BUILD` PASS requires a postcondition, still inside that job:
+If the internal outer deadline is already exhausted before a job starts, that job is `FAIL_INFRASTRUCTURE/OUTER_DEADLINE_EXHAUSTED`. It is not `MISSING_DEPENDENCY`. If the deadline expires while a child is running, the process group is killed and the job is `TIMEOUT`.
 
-- read `CMakeCache.txt` and `compile_commands.json`
-- run the recorded compiler with `-M` on the frozen smoke translation unit
-- hash the canonical sorted dependency-path list
-- every Boost header path must start with `/tmp/p3-boost-math-pilot-production-source/include/`
-- `/usr/include/boost`, `/usr/local/include/boost`, or any other Boost root makes `BASELINE_BUILD` `FAIL_INFRASTRUCTURE/SYSTEM_BOOST_FALLBACK`
-- unsupported `-M` evidence is `FAIL_INFRASTRUCTURE/UNSUPPORTED_TOOLCHAIN`
+`BASELINE_BUILD` PASS requires a postcondition, still inside that job, that reads the actual compiler depfile:
+
+`/tmp/p3-boost-math-pilot-build-preflight/CMakeFiles/boost_math_pilot_smoke.dir/smoke.cpp.o.d`
+
+That file must be a regular non-symlink file. Production must not rerun `compiler -M`. The depfile must mention the frozen `smoke.cpp` and `include/boost/math/constants/constants.hpp`. Every path containing `/boost/` must start with `/tmp/p3-boost-math-pilot-production-source/include/`. `/usr/include/boost`, `/usr/local/include/boost`, or any other Boost root makes `BASELINE_BUILD` `FAIL_INFRASTRUCTURE/SYSTEM_BOOST_FALLBACK`. A missing or unreadable depfile is `FAIL_INFRASTRUCTURE/UNSUPPORTED_TOOLCHAIN`.
+
+`compile_commands.json` must contain exactly one `smoke.cpp` entry. The entry may use `arguments` or a `command` string parsed by `shlex.split`. Production does not execute that command. The compiler realpath, frozen include path, and `BOOST_MATH_STANDALONE=1` must match the environment snapshot. System Boost include paths are forbidden.
+
+`CMakeCache.txt` must record `CMAKE_GENERATOR=Unix Makefiles`, a `CMAKE_CXX_COMPILER` realpath equal to the environment snapshot, and source/build directories equal to the frozen harness and build roots.
 
 The aggregate result binds and validates:
 
 - `CMakeCache.txt` SHA-256
 - `compile_commands.json` SHA-256
-- dependency-list SHA-256
+- compiler depfile SHA-256
+- canonical dependency-list SHA-256
 - `boost_math_pilot_smoke` executable SHA-256
 
-`BASELINE_SMOKE` must execute the executable whose SHA-256 was recorded. Resolved cmake and compiler identities must match the intent environment snapshot.
+`BASELINE_SMOKE` must execute the executable whose SHA-256 was recorded. Resolved cmake and compiler identities must match the intent environment snapshot, CMakeCache, and compile_commands.
+
+`validate_attempt_pair(intent, intent_file_sha256, result)` is required before `RESULT_TERMINAL`. It re-checks intent SHA, environment snapshot object and hash, implementation-verdict SHA, source/preparation identities, Authorization SHA, harness hashes, predecessor = intent predecessor plus the intent file SHA, and job argv/timeout/DAG against that intent.
 
 ---
 
@@ -534,7 +541,7 @@ The aggregate result binds and validates:
 The unique future CLI, not run by this node:
 
 ```text
-env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src timeout 2h \
+env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src timeout 2h5m \
   python3 scripts/p3_v3/pilot.py build-preflight \
   --source-root /tmp/p3-boost-math-pilot-production-source \
   --build-root /tmp/p3-boost-math-pilot-build-preflight
@@ -711,6 +718,18 @@ REQUIRED_BUILD_PREFLIGHT_TESTS = [
     "test_frozen_source_dependency_closure_pass",
     "test_build_artifact_hashes_bound",
     "test_smoke_refuses_executable_hash_drift",
+    "test_collect_baseline_build_evidence_pass",
+    "test_collect_baseline_build_evidence_missing_frozen_include",
+    "test_compile_commands_compiler_mismatch",
+    "test_cmakecache_compiler_generator_root_drift",
+    "test_system_boost_in_actual_depfile",
+    "test_depfile_raw_and_canonical_hashes_enter_result",
+    "test_configure_build_use_resolved_toolchain_argv",
+    "test_producer_dead_child_live_not_orphan_terminal",
+    "test_post_popen_exception_reaps_process_group",
+    "test_outer_deadline_exhausted_not_missing_dependency",
+    "test_validate_attempt_pair_rejects_drift",
+    "test_mismatched_intent_result_is_not_result_terminal",
 ]
 
 
@@ -817,6 +836,18 @@ def test_required_build_preflight_names_are_frozen():
         "test_frozen_source_dependency_closure_pass",
         "test_build_artifact_hashes_bound",
         "test_smoke_refuses_executable_hash_drift",
+        "test_collect_baseline_build_evidence_pass",
+        "test_collect_baseline_build_evidence_missing_frozen_include",
+        "test_compile_commands_compiler_mismatch",
+        "test_cmakecache_compiler_generator_root_drift",
+        "test_system_boost_in_actual_depfile",
+        "test_depfile_raw_and_canonical_hashes_enter_result",
+        "test_configure_build_use_resolved_toolchain_argv",
+        "test_producer_dead_child_live_not_orphan_terminal",
+        "test_post_popen_exception_reaps_process_group",
+        "test_outer_deadline_exhausted_not_missing_dependency",
+        "test_validate_attempt_pair_rejects_drift",
+        "test_mismatched_intent_result_is_not_result_terminal",
     ]
 
 
@@ -1507,16 +1538,25 @@ def test_configure_build_dependency_blocking(tmp_path):
 
 
 def test_process_group_timeout_terminates_descendants(tmp_path):
+    import time
     import p3_v3.pilot_build as pilot_build
 
-    marker = tmp_path / "child.sh"
-    marker.write_text("#!/bin/sh\nsleep 30\n", encoding="utf-8")
-    marker.chmod(0o755)
+    marker = tmp_path / "desc.pid"
     spec = {
         "job_id": "CMAKE_CONFIGURE",
         "job_kind": "CMAKE_CONFIGURE",
         "dependency_job_ids": [],
-        "argv": ["python3", "-c", "import subprocess,time; subprocess.Popen(['sleep','30']); time.sleep(30)"],
+        "argv": [
+            "python3",
+            "-c",
+            (
+                "import pathlib, subprocess, sys, time\n"
+                "child = subprocess.Popen(['sleep', '30'])\n"
+                "pathlib.Path(sys.argv[1]).write_text(str(child.pid), encoding='utf-8')\n"
+                "time.sleep(30)\n"
+            ),
+            str(marker),
+        ],
         "timeout_seconds": 900,
     }
     result = pilot_build.execute_job(
@@ -1528,6 +1568,17 @@ def test_process_group_timeout_terminates_descendants(tmp_path):
     assert result["terminal_status"] == "TIMEOUT"
     assert result["process_group_terminated"] is True
     assert result["exit_code"] is None
+    deadline = time.monotonic() + 3
+    pid = int(marker.read_text(encoding="utf-8"))
+    gone = False
+    while time.monotonic() < deadline:
+        try:
+            os.kill(pid, 0)
+        except ProcessLookupError:
+            gone = True
+            break
+        time.sleep(0.05)
+    assert gone is True
 
 
 def test_exception_after_intent_produces_terminal_result(tmp_path, monkeypatch):
@@ -1579,7 +1630,9 @@ def test_orphaned_intent_reconciliation_writes_no_new_process(tmp_path, monkeypa
             result_present=False,
             intent_valid=True,
             result_valid=False,
-            live_attempt=False,
+            producer_live=False,
+            child_live=False,
+            pair_valid=False,
         )
         == "INTENT_ONLY_ORPHAN"
     )
@@ -1621,7 +1674,9 @@ def test_second_invocation_never_reruns(tmp_path, monkeypatch):
             result_present=True,
             intent_valid=True,
             result_valid=True,
-            live_attempt=False,
+            producer_live=False,
+            child_live=False,
+            pair_valid=True,
         )
         == "RESULT_TERMINAL"
     )
@@ -1637,7 +1692,7 @@ def test_second_invocation_never_reruns(tmp_path, monkeypatch):
         )
         if spec["job_id"] == "CMAKE_CONFIGURE"
         else pilot_build.make_not_started_job(spec)
-        for spec in pilot_build.JOB_SPECS
+        for spec in pilot_build.bind_job_specs(env)
     ]
     intent_path = tmp_path / "intent.json"
     result_path = tmp_path / "result.json"
@@ -1646,7 +1701,9 @@ def test_second_invocation_never_reruns(tmp_path, monkeypatch):
         intent_sha256=_sha256_bytes(intent_path.read_bytes()),
         environment=env,
         jobs=jobs,
-        predecessor=sorted([_sha256_bytes(intent_path.read_bytes()), impl]),
+        predecessor=sorted(
+            [_sha256_bytes(intent_path.read_bytes()), *intent["predecessor_sha256"]]
+        ),
         implementation_verdict_sha256=impl,
         evidence=None,
     )
@@ -1720,6 +1777,7 @@ def test_build_artifact_hashes_bound():
     evidence = {
         "cmake_cache_sha256": "6" * 64,
         "compile_commands_sha256": "7" * 64,
+        "compiler_depfile_sha256": "a" * 64,
         "dependency_list_sha256": "8" * 64,
         "smoke_executable_sha256": "9" * 64,
     }
@@ -1733,6 +1791,7 @@ def test_build_artifact_hashes_bound():
     )
     assert result["cmake_cache_sha256"] == "6" * 64
     assert result["compile_commands_sha256"] == "7" * 64
+    assert result["compiler_depfile_sha256"] == "a" * 64
     assert result["dependency_list_sha256"] == "8" * 64
     assert result["smoke_executable_sha256"] == "9" * 64
     assert result["terminal_status"] == "PASS"
@@ -1762,6 +1821,350 @@ def test_smoke_refuses_executable_hash_drift(tmp_path):
     assert results[2]["failure_reason"] == "MISSING_DEPENDENCY"
     assert results[2]["process_started"] is False
 
+
+
+def _synthetic_build_evidence_tree(
+    tmp_path: Path,
+    pilot_build,
+    monkeypatch,
+    *,
+    include_flag=True,
+    compiler="/usr/bin/c++",
+    generator="Unix Makefiles",
+    system_boost=False,
+    cache_compiler=None,
+    source_dir=None,
+    binary_dir=None,
+):
+    build = tmp_path / "build"
+    harness = tmp_path / "harness"
+    dep_dir = build / "CMakeFiles" / "boost_math_pilot_smoke.dir"
+    dep_dir.mkdir(parents=True)
+    harness.mkdir()
+    monkeypatch.setattr(pilot_build, "FROZEN_BUILD_ROOT", build)
+    monkeypatch.setattr(pilot_build, "FROZEN_HARNESS_ROOT", harness)
+    cache_compiler = compiler if cache_compiler is None else cache_compiler
+    source_dir = harness.as_posix() if source_dir is None else source_dir
+    binary_dir = build.as_posix() if binary_dir is None else binary_dir
+    (build / "CMakeCache.txt").write_text(
+        "\n".join(
+            [
+                f"CMAKE_GENERATOR:INTERNAL={generator}",
+                f"CMAKE_CXX_COMPILER:FILEPATH={cache_compiler}",
+                f"CMAKE_HOME_DIRECTORY:INTERNAL={source_dir}",
+                f"CMAKE_BINARY_DIR:STATIC={binary_dir}",
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    include = pilot_build.FROZEN_INCLUDE_PREFIX if include_flag else "/tmp/other-include"
+    compile_argv = [compiler, f"-I{include}", "-DBOOST_MATH_STANDALONE=1", "-c", "smoke.cpp"]
+    (build / "compile_commands.json").write_text(
+        __import__("json").dumps(
+            [
+                {
+                    "directory": build.as_posix(),
+                    "file": (harness / "smoke.cpp").as_posix(),
+                    "arguments": compile_argv,
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+    (build / "boost_math_pilot_smoke").write_bytes(b"exe\n")
+    boost_header = (
+        "/usr/include/boost/math/constants/constants.hpp"
+        if system_boost
+        else pilot_build.FROZEN_CONSTANTS_HEADER
+    )
+    dep_text = (
+        "CMakeFiles/boost_math_pilot_smoke.dir/smoke.cpp.o: "
+        f"{(harness / 'smoke.cpp').as_posix()} "
+        f"{boost_header} "
+        "/usr/include/c++/13/cmath\n"
+    )
+    (dep_dir / "smoke.cpp.o.d").write_text(dep_text, encoding="utf-8")
+    env = _minimal_environment(pilot_build)
+    env = dict(env)
+    env["cxx_compiler_path"] = compiler
+    env.pop("artifact_sha256", None)
+    env = pilot_build.validate_environment_snapshot(pilot_build._self_hash(env))
+    return build, env
+
+
+def test_collect_baseline_build_evidence_pass(tmp_path, monkeypatch):
+    import p3_v3.pilot_build as pilot_build
+
+    build, env = _synthetic_build_evidence_tree(tmp_path, pilot_build, monkeypatch)
+    evidence = pilot_build.collect_baseline_build_evidence(build, env)
+    assert len(evidence["compiler_depfile_sha256"]) == 64
+    assert len(evidence["dependency_list_sha256"]) == 64
+    assert evidence["compiler_depfile_sha256"] != evidence["dependency_list_sha256"]
+
+
+def test_collect_baseline_build_evidence_missing_frozen_include(tmp_path, monkeypatch):
+    import p3_v3.pilot_build as pilot_build
+
+    build, env = _synthetic_build_evidence_tree(
+        tmp_path, pilot_build, monkeypatch, include_flag=False
+    )
+    with pytest.raises(EvidenceError, match="UNSUPPORTED_TOOLCHAIN"):
+        pilot_build.collect_baseline_build_evidence(build, env)
+
+
+def test_compile_commands_compiler_mismatch(tmp_path, monkeypatch):
+    import p3_v3.pilot_build as pilot_build
+
+    build, env = _synthetic_build_evidence_tree(tmp_path, pilot_build, monkeypatch)
+    env = dict(env)
+    env["cxx_compiler_path"] = "/usr/bin/g++"
+    env.pop("artifact_sha256", None)
+    env = pilot_build.validate_environment_snapshot(pilot_build._self_hash(env))
+    with pytest.raises(EvidenceError, match="compiler differs"):
+        pilot_build.collect_baseline_build_evidence(build, env)
+
+
+def test_cmakecache_compiler_generator_root_drift(tmp_path, monkeypatch):
+    import p3_v3.pilot_build as pilot_build
+
+    build, env = _synthetic_build_evidence_tree(
+        tmp_path,
+        pilot_build,
+        monkeypatch,
+        generator="Ninja",
+    )
+    with pytest.raises(EvidenceError, match="CMAKE_GENERATOR differs"):
+        pilot_build.collect_baseline_build_evidence(build, env)
+    build, env = _synthetic_build_evidence_tree(
+        tmp_path / "compiler",
+        pilot_build,
+        monkeypatch,
+        cache_compiler="/usr/bin/g++",
+    )
+    with pytest.raises(EvidenceError, match="CMakeCache compiler differs"):
+        pilot_build.collect_baseline_build_evidence(build, env)
+    build, env = _synthetic_build_evidence_tree(
+        tmp_path / "root",
+        pilot_build,
+        monkeypatch,
+        source_dir="/tmp/other-harness",
+    )
+    with pytest.raises(EvidenceError, match="CMake source directory differs"):
+        pilot_build.collect_baseline_build_evidence(build, env)
+
+
+def test_system_boost_in_actual_depfile(tmp_path, monkeypatch):
+    import p3_v3.pilot_build as pilot_build
+
+    build, env = _synthetic_build_evidence_tree(
+        tmp_path, pilot_build, monkeypatch, system_boost=True
+    )
+    with pytest.raises(EvidenceError, match="SYSTEM_BOOST_FALLBACK"):
+        pilot_build.collect_baseline_build_evidence(build, env)
+
+
+def test_depfile_raw_and_canonical_hashes_enter_result():
+    test_build_artifact_hashes_bound()
+
+
+def test_configure_build_use_resolved_toolchain_argv():
+    import p3_v3.pilot_build as pilot_build
+
+    env = _minimal_environment(pilot_build)
+    configure = pilot_build.bind_configure_argv(
+        env["cmake_executable_path"], env["cxx_compiler_path"]
+    )
+    build = pilot_build.bind_build_argv(env["cmake_executable_path"])
+    assert configure[0] == env["cmake_executable_path"]
+    assert build[0] == env["cmake_executable_path"]
+    assert "-DCMAKE_CXX_COMPILER=" + env["cxx_compiler_path"] in configure
+    intent = pilot_build.build_intent(env, sorted(["b" * 64]), "b" * 64)
+    assert intent["cmake_configure_argv"] == configure
+    assert intent["baseline_build_argv"] == build
+
+
+def test_producer_dead_child_live_not_orphan_terminal():
+    import p3_v3.pilot_build as pilot_build
+
+    assert (
+        pilot_build.classify_reconciliation(
+            intent_present=True,
+            result_present=False,
+            intent_valid=True,
+            result_valid=False,
+            producer_live=False,
+            child_live=True,
+            pair_valid=False,
+        )
+        == "INTENT_CHILD_LIVE"
+    )
+    assert "ORPHANED_INTENT_NO_PROCESS" not in {
+        pilot_build.classify_reconciliation(
+            intent_present=True,
+            result_present=False,
+            intent_valid=True,
+            result_valid=False,
+            producer_live=False,
+            child_live=True,
+            pair_valid=False,
+        )
+    }
+
+
+def test_post_popen_exception_reaps_process_group(tmp_path, monkeypatch):
+    import time
+    import p3_v3.pilot_build as pilot_build
+
+    marker = tmp_path / "desc.pid"
+    spec = {
+        "job_id": "CMAKE_CONFIGURE",
+        "job_kind": "CMAKE_CONFIGURE",
+        "dependency_job_ids": [],
+        "argv": [
+            "python3",
+            "-c",
+            (
+                "import pathlib, subprocess, sys, time\n"
+                "child = subprocess.Popen(['sleep', '30'])\n"
+                "pathlib.Path(sys.argv[1]).write_text(str(child.pid), encoding='utf-8')\n"
+                "time.sleep(30)\n"
+            ),
+            str(marker),
+        ],
+        "timeout_seconds": 900,
+    }
+
+    def boom(*args, **kwargs):
+        deadline = time.monotonic() + 2
+        while time.monotonic() < deadline and not marker.is_file():
+            time.sleep(0.05)
+        if not marker.is_file():
+            raise OSError("identity publication failed before descendant pid")
+        raise OSError("identity publication failed")
+
+    monkeypatch.setattr(pilot_build, "write_process_identity", boom)
+    with pytest.raises(OSError, match="identity publication failed"):
+        pilot_build.execute_job(
+            spec,
+            env=dict(os.environ),
+            log_root=tmp_path / "logs",
+            timeout_seconds=5,
+        )
+    deadline = time.monotonic() + 3
+    pid = int(marker.read_text(encoding="utf-8"))
+    gone = False
+    while time.monotonic() < deadline:
+        try:
+            os.kill(pid, 0)
+        except ProcessLookupError:
+            gone = True
+            break
+        time.sleep(0.05)
+    assert gone is True
+
+
+def test_outer_deadline_exhausted_not_missing_dependency(tmp_path):
+    import time
+    import p3_v3.pilot_build as pilot_build
+
+    specs = _synthetic_specs(
+        tmp_path,
+        ["python3", "-c", "print('configure')"],
+        ["python3", "-c", "print('build')"],
+        ["python3", "-c", "print('smoke')"],
+    )
+    results, _evidence = pilot_build.run_three_jobs(
+        specs,
+        env=dict(os.environ),
+        log_root=tmp_path / "logs",
+        outer_deadline=time.monotonic() - 1,
+    )
+    assert results[0]["failure_reason"] == "OUTER_DEADLINE_EXHAUSTED"
+    assert results[0]["failure_reason"] != "MISSING_DEPENDENCY"
+    assert results[0]["process_started"] is False
+    assert results[1]["terminal_status"] == "NOT_STARTED"
+
+
+def test_validate_attempt_pair_rejects_drift():
+    import p3_v3.pilot_build as pilot_build
+
+    env = _minimal_environment(pilot_build)
+    impl = "c" * 64
+    intent = pilot_build.build_intent(env, sorted([impl]), impl)
+    jobs = [
+        pilot_build.make_pre_process_infra_job(spec, "ORPHANED_INTENT_NO_PROCESS")
+        if spec["job_id"] == "CMAKE_CONFIGURE"
+        else pilot_build.make_not_started_job(spec)
+        for spec in pilot_build.bind_job_specs(env)
+    ]
+    intent_sha = "d" * 64
+    result = pilot_build.build_result(
+        intent_sha256=intent_sha,
+        environment=env,
+        jobs=jobs,
+        predecessor=sorted([intent_sha, *intent["predecessor_sha256"]]),
+        implementation_verdict_sha256=impl,
+        evidence=None,
+    )
+    drifted = dict(result)
+    drifted["intent_sha256"] = "e" * 64
+    drifted.pop("artifact_sha256")
+    drifted = pilot_build._self_hash(drifted)
+    with pytest.raises(EvidenceError, match="E_PILOT_BUILD_PAIR"):
+        pilot_build.validate_attempt_pair(intent, intent_sha, drifted)
+    other_env = dict(env)
+    other_env["python_version"] = "3.12.0"
+    other_env.pop("artifact_sha256", None)
+    other_env = pilot_build.validate_environment_snapshot(pilot_build._self_hash(other_env))
+    env_drift = dict(result)
+    env_drift["environment_snapshot"] = other_env
+    env_drift["environment_snapshot_sha256"] = other_env["artifact_sha256"]
+    env_drift.pop("artifact_sha256")
+    env_drift = pilot_build._self_hash(env_drift)
+    with pytest.raises(EvidenceError, match="E_PILOT_BUILD_PAIR"):
+        pilot_build.validate_attempt_pair(intent, intent_sha, env_drift)
+    impl_drift = dict(result)
+    impl_drift["implementation_verdict_sha256"] = "0" * 64
+    impl_drift["predecessor_sha256"] = sorted([intent_sha, "0" * 64])
+    impl_drift.pop("artifact_sha256")
+    impl_drift = pilot_build._self_hash(impl_drift)
+    with pytest.raises(EvidenceError, match="E_PILOT_BUILD_PAIR"):
+        pilot_build.validate_attempt_pair(intent, intent_sha, impl_drift)
+    pred_drift = dict(result)
+    pred_drift["predecessor_sha256"] = sorted(list(intent["predecessor_sha256"]))
+    pred_drift.pop("artifact_sha256")
+    pred_drift = pilot_build._self_hash(pred_drift)
+    with pytest.raises(EvidenceError, match="E_PILOT_BUILD_PAIR"):
+        pilot_build.validate_attempt_pair(intent, intent_sha, pred_drift)
+    argv_drift = dict(result)
+    jobs_drift = [dict(job) for job in argv_drift["jobs"]]
+    jobs_drift[0] = dict(jobs_drift[0])
+    jobs_drift[0]["argv"] = ["cmake"]
+    jobs_drift[0].pop("artifact_sha256", None)
+    jobs_drift[0] = pilot_build._self_hash(jobs_drift[0])
+    argv_drift["jobs"] = jobs_drift
+    argv_drift.pop("artifact_sha256")
+    argv_drift = pilot_build._self_hash(argv_drift)
+    with pytest.raises(EvidenceError, match="E_PILOT_BUILD_PAIR"):
+        pilot_build.validate_attempt_pair(intent, intent_sha, argv_drift)
+
+
+def test_mismatched_intent_result_is_not_result_terminal():
+    import p3_v3.pilot_build as pilot_build
+
+    assert (
+        pilot_build.classify_reconciliation(
+            intent_present=True,
+            result_present=True,
+            intent_valid=True,
+            result_valid=True,
+            producer_live=False,
+            child_live=False,
+            pair_valid=False,
+        )
+        == "INVALID_DURABLE"
+    )
 ```
 
 Append these tests to `tests/p3_v3/test_pilot.py`:
@@ -1845,6 +2248,7 @@ import json
 import os
 import platform
 import re
+import shlex
 import resource
 import shutil
 import signal
@@ -1987,8 +2391,23 @@ CMAKE_CONFIGURE_TIMEOUT_SECONDS = 900
 BASELINE_BUILD_TIMEOUT_SECONDS = 3600
 BASELINE_SMOKE_TIMEOUT_SECONDS = 1800
 OUTER_TIMEOUT_SECONDS = 7200
+SHELL_WATCHDOG = "2h5m"
 BUILD_PARALLELISM = 4
 PLANNED_COUNT = 3
+COMPILER_DEPFILE_RELATIVE = (
+    "CMakeFiles/boost_math_pilot_smoke.dir/smoke.cpp.o.d"
+)
+FROZEN_CONSTANTS_HEADER = (
+    "/tmp/p3-boost-math-pilot-production-source/include/"
+    "boost/math/constants/constants.hpp"
+)
+FROZEN_SMOKE_CXX = "/tmp/p3-boost-math-pilot-build-preflight-harness/smoke.cpp"
+FORBIDDEN_TOOLCHAIN_ENV = (
+    "CXX",
+    "CC",
+    "CMAKE_CXX_COMPILER",
+    "CMAKE_C_COMPILER",
+)
 
 CMAKE_CONFIGURE_ARGV = [
     "cmake",
@@ -2113,6 +2532,7 @@ INFRA_REASONS_PRE_PROCESS = frozenset(
         "ORPHANED_INTENT_NO_PROCESS",
         "HARNESS_PUBLICATION_FAILURE",
         "RESULT_PUBLICATION_FAILURE",
+        "OUTER_DEADLINE_EXHAUSTED",
     }
 )
 INFRA_REASONS_POST_PROCESS = frozenset(
@@ -2128,7 +2548,8 @@ INFRA_REASONS_POST_PROCESS = frozenset(
 RECONCILIATION_STATES = frozenset(
     {
         "FRESH",
-        "INTENT_LIVE",
+        "INTENT_PRODUCER_LIVE",
+        "INTENT_CHILD_LIVE",
         "INTENT_ONLY_ORPHAN",
         "RESULT_TERMINAL",
         "RESULT_WITHOUT_INTENT",
@@ -2289,6 +2710,7 @@ BUILD_PREFLIGHT_RESULT_EXACT = {
     "harness_cxx_sha256": str,
     "cmake_cache_sha256": (str, type(None)),
     "compile_commands_sha256": (str, type(None)),
+    "compiler_depfile_sha256": (str, type(None)),
     "dependency_list_sha256": (str, type(None)),
     "smoke_executable_sha256": (str, type(None)),
     "source_root": str,
@@ -2509,23 +2931,51 @@ def attempt_is_live(pid: int, starttime: str) -> bool:
     return fields[19] == starttime
 
 
+def read_proc_starttime(pid: int) -> str:
+    stat_text = Path(f"/proc/{pid}/stat").read_text(encoding="utf-8")
+    rparen = stat_text.rfind(")")
+    fields = stat_text[rparen + 2 :].split()
+    return fields[19]
+
+
+def process_group_has_members(pgid: int) -> bool:
+    for entry in Path("/proc").iterdir():
+        if not entry.name.isdigit():
+            continue
+        try:
+            stat_text = (entry / "stat").read_text(encoding="utf-8")
+        except OSError:
+            continue
+        rparen = stat_text.rfind(")")
+        fields = stat_text[rparen + 2 :].split()
+        if len(fields) > 2 and fields[2] == str(pgid):
+            return True
+    return False
+
+
 def classify_reconciliation(
     *,
     intent_present: bool,
     result_present: bool,
     intent_valid: bool,
     result_valid: bool,
-    live_attempt: bool,
+    producer_live: bool,
+    child_live: bool,
+    pair_valid: bool,
 ) -> str:
     if not intent_present and not result_present:
         return "FRESH"
     if not intent_present and result_present:
         return "RESULT_WITHOUT_INTENT"
-    if intent_present and result_present and intent_valid and result_valid:
-        return "RESULT_TERMINAL"
-    if intent_present and not result_present and intent_valid and live_attempt:
-        return "INTENT_LIVE"
-    if intent_present and not result_present and intent_valid and not live_attempt:
+    if intent_present and result_present:
+        if intent_valid and result_valid and pair_valid:
+            return "RESULT_TERMINAL"
+        return "INVALID_DURABLE"
+    if intent_present and not result_present and intent_valid:
+        if producer_live:
+            return "INTENT_PRODUCER_LIVE"
+        if child_live:
+            return "INTENT_CHILD_LIVE"
         return "INTENT_ONLY_ORPHAN"
     return "INVALID_DURABLE"
 
@@ -2570,6 +3020,149 @@ def reject_nonfrozen_boost_headers(paths: list[str]) -> None:
 
 def canonical_dependency_list_bytes(paths: list[str]) -> bytes:
     return ("".join(f"{item}\n" for item in sorted(paths))).encode("utf-8")
+
+
+def bind_configure_argv(cmake_path: str, cxx_path: str | None) -> list[str]:
+    argv = [cmake_path, *CMAKE_CONFIGURE_ARGV[1:]]
+    if cxx_path is not None:
+        argv.append("-DCMAKE_CXX_COMPILER=" + cxx_path)
+    return argv
+
+
+def bind_build_argv(cmake_path: str) -> list[str]:
+    return [cmake_path, *BASELINE_BUILD_ARGV[1:]]
+
+
+def bind_job_specs(environment: dict[str, Any]) -> tuple[dict[str, Any], ...]:
+    cmake_path = environment["cmake_executable_path"]
+    cxx_path = environment["cxx_compiler_path"]
+    argvs = (
+        bind_configure_argv(cmake_path, cxx_path),
+        bind_build_argv(cmake_path),
+        list(BASELINE_SMOKE_ARGV),
+    )
+    bound = []
+    for spec, argv in zip(JOB_SPECS, argvs, strict=True):
+        item = dict(spec)
+        item["argv"] = list(argv)
+        bound.append(item)
+    return tuple(bound)
+
+
+def reject_unbound_toolchain(env: dict[str, str], resolved_cxx: str | None) -> None:
+    for key in FORBIDDEN_TOOLCHAIN_ENV:
+        value = env.get(key)
+        if not value:
+            continue
+        if resolved_cxx is None or os.path.realpath(value) != os.path.realpath(resolved_cxx):
+            raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "MISSING_DEPENDENCY")
+
+
+def parse_cmake_cache(text: str) -> dict[str, str]:
+    values: dict[str, str] = {}
+    for line in text.splitlines():
+        if not line or line.startswith("#") or line.startswith("//"):
+            continue
+        if ":" not in line or "=" not in line:
+            continue
+        key = line.split(":", 1)[0]
+        value = line.split("=", 1)[1]
+        values[key] = value
+    return values
+
+
+def smoke_compile_argv(compile_db: list[object]) -> list[str]:
+    matches = []
+    for entry in compile_db:
+        if not isinstance(entry, dict):
+            continue
+        file_name = str(entry.get("file", ""))
+        if Path(file_name).name != "smoke.cpp":
+            continue
+        matches.append(entry)
+    if len(matches) != 1:
+        raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "UNSUPPORTED_TOOLCHAIN")
+    entry = matches[0]
+    if isinstance(entry.get("arguments"), list):
+        return [str(item) for item in entry["arguments"]]
+    command = entry.get("command")
+    if not isinstance(command, str):
+        raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "UNSUPPORTED_TOOLCHAIN")
+    return shlex.split(command)
+
+
+def ensure_safe_log_root(log_root: Path) -> Path:
+    if os.path.lexists(log_root) and log_root.is_symlink():
+        raise EvidenceError("E_PILOT_BUILD_SYMLINK", "log-root is a symlink")
+    log_root.mkdir(parents=True, exist_ok=True)
+    if log_root.is_symlink() or not log_root.is_dir():
+        raise EvidenceError("E_PILOT_BUILD_PATH", "log-root is unsafe")
+    return log_root
+
+
+def write_process_identity(
+    log_root: Path,
+    spec: dict[str, Any],
+    pid: int,
+    pgid: int,
+    starttime: str,
+) -> None:
+    payload = {
+        "job_id": spec["job_id"],
+        "pid": pid,
+        "pgid": pgid,
+        "starttime": starttime,
+    }
+    write_canonical_json(log_root / f"{spec['job_id']}.identity.json", payload, exclusive=True)
+
+
+def load_process_identities(log_root: Path) -> list[dict[str, Any]]:
+    if not log_root.is_dir():
+        return []
+    records = []
+    for path in sorted(log_root.glob("*.identity.json")):
+        raw, _digest = read_authority_snapshot(path, "process-identity")
+        records.append(parse_canonical_json_object(raw, "process-identity"))
+    return records
+
+
+def child_records_are_live(records: list[dict[str, Any]]) -> bool:
+    for record in records:
+        if attempt_is_live(int(record["pid"]), str(record["starttime"])):
+            return True
+        if process_group_has_members(int(record["pgid"])):
+            return True
+    return False
+
+
+def terminate_and_reap_process_group(pgid: int | None, proc: Any) -> None:
+    controller_pgid = os.getpgrp()
+    still_running = proc is not None and proc.poll() is None
+    own_group = pgid is not None and pgid == controller_pgid
+    if own_group and (proc is None or proc.pid == os.getpid()):
+        return
+    if still_running and pgid is not None:
+        try:
+            os.killpg(pgid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+    if proc is not None:
+        try:
+            proc.communicate(timeout=5)
+        except Exception:
+            try:
+                proc.wait(timeout=5)
+            except Exception:
+                pass
+    if pgid is not None and not own_group and process_group_has_members(pgid):
+        try:
+            os.killpg(pgid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        deadline = time.monotonic() + 2
+        while time.monotonic() < deadline and process_group_has_members(pgid):
+            time.sleep(0.05)
+
 
 
 def validate_implementation_verdict(
@@ -2824,9 +3417,14 @@ def validate_intent(value: object) -> dict[str, Any]:
         raise EvidenceError("E_PILOT_BUILD_INTENT", "smoke timeout differs")
     if validated["outer_timeout_seconds"] != OUTER_TIMEOUT_SECONDS:
         raise EvidenceError("E_PILOT_BUILD_INTENT", "outer timeout differs")
-    if validated["cmake_configure_argv"] != CMAKE_CONFIGURE_ARGV:
+    snapshot = validate_environment_snapshot(validated["environment_snapshot"])
+    if snapshot["artifact_sha256"] != validated["environment_snapshot_sha256"]:
+        raise EvidenceError("E_PILOT_BUILD_INTENT", "environment snapshot hash differs")
+    if validated["cmake_configure_argv"] != bind_configure_argv(
+        snapshot["cmake_executable_path"], snapshot["cxx_compiler_path"]
+    ):
         raise EvidenceError("E_PILOT_BUILD_INTENT", "configure argv differs")
-    if validated["baseline_build_argv"] != BASELINE_BUILD_ARGV:
+    if validated["baseline_build_argv"] != bind_build_argv(snapshot["cmake_executable_path"]):
         raise EvidenceError("E_PILOT_BUILD_INTENT", "build argv differs")
     if validated["baseline_smoke_argv"] != BASELINE_SMOKE_ARGV:
         raise EvidenceError("E_PILOT_BUILD_INTENT", "smoke argv differs")
@@ -2859,9 +3457,6 @@ def validate_intent(value: object) -> dict[str, Any]:
         validated["implementation_verdict_sha256"],
         "intent.implementation_verdict_sha256",
     )
-    snapshot = validate_environment_snapshot(validated["environment_snapshot"])
-    if snapshot["artifact_sha256"] != validated["environment_snapshot_sha256"]:
-        raise EvidenceError("E_PILOT_BUILD_INTENT", "environment snapshot hash differs")
     if validated["implementation_verdict_sha256"] not in validated["predecessor_sha256"]:
         raise EvidenceError(
             "E_PILOT_BUILD_INTENT",
@@ -2912,8 +3507,6 @@ def validate_result(value: object) -> dict[str, Any]:
             raise EvidenceError("E_PILOT_BUILD_RESULT", "job identity differs")
         if job["dependency_job_ids"] != list(spec["dependency_job_ids"]):
             raise EvidenceError("E_PILOT_BUILD_RESULT", "job dependencies differ")
-        if job["argv"] != list(spec["argv"]):
-            raise EvidenceError("E_PILOT_BUILD_RESULT", "job argv differs")
         if job["timeout_seconds"] != spec["timeout_seconds"]:
             raise EvidenceError("E_PILOT_BUILD_RESULT", "job timeout differs")
     if jobs[0]["terminal_status"] != "PASS":
@@ -2935,6 +3528,7 @@ def validate_result(value: object) -> dict[str, Any]:
         for key in (
             "cmake_cache_sha256",
             "compile_commands_sha256",
+            "compiler_depfile_sha256",
             "dependency_list_sha256",
             "smoke_executable_sha256",
         ):
@@ -2943,6 +3537,7 @@ def validate_result(value: object) -> dict[str, Any]:
         for key in (
             "cmake_cache_sha256",
             "compile_commands_sha256",
+            "compiler_depfile_sha256",
             "dependency_list_sha256",
             "smoke_executable_sha256",
         ):
@@ -2964,6 +3559,70 @@ def validate_result(value: object) -> dict[str, Any]:
     if validated["artifact_sha256"] != canonical_sha256(body):
         raise EvidenceError("E_PILOT_BUILD_RESULT", "self-hash differs")
     return validated
+
+
+def validate_attempt_pair(
+    intent: object, intent_file_sha256: str, result: object
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    validated_intent = validate_intent(intent)
+    validated_result = validate_result(result)
+    validate_sha256(intent_file_sha256, "attempt.intent_file_sha256")
+    if validated_result["intent_sha256"] != intent_file_sha256:
+        raise EvidenceError("E_PILOT_BUILD_PAIR", "intent file SHA differs")
+    if validated_result["environment_snapshot"] != validated_intent["environment_snapshot"]:
+        raise EvidenceError("E_PILOT_BUILD_PAIR", "environment snapshot differs")
+    if (
+        validated_result["environment_snapshot_sha256"]
+        != validated_intent["environment_snapshot_sha256"]
+    ):
+        raise EvidenceError("E_PILOT_BUILD_PAIR", "environment snapshot hash differs")
+    if (
+        validated_result["implementation_verdict_sha256"]
+        != validated_intent["implementation_verdict_sha256"]
+    ):
+        raise EvidenceError("E_PILOT_BUILD_PAIR", "implementation verdict SHA differs")
+    for key in (
+        "source_preparation_verdict_sha256",
+        "source_manifest_sha256",
+        "source_preparation_result_sha256",
+        "normalized_source_tree_sha256",
+        "controlled_subject_id",
+        "controlled_subject_source_id",
+        "build_descriptor_sha256",
+        "authorization_sha256",
+        "harness_cmake_sha256",
+        "harness_cxx_sha256",
+        "source_root",
+        "build_root",
+        "harness_root",
+    ):
+        if validated_result[key] != validated_intent[key]:
+            raise EvidenceError("E_PILOT_BUILD_PAIR", f"{key} differs")
+    expected_predecessor = sorted(
+        [intent_file_sha256, *validated_intent["predecessor_sha256"]]
+    )
+    if validated_result["predecessor_sha256"] != expected_predecessor:
+        raise EvidenceError("E_PILOT_BUILD_PAIR", "predecessor set differs")
+    expected_argvs = [
+        validated_intent["cmake_configure_argv"],
+        validated_intent["baseline_build_argv"],
+        validated_intent["baseline_smoke_argv"],
+    ]
+    expected_timeouts = [
+        validated_intent["cmake_configure_timeout_seconds"],
+        validated_intent["baseline_build_timeout_seconds"],
+        validated_intent["baseline_smoke_timeout_seconds"],
+    ]
+    for job, argv, timeout, spec in zip(
+        validated_result["jobs"], expected_argvs, expected_timeouts, JOB_SPECS, strict=True
+    ):
+        if job["argv"] != argv:
+            raise EvidenceError("E_PILOT_BUILD_PAIR", "job argv differs from intent")
+        if job["timeout_seconds"] != timeout:
+            raise EvidenceError("E_PILOT_BUILD_PAIR", "job timeout differs from intent")
+        if job["dependency_job_ids"] != list(spec["dependency_job_ids"]):
+            raise EvidenceError("E_PILOT_BUILD_PAIR", "job DAG differs from intent")
+    return validated_intent, validated_result
 
 
 def make_not_started_job(spec: dict[str, Any]) -> dict[str, Any]:
@@ -3071,45 +3730,58 @@ def collect_baseline_build_evidence(
     cache = build_root / "CMakeCache.txt"
     commands = build_root / "compile_commands.json"
     executable = build_root / "boost_math_pilot_smoke"
-    dep_file = build_root / "boost_math_pilot_smoke.d"
-    for path in (cache, commands, executable):
-        if not path.is_file() or path.is_symlink():
-            raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "MISSING_DEPENDENCY")
+    dep_file = build_root / COMPILER_DEPFILE_RELATIVE
+    for path in (cache, commands, executable, dep_file):
+        if path.is_symlink() or not path.is_file():
+            raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "UNSUPPORTED_TOOLCHAIN")
+        raw, _mode = read_regular_file_snapshot(path, path.name)
+        if path == dep_file:
+            dep_raw = raw
+    cache_text = cache.read_text(encoding="utf-8")
+    values = parse_cmake_cache(cache_text)
+    if values.get("CMAKE_GENERATOR") != FROZEN_CMAKE_GENERATOR:
+        raise EvidenceError("E_PILOT_BUILD_ENVIRONMENT", "CMAKE_GENERATOR differs")
     compiler = environment["cxx_compiler_path"]
     if compiler is None:
         raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "MISSING_DEPENDENCY")
-    if environment["cmake_executable_path"] != shutil.which("cmake"):
-        raise EvidenceError("E_PILOT_BUILD_ENVIRONMENT", "cmake identity drifted")
+    cache_compiler = values.get("CMAKE_CXX_COMPILER")
+    if cache_compiler is None or os.path.realpath(cache_compiler) != os.path.realpath(compiler):
+        raise EvidenceError("E_PILOT_BUILD_ENVIRONMENT", "CMakeCache compiler differs")
+    source_dir = values.get("CMAKE_HOME_DIRECTORY") or values.get("CMAKE_SOURCE_DIR")
+    binary_dir = values.get("CMAKE_BINARY_DIR") or values.get("CMAKE_CACHEFILE_DIR")
+    if source_dir != FROZEN_HARNESS_ROOT.as_posix():
+        raise EvidenceError("E_PILOT_BUILD_ENVIRONMENT", "CMake source directory differs")
+    if binary_dir != FROZEN_BUILD_ROOT.as_posix():
+        raise EvidenceError("E_PILOT_BUILD_ENVIRONMENT", "CMake build directory differs")
     try:
         compile_db = json.loads(commands.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "UNSUPPORTED_TOOLCHAIN") from exc
-    if not isinstance(compile_db, list) or not compile_db:
+    if not isinstance(compile_db, list):
         raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "UNSUPPORTED_TOOLCHAIN")
-    command = compile_db[0].get("command") if isinstance(compile_db[0], dict) else None
-    if not isinstance(command, str):
+    compile_argv = smoke_compile_argv(compile_db)
+    if os.path.realpath(compile_argv[0]) != os.path.realpath(compiler):
+        raise EvidenceError("E_PILOT_BUILD_ENVIRONMENT", "compile_commands compiler differs")
+    joined = " ".join(compile_argv)
+    if FROZEN_INCLUDE_PREFIX not in joined:
         raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "UNSUPPORTED_TOOLCHAIN")
-    dep_argv = [compiler, "-M", "-MF", str(dep_file)]
-    if "smoke.cpp" in command:
-        dep_argv.append(str(FROZEN_HARNESS_ROOT / "smoke.cpp"))
-    try:
-        completed = subprocess.run(
-            dep_argv,
-            check=False,
-            capture_output=True,
-            timeout=30,
-            shell=False,
-            cwd=build_root,
-        )
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "UNSUPPORTED_TOOLCHAIN") from exc
-    if completed.returncode != 0 or not dep_file.is_file():
+    if "BOOST_MATH_STANDALONE=1" not in joined:
         raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "UNSUPPORTED_TOOLCHAIN")
-    paths = parse_dependency_paths(dep_file.read_text(encoding="utf-8"))
+    for marker in SYSTEM_BOOST_MARKERS:
+        if marker in joined:
+            raise EvidenceError("E_PILOT_SYSTEM_BOOST", "SYSTEM_BOOST_FALLBACK")
+    dep_text = dep_raw.decode("utf-8")
+    paths = parse_dependency_paths(dep_text)
+    smoke_path = (FROZEN_HARNESS_ROOT / "smoke.cpp").as_posix()
+    if smoke_path not in paths and "smoke.cpp" not in dep_text:
+        raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "UNSUPPORTED_TOOLCHAIN")
+    if FROZEN_CONSTANTS_HEADER not in paths and FROZEN_CONSTANTS_HEADER not in dep_text:
+        raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "UNSUPPORTED_TOOLCHAIN")
     reject_nonfrozen_boost_headers(paths)
     return {
         "cmake_cache_sha256": _sha256_bytes(cache.read_bytes()),
         "compile_commands_sha256": _sha256_bytes(commands.read_bytes()),
+        "compiler_depfile_sha256": _sha256_bytes(dep_raw),
         "dependency_list_sha256": _sha256_bytes(canonical_dependency_list_bytes(paths)),
         "smoke_executable_sha256": _sha256_bytes(executable.read_bytes()),
     }
@@ -3143,9 +3815,16 @@ def execute_job(
     argv = list(spec["argv"])
     if any(not isinstance(item, str) for item in argv):
         raise EvidenceError("E_PILOT_BUILD_ARGV", "argv items must be strings")
+    ensure_safe_log_root(log_root)
     started_at = time.time()
     effective_timeout = spec["timeout_seconds"] if timeout_seconds is None else timeout_seconds
     before = resource.getrusage(resource.RUSAGE_CHILDREN)
+    proc = None
+    pgid = None
+    stdout = b""
+    stderr = b""
+    timed_out = False
+    process_group_terminated = False
     try:
         proc = popen(
             argv,
@@ -3157,21 +3836,27 @@ def execute_job(
         )
     except FileNotFoundError:
         return make_pre_process_infra_job(spec, "MISSING_DEPENDENCY")
-    pgid = os.getpgid(proc.pid)
-    log_root.mkdir(parents=True, exist_ok=True)
-    (log_root / f"{spec['job_id']}.pgid").write_text(f"{pgid}\n", encoding="utf-8")
-    timed_out = False
-    process_group_terminated = False
     try:
+        try:
+            pgid = os.getpgid(proc.pid)
+        except ProcessLookupError:
+            pgid = proc.pid
+        starttime = read_proc_starttime(proc.pid)
+        write_process_identity(log_root, spec, proc.pid, pgid, starttime)
         stdout, stderr = proc.communicate(timeout=effective_timeout)
     except subprocess.TimeoutExpired:
         timed_out = True
-        try:
-            os.killpg(pgid, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
         process_group_terminated = True
-        stdout, stderr = proc.communicate()
+        stdout, stderr = b"", b""
+    finally:
+        if pgid is not None:
+            try:
+                os.killpg(pgid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+        terminate_and_reap_process_group(pgid, proc)
+        if timed_out:
+            process_group_terminated = True
     after = resource.getrusage(resource.RUSAGE_CHILDREN)
     stdout = stdout or b""
     stderr = stderr or b""
@@ -3182,7 +3867,7 @@ def execute_job(
         raise EvidenceError("E_PILOT_BUILD_LOG", "LOG_PUBLICATION_FAILURE") from exc
     ended_at = time.time()
     detected = detect_network_or_boost(stdout, stderr, argv)
-    exit_code = proc.returncode
+    exit_code = None if proc is None else proc.returncode
     cpu_seconds = float(
         (after.ru_utime + after.ru_stime) - (before.ru_utime + before.ru_stime)
     )
@@ -3282,7 +3967,7 @@ def run_three_jobs(
         if outer_deadline is not None:
             remaining = outer_deadline - time.monotonic()
             if remaining <= 0:
-                results.append(make_pre_process_infra_job(spec, "MISSING_DEPENDENCY"))
+                results.append(make_pre_process_infra_job(spec, "OUTER_DEADLINE_EXHAUSTED"))
                 prior_pass = False
                 continue
         timeout_seconds = spec["timeout_seconds"]
@@ -3421,8 +4106,10 @@ def build_intent(
         "source_root": FROZEN_SOURCE_ROOT.as_posix(),
         "build_root": FROZEN_BUILD_ROOT.as_posix(),
         "harness_root": FROZEN_HARNESS_ROOT.as_posix(),
-        "cmake_configure_argv": list(CMAKE_CONFIGURE_ARGV),
-        "baseline_build_argv": list(BASELINE_BUILD_ARGV),
+        "cmake_configure_argv": bind_configure_argv(
+            environment["cmake_executable_path"], environment["cxx_compiler_path"]
+        ),
+        "baseline_build_argv": bind_build_argv(environment["cmake_executable_path"]),
         "baseline_smoke_argv": list(BASELINE_SMOKE_ARGV),
         "cmake_configure_timeout_seconds": CMAKE_CONFIGURE_TIMEOUT_SECONDS,
         "baseline_build_timeout_seconds": BASELINE_BUILD_TIMEOUT_SECONDS,
@@ -3463,6 +4150,7 @@ def build_result(
             raise EvidenceError("E_PILOT_BUILD_RESULT", "PASS must bind build artifacts")
         cache_sha = evidence["cmake_cache_sha256"]
         commands_sha = evidence["compile_commands_sha256"]
+        depfile_sha = evidence["compiler_depfile_sha256"]
         dep_sha = evidence["dependency_list_sha256"]
         smoke_sha = evidence["smoke_executable_sha256"]
     else:
@@ -3470,6 +4158,7 @@ def build_result(
         failure_reason = first_bad["failure_reason"]
         cache_sha = None if evidence is None else evidence.get("cmake_cache_sha256")
         commands_sha = None if evidence is None else evidence.get("compile_commands_sha256")
+        depfile_sha = None if evidence is None else evidence.get("compiler_depfile_sha256")
         dep_sha = None if evidence is None else evidence.get("dependency_list_sha256")
         smoke_sha = None if evidence is None else evidence.get("smoke_executable_sha256")
     payload = {
@@ -3494,6 +4183,7 @@ def build_result(
         "harness_cxx_sha256": HARNESS_CXX_SHA256,
         "cmake_cache_sha256": cache_sha,
         "compile_commands_sha256": commands_sha,
+        "compiler_depfile_sha256": depfile_sha,
         "dependency_list_sha256": dep_sha,
         "smoke_executable_sha256": smoke_sha,
         "source_root": FROZEN_SOURCE_ROOT.as_posix(),
@@ -3546,52 +4236,70 @@ def run_build_preflight(source_root: Path, build_root: Path) -> dict[str, Any]:
     intent_exists = os.path.lexists(INTENT_PATH)
     result_exists = os.path.lexists(RESULT_PATH)
     intent_obj = None
+    result_obj = None
+    intent_digest = None
     intent_valid = False
     result_valid = False
-    live_attempt = False
+    producer_live = False
+    child_live = False
+    pair_valid = False
     if intent_exists:
         try:
-            raw, _digest = read_authority_snapshot(INTENT_PATH, "existing-intent")
+            raw, intent_digest = read_authority_snapshot(INTENT_PATH, "existing-intent")
             intent_obj = validate_intent(parse_canonical_json_object(raw, "existing-intent"))
             intent_valid = True
-            live_attempt = attempt_is_live(
+            producer_live = attempt_is_live(
                 intent_obj["producer_pid"],
                 intent_obj["producer_starttime"],
+            )
+            child_live = child_records_are_live(
+                load_process_identities(FROZEN_BUILD_ROOT / "logs")
             )
         except EvidenceError:
             intent_valid = False
     if result_exists:
         try:
             raw, _digest = read_authority_snapshot(RESULT_PATH, "existing-result")
-            validate_result(parse_canonical_json_object(raw, "existing-result"))
+            result_obj = validate_result(parse_canonical_json_object(raw, "existing-result"))
             result_valid = True
         except EvidenceError:
             result_valid = False
+    if intent_valid and result_valid and intent_obj is not None and result_obj is not None:
+        try:
+            validate_attempt_pair(intent_obj, intent_digest or "", result_obj)
+            pair_valid = True
+        except EvidenceError:
+            pair_valid = False
     state = classify_reconciliation(
         intent_present=intent_exists,
         result_present=result_exists,
         intent_valid=intent_valid,
         result_valid=result_valid,
-        live_attempt=live_attempt,
+        producer_live=producer_live,
+        child_live=child_live,
+        pair_valid=pair_valid,
     )
     if state == "RESULT_TERMINAL":
         raise EvidenceError("E_PILOT_BUILD_PREEXISTING", "result already exists")
-    if state == "INTENT_LIVE":
+    if state in {"INTENT_PRODUCER_LIVE", "INTENT_CHILD_LIVE"}:
         raise EvidenceError("E_PILOT_BUILD_PREEXISTING", "original attempt is still live")
     if state == "RESULT_WITHOUT_INTENT" or state == "INVALID_DURABLE":
         raise EvidenceError("E_PILOT_BUILD_PREEXISTING", "durable objects are inconsistent")
     if state == "INTENT_ONLY_ORPHAN":
         environment = intent_obj["environment_snapshot"]
+        specs = bind_job_specs(environment)
         jobs = [
-            make_pre_process_infra_job(JOB_SPECS[0], "ORPHANED_INTENT_NO_PROCESS"),
-            make_not_started_job(JOB_SPECS[1]),
-            make_not_started_job(JOB_SPECS[2]),
+            make_pre_process_infra_job(specs[0], "ORPHANED_INTENT_NO_PROCESS"),
+            make_not_started_job(specs[1]),
+            make_not_started_job(specs[2]),
         ]
         return _write_terminal_result(
             intent_sha256=_sha256_bytes(INTENT_PATH.read_bytes()),
             environment=environment,
             jobs=jobs,
-            predecessor=list(intent_obj["predecessor_sha256"]),
+            predecessor=sorted(
+                [_sha256_bytes(INTENT_PATH.read_bytes()), *intent_obj["predecessor_sha256"]]
+            ),
             implementation_verdict_sha256=intent_obj["implementation_verdict_sha256"],
             evidence=None,
         )
@@ -3605,6 +4313,8 @@ def run_build_preflight(source_root: Path, build_root: Path) -> dict[str, Any]:
     plan_digest, verdict_digest, impl_digest = _require_plan_and_implementation_verdicts()
     require_frozen_source_tree(FROZEN_SOURCE_ROOT)
     environment = make_environment_snapshot()
+    reject_unbound_toolchain(env, environment["cxx_compiler_path"])
+    specs = bind_job_specs(environment)
     predecessor = sorted(
         [
             plan_digest,
@@ -3621,13 +4331,14 @@ def run_build_preflight(source_root: Path, build_root: Path) -> dict[str, Any]:
     write_canonical_json(INTENT_PATH, intent, exclusive=True)
     intent_sha256 = _sha256_bytes(INTENT_PATH.read_bytes())
     outer_deadline = time.monotonic() + OUTER_TIMEOUT_SECONDS
-    jobs = [make_not_started_job(spec) for spec in JOB_SPECS]
+    jobs = [make_not_started_job(spec) for spec in specs]
     evidence = None
     try:
         write_harness(FROZEN_HARNESS_ROOT, HARNESS_CMAKE_BYTES, HARNESS_CXX_BYTES)
         os.mkdir(FROZEN_BUILD_ROOT)
+        ensure_safe_log_root(FROZEN_BUILD_ROOT / "logs")
         jobs, evidence = run_three_jobs(
-            JOB_SPECS,
+            specs,
             env=env,
             log_root=FROZEN_BUILD_ROOT / "logs",
             source_root=FROZEN_SOURCE_ROOT,
@@ -3648,12 +4359,12 @@ def run_build_preflight(source_root: Path, build_root: Path) -> dict[str, Any]:
         elif "SYSTEM_BOOST" in detail:
             reason = "SYSTEM_BOOST_FALLBACK"
         while len(jobs) < 3:
-            jobs.append(make_not_started_job(JOB_SPECS[len(jobs)]))
+            jobs.append(make_not_started_job(specs[len(jobs)]))
         if all(job["terminal_status"] == "NOT_STARTED" for job in jobs):
             jobs = [
-                make_pre_process_infra_job(JOB_SPECS[0], reason),
-                make_not_started_job(JOB_SPECS[1]),
-                make_not_started_job(JOB_SPECS[2]),
+                make_pre_process_infra_job(specs[0], reason),
+                make_not_started_job(specs[1]),
+                make_not_started_job(specs[2]),
             ]
         return _write_terminal_result(
             intent_sha256=intent_sha256,
@@ -3665,9 +4376,9 @@ def run_build_preflight(source_root: Path, build_root: Path) -> dict[str, Any]:
         )
     except Exception:
         jobs = [
-            make_pre_process_infra_job(JOB_SPECS[0], "RESULT_PUBLICATION_FAILURE"),
-            make_not_started_job(JOB_SPECS[1]),
-            make_not_started_job(JOB_SPECS[2]),
+            make_pre_process_infra_job(specs[0], "RESULT_PUBLICATION_FAILURE"),
+            make_not_started_job(specs[1]),
+            make_not_started_job(specs[2]),
         ]
         return _write_terminal_result(
             intent_sha256=intent_sha256,
