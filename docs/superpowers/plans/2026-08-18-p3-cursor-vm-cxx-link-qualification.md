@@ -321,17 +321,25 @@ exactly `CXX_COMPILE_LINK` and `QUALIFIED_BINARY_RUN` in that order. PASS
 requires both workload jobs PASS, a regular non-symlink executable, and its
 hash/size.
 
-Executable evidence is present whenever `CXX_COMPILE_LINK` produced a valid
-regular, non-symlink executable, even if `QUALIFIED_BINARY_RUN` later times
-out or exits nonzero.
+Executable evidence is present whenever compile-link produced a valid
+regular, non-symlink executable at the frozen output path. Presence is
+decided only by that filesystem identity, not by either workload
+`terminal_status`.
 
-Executable evidence is null only when compile-link did not PASS or when no
-valid regular, non-symlink executable was produced.
+If a valid executable exists after compile-link, the result must retain
+its SHA-256, byte count, regular-file identity, and symlink identity,
+and the manifest must list `qualify`, even when compile-link ends as
+`NONZERO_EXIT`, `TIMEOUT`, or `UNEXPECTED_OUTPUT`.
+
+The four executable evidence fields are null together only when no valid
+regular, non-symlink executable exists.
+
+Preserving executable evidence must not upgrade the compile-link job or
+the aggregate terminal status to PASS.
 
 Aggregate PASS still requires both workload jobs PASS, zero workload
 stdout/stderr, a matching clean repository postcondition, a regular
-non-symlink executable, and its hash/size. Preserving executable evidence
-after a binary-run failure does not upgrade the aggregate status.
+non-symlink executable, and its hash/size.
 
 Host snapshot exact fields:
 
@@ -668,7 +676,8 @@ Tests must prove:
 - compile timeout → binary run `NOT_STARTED`;
 - nonempty compile-link stdout or stderr → `UNEXPECTED_OUTPUT` and
   binary run `NOT_STARTED`;
-- missing or symlink output executable → binary run `NOT_STARTED`;
+- missing, invalid, or symlink output executable → binary
+  `NOT_STARTED` and grouped executable evidence remains null;
 - binary nonzero → terminal FAIL;
 - nonempty binary stdout or stderr → `UNEXPECTED_OUTPUT` and terminal
   FAIL;
@@ -721,17 +730,49 @@ def test_compile_stdout_is_unexpected_output_and_blocks_binary(tmp_path):
     assert result["jobs"][1]["terminal_status"] == "NOT_STARTED"
     assert result["terminal_status"] == "FAIL"
     assert result["failure_reason"] == "UNEXPECTED_OUTPUT"
+    assert result["executable_sha256"] is not None
+    assert result["executable_bytes"] is not None
+    assert result["executable_regular"] is True
+    assert result["executable_symlink"] is False
     assert (root / "CXX_COMPILE_LINK.stdout").read_bytes() == b"warning\n"
     assert "CXX_COMPILE_LINK.stdout" in {
         entry["path"] for entry in manifest["files"]
     }
+    assert "qualify" in {entry["path"] for entry in manifest["files"]}
 ```
 
 Also test compile stderr, binary stdout, and binary stderr independently.
-Binary unexpected output may preserve executable evidence because
-compile-link PASS already occurred. Compile unexpected output leaves
-executable evidence null because compile-link did not PASS. Raw logs for
-the started job remain on disk and in the manifest.
+When `create_regular_executable=True`, compile stdout and compile stderr
+cases must keep executable evidence and list `qualify` in the manifest.
+The compile-link job and aggregate remain FAIL / `UNEXPECTED_OUTPUT`, and
+binary remains `NOT_STARTED`. Binary unexpected output likewise keeps
+executable evidence. Raw logs for the started job remain on disk and in
+the manifest.
+
+Add missing, invalid, and symlink executable cases:
+
+```python
+def test_missing_or_symlink_executable_clears_grouped_evidence(tmp_path):
+    result, manifest, root = _run_synthetic_qualification(
+        tmp_path,
+        compile_exit=0,
+        create_regular_executable=False,
+        create_symlink_executable=True,
+    )
+    assert result["jobs"][1]["terminal_status"] == "NOT_STARTED"
+    assert result["executable_sha256"] is None
+    assert result["executable_bytes"] is None
+    assert result["executable_regular"] is None
+    assert result["executable_symlink"] is None
+    assert "qualify" not in {entry["path"] for entry in manifest["files"]}
+```
+
+Also test a missing output path and a non-regular output path. Both leave
+the four executable evidence fields null as a group.
+
+A compile-link `NONZERO_EXIT` or `TIMEOUT` that still creates a valid
+regular executable must retain the same grouped executable evidence
+without upgrading that job or the aggregate status to PASS.
 
 - [ ] **Step 7: Implement PASS and manifest closure**
 
