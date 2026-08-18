@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import hashlib
 import io
+import json
 import os
+import subprocess
 import tarfile
 import zipfile
 from pathlib import Path
@@ -1559,17 +1561,66 @@ def test_validate_source_cli_has_no_authority_overrides():
 
 
 def test_capability_implementation_creates_no_production_artifact():
-    production = [
-        Path("data/p3_v3/pilot/boost_math/user-auth-preparation.txt"),
-        Path("data/p3_v3/pilot/boost_math/source-manifest.json"),
-        Path("data/p3_v3/pilot/boost_math/source-preparation-result.json"),
-        Path("data/p3_v3/pilot/boost_math/source-preparation-launch.json"),
-        Path("docs/review_20260817/boost_math_pilot_source_preparation_implementation_sol_high_review.md"),
-        Path("docs/review_20260817/boost_math_pilot_source_preparation_launch_packet.md"),
-        Path("docs/review_20260817/boost_math_pilot_source_preparation_launch_sol_high_review.md"),
+    implementation_base = "1cdf2a1d5b4f43c5565f2b773103a971784468e1"
+    verdict_path = Path(
+        "docs/review_20260817/"
+        "boost_math_pilot_source_preparation_implementation_sol_high_review.md"
+    )
+    verdict = json.loads(verdict_path.read_text(encoding="utf-8"))
+    reviewed_commit = verdict["reviewed_commit"]
+
+    assert reviewed_commit == "e5a92499b2b3495ecd0013b2279438147b203f25"
+
+    env = dict(os.environ)
+    env.update(
+        {
+            "GIT_CONFIG_GLOBAL": "/dev/null",
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_CONFIG_COUNT": "0",
+        }
+    )
+    completed = subprocess.run(
+        [
+            "git",
+            "diff",
+            "--name-status",
+            f"{implementation_base}..{reviewed_commit}",
+            "--",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+
+    changed = completed.stdout.splitlines()
+    assert changed == [
+        "M\tscripts/p3_v3/pilot.py",
+        "A\tsrc/p3_v3/pilot_source.py",
+        "M\ttests/p3_v3/test_pilot.py",
+        "A\ttests/p3_v3/test_pilot_source.py",
     ]
-    for path in production:
-        assert not path.exists()
+
+    changed_paths = {line.split("\t", 1)[1] for line in changed}
+    production_paths = {
+        "data/p3_v3/pilot/boost_math/user-auth-preparation.txt",
+        "data/p3_v3/pilot/boost_math/source-manifest.json",
+        "data/p3_v3/pilot/boost_math/source-preparation-result.json",
+        "data/p3_v3/pilot/boost_math/source-preparation-launch.json",
+        (
+            "docs/review_20260817/"
+            "boost_math_pilot_source_preparation_implementation_sol_high_review.md"
+        ),
+        (
+            "docs/review_20260817/"
+            "boost_math_pilot_source_preparation_launch_packet.md"
+        ),
+        (
+            "docs/review_20260817/"
+            "boost_math_pilot_source_preparation_launch_sol_high_review.md"
+        ),
+    }
+    assert changed_paths.isdisjoint(production_paths)
 
 
 def test_preexisting_staging_is_preserved_and_attempt_fails_closed(tmp_path, monkeypatch):
