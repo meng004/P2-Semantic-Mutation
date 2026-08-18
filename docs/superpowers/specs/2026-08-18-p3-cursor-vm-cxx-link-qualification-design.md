@@ -1,8 +1,8 @@
 # Cursor VM C++ Link Qualification Design
 
-**Status:** Approved design; execution not yet authorized  
-**Execution class:** `PILOT_TOOLCHAIN_QUALIFICATION_ONLY`  
-**Formal denominator membership:** false  
+**Status:** Approved design; execution not yet authorized
+**Execution class:** `PILOT_TOOLCHAIN_QUALIFICATION_ONLY`
+**Formal denominator membership:** false
 **Claims:** blocked
 
 ## Purpose
@@ -72,9 +72,34 @@ The qualification must reject nonempty `CXX`, `CC`, `CPATH`,
 `CPLUS_INCLUDE_PATH`, `LIBRARY_PATH`, `LD_LIBRARY_PATH`, `LDFLAGS`, and
 `CXXFLAGS`. It must not silently unset them and continue.
 
+### Metadata Probes
+
+Read-only metadata probes are allowed before the two qualification workload
+jobs. They are not qualification workload jobs and must not be represented as
+compile-link or binary-run results.
+
+The allowed metadata probes are limited to:
+
+- repository commit and clean-state inspection
+- executable path resolution and filesystem identity inspection
+- operating-system and kernel identity
+- Python and Git version inspection
+- exactly one `<resolved-cxx> --version` invocation
+
+The compiler-version invocation must occur after the qualification intent has
+been exclusive-created. Its argv, exit code, stdout, stderr, byte counts, and
+SHA-256 values are bound into the terminal evidence.
+
+No metadata probe may compile, link, execute generated code, invoke CMake,
+access the network, install software, or modify the environment.
+
+The phrase "exactly two qualification workload jobs" refers only to
+`CXX_COMPILE_LINK` and `QUALIFIED_BINARY_RUN`. Metadata probes do not weaken
+the no-retry rule for either workload job.
+
 ## Unique Execution
 
-Exactly two child processes are allowed, in order:
+Exactly two qualification workload jobs are allowed, in order:
 
 1. `CXX_COMPILE_LINK`
 2. `QUALIFIED_BINARY_RUN`
@@ -102,6 +127,73 @@ No CMake, package manager, dependency download, Boost source, production CLI,
 mutant, MR, certification, profiling, or confirmatory runner is allowed.
 
 ## Evidence
+
+### Evidence Storage And Ordering
+
+After repository and forbidden-environment checks pass, the qualification root
+is created exclusively. It must not be deleted or reused.
+
+Executable path resolution may use the controller's filesystem APIs without
+executing the compiler. The qualification then exclusive-creates:
+
+`/tmp/p3-cxx-link-qualification/qualification-intent.json`
+
+The intent is created before `<resolved-cxx> --version` and before either
+qualification workload job. It binds:
+
+- this specification path and SHA-256
+- repository commit
+- requested compiler name and resolved compiler path
+- exact source bytes and SHA-256
+- exact workload argv arrays
+- exact timeouts
+- qualification root
+- relevant environment-variable snapshot
+- `no_retry=true`
+- `formal_denominator_membership=false`
+- `claims=blocked`
+- `attempt_2_authorized=false`
+
+If the requested compiler cannot be resolved, the root, intent, terminal
+result, and manifest still record that terminal prerequisite failure without
+executing a compiler.
+
+All qualification evidence is written only beneath the qualification root:
+
+```text
+qualification-intent.json
+qualification-result.json
+qualification-manifest.json
+METADATA_CXX_VERSION.stdout
+METADATA_CXX_VERSION.stderr
+CXX_COMPILE_LINK.stdout
+CXX_COMPILE_LINK.stderr
+QUALIFIED_BINARY_RUN.stdout
+QUALIFIED_BINARY_RUN.stderr
+qualify.cpp
+qualify
+```
+
+A file for an unstarted job is absent and its result contains no invented
+stdout, stderr, exit code, timestamp, or executable evidence.
+
+The intent, result, and manifest are canonical UTF-8 JSON objects with sorted
+keys, compact separators, exactly one terminal LF, no CR, and a self-hash over
+the object without its self-hash field.
+
+The terminal result is exclusive-created after the qualification reaches PASS
+or FAIL. It binds the intent file SHA-256, metadata evidence, workload job
+results, output executable evidence when present, final status,
+`no_retry=true`, `formal_denominator_membership=false`, `claims=blocked`, and
+`attempt_2_authorized=false`.
+
+The manifest is exclusive-created last and binds the relative path, SHA-256,
+and byte count of every evidence file present. It must not list absent or
+unstarted-job files.
+
+The repository remains unchanged throughout qualification execution. The
+complete canonical intent, result, manifest, and every raw stdout/stderr file
+are returned losslessly as Base64 for independent review.
 
 Record independently for both child processes:
 
@@ -173,6 +265,16 @@ stops. The second child is not started if compile-link is not PASS.
 The VM must not be repaired and the qualification must not be rerun under the
 same authorization. A failed VM is reported as unsuitable.
 
+Every failure after qualification-root creation must produce one terminal
+result and one manifest. Existing evidence is never deleted, overwritten,
+renamed, or supplemented by a second workload attempt.
+
+A failure of the compiler-version metadata probe prevents both workload jobs.
+A failure of `CXX_COMPILE_LINK` prevents `QUALIFIED_BINARY_RUN`.
+
+No failed qualification evidence is rewritten as PASS after environment
+repair.
+
 ## Workflow After PASS
 
 After independent review of a qualification PASS:
@@ -184,3 +286,8 @@ After independent review of a qualification PASS:
 5. execute attempt-2 exactly once.
 
 Qualification PASS alone does not advance to any later step.
+
+Before defining attempt-2, Sol independently validates the returned canonical
+objects and raw byte hashes. A qualification verdict may then be archived in a
+separate governance node. Neither the evidence return nor verdict archival may
+rerun the compiler.
