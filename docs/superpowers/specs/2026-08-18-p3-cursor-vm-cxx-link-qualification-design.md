@@ -53,8 +53,14 @@ network functionality, random input, or filesystem access.
 
 ## Compiler Binding
 
-Resolve `c++` through the qualification process environment before creating
-the qualification directory.
+After the qualification root is exclusive-created, resolve `c++` through the
+qualification process environment using the controller's filesystem APIs
+without executing the compiler. Resolution occurs before the qualification
+intent is exclusive-created.
+
+If `c++` cannot be resolved, the intent records null resolved-compiler fields
+and null workload argv arrays. Both workload jobs remain unstarted, and the
+terminal result and manifest record the prerequisite failure.
 
 Record:
 
@@ -188,14 +194,18 @@ results, output executable evidence when present, final status,
 `attempt_2_authorized=false`.
 
 The manifest is exclusive-created last and binds the relative path, SHA-256,
-and byte count of every evidence file present. It must not list absent or
-unstarted-job files.
+and byte count of every evidence file present except the manifest itself. It
+must not list absent or unstarted-job files.
+
+The manifest is not a member of its own file inventory. Its integrity is
+provided by its canonical self-hash field, computed over the manifest object
+without that field.
 
 The repository remains unchanged throughout qualification execution. The
 complete canonical intent, result, manifest, and every raw stdout/stderr file
 are returned losslessly as Base64 for independent review.
 
-Record independently for both child processes:
+Record independently for both qualification workload jobs:
 
 - exact argv
 - start and end timestamps
