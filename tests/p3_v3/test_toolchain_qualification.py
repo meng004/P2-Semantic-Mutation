@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import errno
 import os
 import signal
 import subprocess
@@ -1035,18 +1036,157 @@ def _patch_group_signals(
 
     def fake_killpg(pgid: int, sig: int) -> None:
         recorded.append(("killpg", pgid, sig))
-        if killpg_error is not None:
-            raise killpg_error
+        if sig == signal.SIGKILL:
+            if killpg_error is not None:
+                raise killpg_error
+            return
+        if sig == 0:
+            if probe_error is not None:
+                raise probe_error
+            return
+        raise AssertionError(f"unexpected killpg signal: {sig}")
 
     def fake_kill(pid: int, sig: int) -> None:
         recorded.append(("kill", pid, sig))
-        if sig == 0 and probe_error is not None:
-            raise probe_error
 
     monkeypatch.setattr(q.os, "getpgid", fake_getpgid)
     monkeypatch.setattr(q.os, "killpg", fake_killpg)
     monkeypatch.setattr(q.os, "kill", fake_kill)
     return recorded
+
+
+def _patch_group_probe(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    terminate_error: BaseException | None = None,
+    probe_error: BaseException | None = None,
+) -> list[tuple[object, ...]]:
+    recorded: list[tuple[object, ...]] = []
+
+    def fake_getpgid(pid: int) -> int:
+        recorded.append(("getpgid", pid))
+        return pid
+
+    def fake_killpg(pgid: int, sig: int) -> None:
+        recorded.append(("killpg", pgid, sig))
+        if sig == signal.SIGKILL:
+            if terminate_error is not None:
+                raise terminate_error
+            return
+        if sig == 0:
+            if probe_error is not None:
+                raise probe_error
+            return
+        raise AssertionError(f"unexpected killpg signal: {sig}")
+
+    def fake_kill(pid: int, sig: int) -> None:
+        recorded.append(("kill", pid, sig))
+        if sig == 0:
+            raise ProcessLookupError("leader pid is gone")
+
+    monkeypatch.setattr(q.os, "getpgid", fake_getpgid)
+    monkeypatch.setattr(q.os, "killpg", fake_killpg)
+    monkeypatch.setattr(q.os, "kill", fake_kill)
+    return recorded
+
+
+def test_process_group_absent_uses_killpg_zero(monkeypatch):
+    recorded: list[tuple[int, int]] = []
+
+    def fake_killpg(pgid: int, sig: int) -> None:
+        recorded.append((pgid, sig))
+        raise ProcessLookupError("gone")
+
+    def fake_kill(*_args: object) -> None:
+        raise AssertionError("os.kill must not probe process groups")
+
+    monkeypatch.setattr(q.os, "killpg", fake_killpg)
+    monkeypatch.setattr(q.os, "kill", fake_kill)
+    assert q._process_group_absent(2_000_000_000) is True
+    assert recorded == [(2_000_000_000, 0)]
+
+
+def test_process_group_absent_rejects_non_esrch_results(monkeypatch):
+    cases: list[BaseException | None] = [
+        None,
+        PermissionError("denied"),
+        OSError(errno.EPERM, "operation not permitted"),
+        OSError(errno.EINVAL, "invalid argument"),
+    ]
+
+    def fake_kill(*_args: object) -> None:
+        raise AssertionError("os.kill must not probe process groups")
+
+    monkeypatch.setattr(q.os, "kill", fake_kill)
+    for probe in cases:
+        def fake_killpg(_pgid: int, sig: int, error=probe) -> None:
+            assert sig == 0
+            if error is not None:
+                raise error
+
+        monkeypatch.setattr(q.os, "killpg", fake_killpg)
+        assert q._process_group_absent(7) is False
+
+
+def test_process_group_absent_esrch_is_absent(monkeypatch):
+    def fake_killpg(_pgid: int, sig: int) -> None:
+        assert sig == 0
+        raise OSError(errno.ESRCH, "no such process")
+
+    def fake_kill(*_args: object) -> None:
+        raise AssertionError("os.kill must not probe process groups")
+
+    monkeypatch.setattr(q.os, "killpg", fake_killpg)
+    monkeypatch.setattr(q.os, "kill", fake_kill)
+    assert q._process_group_absent(7) is True
+
+
+def test_timeout_fails_when_killpg_zero_probe_succeeds(tmp_path, monkeypatch):
+    recorded = _patch_group_probe(monkeypatch)
+    result, _manifest, root = _run_synthetic_qualification(
+        tmp_path,
+        compiler_version_timeout=True,
+    )
+    version = result["compiler_version"]
+    assert version["terminal_status"] == "FAIL"
+    assert version["failure_reason"] == "PROCESS_CLEANUP_FAILED"
+    assert version["process_group_terminated"] is False
+    assert (root / "qualification-result.json").is_file()
+    assert ("killpg", 2_000_000_000, signal.SIGKILL) in recorded
+    assert ("killpg", 2_000_000_000, 0) in recorded
+    assert ("kill", 2_000_000_000, 0) not in recorded
+
+
+def test_wait_error_fails_when_killpg_zero_probe_succeeds(tmp_path, monkeypatch):
+    recorded = _patch_group_probe(monkeypatch)
+    result, _manifest, root = _run_synthetic_qualification(
+        tmp_path,
+        metadata_wait_error=True,
+    )
+    version = result["compiler_version"]
+    assert version["terminal_status"] == "FAIL"
+    assert version["failure_reason"] == "PROCESS_CLEANUP_FAILED"
+    assert version["process_group_terminated"] is False
+    assert (root / "qualification-result.json").is_file()
+    assert ("killpg", 2_000_000_000, 0) in recorded
+    assert ("kill", 2_000_000_000, 0) not in recorded
+
+
+def test_timeout_fails_when_killpg_zero_probe_is_permission(tmp_path, monkeypatch):
+    recorded = _patch_group_probe(
+        monkeypatch,
+        probe_error=PermissionError("denied"),
+    )
+    result, _manifest, _root = _run_synthetic_qualification(
+        tmp_path,
+        compiler_version_timeout=True,
+    )
+    version = result["compiler_version"]
+    assert version["terminal_status"] == "FAIL"
+    assert version["failure_reason"] == "PROCESS_CLEANUP_FAILED"
+    assert version["process_group_terminated"] is False
+    assert ("killpg", 2_000_000_000, 0) in recorded
+    assert ("kill", 2_000_000_000, 0) not in recorded
 
 
 def test_timeout_cleanup_succeeds_when_leader_reaped_and_pgid_absent(
@@ -1066,7 +1206,8 @@ def test_timeout_cleanup_succeeds_when_leader_reaped_and_pgid_absent(
     assert version["process_group_terminated"] is True
     assert version["failure_reason"] == "TIMEOUT"
     assert ("killpg", 2_000_000_000, signal.SIGKILL) in recorded
-    assert ("kill", 2_000_000_000, 0) in recorded
+    assert ("killpg", 2_000_000_000, 0) in recorded
+    assert ("kill", 2_000_000_000, 0) not in recorded
     assert recorded[0] == ("getpgid", 2_000_000_000)
     assert recorded.count(("getpgid", 2_000_000_000)) == 1
     assert result["_calls"] == [
@@ -1087,7 +1228,8 @@ def test_timeout_cleanup_fails_when_pgid_still_exists(tmp_path, monkeypatch):
     assert all(job["terminal_status"] == "NOT_STARTED" for job in result["jobs"])
     assert (root / "qualification-result.json").is_file()
     assert ("killpg", 2_000_000_000, signal.SIGKILL) in recorded
-    assert ("kill", 2_000_000_000, 0) in recorded
+    assert ("killpg", 2_000_000_000, 0) in recorded
+    assert ("kill", 2_000_000_000, 0) not in recorded
     assert result["_calls"] == [
         [str(tmp_path / "toolchain" / "c++"), "--version"]
     ]
@@ -1219,7 +1361,8 @@ def test_metadata_wait_error_cleans_up_and_closes(tmp_path, monkeypatch):
     assert (root / "qualification-manifest.json").is_file()
     assert (root / "METADATA_CXX_VERSION.stdout").read_bytes() == b"partial"
     assert ("killpg", 2_000_000_000, signal.SIGKILL) in recorded
-    assert ("kill", 2_000_000_000, 0) in recorded
+    assert ("killpg", 2_000_000_000, 0) in recorded
+    assert ("kill", 2_000_000_000, 0) not in recorded
     assert result["_calls"] == [
         [str(tmp_path / "toolchain" / "c++"), "--version"]
     ]

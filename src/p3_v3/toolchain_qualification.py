@@ -877,7 +877,7 @@ def _signal_process_group(pgid: int) -> bool:
 
 def _process_group_absent(pgid: int) -> bool:
     try:
-        os.kill(pgid, 0)
+        os.killpg(pgid, 0)
     except ProcessLookupError:
         return True
     except OSError as exc:
