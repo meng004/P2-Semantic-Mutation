@@ -1,16 +1,18 @@
-# Boost.Math PILOT_BUILD_PREFLIGHT_ONLY Plan Review Packet: P1BP1
+# Boost.Math PILOT_BUILD_PREFLIGHT_ONLY Plan Review Packet: P1BP1R1
 
-- Node name: `P1BP1_BOOST_MATH_PILOT_BUILD_PREFLIGHT_ONLY_PLAN`
-- Packet title: Boost.Math PILOT build-preflight-only plan review candidate
+- Node name: `P1BP1R1_BOOST_MATH_PILOT_BUILD_PREFLIGHT_PLAN_EVIDENCE_CLOSURE_REPAIR`
+- Packet title: Boost.Math PILOT build-preflight plan evidence-closure repair
 - Builder identity: Cursor VM
-- Starting commit: `d4289c6a92aa37ed6f7a9134aa81f9c066e905ba`
-- Ending commit: this node does not write an ending-commit token. The ending commit is the unique successor on `origin/main` that adds only the two files listed below.
+- Starting commit: `b0af1b1905891426bfc5b86b46cbe0e88360116b`
+- Ending commit: this node does not write an ending-commit token. The ending commit is the unique successor on `origin/main` that modifies only the two files listed below.
 - Plan path: `docs/superpowers/plans/2026-08-17-p3-boost-math-pilot-build-preflight-only.md`
-- Plan SHA-256: `72fbc0f53c0ca088bfd25f99c2f9f19832cde5466512bed3860c713293147e42`
-- Plan bytes: 101579
-- Plan LF count: 2504
-- Plan CR count: 0
+- Old plan SHA-256: `72fbc0f53c0ca088bfd25f99c2f9f19832cde5466512bed3860c713293147e42`
+- Old plan bytes / LF / CR: 101579 / 2504 / 0
+- New plan SHA-256: `9812df0a5faf98da32eabef861a8e60c6f66799c4810a719af9591d8a05bc182`
+- New plan bytes / LF / CR: 159208 / 3829 / 0
 - Packet path: `docs/review_20260817/boost_math_pilot_build_preflight_plan_review_packet.md`
+- Old packet SHA-256: `5b0dc14715dc00f6051d2192c29cc2b36a06004e04d203e8b8d1aa29ffec93a5`
+- Old packet bytes / LF / CR: 10492 / 257 / 0
 - Packet SHA-256, bytes, LF, and CR: this packet does not self-hash. Independent reviewers hash this file after clone. The node return records the post-write measurement.
 - Python fence count: 4
 - Requested reviewer: GPT-5.6 Sol High
@@ -18,6 +20,7 @@
 - Current source-preparation formal state: `PILOT_SOURCE_PREPARATION_PASS`
 - Requested build-preflight request status: `PILOT_BUILD_PREFLIGHT_PLAN_REVIEW_CANDIDATE`
 - `claims=blocked`
+- Repair rounds: 2
 
 This packet is not an independent PASS.
 This packet does not record an independent review PASS and does not speak for the reviewer.
@@ -31,40 +34,41 @@ Mutant, MR, certification, and outcome objects were not touched.
 
 ## File change list
 
-This node creates only:
+This node modifies only:
 
 1. `docs/superpowers/plans/2026-08-17-p3-boost-math-pilot-build-preflight-only.md`
 2. `docs/review_20260817/boost_math_pilot_build_preflight_plan_review_packet.md`
 
-No other file was created or modified. In particular no verdict, Authorization, intent, result, harness root, or build root was created. The complete 2026-08-15 plan, claim ledger, protocol, Frame, src, scripts, tests, and data files were not edited.
+No third file was created. No verdict, Authorization, intent, result, harness root, or build root was created. The complete 2026-08-15 plan, claim ledger, protocol, Frame, src, scripts, tests, and data files were not edited.
 
 ## RED
 
-Command, run before either file existed, against `d4289c6a92aa37ed6f7a9134aa81f9c066e905ba`:
+Command, run against committed `b0af1b1905891426bfc5b86b46cbe0e88360116b` before either file was rewritten:
 
-```python
-from pathlib import Path
-
-plan = Path(
-    "docs/superpowers/plans/"
-    "2026-08-17-p3-boost-math-pilot-build-preflight-only.md"
-)
-packet = Path(
-    "docs/review_20260817/"
-    "boost_math_pilot_build_preflight_plan_review_packet.md"
-)
-assert plan.is_file()
-assert packet.is_file()
+```text
+python3 /tmp/p3-bp-r1-red_check.py \
+  docs/superpowers/plans/2026-08-17-p3-boost-math-pilot-build-preflight-only.md
 ```
 
 Exit code: 1
 
-First failure: `assert plan.is_file()`.
-
 ```text
-Traceback (most recent call last):
-  File "<stdin>", line 11, in <module>
-AssertionError
+RED against b0af1b19 plan implementation fence
+RED_ITEM_COUNT 13
+RED 1_impl_verdict_paths_unchecked :: path_comparisons=[]
+RED 2_reviewed_commit_unvalidated :: reviewed_commit_in_validator=False
+RED 3_no_runtime_production_byte_compare :: verify_reviewed_production_bytes absent
+RED 4_impl_digest_discarded :: return plan_digest, verdict_digest
+RED 5_impl_verdict_sha_unbound :: intent=False result=False predecessor_has_impl_digest=False
+RED 6_no_crash_reconciliation_machine :: classify=False orphan_reason=False run_try=False
+RED 7_no_process_group_timeout :: start_new_session=False killpg=False proc_kill=True
+RED 8_incomplete_job_terminal_matrix :: PASS_branch=False FAIL_branch=False TIMEOUT_branch=False infra_phase=False process_started=False
+RED 9_incomplete_result_conservation :: started_count=False not_started_count=False JOB_SPECS=False
+RED 10_environment_hash_only :: intent_env=[] result_env=[]
+RED 11_no_compiler_dependency_closure :: compile_commands=False dependency_list=False
+RED 12_no_build_artifact_hashes :: artifact_keys=[]
+RED 13_compiler_missing_not_exact :: cmake_absent_raises=False run_records_compiler_missing=False
+RED_FAILED 13
 ```
 
 `command -v rtk` exited 1. Subsequent commands were bare `git`, `python3`, `sha256sum`, and `wc`.
@@ -72,8 +76,8 @@ AssertionError
 Start-gate evidence:
 
 ```text
-HEAD=d4289c6a92aa37ed6f7a9134aa81f9c066e905ba
-ORIGIN=d4289c6a92aa37ed6f7a9134aa81f9c066e905ba
+HEAD=b0af1b1905891426bfc5b86b46cbe0e88360116b
+ORIGIN=b0af1b1905891426bfc5b86b46cbe0e88360116b
 BRANCH=main
 branch.ab +0 -0
 diff_exit=0
@@ -81,63 +85,38 @@ cached_exit=0
 untracked empty
 ```
 
-## Source inspection allowlist
+Old file identities before rewrite:
 
-Before any source-file read, `capture_materialized_tree` and `validate_materialized_tree_with_phase1` were called on `/tmp/p3-boost-math-pilot-production-source`.
-
-```text
-tree SHA-256 = 93a62859d7fdd6b2068e494bbe6e3e27180b874cbd27055ac27f941e507a90d8
-file count = 4396
-total bytes = 95635487
-```
-
-No CMake, CTest, compiler, or source-defined executable was run. The source root was not written. Package C, P12 reveal, buggy revisions, patches, MR, and outcomes were not read. No dependency was downloaded.
-
-Adopted files and SHA-256 values:
-
-| Source-relative path | SHA-256 |
-|---|---|
-| `CMakeLists.txt` | `eae9729bfcc3cb4ba5d21921a040a06ee0975b029e8d976fb55cd60322111fae` |
-| `README.md` | `9a8b2fd7ccc0ef9f08cbd6384ac3b1ebc2a25b695df72e63ad426bcc13407f4d` |
-| `include/boost/math/tools/is_standalone.hpp` | `83a9b1e4f131596ec61ff4de801ab917e89c1e2aa8f0f974d01d1ed6a9cb753f` |
-| `include/boost/math/tools/config.hpp` | `8848794f913847071f46358548b63cc288281702efd0c1bcbaf785341f325ce5` |
-| `include/boost/math/constants/constants.hpp` | `06f55b132b6cb337ba298851b94cc92bc54209d90d29debdf39ae748aa19c2a7` |
-| `example/CMakeLists.txt` | `56a2c06eca3591cfb545751ebafcb0101699f51d62ae50943c0e7fffa835d688` |
-
-Those files support a standalone header-only consumer harness that includes the frozen `include/` directory. They do not support treating this stage as a Boost.Math full-project build. `/usr/include/boost` was absent on the planning host and was not used.
-
-Frozen harness identities derived from that evidence:
-
-| Harness file | SHA-256 | bytes | LF | CR |
+| File | SHA-256 | bytes | LF | CR |
 |---|---|---|---|---|
-| `CMakeLists.txt` | `2bdbb40e8d6fbd488ddde7bda4b855047361bedc1e7c4c9a5e72bf971d602a8b` | 1084 | 33 | 0 |
-| `smoke.cpp` | `609c8990cef0cad5a1e448f11e8353dbc6c040e88778b72fac64ea6a6b4002ed` | 198 | 11 | 0 |
+| plan | `72fbc0f53c0ca088bfd25f99c2f9f19832cde5466512bed3860c713293147e42` | 101579 | 2504 | 0 |
+| packet | `5b0dc14715dc00f6051d2192c29cc2b36a06004e04d203e8b8d1aa29ffec93a5` | 10492 | 257 | 0 |
 
 ## Authority hash table
 
-Rechecked against the starting commit. All listed file hashes matched.
+Rechecked against the starting commit. All listed file hashes matched. No drift.
 
-| Object | SHA-256 |
-|---|---|
-| Phase 1 final review | `95345c4229e8e3dedd21e3f7da022fc5daeceb1018392dc1d0e3e35b00fa5a7d` |
-| scientific charter | `bd9234e3a26557e0036e42415528f983f2c18313295352ddffb4ccc076c1d5e4` |
-| governing scientific plan | `fea00496801c31ba074aa74742f5e6a77019ffc2e344642122a15462d7443830` |
-| protocol | `240d8270d41802c9d5b86f30564eadd1a86fd9ed09de2c7e947d17c1a4d78519` |
-| environment lock | `7706b4ce272d09df13c5212b04ec0f2519932f4225d5eac0d052d3225c7ff35f` |
-| claim ceiling | `1f46b7cd97e6ddf6d65f6c52a552f4e4b6680a987a088d4f5a65ebc19bf017ed` |
-| claim ledger | `bf4979662697b2d0565bb70eec88b22673e84bee93b61234555342efb4082a68` |
-| Phase 1 receipts | `8eeccfe4d1aebb09e6ee9ad2fadb82ac5b8697c40f602592faa6b3878692a440` |
-| Pass-1 baseline manifest | `b0be90ded75a4242bf883698d2b8c3f0c55d70b1b0928d7068bc1a3797e4eb11` |
-| source manifest file | `d774143f6a0dc6cf24a9ddda8b4e9760b3d547e03cbd21e16d84220f826073c5` |
-| source-preparation result file | `6a525ff074f5ab67f4a58af0a4f7f2264f3888757513a8fc80fb6760c8b577b9` |
-| source-preparation result verdict | `43cedfd21621496f61feec1418b2ec4d9e02b51096c477b0d221067d1e1ed7f2` |
-| source-preparation reviewed commit | `44acee8882b004f50005cd39ca732bc6f09604fa` |
-| normalized/materialized tree | `93a62859d7fdd6b2068e494bbe6e3e27180b874cbd27055ac27f941e507a90d8` |
-| build descriptor | `68d2e0fd34b845bb0df22b29003f26259d5655d2ec80c18895ff36904db2d95d` |
-| neutral snapshot | `74cdc825c3c728c25f5ea857af1565350515a4e631fb0a874c26e810ec437886` |
-| controlled subject | `89b0e6791c611b465b9216e833e0c526a53ffd6946b5cd20de045e3641f43914` |
-| controlled subject source | `e5f21a7d067d641d0a20bfc57c61e630d6f7588ef30235cea49c9a9cf950c7a7` |
-| complete 2026-08-15 pilot plan, unfrozen | `1612a6ee81773c7db97625ae3497fab31b93ad70f2ecaefce2fdd845bda73cca` |
+| Object | SHA-256 | Status |
+|---|---|---|
+| docs/review_20260815/phase1_sol_high_final_review.md | `95345c4229e8e3dedd21e3f7da022fc5daeceb1018392dc1d0e3e35b00fa5a7d` | no drift |
+| docs/superpowers/plans/2026-08-12-p3-return-to-scientific-critical-path.md | `bd9234e3a26557e0036e42415528f983f2c18313295352ddffb4ccc076c1d5e4` | no drift |
+| docs/superpowers/plans/2026-08-08-p3-semantic-mutant-argumentation-experiment.md | `fea00496801c31ba074aa74742f5e6a77019ffc2e344642122a15462d7443830` | no drift |
+| data/p3_v3/protocol/protocol.json | `240d8270d41802c9d5b86f30564eadd1a86fd9ed09de2c7e947d17c1a4d78519` | no drift |
+| data/p3_v3/protocol/environment_lock.json | `7706b4ce272d09df13c5212b04ec0f2519932f4225d5eac0d052d3225c7ff35f` | no drift |
+| data/p3_v3/protocol/claim_ceiling_authority.json | `1f46b7cd97e6ddf6d65f6c52a552f4e4b6680a987a088d4f5a65ebc19bf017ed` | no drift |
+| research/evidence/p3_claim_ledger_v1.3.0.yml | `bf4979662697b2d0565bb70eec88b22673e84bee93b61234555342efb4082a68` | no drift |
+| data/p3_v3/phase1_frames/receipts.json | `8eeccfe4d1aebb09e6ee9ad2fadb82ac5b8697c40f602592faa6b3878692a440` | no drift |
+| data/p3_v3/phase1_frames/pass1_baseline_manifest.json | `b0be90ded75a4242bf883698d2b8c3f0c55d70b1b0928d7068bc1a3797e4eb11` | no drift |
+| data/p3_v3/pilot/boost_math/source-manifest.json | `d774143f6a0dc6cf24a9ddda8b4e9760b3d547e03cbd21e16d84220f826073c5` | no drift |
+| data/p3_v3/pilot/boost_math/source-preparation-result.json | `6a525ff074f5ab67f4a58af0a4f7f2264f3888757513a8fc80fb6760c8b577b9` | no drift |
+| docs/review_20260817/boost_math_pilot_source_preparation_result_sol_high_review.md | `43cedfd21621496f61feec1418b2ec4d9e02b51096c477b0d221067d1e1ed7f2` | no drift |
+| docs/superpowers/plans/2026-08-15-p3-boost-math-pilot-only.md | `1612a6ee81773c7db97625ae3497fab31b93ad70f2ecaefce2fdd845bda73cca` | no drift |
+| source-preparation reviewed commit | `44acee8882b004f50005cd39ca732bc6f09604fa` | no drift |
+| normalized/materialized tree | `93a62859d7fdd6b2068e494bbe6e3e27180b874cbd27055ac27f941e507a90d8` | no drift |
+| build descriptor | `68d2e0fd34b845bb0df22b29003f26259d5655d2ec80c18895ff36904db2d95d` | no drift |
+| neutral snapshot | `74cdc825c3c728c25f5ea857af1565350515a4e631fb0a874c26e810ec437886` | no drift |
+| controlled subject | `89b0e6791c611b465b9216e833e0c526a53ffd6946b5cd20de045e3641f43914` | no drift |
+| controlled subject source | `e5f21a7d067d641d0a20bfc57c61e630d6f7588ef30235cea49c9a9cf950c7a7` | no drift |
 
 Authorization bytes checked in memory only, not written:
 
@@ -149,86 +128,99 @@ LF 1
 CR 0
 ```
 
+Harness identities remain frozen:
+
+| Harness file | SHA-256 | bytes | LF | CR |
+|---|---|---|---|---|
+| `CMakeLists.txt` | `2bdbb40e8d6fbd488ddde7bda4b855047361bedc1e7c4c9a5e72bf971d602a8b` | 1084 | 33 | 0 |
+| `smoke.cpp` | `609c8990cef0cad5a1e448f11e8353dbc6c040e88778b72fac64ea6a6b4002ed` | 198 | 11 | 0 |
+
 ## Repair rounds
 
-1. After the first exclusive-create of the plan, two prose lines were edited before this packet existed: the source-inspection sentence no longer used function-call ellipsis, and the `CMakeLists.txt` allowlist row quoted the full `cmake_dependent_option` line. No schema, harness byte, argv, timeout, or task-map change. GREEN below is the post-repair plan.
-
-Repair rounds after this packet: 0.
+2. Round 1 rewrote the plan and packet so the 13 RED items became PASS. Round 2 added the missing heading break before Implementation-Verdict Byte Closure and refreshed this packet's hashes and line index. The unique future Task, 2 Create + 2 Modify file map, three-job DAG, timeouts, Authorization bytes, harness bytes, and claims ceiling are unchanged. `-G Unix Makefiles` was added to the frozen configure argv so the generator in the durable environment snapshot is fixed before configure.
 
 ## Semantic GREEN
 
-Command, run after the plan existed and before this packet was written, then re-checked after both files existed for the plan invariants:
+Command, run after both files were rewritten:
 
 ```text
-python3 semantic_green.py
+python3 /tmp/p3-bp-r1-red_check.py --green \
+  docs/superpowers/plans/2026-08-17-p3-boost-math-pilot-build-preflight-only.md
+python3 /tmp/p3-bp-r1-green_extra.py
 ```
 
 Exit code: 0
 
 ```text
-PLAN_SHA 72fbc0f53c0ca088bfd25f99c2f9f19832cde5466512bed3860c713293147e42
-PLAN_BYTES 101579
-PLAN_LF 2504
-PLAN_CR 0
-PASS exactly one future Task
-PASS task title
-PASS future file map 2 Create + 2 Modify create=['src/p3_v3/pilot_build.py', 'tests/p3_v3/test_pilot_build.py'] modify=['scripts/p3_v3/pilot.py', 'tests/p3_v3/test_pilot.py']
-PASS exactly 3 jobs planned_count
-PASS unique order configure -> build -> smoke
-PASS timeouts 900/3600/1800
-PASS outer 7200
-PASS parallelism 4
-PASS Authorization hash
-PASS Authorization bytes 42
-PASS Authorization LF 1
-PASS source-prep verdict hash
-PASS source manifest hash
-PASS source-prep result hash
-PASS tree hash
-PASS harness cmake hash
-PASS harness cxx hash
-PASS harness cmake complete
-PASS harness cxx complete
-PASS dependency provenance fail-closed
-PASS no system Boost fallback
-PASS no retry
-PASS schema environment
-PASS schema intent
-PASS schema job
-PASS schema result
-PASS no TODO/TBD
-PASS confirmatory leakage tests
-PASS claims blocked
-PASS rq4_supported=false
-PASS formal_denominator_membership=false
-PASS 2026-08-15 plan unfrozen
-PASS no mutant/MR/cert/profiling procedures as tasks
-PASS writing-plans header
-PASS title exact
-PASS python fence count 4 4
-AST_OK 1
-AST_OK 2
-AST_OK 3
-AST_OK 4
-PASS all Python fences AST-valid
-PASS authority 95345c4229e8
-PASS authority bd9234e3a265
-PASS authority fea00496801c
-PASS authority 240d8270d418
-PASS authority 7706b4ce272d
-PASS authority 1f46b7cd97e6
-PASS authority bf4979662697
-PASS authority 8eeccfe4d1ae
-PASS authority b0be90ded75a
-PASS authority 68d2e0fd34b8
-PASS authority 74cdc825c3c7
-PASS authority 89b0e6791c61
-PASS authority e5f21a7d067d
-PASS authority 44acee8882b0
-SUMMARY PASS pass=51 fail=0
+GREEN against repaired plan implementation fence
+GREEN_ITEM_COUNT 13
+PASS 1_impl_verdict_paths_unchecked :: path_comparisons=['src/p3_v3/pilot_build.py', 'scripts/p3_v3/pilot.py', 'tests/p3_v3/test_pilot_build.py', 'tests/p3_v3/test_pilot.py']
+PASS 2_reviewed_commit_unvalidated :: reviewed_commit_in_validator=True
+PASS 3_no_runtime_production_byte_compare :: verify_reviewed_production_bytes present
+PASS 4_impl_digest_discarded :: return plan_digest, verdict_digest, impl_digest
+PASS 5_impl_verdict_sha_unbound :: intent=True result=True predecessor_has_impl_digest=True
+PASS 6_no_crash_reconciliation_machine :: classify=True orphan_reason=True run_try=True
+PASS 7_no_process_group_timeout :: start_new_session=True killpg=True proc_kill=False
+PASS 8_incomplete_job_terminal_matrix :: PASS_branch=True FAIL_branch=True TIMEOUT_branch=True infra_phase=True process_started=True
+PASS 9_incomplete_result_conservation :: started_count=True not_started_count=True JOB_SPECS=True
+PASS 10_environment_hash_only :: intent_env=['environment_snapshot_sha256', 'environment_snapshot'] result_env=['environment_snapshot_sha256', 'environment_snapshot']
+PASS 11_no_compiler_dependency_closure :: compile_commands=True dependency_list=True
+PASS 12_no_build_artifact_hashes :: artifact_keys=['cmake_cache_sha256', 'compile_commands_sha256', 'dependency_list_sha256', 'smoke_executable_sha256']
+PASS 13_compiler_missing_not_exact :: cmake_absent_raises=True run_records_compiler_missing=True
+GREEN_FAILED 0
+GREEN extra invariants
+PASS python_fences_ast :: count=4
+PASS exactly_one_task :: count=1
+PASS task_title :: present
+PASS future_file_map :: create=True modify=True
+PASS planned_count_3 :: 3
+PASS timeouts :: 900/3600/1800/7200
+PASS parallelism_4 :: 4
+PASS auth_hash :: present
+PASS harness_cmake :: present
+PASS harness_cxx :: present
+PASS claims_blocked :: blocked
+PASS rq4_false :: false
+PASS no_todo :: clean
+PASS no_emdash :: clean
+PASS writing_plans_header :: present
+PASS generator_frozen :: present
+PASS verify_before_intent :: order
+PASS process_group :: present
+PASS orphan_state :: present
+PASS env_body :: present
+PASS dep_closure :: present
+PASS artifact_hashes :: present
+PASS no_mutant_task :: no extra tasks
+GREEN_EXTRA_FAILED 0
 ```
 
-The only remaining `...` token in the plan is the Python variadic type `tuple[dict[str, Any], ...]` inside the implementation fence. It is not a placeholder.
+## Authority / terminal / reconciliation / dependency-evidence line index
+
+These line numbers are 1-based in the repaired plan.
+
+| Symbol | Line |
+|---|---|
+| `validate_implementation_verdict` | 2575 |
+| `verify_reviewed_production_bytes` | 2618 |
+| `_require_plan_and_implementation_verdicts` | 3378 |
+| `validate_environment_snapshot` | 2632 |
+| `validate_job_result` | 2701 |
+| `validate_intent` | 2795 |
+| `validate_result` | 2876 |
+| `classify_reconciliation` | 2512 |
+| `execute_job` | 3134 |
+| `start_new_session=True` | 400 / 3156 |
+| `os.killpg` | 3170 |
+| `ORPHANED_INTENT_NO_PROCESS` | 406 / 495 / 1607 |
+| `collect_baseline_build_evidence` | 3067 |
+| `reject_nonfrozen_boost_headers` | 2561 |
+| `FROZEN_INCLUDE_PREFIX` | 2082 |
+| `cmake_cache_sha256` | 1721 |
+| `compile_commands_sha256` | 1722 |
+| `dependency_list_sha256` | 1723 |
+| `smoke_executable_sha256` | 1724 |
+| `run_build_preflight` | 3543 |
 
 ## Current and requested states
 

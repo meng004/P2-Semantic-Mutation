@@ -234,6 +234,7 @@ CMAKE_CONFIGURE =
   cmake
   -S /tmp/p3-boost-math-pilot-build-preflight-harness
   -B /tmp/p3-boost-math-pilot-build-preflight
+  -G Unix Makefiles
   -DCMAKE_BUILD_TYPE=Release
   -DCMAKE_CXX_STANDARD=14
   -DCMAKE_CXX_STANDARD_REQUIRED=ON
@@ -300,7 +301,9 @@ Executable network contract:
 - if `BOOST_ROOT`, `BOOST_INCLUDEDIR`, `Boost_DIR`, `CMAKE_PREFIX_PATH`, `CMAKE_INCLUDE_PATH`, `CPATH`, or `CPLUS_INCLUDE_PATH` names a Boost search path, production stops with `FAIL_INFRASTRUCTURE` / `SYSTEM_BOOST_FALLBACK` and does not unset the variable to continue
 - if stdout, stderr, or argv contains `/usr/include/boost` or `/usr/local/include/boost`, the job is `FAIL_INFRASTRUCTURE` with `failure_reason = SYSTEM_BOOST_FALLBACK`
 
-If `cmake` or a C++ compiler is absent, stop with `FAIL_INFRASTRUCTURE` / `MISSING_DEPENDENCY`. Do not install it.
+If `cmake` or a C++ compiler is absent, stop with `FAIL_INFRASTRUCTURE` / `MISSING_DEPENDENCY` and `infrastructure_phase=PRE_PROCESS`. Do not install it. Do not change the harness. Do not retry.
+
+PASS of `BASELINE_BUILD` must prove the compiler used the frozen source object. Log-string scans are not enough. The compiler dependency file, `CMakeCache.txt`, `compile_commands.json`, and the smoke executable hashes are bound on the aggregate result. A Boost header outside `/tmp/p3-boost-math-pilot-production-source/include` is `FAIL_INFRASTRUCTURE/SYSTEM_BOOST_FALLBACK`.
 
 ---
 
@@ -384,26 +387,145 @@ The complete key and type maps, validators, constructors, and producers are the 
 3. `p3-pilot-build-preflight-job-result-v1`
 4. `p3-pilot-build-preflight-result-v1`
 
-Intent binds: source-preparation verdict SHA, source manifest SHA, source-preparation result SHA, normalized tree SHA, controlled subject IDs, build descriptor SHA, Authorization hash, exact harness file hashes, exact three argv arrays, exact timeouts, exact dependency DAG, source/build/harness paths, environment snapshot hash, and predecessor hashes.
+Intent binds: source-preparation verdict SHA, source manifest SHA, source-preparation result SHA, normalized tree SHA, controlled subject IDs, build descriptor SHA, Authorization hash, exact harness file hashes, exact three argv arrays, exact timeouts, exact dependency DAG, source/build/harness paths, the complete environment snapshot object, `environment_snapshot_sha256`, `implementation_verdict_sha256`, producer pid/starttime, and predecessor hashes that include the implementation-verdict file SHA.
 
-Aggregate result binds: intent file SHA, the three exact job-result objects, source/preparation identities, terminal aggregate status, build-root identity/evidence, `no_retry=true`, `formal_denominator_membership=false`, `rq4_supported=false`, and `claims=blocked`.
+Aggregate result binds: intent file SHA, the three exact job-result objects, source/preparation identities, `implementation_verdict_sha256`, the complete environment snapshot object, CMakeCache / compile_commands / dependency-list / smoke-executable hashes, terminal aggregate status, build-root identity/evidence, `no_retry=true`, `formal_denominator_membership=false`, `rq4_supported=false`, and `claims=blocked`.
 
-Job result binds: `job_id`, `job_kind`, `dependency_job_ids`, `argv`, `timeout_seconds`, `started`, `terminal_status`, `failure_reason`, `exit_code`, `stdout_sha256`, `stderr_sha256`, `stdout_bytes`, `stderr_bytes`, `started_at`, `ended_at`, `wall_seconds`, `cpu_seconds`, `peak_rss_bytes`, and `artifact_sha256`.
+Job result binds: `job_id`, `job_kind`, `dependency_job_ids`, `argv`, `timeout_seconds`, `process_started`, `process_group_terminated`, `infrastructure_phase`, `terminal_status`, `failure_reason`, `exit_code`, `stdout_sha256`, `stderr_sha256`, `stdout_bytes`, `stderr_bytes`, `started_at`, `ended_at`, `wall_seconds`, `cpu_seconds`, `peak_rss_bytes`, and `artifact_sha256`.
 
 ---
 
 ## Execution Contract
 
-- `subprocess` uses an argv list and `shell=False`.
+- `subprocess` uses an argv list, `shell=False`, and `start_new_session=True`.
 - Intent is exclusive-created before the first child process starts.
-- The three-job attempt must not reuse an existing intent.
+- The implementation verdict and current production bytes are verified before intent, harness, build root, or result creation.
+- The three-job attempt must not reuse an existing intent or an existing valid result.
 - There is no retry.
+- Every catchable exception after intent creation writes exactly one terminal result.
+- An orphaned valid intent with no result and no live producer writes `FAIL_INFRASTRUCTURE/ORPHANED_INTENT_NO_PROCESS` and starts no child.
+- Job timeout kills the process group and reaps. The runner also tracks the 7200-second outer deadline.
 - Every started job produces one terminal result.
 - Unstarted dependents are written as `NOT_STARTED`.
 - stdout and stderr are hashed and counted as raw bytes.
 - Source, build, and harness paths are safe and non-symlink.
 - Production does not call confirmatory `run_preflight`.
 - Production does not call a profiling runner.
+
+---
+
+## Implementation-Verdict Byte Closure
+
+Formal implementation-verdict archival remains a later reserved file. This plan does not create it. The later production function must still treat that file as authority over the four reviewed implementation paths.
+
+`validate_implementation_verdict` must require:
+
+- `reviewed_commit` matches `^[0-9a-f]{40}$`
+- the four reviewed paths are exactly:
+  - `src/p3_v3/pilot_build.py`
+  - `scripts/p3_v3/pilot.py`
+  - `tests/p3_v3/test_pilot_build.py`
+  - `tests/p3_v3/test_pilot.py`
+- the six SHA-256 fields are lowercase SHA-256
+
+`verify_reviewed_production_bytes` must use `read_regular_file_snapshot` on those four current files, compare each digest to the verdict, and finish before intent, harness, build root, or result creation. Any drift writes no output and fails closed.
+
+`_require_plan_and_implementation_verdicts` returns `plan_sha256`, `plan_verdict_sha256`, and `implementation_verdict_sha256`. Intent and aggregate result bind `implementation_verdict_sha256`. `predecessor_sha256` must contain the implementation-verdict file SHA.
+
+---
+
+## Durable Environment Evidence
+
+The durable intent must embed the complete exact environment snapshot object and its self-hash. Storing only `environment_snapshot_sha256` is not enough.
+
+The snapshot must bind at least:
+
+- resolved cmake executable path
+- resolved C++ compiler path or null
+- CMake version
+- compiler identity and version, or null
+- generator `Unix Makefiles`
+- OS, Python, and Git identities
+- `build_parallelism = 4`
+- disconnected environment
+- `system_boost_fallback_accepted = false`
+- CUDA absence non-blocking
+- `claims = blocked`
+
+The intent validator must re-validate the embedded object and require `environment_snapshot.artifact_sha256 == environment_snapshot_sha256`. The aggregate result carries the same embedded object.
+
+---
+
+## Exact Terminal Semantics
+
+Job `terminal_status` values are mutually exclusive. The field matrix is:
+
+- `PASS`: `process_started=true`, `exit_code=0`, `failure_reason=null`, stdio hashes and counts present, timestamps and resource fields present, `process_group_terminated=false`, `infrastructure_phase=null`
+- `FAIL`: `process_started=true`, nonzero or crash exit, `failure_reason` in `{NONZERO_EXIT, CRASH}`
+- `TIMEOUT`: `process_started=true`, `exit_code=null`, `failure_reason=TIMEOUT`, and the process group was terminated
+- `FAIL_INFRASTRUCTURE`: `infrastructure_phase` is `PRE_PROCESS` or `POST_PROCESS`. `PRE_PROCESS` has `process_started=false` and no forged process evidence. `POST_PROCESS` has `process_started=true` and stdio evidence.
+- `NOT_STARTED`: `process_started=false`, `failure_reason=DEPENDENCY_NOT_STARTED`, and no forged exit, stdio, timestamps, or resource evidence
+
+Result validator conservation:
+
+- `planned_count == 3`
+- `terminal_count == 3`
+- `started_count` equals the number of jobs with `process_started=true`
+- `not_started_count` equals the number of `NOT_STARTED` jobs
+- job id, order, argv, dependencies, and timeouts equal `JOB_SPECS`
+- configure not PASS implies build and smoke `NOT_STARTED`
+- build not PASS implies smoke `NOT_STARTED`
+- aggregate `terminal_status` and `failure_reason` equal the first non-PASS job
+- all three PASS implies aggregate `PASS` and `failure_reason=null`
+
+---
+
+## Crash, Timeout, and No-Retry Reconciliation
+
+Child processes start in an independent process group or session. A job timeout sends `SIGKILL` to the process group and then waits and reaps. The runner keeps an internal outer deadline of 7200 seconds. Shell `timeout 2h` is not the only deadline.
+
+After intent creation, every catchable exception normalizes to one terminal result. Production must not delete or overwrite intent, result, harness, or build root.
+
+Reconciliation states are mutually exclusive and complete:
+
+| State | Intent | Result | Live producer | Action |
+|---|---|---|---|---|
+| `FRESH` | absent | absent | no | start one new attempt |
+| `INTENT_LIVE` | valid | absent | yes | refuse; do not start another child |
+| `INTENT_ONLY_ORPHAN` | valid | absent | no | write `FAIL_INFRASTRUCTURE/ORPHANED_INTENT_NO_PROCESS` for configure; dependents `NOT_STARTED`; start no child |
+| `RESULT_TERMINAL` | valid | valid | any | refuse; do not rerun |
+| `RESULT_WITHOUT_INTENT` | absent | present | any | refuse |
+| `INVALID_DURABLE` | any other combination |  |  | refuse |
+
+Source drift after a child, harness publication failure, and log or result publication failure have explicit terminal reasons. They must not leave an intent that cannot be reviewed.
+
+---
+
+## Compiler Source and Build Artifact Evidence
+
+Keep the three-job DAG. Do not add a fourth job.
+
+`CMAKE_CONFIGURE` argv now also freezes `-G Unix Makefiles`. Timeouts remain 900 / 3600 / 1800. Outer deadline remains 7200. Parallelism remains 4.
+
+If the resolved C++ compiler is absent, `CMAKE_CONFIGURE` is `FAIL_INFRASTRUCTURE/MISSING_DEPENDENCY` with `infrastructure_phase=PRE_PROCESS`. Do not install a compiler, change the harness, or retry.
+
+`BASELINE_BUILD` PASS requires a postcondition, still inside that job:
+
+- read `CMakeCache.txt` and `compile_commands.json`
+- run the recorded compiler with `-M` on the frozen smoke translation unit
+- hash the canonical sorted dependency-path list
+- every Boost header path must start with `/tmp/p3-boost-math-pilot-production-source/include/`
+- `/usr/include/boost`, `/usr/local/include/boost`, or any other Boost root makes `BASELINE_BUILD` `FAIL_INFRASTRUCTURE/SYSTEM_BOOST_FALLBACK`
+- unsupported `-M` evidence is `FAIL_INFRASTRUCTURE/UNSUPPORTED_TOOLCHAIN`
+
+The aggregate result binds and validates:
+
+- `CMakeCache.txt` SHA-256
+- `compile_commands.json` SHA-256
+- dependency-list SHA-256
+- `boost_math_pilot_smoke` executable SHA-256
+
+`BASELINE_SMOKE` must execute the executable whose SHA-256 was recorded. Resolved cmake and compiler identities must match the intent environment snapshot.
 
 ---
 
@@ -572,11 +694,58 @@ REQUIRED_BUILD_PREFLIGHT_TESTS = [
     "test_cuda_absence_is_non_blocking",
     "test_confirmatory_schema_leakage_rejection",
     "test_claims_denominator_rq4_invariants",
+    "test_implementation_verdict_reviewed_path_commit_hash_drift",
+    "test_implementation_verdict_sha_enters_intent_result_predecessor",
+    "test_reviewed_production_bytes_runtime_drift",
+    "test_durable_environment_snapshot_round_trip",
+    "test_missing_compiler_exact_infrastructure_result",
+    "test_terminal_status_exact_matrix",
+    "test_result_count_conservation_and_aggregate",
+    "test_configure_build_dependency_blocking",
+    "test_process_group_timeout_terminates_descendants",
+    "test_exception_after_intent_produces_terminal_result",
+    "test_orphaned_intent_reconciliation_writes_no_new_process",
+    "test_second_invocation_never_reruns",
+    "test_source_drift_after_child_yields_terminal_failure",
+    "test_system_boost_dependency_path_rejection",
+    "test_frozen_source_dependency_closure_pass",
+    "test_build_artifact_hashes_bound",
+    "test_smoke_refuses_executable_hash_drift",
 ]
 
 
 def _sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def _minimal_environment(pilot_build):
+    environment = {
+        "schema_version": "p3-pilot-build-preflight-environment-v1",
+        "execution_class": "PILOT_ONLY",
+        "denominator": "PILOT_ONLY",
+        "cmake_executable": "cmake",
+        "cmake_executable_path": "/usr/bin/cmake",
+        "cmake_version": "cmake version 3.28.0",
+        "cxx_compiler_executable": "c++",
+        "cxx_compiler_path": "/usr/bin/c++",
+        "cxx_compiler_identity": "c++ (Debian)",
+        "cxx_compiler_version": "c++ (Debian)",
+        "cmake_generator": "Unix Makefiles",
+        "os_name": "Linux",
+        "os_release": "6.12.0",
+        "python_version": "3.11.0",
+        "git_version": "git version 2.43.0",
+        "build_parallelism": 4,
+        "nvcc_present": False,
+        "native_profiling_present": False,
+        "cuda_absence_blocking": False,
+        "fetchcontent_fully_disconnected": True,
+        "system_boost_fallback_accepted": False,
+        "disconnected_environment": dict(pilot_build.DISCONNECTED_ENVIRONMENT),
+        "claims": "blocked",
+    }
+    return pilot_build.validate_environment_snapshot(pilot_build._self_hash(environment))
+
 
 
 def _synthetic_specs(tmp_path: Path, configure, build, smoke, timeouts=None):
@@ -631,6 +800,23 @@ def test_required_build_preflight_names_are_frozen():
         "test_cuda_absence_is_non_blocking",
         "test_confirmatory_schema_leakage_rejection",
         "test_claims_denominator_rq4_invariants",
+        "test_implementation_verdict_reviewed_path_commit_hash_drift",
+        "test_implementation_verdict_sha_enters_intent_result_predecessor",
+        "test_reviewed_production_bytes_runtime_drift",
+        "test_durable_environment_snapshot_round_trip",
+        "test_missing_compiler_exact_infrastructure_result",
+        "test_terminal_status_exact_matrix",
+        "test_result_count_conservation_and_aggregate",
+        "test_configure_build_dependency_blocking",
+        "test_process_group_timeout_terminates_descendants",
+        "test_exception_after_intent_produces_terminal_result",
+        "test_orphaned_intent_reconciliation_writes_no_new_process",
+        "test_second_invocation_never_reruns",
+        "test_source_drift_after_child_yields_terminal_failure",
+        "test_system_boost_dependency_path_rejection",
+        "test_frozen_source_dependency_closure_pass",
+        "test_build_artifact_hashes_bound",
+        "test_smoke_refuses_executable_hash_drift",
     ]
 
 
@@ -779,7 +965,7 @@ def test_exact_three_job_dag(tmp_path):
         ["python3", "-c", "print('build')"],
         ["python3", "-c", "print('smoke')"],
     )
-    results = pilot_build.run_three_jobs(
+    results, _evidence = pilot_build.run_three_jobs(
         specs,
         env=dict(os.environ),
         log_root=tmp_path / "logs",
@@ -802,7 +988,7 @@ def test_configure_failure_prevents_build_and_smoke(tmp_path):
         ["python3", "-c", "print('build')"],
         ["python3", "-c", "print('smoke')"],
     )
-    results = pilot_build.run_three_jobs(
+    results, _evidence = pilot_build.run_three_jobs(
         specs,
         env=dict(os.environ),
         log_root=tmp_path / "logs",
@@ -825,7 +1011,7 @@ def test_build_failure_prevents_smoke(tmp_path):
         ["python3", "-c", "raise SystemExit(3)"],
         ["python3", "-c", "print('smoke')"],
     )
-    results = pilot_build.run_three_jobs(
+    results, _evidence = pilot_build.run_three_jobs(
         specs,
         env=dict(os.environ),
         log_root=tmp_path / "logs",
@@ -846,7 +1032,7 @@ def test_configure_timeout(tmp_path):
         ["python3", "-c", "print('smoke')"],
         timeouts=(0.2, 3600, 1800),
     )
-    results = pilot_build.run_three_jobs(
+    results, _evidence = pilot_build.run_three_jobs(
         specs,
         env=dict(os.environ),
         log_root=tmp_path / "logs",
@@ -866,7 +1052,7 @@ def test_build_timeout(tmp_path):
         ["python3", "-c", "print('smoke')"],
         timeouts=(900, 0.2, 1800),
     )
-    results = pilot_build.run_three_jobs(
+    results, _evidence = pilot_build.run_three_jobs(
         specs,
         env=dict(os.environ),
         log_root=tmp_path / "logs",
@@ -885,7 +1071,7 @@ def test_smoke_timeout(tmp_path):
         ["python3", "-c", "import time; time.sleep(2)"],
         timeouts=(900, 3600, 0.2),
     )
-    results = pilot_build.run_three_jobs(
+    results, _evidence = pilot_build.run_three_jobs(
         specs,
         env=dict(os.environ),
         log_root=tmp_path / "logs",
@@ -902,7 +1088,7 @@ def test_stdout_stderr_hash_and_byte_counts(tmp_path):
         ["python3", "-c", "print('build')"],
         ["python3", "-c", "print('smoke')"],
     )
-    results = pilot_build.run_three_jobs(
+    results, _evidence = pilot_build.run_three_jobs(
         specs,
         env=dict(os.environ),
         log_root=tmp_path / "logs",
@@ -921,6 +1107,7 @@ def test_no_shell_execution(tmp_path, monkeypatch):
 
     class FakeProc:
         returncode = 0
+        pid = os.getpid()
 
         def communicate(self, timeout=None):
             return b"", b""
@@ -928,9 +1115,10 @@ def test_no_shell_execution(tmp_path, monkeypatch):
         def kill(self):
             return None
 
-    def fake_popen(argv, stdout=None, stderr=None, shell=None, env=None):
+    def fake_popen(argv, stdout=None, stderr=None, shell=None, env=None, start_new_session=None):
         seen["argv"] = argv
         seen["shell"] = shell
+        seen["start_new_session"] = start_new_session
         return FakeProc()
 
     spec = {
@@ -944,6 +1132,7 @@ def test_no_shell_execution(tmp_path, monkeypatch):
         spec, env={"PATH": "/usr/bin"}, log_root=tmp_path / "logs", popen=fake_popen
     )
     assert seen["shell"] is False
+    assert seen["start_new_session"] is True
     assert seen["argv"] == ["cmake", "-S", "harness", "-B", "build"]
 
 
@@ -995,7 +1184,12 @@ def test_no_system_boost_fallback():
 def test_cuda_absence_is_non_blocking(monkeypatch):
     import p3_v3.pilot_build as pilot_build
 
-    monkeypatch.setattr(pilot_build.shutil, "which", lambda name: None if name == "nvcc" else "/usr/bin/" + name)
+    monkeypatch.setattr(
+        pilot_build.shutil,
+        "which",
+        lambda name: None if name == "nvcc" else "/usr/bin/" + name,
+    )
+    monkeypatch.setattr(pilot_build, "probe_identity", lambda exe: None if exe is None else "probe")
     snapshot = pilot_build.make_environment_snapshot()
     assert snapshot["nvcc_present"] is False
     assert snapshot["cuda_absence_blocking"] is False
@@ -1040,30 +1234,16 @@ def test_claims_denominator_rq4_invariants():
     assert not_started["claims"] == "blocked"
     assert not_started["execution_class"] == "PILOT_ONLY"
     assert not_started["denominator"] == "PILOT_ONLY"
-    environment = {
-        "schema_version": "p3-pilot-build-preflight-environment-v1",
-        "execution_class": "PILOT_ONLY",
-        "denominator": "PILOT_ONLY",
-        "cmake_executable": "cmake",
-        "cxx_compiler_executable": None,
-        "nvcc_present": False,
-        "native_profiling_present": False,
-        "cuda_absence_blocking": False,
-        "fetchcontent_fully_disconnected": True,
-        "system_boost_fallback_accepted": False,
-        "disconnected_environment": dict(pilot_build.DISCONNECTED_ENVIRONMENT),
-        "claims": "blocked",
-    }
-    validated = pilot_build.validate_environment_snapshot(
-        pilot_build._self_hash(environment)
-    )
+    validated = _minimal_environment(pilot_build)
     assert validated["claims"] == "blocked"
-    intent = pilot_build.build_intent(validated, ["0" * 64])
+    impl = "a" * 64
+    intent = pilot_build.build_intent(validated, sorted([impl, "0" * 64]), impl)
     assert intent["claims"] == "blocked"
     assert intent["formal_denominator_membership"] is False
     assert intent["rq4_supported"] is False
     assert intent["no_retry"] is True
     assert intent["planned_count"] == 3
+    assert intent["implementation_verdict_sha256"] == impl
     jobs = [
         pilot_build.make_not_started_job(spec) for spec in pilot_build.JOB_SPECS
     ]
@@ -1071,7 +1251,9 @@ def test_claims_denominator_rq4_invariants():
         intent_sha256="1" * 64,
         environment=validated,
         jobs=jobs,
-        predecessor=["1" * 64],
+        predecessor=sorted(["1" * 64, impl]),
+        implementation_verdict_sha256=impl,
+        evidence=None,
     )
     assert result["claims"] == "blocked"
     assert result["formal_denominator_membership"] is False
@@ -1089,6 +1271,497 @@ def test_capability_does_not_call_confirmatory_preflight():
     assert "run_preflight" not in text
     assert "erf(x)" not in text
     assert "erfc" not in text
+
+
+def test_implementation_verdict_reviewed_path_commit_hash_drift():
+    import p3_v3.pilot_build as pilot_build
+
+    verdict = {
+        "reviewed_plan_path": pilot_build.PLAN_PATH.as_posix(),
+        "reviewed_plan_sha256": "0" * 64,
+        "reviewed_plan_verdict_sha256": "1" * 64,
+        "reviewed_commit": "44acee8882b004f50005cd39ca732bc6f09604fa",
+        "reviewed_pilot_build_path": "src/wrong.py",
+        "reviewed_pilot_build_sha256": "2" * 64,
+        "reviewed_pilot_cli_path": "scripts/p3_v3/pilot.py",
+        "reviewed_pilot_cli_sha256": "3" * 64,
+        "reviewed_test_pilot_build_path": "tests/p3_v3/test_pilot_build.py",
+        "reviewed_test_pilot_build_sha256": "4" * 64,
+        "reviewed_test_pilot_path": "tests/p3_v3/test_pilot.py",
+        "reviewed_test_pilot_sha256": "5" * 64,
+        "verdict": "PASS",
+        "authorized_state": "PILOT_BUILD_PREFLIGHT_IMPLEMENTATION_PASS",
+        "claims": "blocked",
+    }
+    with pytest.raises(EvidenceError, match="E_PILOT_BUILD_IMPL_VERDICT"):
+        pilot_build.validate_implementation_verdict(verdict, "0" * 64, "1" * 64)
+    verdict["reviewed_pilot_build_path"] = "src/p3_v3/pilot_build.py"
+    verdict["reviewed_commit"] = "NOTAGITSHA"
+    with pytest.raises(EvidenceError, match="E_PILOT_BUILD_IMPL_VERDICT"):
+        pilot_build.validate_implementation_verdict(verdict, "0" * 64, "1" * 64)
+
+
+def test_implementation_verdict_sha_enters_intent_result_predecessor():
+    import p3_v3.pilot_build as pilot_build
+
+    env = _minimal_environment(pilot_build)
+    impl = "b" * 64
+    intent = pilot_build.build_intent(env, sorted([impl, "c" * 64]), impl)
+    assert intent["implementation_verdict_sha256"] == impl
+    assert impl in intent["predecessor_sha256"]
+    jobs = [pilot_build.make_not_started_job(spec) for spec in pilot_build.JOB_SPECS]
+    result = pilot_build.build_result(
+        intent_sha256="d" * 64,
+        environment=env,
+        jobs=jobs,
+        predecessor=sorted(["d" * 64, impl]),
+        implementation_verdict_sha256=impl,
+        evidence=None,
+    )
+    assert result["implementation_verdict_sha256"] == impl
+    assert impl in result["predecessor_sha256"]
+
+
+def test_reviewed_production_bytes_runtime_drift(tmp_path, monkeypatch):
+    import p3_v3.pilot_build as pilot_build
+
+    current = tmp_path / "src" / "p3_v3" / "pilot_build.py"
+    current.parent.mkdir(parents=True)
+    current.write_bytes(b"current-bytes\n")
+    monkeypatch.setattr(
+        pilot_build,
+        "REVIEWED_IMPLEMENTATION_FILES",
+        (
+            (
+                "reviewed_pilot_build_path",
+                "reviewed_pilot_build_sha256",
+                str(current),
+            ),
+        ),
+    )
+    verdict = {
+        "reviewed_pilot_build_path": str(current),
+        "reviewed_pilot_build_sha256": "0" * 64,
+    }
+    with pytest.raises(EvidenceError, match="E_PILOT_BUILD_PRODUCTION_BYTES"):
+        pilot_build.verify_reviewed_production_bytes(verdict)
+
+
+def test_durable_environment_snapshot_round_trip():
+    import p3_v3.pilot_build as pilot_build
+
+    env = _minimal_environment(pilot_build)
+    impl = "f" * 64
+    intent = pilot_build.build_intent(env, sorted([impl]), impl)
+    again = pilot_build.validate_environment_snapshot(intent["environment_snapshot"])
+    assert again["artifact_sha256"] == intent["environment_snapshot_sha256"]
+    assert again["cmake_executable_path"] == "/usr/bin/cmake"
+    assert again["cxx_compiler_path"] == "/usr/bin/c++"
+    assert again["cmake_version"] == "cmake version 3.28.0"
+    assert again["cmake_generator"] == "Unix Makefiles"
+
+
+def test_missing_compiler_exact_infrastructure_result(tmp_path):
+    import p3_v3.pilot_build as pilot_build
+
+    env = _minimal_environment(pilot_build)
+    env = dict(env)
+    env["cxx_compiler_path"] = None
+    env["cxx_compiler_executable"] = None
+    env["cxx_compiler_identity"] = None
+    env["cxx_compiler_version"] = None
+    env.pop("artifact_sha256")
+    env = pilot_build.validate_environment_snapshot(pilot_build._self_hash(env))
+    specs = _synthetic_specs(
+        tmp_path,
+        ["python3", "-c", "print('configure')"],
+        ["python3", "-c", "print('build')"],
+        ["python3", "-c", "print('smoke')"],
+    )
+    results, _evidence = pilot_build.run_three_jobs(
+        specs,
+        env=dict(os.environ),
+        log_root=tmp_path / "logs",
+        environment=env,
+    )
+    assert results[0]["terminal_status"] == "FAIL_INFRASTRUCTURE"
+    assert results[0]["failure_reason"] == "MISSING_DEPENDENCY"
+    assert results[0]["process_started"] is False
+    assert results[0]["infrastructure_phase"] == "PRE_PROCESS"
+    assert results[1]["terminal_status"] == "NOT_STARTED"
+    assert results[2]["terminal_status"] == "NOT_STARTED"
+
+
+def _started_job(pilot_build, spec, **overrides):
+    payload = {
+        "schema_version": "p3-pilot-build-preflight-job-result-v1",
+        "execution_class": "PILOT_ONLY",
+        "denominator": "PILOT_ONLY",
+        "job_id": spec["job_id"],
+        "job_kind": spec["job_kind"],
+        "dependency_job_ids": list(spec["dependency_job_ids"]),
+        "argv": list(spec["argv"]),
+        "timeout_seconds": spec["timeout_seconds"],
+        "process_started": True,
+        "process_group_terminated": False,
+        "infrastructure_phase": None,
+        "terminal_status": "PASS",
+        "failure_reason": None,
+        "exit_code": 0,
+        "stdout_sha256": "a" * 64,
+        "stderr_sha256": "b" * 64,
+        "stdout_bytes": 1,
+        "stderr_bytes": 1,
+        "started_at": "2026-08-18T00:00:00Z",
+        "ended_at": "2026-08-18T00:00:01Z",
+        "wall_seconds": 1.0,
+        "cpu_seconds": 0.1,
+        "peak_rss_bytes": 1024,
+        "claims": "blocked",
+    }
+    payload.update(overrides)
+    return pilot_build.validate_job_result(pilot_build._self_hash(payload))
+
+
+def test_terminal_status_exact_matrix():
+    import p3_v3.pilot_build as pilot_build
+
+    spec = {
+        "job_id": "CMAKE_CONFIGURE",
+        "job_kind": "CMAKE_CONFIGURE",
+        "dependency_job_ids": [],
+        "argv": ["cmake"],
+        "timeout_seconds": 900,
+    }
+    passed = _started_job(pilot_build, spec)
+    assert passed["terminal_status"] == "PASS"
+    assert passed["process_started"] is True
+    assert passed["failure_reason"] is None
+    failed = _started_job(
+        pilot_build,
+        spec,
+        terminal_status="FAIL",
+        failure_reason="NONZERO_EXIT",
+        exit_code=2,
+    )
+    assert failed["terminal_status"] == "FAIL"
+    timed = _started_job(
+        pilot_build,
+        spec,
+        terminal_status="TIMEOUT",
+        failure_reason="TIMEOUT",
+        exit_code=None,
+        process_group_terminated=True,
+    )
+    assert timed["process_group_terminated"] is True
+    not_started = pilot_build.make_not_started_job(spec)
+    assert not_started["process_started"] is False
+    assert not_started["failure_reason"] == "DEPENDENCY_NOT_STARTED"
+    assert not_started["started_at"] is None
+    pre = pilot_build.make_pre_process_infra_job(spec, "MISSING_DEPENDENCY")
+    assert pre["terminal_status"] == "FAIL_INFRASTRUCTURE"
+    assert pre["infrastructure_phase"] == "PRE_PROCESS"
+    assert pre["process_started"] is False
+    post = _started_job(
+        pilot_build,
+        spec,
+        terminal_status="FAIL_INFRASTRUCTURE",
+        failure_reason="SYSTEM_BOOST_FALLBACK",
+        infrastructure_phase="POST_PROCESS",
+        exit_code=1,
+    )
+    assert post["infrastructure_phase"] == "POST_PROCESS"
+    for status in ("PASS", "FAIL", "TIMEOUT", "FAIL_INFRASTRUCTURE", "NOT_STARTED"):
+        assert status in pilot_build.ALL_TERMINAL
+
+
+def test_result_count_conservation_and_aggregate():
+    import p3_v3.pilot_build as pilot_build
+
+    env = _minimal_environment(pilot_build)
+    impl = "1" * 64
+    jobs = [
+        pilot_build.make_pre_process_infra_job(pilot_build.JOB_SPECS[0], "MISSING_DEPENDENCY"),
+        pilot_build.make_not_started_job(pilot_build.JOB_SPECS[1]),
+        pilot_build.make_not_started_job(pilot_build.JOB_SPECS[2]),
+    ]
+    result = pilot_build.build_result(
+        intent_sha256="2" * 64,
+        environment=env,
+        jobs=jobs,
+        predecessor=sorted(["2" * 64, impl]),
+        implementation_verdict_sha256=impl,
+        evidence=None,
+    )
+    assert result["planned_count"] == 3
+    assert result["terminal_count"] == 3
+    assert result["started_count"] == 0
+    assert result["not_started_count"] == 2
+    assert result["terminal_status"] == "FAIL_INFRASTRUCTURE"
+    assert result["failure_reason"] == "MISSING_DEPENDENCY"
+
+
+def test_configure_build_dependency_blocking(tmp_path):
+    test_configure_failure_prevents_build_and_smoke(tmp_path)
+    test_build_failure_prevents_smoke(tmp_path)
+
+
+def test_process_group_timeout_terminates_descendants(tmp_path):
+    import p3_v3.pilot_build as pilot_build
+
+    marker = tmp_path / "child.sh"
+    marker.write_text("#!/bin/sh\nsleep 30\n", encoding="utf-8")
+    marker.chmod(0o755)
+    spec = {
+        "job_id": "CMAKE_CONFIGURE",
+        "job_kind": "CMAKE_CONFIGURE",
+        "dependency_job_ids": [],
+        "argv": ["python3", "-c", "import subprocess,time; subprocess.Popen(['sleep','30']); time.sleep(30)"],
+        "timeout_seconds": 900,
+    }
+    result = pilot_build.execute_job(
+        spec,
+        env=dict(os.environ),
+        log_root=tmp_path / "logs",
+        timeout_seconds=0.2,
+    )
+    assert result["terminal_status"] == "TIMEOUT"
+    assert result["process_group_terminated"] is True
+    assert result["exit_code"] is None
+
+
+def test_exception_after_intent_produces_terminal_result(tmp_path, monkeypatch):
+    import p3_v3.pilot_build as pilot_build
+
+    source = tmp_path / "source"
+    build = tmp_path / "build"
+    harness = tmp_path / "harness"
+    intent_path = tmp_path / "intent.json"
+    result_path = tmp_path / "result.json"
+    monkeypatch.setattr(pilot_build, "FROZEN_SOURCE_ROOT", source)
+    monkeypatch.setattr(pilot_build, "FROZEN_BUILD_ROOT", build)
+    monkeypatch.setattr(pilot_build, "FROZEN_HARNESS_ROOT", harness)
+    monkeypatch.setattr(pilot_build, "INTENT_PATH", intent_path)
+    monkeypatch.setattr(pilot_build, "RESULT_PATH", result_path)
+    monkeypatch.setattr(pilot_build, "_require_authorization", lambda: "a" * 64)
+    monkeypatch.setattr(pilot_build, "_require_source_preparation_identities", lambda: None)
+    monkeypatch.setattr(
+        pilot_build,
+        "_require_plan_and_implementation_verdicts",
+        lambda: ("0" * 64, "1" * 64, "2" * 64),
+    )
+    monkeypatch.setattr(pilot_build, "require_frozen_source_tree", lambda root: "3" * 64)
+    monkeypatch.setattr(
+        pilot_build,
+        "make_environment_snapshot",
+        lambda: _minimal_environment(pilot_build),
+    )
+
+    def boom(harness_root, cmake_bytes, cxx_bytes):
+        raise EvidenceError("E_PILOT_BUILD_HARNESS", "HARNESS_PUBLICATION_FAILURE")
+
+    monkeypatch.setattr(pilot_build, "write_harness", boom)
+    written = pilot_build.run_build_preflight(source, build)
+    assert intent_path.is_file()
+    assert result_path.is_file()
+    assert written["terminal_status"] == "FAIL_INFRASTRUCTURE"
+    assert written["failure_reason"] == "HARNESS_PUBLICATION_FAILURE"
+    assert written["jobs"][0]["process_started"] is False
+
+
+def test_orphaned_intent_reconciliation_writes_no_new_process(tmp_path, monkeypatch):
+    import p3_v3.pilot_build as pilot_build
+    from p3_v3.artifacts import write_canonical_json
+
+    assert (
+        pilot_build.classify_reconciliation(
+            intent_present=True,
+            result_present=False,
+            intent_valid=True,
+            result_valid=False,
+            live_attempt=False,
+        )
+        == "INTENT_ONLY_ORPHAN"
+    )
+    env = _minimal_environment(pilot_build)
+    impl = "7" * 64
+    monkeypatch.setattr(pilot_build, "FROZEN_SOURCE_ROOT", tmp_path / "source")
+    monkeypatch.setattr(pilot_build, "FROZEN_BUILD_ROOT", tmp_path / "build")
+    monkeypatch.setattr(pilot_build, "FROZEN_HARNESS_ROOT", tmp_path / "harness")
+    intent = pilot_build.build_intent(env, sorted([impl]), impl)
+    intent_path = tmp_path / "intent.json"
+    result_path = tmp_path / "result.json"
+    write_canonical_json(intent_path, intent, exclusive=True)
+    original = intent_path.read_bytes()
+    monkeypatch.setattr(pilot_build, "INTENT_PATH", intent_path)
+    monkeypatch.setattr(pilot_build, "RESULT_PATH", result_path)
+    monkeypatch.setattr(pilot_build, "attempt_is_live", lambda pid, starttime: False)
+    seen = []
+
+    def fake_popen(*args, **kwargs):
+        seen.append(args)
+        raise AssertionError("orphan must not start a child")
+
+    monkeypatch.setattr(pilot_build.subprocess, "Popen", fake_popen)
+    written = pilot_build.run_build_preflight(tmp_path / "source", tmp_path / "build")
+    assert written["failure_reason"] == "ORPHANED_INTENT_NO_PROCESS"
+    assert written["jobs"][0]["process_started"] is False
+    assert seen == []
+    assert intent_path.read_bytes() == original
+    assert result_path.is_file()
+
+
+def test_second_invocation_never_reruns(tmp_path, monkeypatch):
+    import p3_v3.pilot_build as pilot_build
+    from p3_v3.artifacts import write_canonical_json
+
+    assert (
+        pilot_build.classify_reconciliation(
+            intent_present=True,
+            result_present=True,
+            intent_valid=True,
+            result_valid=True,
+            live_attempt=False,
+        )
+        == "RESULT_TERMINAL"
+    )
+    env = _minimal_environment(pilot_build)
+    impl = "8" * 64
+    monkeypatch.setattr(pilot_build, "FROZEN_SOURCE_ROOT", tmp_path / "source")
+    monkeypatch.setattr(pilot_build, "FROZEN_BUILD_ROOT", tmp_path / "build")
+    monkeypatch.setattr(pilot_build, "FROZEN_HARNESS_ROOT", tmp_path / "harness")
+    intent = pilot_build.build_intent(env, sorted([impl]), impl)
+    jobs = [
+        pilot_build.make_pre_process_infra_job(
+            spec, "ORPHANED_INTENT_NO_PROCESS"
+        )
+        if spec["job_id"] == "CMAKE_CONFIGURE"
+        else pilot_build.make_not_started_job(spec)
+        for spec in pilot_build.JOB_SPECS
+    ]
+    intent_path = tmp_path / "intent.json"
+    result_path = tmp_path / "result.json"
+    write_canonical_json(intent_path, intent, exclusive=True)
+    result = pilot_build.build_result(
+        intent_sha256=_sha256_bytes(intent_path.read_bytes()),
+        environment=env,
+        jobs=jobs,
+        predecessor=sorted([_sha256_bytes(intent_path.read_bytes()), impl]),
+        implementation_verdict_sha256=impl,
+        evidence=None,
+    )
+    write_canonical_json(result_path, result, exclusive=True)
+    before_intent = intent_path.read_bytes()
+    before_result = result_path.read_bytes()
+    monkeypatch.setattr(pilot_build, "INTENT_PATH", intent_path)
+    monkeypatch.setattr(pilot_build, "RESULT_PATH", result_path)
+    with pytest.raises(EvidenceError, match="E_PILOT_BUILD_PREEXISTING"):
+        pilot_build.run_build_preflight(tmp_path / "source", tmp_path / "build")
+    assert intent_path.read_bytes() == before_intent
+    assert result_path.read_bytes() == before_result
+
+
+def test_source_drift_after_child_yields_terminal_failure(tmp_path, monkeypatch):
+    import p3_v3.pilot_build as pilot_build
+
+    calls = {"n": 0}
+
+    def fake_tree(source_root):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return "a" * 64
+        raise EvidenceError("E_PILOT_SOURCE_TREE_MISMATCH", "SOURCE_TREE_DRIFT")
+
+    monkeypatch.setattr(pilot_build, "require_frozen_source_tree", fake_tree)
+    specs = _synthetic_specs(
+        tmp_path,
+        ["python3", "-c", "print('configure')"],
+        ["python3", "-c", "print('build')"],
+        ["python3", "-c", "print('smoke')"],
+    )
+    results, _evidence = pilot_build.run_three_jobs(
+        specs,
+        env=dict(os.environ),
+        log_root=tmp_path / "logs",
+        source_root=tmp_path / "source",
+    )
+    assert results[0]["terminal_status"] == "FAIL_INFRASTRUCTURE"
+    assert results[0]["failure_reason"] == "SOURCE_TREE_DRIFT"
+    assert results[1]["terminal_status"] == "NOT_STARTED"
+
+
+def test_system_boost_dependency_path_rejection():
+    import p3_v3.pilot_build as pilot_build
+
+    with pytest.raises(EvidenceError, match="SYSTEM_BOOST_FALLBACK"):
+        pilot_build.reject_nonfrozen_boost_headers(
+            ["/usr/include/boost/config.hpp"]
+        )
+
+
+def test_frozen_source_dependency_closure_pass():
+    import p3_v3.pilot_build as pilot_build
+
+    paths = [
+        "/tmp/p3-boost-math-pilot-production-source/include/boost/math/constants/constants.hpp",
+        "/usr/include/c++/13/cmath",
+    ]
+    pilot_build.reject_nonfrozen_boost_headers(paths)
+    digest = _sha256_bytes(pilot_build.canonical_dependency_list_bytes(paths))
+    assert len(digest) == 64
+
+
+def test_build_artifact_hashes_bound():
+    import p3_v3.pilot_build as pilot_build
+
+    env = _minimal_environment(pilot_build)
+    impl = "4" * 64
+    jobs = [_started_job(pilot_build, spec) for spec in pilot_build.JOB_SPECS]
+    evidence = {
+        "cmake_cache_sha256": "6" * 64,
+        "compile_commands_sha256": "7" * 64,
+        "dependency_list_sha256": "8" * 64,
+        "smoke_executable_sha256": "9" * 64,
+    }
+    result = pilot_build.build_result(
+        intent_sha256="5" * 64,
+        environment=env,
+        jobs=jobs,
+        predecessor=sorted(["5" * 64, impl]),
+        implementation_verdict_sha256=impl,
+        evidence=evidence,
+    )
+    assert result["cmake_cache_sha256"] == "6" * 64
+    assert result["compile_commands_sha256"] == "7" * 64
+    assert result["dependency_list_sha256"] == "8" * 64
+    assert result["smoke_executable_sha256"] == "9" * 64
+    assert result["terminal_status"] == "PASS"
+    assert result["failure_reason"] is None
+
+
+def test_smoke_refuses_executable_hash_drift(tmp_path):
+    import p3_v3.pilot_build as pilot_build
+
+    exe = tmp_path / "boost_math_pilot_smoke"
+    exe.write_bytes(b"old-bytes\n")
+    specs = _synthetic_specs(
+        tmp_path,
+        ["python3", "-c", "print('configure')"],
+        ["python3", "-c", "print('build')"],
+        [str(exe)],
+    )
+    results, _evidence = pilot_build.run_three_jobs(
+        specs,
+        env=dict(os.environ),
+        log_root=tmp_path / "logs",
+        expected_smoke_sha256="0" * 64,
+    )
+    assert results[0]["terminal_status"] == "PASS"
+    assert results[1]["terminal_status"] == "PASS"
+    assert results[2]["terminal_status"] == "FAIL_INFRASTRUCTURE"
+    assert results[2]["failure_reason"] == "MISSING_DEPENDENCY"
+    assert results[2]["process_started"] is False
+
 ```
 
 Append these tests to `tests/p3_v3/test_pilot.py`:
@@ -1170,8 +1843,11 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import platform
+import re
 import resource
 import shutil
+import signal
 import stat
 import subprocess
 import time
@@ -1320,6 +1996,8 @@ CMAKE_CONFIGURE_ARGV = [
     "/tmp/p3-boost-math-pilot-build-preflight-harness",
     "-B",
     "/tmp/p3-boost-math-pilot-build-preflight",
+    "-G",
+    "Unix Makefiles",
     "-DCMAKE_BUILD_TYPE=Release",
     "-DCMAKE_CXX_STANDARD=14",
     "-DCMAKE_CXX_STANDARD_REQUIRED=ON",
@@ -1401,6 +2079,62 @@ SYSTEM_BOOST_MARKERS = (
     "/usr/include/boost",
     "/usr/local/include/boost",
 )
+FROZEN_INCLUDE_PREFIX = "/tmp/p3-boost-math-pilot-production-source/include"
+FROZEN_CMAKE_GENERATOR = "Unix Makefiles"
+GIT_OID_RE = re.compile(r"^[0-9a-f]{40}$")
+REVIEWED_IMPLEMENTATION_FILES = (
+    (
+        "reviewed_pilot_build_path",
+        "reviewed_pilot_build_sha256",
+        "src/p3_v3/pilot_build.py",
+    ),
+    (
+        "reviewed_pilot_cli_path",
+        "reviewed_pilot_cli_sha256",
+        "scripts/p3_v3/pilot.py",
+    ),
+    (
+        "reviewed_test_pilot_build_path",
+        "reviewed_test_pilot_build_sha256",
+        "tests/p3_v3/test_pilot_build.py",
+    ),
+    (
+        "reviewed_test_pilot_path",
+        "reviewed_test_pilot_sha256",
+        "tests/p3_v3/test_pilot.py",
+    ),
+)
+FAIL_REASONS = frozenset({"NONZERO_EXIT", "CRASH"})
+INFRA_REASONS_PRE_PROCESS = frozenset(
+    {
+        "MISSING_DEPENDENCY",
+        "SYSTEM_BOOST_FALLBACK",
+        "UNSUPPORTED_TOOLCHAIN",
+        "ORPHANED_INTENT_NO_PROCESS",
+        "HARNESS_PUBLICATION_FAILURE",
+        "RESULT_PUBLICATION_FAILURE",
+    }
+)
+INFRA_REASONS_POST_PROCESS = frozenset(
+    {
+        "NETWORK_OR_DOWNLOAD_ATTEMPT",
+        "SYSTEM_BOOST_FALLBACK",
+        "MISSING_DEPENDENCY",
+        "UNSUPPORTED_TOOLCHAIN",
+        "SOURCE_TREE_DRIFT",
+        "LOG_PUBLICATION_FAILURE",
+    }
+)
+RECONCILIATION_STATES = frozenset(
+    {
+        "FRESH",
+        "INTENT_LIVE",
+        "INTENT_ONLY_ORPHAN",
+        "RESULT_TERMINAL",
+        "RESULT_WITHOUT_INTENT",
+        "INVALID_DURABLE",
+    }
+)
 
 PLAN_VERDICT_EXACT = {
     "reviewed_plan_path": str,
@@ -1442,7 +2176,18 @@ BUILD_PREFLIGHT_ENVIRONMENT_EXACT = {
     "execution_class": str,
     "denominator": str,
     "cmake_executable": str,
+    "cmake_executable_path": str,
+    "cmake_version": str,
     "cxx_compiler_executable": (str, type(None)),
+    "cxx_compiler_path": (str, type(None)),
+    "cxx_compiler_identity": (str, type(None)),
+    "cxx_compiler_version": (str, type(None)),
+    "cmake_generator": str,
+    "os_name": str,
+    "os_release": str,
+    "python_version": str,
+    "git_version": (str, type(None)),
+    "build_parallelism": int,
     "nvcc_present": bool,
     "native_profiling_present": bool,
     "cuda_absence_blocking": bool,
@@ -1467,6 +2212,7 @@ BUILD_PREFLIGHT_INTENT_EXACT = {
     "source_manifest_sha256": str,
     "source_preparation_result_sha256": str,
     "source_preparation_reviewed_commit": str,
+    "implementation_verdict_sha256": str,
     "authorization_sha256": str,
     "harness_cmake_sha256": str,
     "harness_cxx_sha256": str,
@@ -1483,7 +2229,10 @@ BUILD_PREFLIGHT_INTENT_EXACT = {
     "build_parallelism": int,
     "planned_count": int,
     "dependency_dag": list,
+    "environment_snapshot": dict,
     "environment_snapshot_sha256": str,
+    "producer_pid": int,
+    "producer_starttime": str,
     "predecessor_sha256": list,
     "no_retry": bool,
     "claims": str,
@@ -1500,7 +2249,9 @@ BUILD_PREFLIGHT_JOB_RESULT_EXACT = {
     "dependency_job_ids": list,
     "argv": list,
     "timeout_seconds": int,
-    "started": bool,
+    "process_started": bool,
+    "process_group_terminated": (bool, type(None)),
+    "infrastructure_phase": (str, type(None)),
     "terminal_status": str,
     "failure_reason": (str, type(None)),
     "exit_code": (int, type(None)),
@@ -1529,11 +2280,17 @@ BUILD_PREFLIGHT_RESULT_EXACT = {
     "source_preparation_verdict_sha256": str,
     "source_manifest_sha256": str,
     "source_preparation_result_sha256": str,
+    "implementation_verdict_sha256": str,
     "intent_sha256": str,
     "authorization_sha256": str,
+    "environment_snapshot": dict,
     "environment_snapshot_sha256": str,
     "harness_cmake_sha256": str,
     "harness_cxx_sha256": str,
+    "cmake_cache_sha256": (str, type(None)),
+    "compile_commands_sha256": (str, type(None)),
+    "dependency_list_sha256": (str, type(None)),
+    "smoke_executable_sha256": (str, type(None)),
     "source_root": str,
     "build_root": str,
     "harness_root": str,
@@ -1687,38 +2444,6 @@ def validate_plan_verdict(value: object, plan_sha256: str) -> dict[str, Any]:
     return validated
 
 
-def validate_implementation_verdict(
-    value: object, plan_sha256: str, plan_verdict_sha256: str
-) -> dict[str, Any]:
-    validated = validate_exact_object(
-        value,
-        IMPLEMENTATION_VERDICT_EXACT,
-        "build-preflight-implementation-verdict",
-    )
-    for key in (
-        "reviewed_plan_sha256",
-        "reviewed_plan_verdict_sha256",
-        "reviewed_pilot_build_sha256",
-        "reviewed_pilot_cli_sha256",
-        "reviewed_test_pilot_build_sha256",
-        "reviewed_test_pilot_sha256",
-    ):
-        validate_sha256(validated[key], f"implementation-verdict.{key}")
-    if validated["reviewed_plan_path"] != PLAN_PATH.as_posix():
-        raise EvidenceError("E_PILOT_BUILD_IMPL_VERDICT", "reviewed plan path differs")
-    if validated["reviewed_plan_sha256"] != plan_sha256:
-        raise EvidenceError("E_PILOT_BUILD_IMPL_VERDICT", "reviewed plan hash differs")
-    if validated["reviewed_plan_verdict_sha256"] != plan_verdict_sha256:
-        raise EvidenceError("E_PILOT_BUILD_IMPL_VERDICT", "plan verdict hash differs")
-    if validated["verdict"] != "PASS":
-        raise EvidenceError("E_PILOT_BUILD_IMPL_VERDICT", "verdict is not PASS")
-    if validated["authorized_state"] != "PILOT_BUILD_PREFLIGHT_IMPLEMENTATION_PASS":
-        raise EvidenceError("E_PILOT_BUILD_IMPL_VERDICT", "authorized_state differs")
-    if validated["claims"] != "blocked":
-        raise EvidenceError("E_PILOT_BUILD_IMPL_VERDICT", "claims are not blocked")
-    return validated
-
-
 def validate_source_preparation_result_verdict(value: object) -> dict[str, Any]:
     validated = validate_exact_object(
         value,
@@ -1766,6 +2491,144 @@ def validate_source_preparation_result_verdict(value: object) -> dict[str, Any]:
     return validated
 
 
+def producer_identity() -> tuple[int, str]:
+    pid = os.getpid()
+    stat_text = Path(f"/proc/{pid}/stat").read_text(encoding="utf-8")
+    rparen = stat_text.rfind(")")
+    fields = stat_text[rparen + 2 :].split()
+    return pid, fields[19]
+
+
+def attempt_is_live(pid: int, starttime: str) -> bool:
+    path = Path(f"/proc/{pid}/stat")
+    if not path.is_file():
+        return False
+    stat_text = path.read_text(encoding="utf-8")
+    rparen = stat_text.rfind(")")
+    fields = stat_text[rparen + 2 :].split()
+    return fields[19] == starttime
+
+
+def classify_reconciliation(
+    *,
+    intent_present: bool,
+    result_present: bool,
+    intent_valid: bool,
+    result_valid: bool,
+    live_attempt: bool,
+) -> str:
+    if not intent_present and not result_present:
+        return "FRESH"
+    if not intent_present and result_present:
+        return "RESULT_WITHOUT_INTENT"
+    if intent_present and result_present and intent_valid and result_valid:
+        return "RESULT_TERMINAL"
+    if intent_present and not result_present and intent_valid and live_attempt:
+        return "INTENT_LIVE"
+    if intent_present and not result_present and intent_valid and not live_attempt:
+        return "INTENT_ONLY_ORPHAN"
+    return "INVALID_DURABLE"
+
+
+def probe_identity(executable: str | None) -> str | None:
+    if executable is None:
+        return None
+    try:
+        completed = subprocess.run(
+            [executable, "--version"],
+            check=False,
+            capture_output=True,
+            timeout=5,
+            shell=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    blob = (completed.stdout or b"") + (completed.stderr or b"")
+    text = blob.decode("utf-8", "replace").strip()
+    if not text:
+        return None
+    return text.splitlines()[0]
+
+
+def parse_dependency_paths(dep_text: str) -> list[str]:
+    stripped = dep_text.replace("\\\n", " ")
+    if ":" in stripped:
+        stripped = stripped.split(":", 1)[1]
+    paths = [item.strip() for item in stripped.split() if item.strip()]
+    return sorted(dict.fromkeys(paths))
+
+
+def reject_nonfrozen_boost_headers(paths: list[str]) -> None:
+    for path in paths:
+        posix = path.replace("\\", "/")
+        lowered = posix.lower()
+        if "/boost/" not in lowered and not lowered.endswith("/boost"):
+            continue
+        if not posix.startswith(FROZEN_INCLUDE_PREFIX + "/"):
+            raise EvidenceError("E_PILOT_SYSTEM_BOOST", "SYSTEM_BOOST_FALLBACK")
+
+
+def canonical_dependency_list_bytes(paths: list[str]) -> bytes:
+    return ("".join(f"{item}\n" for item in sorted(paths))).encode("utf-8")
+
+
+def validate_implementation_verdict(
+    value: object, plan_sha256: str, plan_verdict_sha256: str
+) -> dict[str, Any]:
+    validated = validate_exact_object(
+        value,
+        IMPLEMENTATION_VERDICT_EXACT,
+        "build-preflight-implementation-verdict",
+    )
+    for key in (
+        "reviewed_plan_sha256",
+        "reviewed_plan_verdict_sha256",
+        "reviewed_pilot_build_sha256",
+        "reviewed_pilot_cli_sha256",
+        "reviewed_test_pilot_build_sha256",
+        "reviewed_test_pilot_sha256",
+    ):
+        validate_sha256(validated[key], f"implementation-verdict.{key}")
+    if GIT_OID_RE.fullmatch(validated["reviewed_commit"]) is None:
+        raise EvidenceError(
+            "E_PILOT_BUILD_IMPL_VERDICT",
+            "reviewed_commit is not 40 lowercase hexadecimal characters",
+        )
+    if validated["reviewed_plan_path"] != PLAN_PATH.as_posix():
+        raise EvidenceError("E_PILOT_BUILD_IMPL_VERDICT", "reviewed plan path differs")
+    if validated["reviewed_plan_sha256"] != plan_sha256:
+        raise EvidenceError("E_PILOT_BUILD_IMPL_VERDICT", "reviewed plan hash differs")
+    if validated["reviewed_plan_verdict_sha256"] != plan_verdict_sha256:
+        raise EvidenceError("E_PILOT_BUILD_IMPL_VERDICT", "plan verdict hash differs")
+    for path_key, _sha_key, expected in REVIEWED_IMPLEMENTATION_FILES:
+        if validated[path_key] != expected:
+            raise EvidenceError(
+                "E_PILOT_BUILD_IMPL_VERDICT",
+                f"{path_key} differs",
+            )
+    if validated["verdict"] != "PASS":
+        raise EvidenceError("E_PILOT_BUILD_IMPL_VERDICT", "verdict is not PASS")
+    if validated["authorized_state"] != "PILOT_BUILD_PREFLIGHT_IMPLEMENTATION_PASS":
+        raise EvidenceError("E_PILOT_BUILD_IMPL_VERDICT", "authorized_state differs")
+    if validated["claims"] != "blocked":
+        raise EvidenceError("E_PILOT_BUILD_IMPL_VERDICT", "claims are not blocked")
+    return validated
+
+
+def verify_reviewed_production_bytes(verdict: dict[str, Any]) -> None:
+    for path_key, sha_key, expected in REVIEWED_IMPLEMENTATION_FILES:
+        if verdict[path_key] != expected:
+            raise EvidenceError("E_PILOT_BUILD_PRODUCTION_BYTES", f"{path_key} differs")
+        raw, digest = read_authority_snapshot(Path(expected), path_key)
+        if digest != verdict[sha_key]:
+            raise EvidenceError(
+                "E_PILOT_BUILD_PRODUCTION_BYTES",
+                f"{expected} drifted from the implementation verdict",
+            )
+        if _sha256_bytes(raw) != digest:
+            raise EvidenceError("E_PILOT_BUILD_PRODUCTION_BYTES", "snapshot hash drifted")
+
+
 def validate_environment_snapshot(value: object) -> dict[str, Any]:
     validated = validate_exact_object(
         value,
@@ -1791,10 +2654,48 @@ def validate_environment_snapshot(value: object) -> dict[str, Any]:
         raise EvidenceError("E_PILOT_BUILD_ENVIRONMENT", "profiling is not a prerequisite")
     if validated["disconnected_environment"] != DISCONNECTED_ENVIRONMENT:
         raise EvidenceError("E_PILOT_BUILD_ENVIRONMENT", "disconnected environment differs")
+    if validated["cmake_generator"] != FROZEN_CMAKE_GENERATOR:
+        raise EvidenceError("E_PILOT_BUILD_ENVIRONMENT", "generator differs")
+    if validated["build_parallelism"] != BUILD_PARALLELISM:
+        raise EvidenceError("E_PILOT_BUILD_ENVIRONMENT", "parallelism differs")
+    if not validated["cmake_executable_path"] or not validated["cmake_version"]:
+        raise EvidenceError("E_PILOT_BUILD_ENVIRONMENT", "cmake identity is incomplete")
     body = {key: validated[key] for key in validated if key != "artifact_sha256"}
     if validated["artifact_sha256"] != canonical_sha256(body):
         raise EvidenceError("E_PILOT_BUILD_ENVIRONMENT", "self-hash differs")
     return validated
+
+
+def _require_stdio(validated: dict[str, Any]) -> None:
+    if validated["stdout_sha256"] is None or validated["stderr_sha256"] is None:
+        raise EvidenceError("E_PILOT_BUILD_JOB", "started job must hash stdio")
+    validate_sha256(validated["stdout_sha256"], "job.stdout_sha256")
+    validate_sha256(validated["stderr_sha256"], "job.stderr_sha256")
+    if type(validated["stdout_bytes"]) is not int or validated["stdout_bytes"] < 0:
+        raise EvidenceError("E_PILOT_BUILD_JOB", "stdout_bytes is invalid")
+    if type(validated["stderr_bytes"]) is not int or validated["stderr_bytes"] < 0:
+        raise EvidenceError("E_PILOT_BUILD_JOB", "stderr_bytes is invalid")
+    if validated["started_at"] is None or validated["ended_at"] is None:
+        raise EvidenceError("E_PILOT_BUILD_JOB", "started job must have timestamps")
+    if validated["wall_seconds"] is None:
+        raise EvidenceError("E_PILOT_BUILD_JOB", "started job must have wall time")
+    if validated["cpu_seconds"] is None or validated["peak_rss_bytes"] is None:
+        raise EvidenceError("E_PILOT_BUILD_JOB", "started job must have rusage")
+
+
+def _require_no_process_evidence(validated: dict[str, Any]) -> None:
+    if validated["exit_code"] is not None:
+        raise EvidenceError("E_PILOT_BUILD_JOB", "unstarted job must not have exit_code")
+    if validated["stdout_sha256"] is not None or validated["stderr_sha256"] is not None:
+        raise EvidenceError("E_PILOT_BUILD_JOB", "unstarted job must not forge hashes")
+    if validated["stdout_bytes"] is not None or validated["stderr_bytes"] is not None:
+        raise EvidenceError("E_PILOT_BUILD_JOB", "unstarted job must not forge byte counts")
+    if validated["wall_seconds"] is not None:
+        raise EvidenceError("E_PILOT_BUILD_JOB", "unstarted job must not have wall time")
+    if validated["cpu_seconds"] is not None or validated["peak_rss_bytes"] is not None:
+        raise EvidenceError("E_PILOT_BUILD_JOB", "unstarted job must not have rusage")
+    if validated["process_group_terminated"] is not None:
+        raise EvidenceError("E_PILOT_BUILD_JOB", "unstarted job must not claim a process group")
 
 
 def validate_job_result(value: object) -> dict[str, Any]:
@@ -1821,34 +2722,70 @@ def validate_job_result(value: object) -> dict[str, Any]:
         type(item) is not str for item in validated["dependency_job_ids"]
     ):
         raise EvidenceError("E_PILOT_BUILD_JOB", "dependency_job_ids are invalid")
-    if validated["terminal_status"] == "NOT_STARTED":
-        if validated["started"] is not False:
-            raise EvidenceError("E_PILOT_BUILD_JOB", "NOT_STARTED must not start")
+    status = validated["terminal_status"]
+    if status == "PASS":
+        if validated["process_started"] is not True:
+            raise EvidenceError("E_PILOT_BUILD_JOB", "PASS must start a process")
+        if validated["exit_code"] != 0:
+            raise EvidenceError("E_PILOT_BUILD_JOB", "PASS must have exit_code 0")
+        if validated["failure_reason"] is not None:
+            raise EvidenceError("E_PILOT_BUILD_JOB", "PASS must not carry a failure")
+        if validated["infrastructure_phase"] is not None:
+            raise EvidenceError("E_PILOT_BUILD_JOB", "PASS must not set infrastructure_phase")
+        if validated["process_group_terminated"] is not False:
+            raise EvidenceError("E_PILOT_BUILD_JOB", "PASS must not kill the process group")
+        _require_stdio(validated)
+    elif status == "FAIL":
+        if validated["process_started"] is not True:
+            raise EvidenceError("E_PILOT_BUILD_JOB", "FAIL must start a process")
+        if validated["failure_reason"] not in FAIL_REASONS:
+            raise EvidenceError("E_PILOT_BUILD_JOB", "FAIL reason is not frozen")
+        if validated["failure_reason"] == "NONZERO_EXIT" and (
+            validated["exit_code"] is None or validated["exit_code"] == 0
+        ):
+            raise EvidenceError("E_PILOT_BUILD_JOB", "NONZERO_EXIT must have a nonzero exit")
+        if validated["failure_reason"] == "CRASH" and validated["exit_code"] is not None:
+            raise EvidenceError("E_PILOT_BUILD_JOB", "CRASH must not invent exit_code")
+        if validated["infrastructure_phase"] is not None:
+            raise EvidenceError("E_PILOT_BUILD_JOB", "FAIL must not set infrastructure_phase")
+        _require_stdio(validated)
+    elif status == "TIMEOUT":
+        if validated["process_started"] is not True:
+            raise EvidenceError("E_PILOT_BUILD_JOB", "TIMEOUT must start a process")
         if validated["exit_code"] is not None:
-            raise EvidenceError("E_PILOT_BUILD_JOB", "NOT_STARTED must not have exit_code")
-        if validated["stdout_sha256"] is not None or validated["stderr_sha256"] is not None:
-            raise EvidenceError("E_PILOT_BUILD_JOB", "NOT_STARTED must not forge hashes")
-        if validated["stdout_bytes"] is not None or validated["stderr_bytes"] is not None:
-            raise EvidenceError("E_PILOT_BUILD_JOB", "NOT_STARTED must not forge byte counts")
-        if validated["started_at"] is not None or validated["ended_at"] is not None:
-            raise EvidenceError("E_PILOT_BUILD_JOB", "NOT_STARTED must not have timestamps")
-        if validated["wall_seconds"] is not None:
-            raise EvidenceError("E_PILOT_BUILD_JOB", "NOT_STARTED must not have wall time")
-        if validated["cpu_seconds"] is not None or validated["peak_rss_bytes"] is not None:
-            raise EvidenceError("E_PILOT_BUILD_JOB", "NOT_STARTED must not have rusage")
+            raise EvidenceError("E_PILOT_BUILD_JOB", "TIMEOUT must have null exit_code")
+        if validated["failure_reason"] != "TIMEOUT":
+            raise EvidenceError("E_PILOT_BUILD_JOB", "TIMEOUT reason differs")
+        if validated["process_group_terminated"] is not True:
+            raise EvidenceError("E_PILOT_BUILD_JOB", "TIMEOUT must terminate the process group")
+        if validated["infrastructure_phase"] is not None:
+            raise EvidenceError("E_PILOT_BUILD_JOB", "TIMEOUT must not set infrastructure_phase")
+        _require_stdio(validated)
+    elif status == "FAIL_INFRASTRUCTURE":
+        if validated["infrastructure_phase"] not in {"PRE_PROCESS", "POST_PROCESS"}:
+            raise EvidenceError("E_PILOT_BUILD_JOB", "infrastructure_phase differs")
+        if validated["infrastructure_phase"] == "PRE_PROCESS":
+            if validated["process_started"] is not False:
+                raise EvidenceError("E_PILOT_BUILD_JOB", "PRE_PROCESS must not start")
+            if validated["failure_reason"] not in INFRA_REASONS_PRE_PROCESS:
+                raise EvidenceError("E_PILOT_BUILD_JOB", "PRE_PROCESS reason is not frozen")
+            _require_no_process_evidence(validated)
+        else:
+            if validated["process_started"] is not True:
+                raise EvidenceError("E_PILOT_BUILD_JOB", "POST_PROCESS must start")
+            if validated["failure_reason"] not in INFRA_REASONS_POST_PROCESS:
+                raise EvidenceError("E_PILOT_BUILD_JOB", "POST_PROCESS reason is not frozen")
+            _require_stdio(validated)
+    elif status == "NOT_STARTED":
+        if validated["process_started"] is not False:
+            raise EvidenceError("E_PILOT_BUILD_JOB", "NOT_STARTED must not start")
         if validated["failure_reason"] != "DEPENDENCY_NOT_STARTED":
             raise EvidenceError("E_PILOT_BUILD_JOB", "NOT_STARTED reason differs")
-    else:
-        if validated["started"] is not True:
-            raise EvidenceError("E_PILOT_BUILD_JOB", "started job must set started")
-        if validated["stdout_sha256"] is None or validated["stderr_sha256"] is None:
-            raise EvidenceError("E_PILOT_BUILD_JOB", "started job must hash stdio")
-        validate_sha256(validated["stdout_sha256"], "job.stdout_sha256")
-        validate_sha256(validated["stderr_sha256"], "job.stderr_sha256")
-        if type(validated["stdout_bytes"]) is not int or validated["stdout_bytes"] < 0:
-            raise EvidenceError("E_PILOT_BUILD_JOB", "stdout_bytes is invalid")
-        if type(validated["stderr_bytes"]) is not int or validated["stderr_bytes"] < 0:
-            raise EvidenceError("E_PILOT_BUILD_JOB", "stderr_bytes is invalid")
+        if validated["infrastructure_phase"] is not None:
+            raise EvidenceError("E_PILOT_BUILD_JOB", "NOT_STARTED must not set infrastructure_phase")
+        if validated["started_at"] is not None or validated["ended_at"] is not None:
+            raise EvidenceError("E_PILOT_BUILD_JOB", "NOT_STARTED must not have timestamps")
+        _require_no_process_evidence(validated)
     body = {key: validated[key] for key in validated if key != "artifact_sha256"}
     if validated["artifact_sha256"] != canonical_sha256(body):
         raise EvidenceError("E_PILOT_BUILD_JOB", "self-hash differs")
@@ -1918,6 +2855,18 @@ def validate_intent(value: object) -> dict[str, Any]:
         raise EvidenceError("E_PILOT_BUILD_INTENT", "source manifest hash differs")
     if validated["source_preparation_result_sha256"] != SOURCE_PREPARATION_RESULT_FILE_SHA256:
         raise EvidenceError("E_PILOT_BUILD_INTENT", "source-preparation result differs")
+    validate_sha256(
+        validated["implementation_verdict_sha256"],
+        "intent.implementation_verdict_sha256",
+    )
+    snapshot = validate_environment_snapshot(validated["environment_snapshot"])
+    if snapshot["artifact_sha256"] != validated["environment_snapshot_sha256"]:
+        raise EvidenceError("E_PILOT_BUILD_INTENT", "environment snapshot hash differs")
+    if validated["implementation_verdict_sha256"] not in validated["predecessor_sha256"]:
+        raise EvidenceError(
+            "E_PILOT_BUILD_INTENT",
+            "predecessor_sha256 must contain implementation_verdict_sha256",
+        )
     body = {key: validated[key] for key in validated if key != "artifact_sha256"}
     if validated["artifact_sha256"] != canonical_sha256(body):
         raise EvidenceError("E_PILOT_BUILD_INTENT", "self-hash differs")
@@ -1944,12 +2893,73 @@ def validate_result(value: object) -> dict[str, Any]:
         raise EvidenceError("E_PILOT_BUILD_RESULT", "no_retry must be true")
     if validated["planned_count"] != PLANNED_COUNT:
         raise EvidenceError("E_PILOT_BUILD_RESULT", "planned_count must be 3")
+    if validated["terminal_count"] != PLANNED_COUNT:
+        raise EvidenceError("E_PILOT_BUILD_RESULT", "terminal_count must be 3")
     if type(validated["jobs"]) is not list or len(validated["jobs"]) != 3:
         raise EvidenceError("E_PILOT_BUILD_RESULT", "jobs must be exactly 3")
     jobs = [validate_job_result(item) for item in validated["jobs"]]
     order = [item["job_id"] for item in jobs]
     if order != ["CMAKE_CONFIGURE", "BASELINE_BUILD", "BASELINE_SMOKE"]:
         raise EvidenceError("E_PILOT_BUILD_RESULT", "job order differs")
+    started = sum(1 for item in jobs if item["process_started"] is True)
+    not_started = sum(1 for item in jobs if item["terminal_status"] == "NOT_STARTED")
+    if validated["started_count"] != started:
+        raise EvidenceError("E_PILOT_BUILD_RESULT", "started_count is not conserved")
+    if validated["not_started_count"] != not_started:
+        raise EvidenceError("E_PILOT_BUILD_RESULT", "not_started_count is not conserved")
+    for job, spec in zip(jobs, JOB_SPECS, strict=True):
+        if job["job_id"] != spec["job_id"] or job["job_kind"] != spec["job_kind"]:
+            raise EvidenceError("E_PILOT_BUILD_RESULT", "job identity differs")
+        if job["dependency_job_ids"] != list(spec["dependency_job_ids"]):
+            raise EvidenceError("E_PILOT_BUILD_RESULT", "job dependencies differ")
+        if job["argv"] != list(spec["argv"]):
+            raise EvidenceError("E_PILOT_BUILD_RESULT", "job argv differs")
+        if job["timeout_seconds"] != spec["timeout_seconds"]:
+            raise EvidenceError("E_PILOT_BUILD_RESULT", "job timeout differs")
+    if jobs[0]["terminal_status"] != "PASS":
+        if jobs[1]["terminal_status"] != "NOT_STARTED" or jobs[2]["terminal_status"] != "NOT_STARTED":
+            raise EvidenceError("E_PILOT_BUILD_RESULT", "configure failure must block dependents")
+    elif jobs[1]["terminal_status"] != "PASS":
+        if jobs[2]["terminal_status"] != "NOT_STARTED":
+            raise EvidenceError("E_PILOT_BUILD_RESULT", "build failure must block smoke")
+    first_bad = next((item for item in jobs if item["terminal_status"] != "PASS"), None)
+    if first_bad is None:
+        if validated["terminal_status"] != "PASS" or validated["failure_reason"] is not None:
+            raise EvidenceError("E_PILOT_BUILD_RESULT", "all-PASS aggregate differs")
+    else:
+        if validated["terminal_status"] != first_bad["terminal_status"]:
+            raise EvidenceError("E_PILOT_BUILD_RESULT", "aggregate status differs")
+        if validated["failure_reason"] != first_bad["failure_reason"]:
+            raise EvidenceError("E_PILOT_BUILD_RESULT", "aggregate failure_reason differs")
+    if jobs[1]["terminal_status"] == "PASS":
+        for key in (
+            "cmake_cache_sha256",
+            "compile_commands_sha256",
+            "dependency_list_sha256",
+            "smoke_executable_sha256",
+        ):
+            validate_sha256(validated[key], f"result.{key}")
+    elif first_bad is not None and jobs[1]["terminal_status"] != "PASS":
+        for key in (
+            "cmake_cache_sha256",
+            "compile_commands_sha256",
+            "dependency_list_sha256",
+            "smoke_executable_sha256",
+        ):
+            if validated[key] is not None:
+                raise EvidenceError("E_PILOT_BUILD_RESULT", f"{key} must be null")
+    snapshot = validate_environment_snapshot(validated["environment_snapshot"])
+    if snapshot["artifact_sha256"] != validated["environment_snapshot_sha256"]:
+        raise EvidenceError("E_PILOT_BUILD_RESULT", "environment snapshot hash differs")
+    validate_sha256(
+        validated["implementation_verdict_sha256"],
+        "result.implementation_verdict_sha256",
+    )
+    if validated["implementation_verdict_sha256"] not in validated["predecessor_sha256"]:
+        raise EvidenceError(
+            "E_PILOT_BUILD_RESULT",
+            "predecessor_sha256 must contain implementation_verdict_sha256",
+        )
     body = {key: validated[key] for key in validated if key != "artifact_sha256"}
     if validated["artifact_sha256"] != canonical_sha256(body):
         raise EvidenceError("E_PILOT_BUILD_RESULT", "self-hash differs")
@@ -1966,7 +2976,9 @@ def make_not_started_job(spec: dict[str, Any]) -> dict[str, Any]:
         "dependency_job_ids": list(spec["dependency_job_ids"]),
         "argv": list(spec["argv"]),
         "timeout_seconds": spec["timeout_seconds"],
-        "started": False,
+        "process_started": False,
+        "process_group_terminated": None,
+        "infrastructure_phase": None,
         "terminal_status": "NOT_STARTED",
         "failure_reason": "DEPENDENCY_NOT_STARTED",
         "exit_code": None,
@@ -1984,16 +2996,63 @@ def make_not_started_job(spec: dict[str, Any]) -> dict[str, Any]:
     return validate_job_result(_self_hash(payload))
 
 
+def make_pre_process_infra_job(spec: dict[str, Any], reason: str) -> dict[str, Any]:
+    now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    payload = {
+        "schema_version": "p3-pilot-build-preflight-job-result-v1",
+        "execution_class": PILOT_EXECUTION_CLASS,
+        "denominator": PILOT_DENOMINATOR,
+        "job_id": spec["job_id"],
+        "job_kind": spec["job_kind"],
+        "dependency_job_ids": list(spec["dependency_job_ids"]),
+        "argv": list(spec["argv"]),
+        "timeout_seconds": spec["timeout_seconds"],
+        "process_started": False,
+        "process_group_terminated": None,
+        "infrastructure_phase": "PRE_PROCESS",
+        "terminal_status": "FAIL_INFRASTRUCTURE",
+        "failure_reason": reason,
+        "exit_code": None,
+        "stdout_sha256": None,
+        "stderr_sha256": None,
+        "stdout_bytes": None,
+        "stderr_bytes": None,
+        "started_at": now,
+        "ended_at": now,
+        "wall_seconds": None,
+        "cpu_seconds": None,
+        "peak_rss_bytes": None,
+        "claims": "blocked",
+    }
+    return validate_job_result(_self_hash(payload))
+
+
 def make_environment_snapshot() -> dict[str, Any]:
-    cmake = shutil.which("cmake")
-    if cmake is None:
+    cmake_path = shutil.which("cmake")
+    cxx_path = shutil.which("c++") or shutil.which("g++")
+    if cmake_path is None:
         raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "MISSING_DEPENDENCY")
+    cmake_version = probe_identity(cmake_path)
+    if cmake_version is None:
+        raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "MISSING_DEPENDENCY")
+    cxx_identity = probe_identity(cxx_path)
     payload = {
         "schema_version": "p3-pilot-build-preflight-environment-v1",
         "execution_class": PILOT_EXECUTION_CLASS,
         "denominator": PILOT_DENOMINATOR,
         "cmake_executable": "cmake",
-        "cxx_compiler_executable": shutil.which("c++") or shutil.which("g++"),
+        "cmake_executable_path": cmake_path,
+        "cmake_version": cmake_version,
+        "cxx_compiler_executable": None if cxx_path is None else Path(cxx_path).name,
+        "cxx_compiler_path": cxx_path,
+        "cxx_compiler_identity": cxx_identity,
+        "cxx_compiler_version": cxx_identity,
+        "cmake_generator": FROZEN_CMAKE_GENERATOR,
+        "os_name": platform.system(),
+        "os_release": platform.release(),
+        "python_version": platform.python_version(),
+        "git_version": probe_identity(shutil.which("git")),
+        "build_parallelism": BUILD_PARALLELISM,
         "nvcc_present": shutil.which("nvcc") is not None,
         "native_profiling_present": False,
         "cuda_absence_blocking": False,
@@ -2005,17 +3064,71 @@ def make_environment_snapshot() -> dict[str, Any]:
     return validate_environment_snapshot(_self_hash(payload))
 
 
+def collect_baseline_build_evidence(
+    build_root: Path,
+    environment: dict[str, Any],
+) -> dict[str, str]:
+    cache = build_root / "CMakeCache.txt"
+    commands = build_root / "compile_commands.json"
+    executable = build_root / "boost_math_pilot_smoke"
+    dep_file = build_root / "boost_math_pilot_smoke.d"
+    for path in (cache, commands, executable):
+        if not path.is_file() or path.is_symlink():
+            raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "MISSING_DEPENDENCY")
+    compiler = environment["cxx_compiler_path"]
+    if compiler is None:
+        raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "MISSING_DEPENDENCY")
+    if environment["cmake_executable_path"] != shutil.which("cmake"):
+        raise EvidenceError("E_PILOT_BUILD_ENVIRONMENT", "cmake identity drifted")
+    try:
+        compile_db = json.loads(commands.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "UNSUPPORTED_TOOLCHAIN") from exc
+    if not isinstance(compile_db, list) or not compile_db:
+        raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "UNSUPPORTED_TOOLCHAIN")
+    command = compile_db[0].get("command") if isinstance(compile_db[0], dict) else None
+    if not isinstance(command, str):
+        raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "UNSUPPORTED_TOOLCHAIN")
+    dep_argv = [compiler, "-M", "-MF", str(dep_file)]
+    if "smoke.cpp" in command:
+        dep_argv.append(str(FROZEN_HARNESS_ROOT / "smoke.cpp"))
+    try:
+        completed = subprocess.run(
+            dep_argv,
+            check=False,
+            capture_output=True,
+            timeout=30,
+            shell=False,
+            cwd=build_root,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "UNSUPPORTED_TOOLCHAIN") from exc
+    if completed.returncode != 0 or not dep_file.is_file():
+        raise EvidenceError("E_PILOT_MISSING_DEPENDENCY", "UNSUPPORTED_TOOLCHAIN")
+    paths = parse_dependency_paths(dep_file.read_text(encoding="utf-8"))
+    reject_nonfrozen_boost_headers(paths)
+    return {
+        "cmake_cache_sha256": _sha256_bytes(cache.read_bytes()),
+        "compile_commands_sha256": _sha256_bytes(commands.read_bytes()),
+        "dependency_list_sha256": _sha256_bytes(canonical_dependency_list_bytes(paths)),
+        "smoke_executable_sha256": _sha256_bytes(executable.read_bytes()),
+    }
+
+
 def write_harness(harness_root: Path, cmake_bytes: bytes, cxx_bytes: bytes) -> None:
     require_absent_path(harness_root, "harness-root")
-    os.mkdir(harness_root)
-    cmake_path = harness_root / "CMakeLists.txt"
-    cxx_path = harness_root / "smoke.cpp"
-    cmake_path.write_bytes(cmake_bytes)
-    cxx_path.write_bytes(cxx_bytes)
+    try:
+        os.mkdir(harness_root)
+        cmake_path = harness_root / "CMakeLists.txt"
+        cxx_path = harness_root / "smoke.cpp"
+        cmake_path.write_bytes(cmake_bytes)
+        cxx_path.write_bytes(cxx_bytes)
+    except OSError as exc:
+        raise EvidenceError("E_PILOT_BUILD_HARNESS", "HARNESS_PUBLICATION_FAILURE") from exc
     if _sha256_bytes(cmake_path.read_bytes()) != _sha256_bytes(cmake_bytes):
-        raise EvidenceError("E_PILOT_BUILD_HARNESS", "cmake bytes drifted")
+        raise EvidenceError("E_PILOT_BUILD_HARNESS", "HARNESS_PUBLICATION_FAILURE")
     if _sha256_bytes(cxx_path.read_bytes()) != _sha256_bytes(cxx_bytes):
-        raise EvidenceError("E_PILOT_BUILD_HARNESS", "cxx bytes drifted")
+        raise EvidenceError("E_PILOT_BUILD_HARNESS", "HARNESS_PUBLICATION_FAILURE")
 
 
 def execute_job(
@@ -2024,13 +3137,14 @@ def execute_job(
     env: dict[str, str],
     log_root: Path,
     popen=subprocess.Popen,
+    timeout_seconds: int | None = None,
 ) -> dict[str, Any]:
     reject_system_boost_environment(env)
     argv = list(spec["argv"])
     if any(not isinstance(item, str) for item in argv):
         raise EvidenceError("E_PILOT_BUILD_ARGV", "argv items must be strings")
     started_at = time.time()
-    timeout_seconds = spec["timeout_seconds"]
+    effective_timeout = spec["timeout_seconds"] if timeout_seconds is None else timeout_seconds
     before = resource.getrusage(resource.RUSAGE_CHILDREN)
     try:
         proc = popen(
@@ -2039,46 +3153,33 @@ def execute_job(
             stderr=subprocess.PIPE,
             shell=False,
             env=env,
+            start_new_session=True,
         )
-    except FileNotFoundError as exc:
-        payload = {
-            "schema_version": "p3-pilot-build-preflight-job-result-v1",
-            "execution_class": PILOT_EXECUTION_CLASS,
-            "denominator": PILOT_DENOMINATOR,
-            "job_id": spec["job_id"],
-            "job_kind": spec["job_kind"],
-            "dependency_job_ids": list(spec["dependency_job_ids"]),
-            "argv": argv,
-            "timeout_seconds": timeout_seconds,
-            "started": True,
-            "terminal_status": "FAIL_INFRASTRUCTURE",
-            "failure_reason": "MISSING_DEPENDENCY",
-            "exit_code": None,
-            "stdout_sha256": _sha256_bytes(b""),
-            "stderr_sha256": _sha256_bytes(str(exc).encode("utf-8")),
-            "stdout_bytes": 0,
-            "stderr_bytes": len(str(exc).encode("utf-8")),
-            "started_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(started_at)),
-            "ended_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-            "wall_seconds": 0.0,
-            "cpu_seconds": 0.0,
-            "peak_rss_bytes": 0,
-            "claims": "blocked",
-        }
-        return validate_job_result(_self_hash(payload))
+    except FileNotFoundError:
+        return make_pre_process_infra_job(spec, "MISSING_DEPENDENCY")
+    pgid = os.getpgid(proc.pid)
+    log_root.mkdir(parents=True, exist_ok=True)
+    (log_root / f"{spec['job_id']}.pgid").write_text(f"{pgid}\n", encoding="utf-8")
     timed_out = False
+    process_group_terminated = False
     try:
-        stdout, stderr = proc.communicate(timeout=timeout_seconds)
+        stdout, stderr = proc.communicate(timeout=effective_timeout)
     except subprocess.TimeoutExpired:
         timed_out = True
-        proc.kill()
+        try:
+            os.killpg(pgid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        process_group_terminated = True
         stdout, stderr = proc.communicate()
     after = resource.getrusage(resource.RUSAGE_CHILDREN)
     stdout = stdout or b""
     stderr = stderr or b""
-    log_root.mkdir(parents=True, exist_ok=True)
-    (log_root / f"{spec['job_id']}.stdout").write_bytes(stdout)
-    (log_root / f"{spec['job_id']}.stderr").write_bytes(stderr)
+    try:
+        (log_root / f"{spec['job_id']}.stdout").write_bytes(stdout)
+        (log_root / f"{spec['job_id']}.stderr").write_bytes(stderr)
+    except OSError as exc:
+        raise EvidenceError("E_PILOT_BUILD_LOG", "LOG_PUBLICATION_FAILURE") from exc
     ended_at = time.time()
     detected = detect_network_or_boost(stdout, stderr, argv)
     exit_code = proc.returncode
@@ -2089,21 +3190,33 @@ def execute_job(
     if timed_out:
         terminal_status = "TIMEOUT"
         failure_reason = "TIMEOUT"
+        recorded_exit = None
+        infrastructure_phase = None
     elif detected == "NETWORK_OR_DOWNLOAD_ATTEMPT":
         terminal_status = "FAIL_INFRASTRUCTURE"
         failure_reason = "NETWORK_OR_DOWNLOAD_ATTEMPT"
+        recorded_exit = exit_code
+        infrastructure_phase = "POST_PROCESS"
     elif detected == "SYSTEM_BOOST_FALLBACK":
         terminal_status = "FAIL_INFRASTRUCTURE"
         failure_reason = "SYSTEM_BOOST_FALLBACK"
+        recorded_exit = exit_code
+        infrastructure_phase = "POST_PROCESS"
     elif exit_code == 0:
         terminal_status = "PASS"
         failure_reason = None
+        recorded_exit = 0
+        infrastructure_phase = None
     elif exit_code is None or exit_code < 0:
         terminal_status = "FAIL"
         failure_reason = "CRASH"
+        recorded_exit = None
+        infrastructure_phase = None
     else:
         terminal_status = "FAIL"
         failure_reason = "NONZERO_EXIT"
+        recorded_exit = exit_code
+        infrastructure_phase = None
     payload = {
         "schema_version": "p3-pilot-build-preflight-job-result-v1",
         "execution_class": PILOT_EXECUTION_CLASS,
@@ -2112,11 +3225,13 @@ def execute_job(
         "job_kind": spec["job_kind"],
         "dependency_job_ids": list(spec["dependency_job_ids"]),
         "argv": argv,
-        "timeout_seconds": timeout_seconds,
-        "started": True,
+        "timeout_seconds": spec["timeout_seconds"],
+        "process_started": True,
+        "process_group_terminated": process_group_terminated,
+        "infrastructure_phase": infrastructure_phase,
         "terminal_status": terminal_status,
         "failure_reason": failure_reason,
-        "exit_code": None if timed_out or (exit_code is not None and exit_code < 0) else exit_code,
+        "exit_code": recorded_exit,
         "stdout_sha256": _sha256_bytes(stdout),
         "stderr_sha256": _sha256_bytes(stderr),
         "stdout_bytes": len(stdout),
@@ -2138,7 +3253,11 @@ def run_three_jobs(
     log_root: Path,
     popen=subprocess.Popen,
     source_root: Path | None = None,
-) -> list[dict[str, Any]]:
+    environment: dict[str, Any] | None = None,
+    outer_deadline: float | None = None,
+    expected_smoke_sha256: str | None = None,
+    collect_evidence=None,
+) -> tuple[list[dict[str, Any]], dict[str, str] | None]:
     if len(specs) != 3:
         raise EvidenceError("E_PILOT_BUILD_DAG", "planned_count must be 3")
     ids = [spec["job_id"] for spec in specs]
@@ -2147,20 +3266,78 @@ def run_three_jobs(
     results: list[dict[str, Any]] = []
     prior_pass = True
     tree_before = None
+    evidence = None
     if source_root is not None:
         tree_before = require_frozen_source_tree(source_root)
+    if environment is not None and environment["cxx_compiler_path"] is None:
+        results.append(make_pre_process_infra_job(specs[0], "MISSING_DEPENDENCY"))
+        results.append(make_not_started_job(specs[1]))
+        results.append(make_not_started_job(specs[2]))
+        return results, None
     for spec in specs:
         if not prior_pass:
             results.append(make_not_started_job(spec))
             continue
-        result = execute_job(spec, env=env, log_root=log_root, popen=popen)
-        results.append(result)
+        remaining = None
+        if outer_deadline is not None:
+            remaining = outer_deadline - time.monotonic()
+            if remaining <= 0:
+                results.append(make_pre_process_infra_job(spec, "MISSING_DEPENDENCY"))
+                prior_pass = False
+                continue
+        timeout_seconds = spec["timeout_seconds"]
+        if remaining is not None:
+            timeout_seconds = min(timeout_seconds, max(1, int(remaining)))
+        if spec["job_id"] == "BASELINE_SMOKE" and expected_smoke_sha256 is not None:
+            executable = Path(spec["argv"][0])
+            if (
+                not executable.is_file()
+                or _sha256_bytes(executable.read_bytes()) != expected_smoke_sha256
+            ):
+                results.append(make_pre_process_infra_job(spec, "MISSING_DEPENDENCY"))
+                prior_pass = False
+                continue
+        result = execute_job(
+            spec,
+            env=env,
+            log_root=log_root,
+            popen=popen,
+            timeout_seconds=timeout_seconds,
+        )
         if source_root is not None:
-            tree_after = require_frozen_source_tree(source_root)
-            if tree_after != tree_before:
-                raise EvidenceError("E_PILOT_SOURCE_TREE_MISMATCH", "tree drifted")
+            try:
+                tree_after = require_frozen_source_tree(source_root)
+                if tree_after != tree_before:
+                    raise EvidenceError("E_PILOT_SOURCE_TREE_MISMATCH", "SOURCE_TREE_DRIFT")
+            except EvidenceError:
+                overlay = dict(result)
+                overlay["terminal_status"] = "FAIL_INFRASTRUCTURE"
+                overlay["failure_reason"] = "SOURCE_TREE_DRIFT"
+                overlay["infrastructure_phase"] = "POST_PROCESS"
+                overlay.pop("artifact_sha256", None)
+                result = validate_job_result(_self_hash(overlay))
+        if (
+            spec["job_id"] == "BASELINE_BUILD"
+            and result["terminal_status"] == "PASS"
+            and collect_evidence is not None
+            and environment is not None
+        ):
+            try:
+                evidence = collect_evidence(FROZEN_BUILD_ROOT, environment)
+                expected_smoke_sha256 = evidence["smoke_executable_sha256"]
+            except EvidenceError as exc:
+                reason = str(exc).split(":", 1)[-1].strip()
+                if reason not in INFRA_REASONS_POST_PROCESS:
+                    reason = "UNSUPPORTED_TOOLCHAIN"
+                overlay = dict(result)
+                overlay["terminal_status"] = "FAIL_INFRASTRUCTURE"
+                overlay["failure_reason"] = reason
+                overlay["infrastructure_phase"] = "POST_PROCESS"
+                overlay.pop("artifact_sha256", None)
+                result = validate_job_result(_self_hash(overlay))
+        results.append(result)
         prior_pass = result["terminal_status"] == "PASS"
-    return results
+    return results, evidence
 
 
 def _require_authorization() -> str:
@@ -2198,24 +3375,30 @@ def _require_source_preparation_identities() -> None:
         )
 
 
-def _require_plan_and_implementation_verdicts() -> tuple[str, str]:
+def _require_plan_and_implementation_verdicts() -> tuple[str, str, str]:
     plan_raw, plan_digest = read_authority_snapshot(PLAN_PATH, "build-preflight-plan")
     verdict_raw, verdict_digest = read_authority_snapshot(
         PLAN_VERDICT_PATH, "build-preflight-plan-verdict"
     )
     validate_plan_verdict(parse_canonical_json_object(verdict_raw, "plan-verdict"), plan_digest)
-    impl_raw, _impl_digest = read_authority_snapshot(
+    impl_raw, impl_digest = read_authority_snapshot(
         IMPLEMENTATION_VERDICT_PATH, "build-preflight-implementation-verdict"
     )
-    validate_implementation_verdict(
+    impl_verdict = validate_implementation_verdict(
         parse_canonical_json_object(impl_raw, "implementation-verdict"),
         plan_digest,
         verdict_digest,
     )
-    return plan_digest, verdict_digest
+    verify_reviewed_production_bytes(impl_verdict)
+    return plan_digest, verdict_digest, impl_digest
 
 
-def build_intent(environment: dict[str, Any], predecessor: list[str]) -> dict[str, Any]:
+def build_intent(
+    environment: dict[str, Any],
+    predecessor: list[str],
+    implementation_verdict_sha256: str,
+) -> dict[str, Any]:
+    pid, starttime = producer_identity()
     payload = {
         "schema_version": "p3-pilot-build-preflight-intent-v1",
         "execution_class": PILOT_EXECUTION_CLASS,
@@ -2231,6 +3414,7 @@ def build_intent(environment: dict[str, Any], predecessor: list[str]) -> dict[st
         "source_manifest_sha256": SOURCE_MANIFEST_FILE_SHA256,
         "source_preparation_result_sha256": SOURCE_PREPARATION_RESULT_FILE_SHA256,
         "source_preparation_reviewed_commit": SOURCE_PREPARATION_REVIEWED_COMMIT,
+        "implementation_verdict_sha256": implementation_verdict_sha256,
         "authorization_sha256": AUTHORIZATION_SHA256,
         "harness_cmake_sha256": HARNESS_CMAKE_SHA256,
         "harness_cxx_sha256": HARNESS_CXX_SHA256,
@@ -2247,7 +3431,10 @@ def build_intent(environment: dict[str, Any], predecessor: list[str]) -> dict[st
         "build_parallelism": BUILD_PARALLELISM,
         "planned_count": PLANNED_COUNT,
         "dependency_dag": [list(edge) for edge in DEPENDENCY_DAG],
+        "environment_snapshot": environment,
         "environment_snapshot_sha256": environment["artifact_sha256"],
+        "producer_pid": pid,
+        "producer_starttime": starttime,
         "predecessor_sha256": list(predecessor),
         "no_retry": True,
         "claims": "blocked",
@@ -2263,19 +3450,28 @@ def build_result(
     environment: dict[str, Any],
     jobs: list[dict[str, Any]],
     predecessor: list[str],
+    implementation_verdict_sha256: str,
+    evidence: dict[str, str] | None,
 ) -> dict[str, Any]:
-    started = [job for job in jobs if job["started"] is True]
+    started = [job for job in jobs if job["process_started"] is True]
     not_started = [job for job in jobs if job["terminal_status"] == "NOT_STARTED"]
-    first_bad = next(
-        (job for job in jobs if job["terminal_status"] != "PASS"),
-        None,
-    )
+    first_bad = next((job for job in jobs if job["terminal_status"] != "PASS"), None)
     if first_bad is None:
         terminal_status = "PASS"
         failure_reason = None
+        if evidence is None:
+            raise EvidenceError("E_PILOT_BUILD_RESULT", "PASS must bind build artifacts")
+        cache_sha = evidence["cmake_cache_sha256"]
+        commands_sha = evidence["compile_commands_sha256"]
+        dep_sha = evidence["dependency_list_sha256"]
+        smoke_sha = evidence["smoke_executable_sha256"]
     else:
         terminal_status = first_bad["terminal_status"]
         failure_reason = first_bad["failure_reason"]
+        cache_sha = None if evidence is None else evidence.get("cmake_cache_sha256")
+        commands_sha = None if evidence is None else evidence.get("compile_commands_sha256")
+        dep_sha = None if evidence is None else evidence.get("dependency_list_sha256")
+        smoke_sha = None if evidence is None else evidence.get("smoke_executable_sha256")
     payload = {
         "schema_version": "p3-pilot-build-preflight-result-v1",
         "execution_class": PILOT_EXECUTION_CLASS,
@@ -2289,11 +3485,17 @@ def build_result(
         "source_preparation_verdict_sha256": SOURCE_PREPARATION_RESULT_VERDICT_SHA256,
         "source_manifest_sha256": SOURCE_MANIFEST_FILE_SHA256,
         "source_preparation_result_sha256": SOURCE_PREPARATION_RESULT_FILE_SHA256,
+        "implementation_verdict_sha256": implementation_verdict_sha256,
         "intent_sha256": intent_sha256,
         "authorization_sha256": AUTHORIZATION_SHA256,
+        "environment_snapshot": environment,
         "environment_snapshot_sha256": environment["artifact_sha256"],
         "harness_cmake_sha256": HARNESS_CMAKE_SHA256,
         "harness_cxx_sha256": HARNESS_CXX_SHA256,
+        "cmake_cache_sha256": cache_sha,
+        "compile_commands_sha256": commands_sha,
+        "dependency_list_sha256": dep_sha,
+        "smoke_executable_sha256": smoke_sha,
         "source_root": FROZEN_SOURCE_ROOT.as_posix(),
         "build_root": FROZEN_BUILD_ROOT.as_posix(),
         "harness_root": FROZEN_HARNESS_ROOT.as_posix(),
@@ -2315,11 +3517,84 @@ def build_result(
     return validate_result(_self_hash(payload))
 
 
+def _write_terminal_result(
+    *,
+    intent_sha256: str,
+    environment: dict[str, Any],
+    jobs: list[dict[str, Any]],
+    predecessor: list[str],
+    implementation_verdict_sha256: str,
+    evidence: dict[str, str] | None,
+) -> dict[str, Any]:
+    if os.path.lexists(RESULT_PATH):
+        raise EvidenceError("E_PILOT_BUILD_PREEXISTING", "result already exists")
+    result = build_result(
+        intent_sha256=intent_sha256,
+        environment=environment,
+        jobs=jobs,
+        predecessor=predecessor,
+        implementation_verdict_sha256=implementation_verdict_sha256,
+        evidence=evidence,
+    )
+    write_canonical_json(RESULT_PATH, result, exclusive=True)
+    return result
+
+
 def run_build_preflight(source_root: Path, build_root: Path) -> dict[str, Any]:
     if source_root != FROZEN_SOURCE_ROOT or build_root != FROZEN_BUILD_ROOT:
         raise EvidenceError("E_PILOT_BUILD_PATH", "CLI paths must equal frozen paths")
-    require_absent_path(INTENT_PATH, "intent")
-    require_absent_path(RESULT_PATH, "result")
+    intent_exists = os.path.lexists(INTENT_PATH)
+    result_exists = os.path.lexists(RESULT_PATH)
+    intent_obj = None
+    intent_valid = False
+    result_valid = False
+    live_attempt = False
+    if intent_exists:
+        try:
+            raw, _digest = read_authority_snapshot(INTENT_PATH, "existing-intent")
+            intent_obj = validate_intent(parse_canonical_json_object(raw, "existing-intent"))
+            intent_valid = True
+            live_attempt = attempt_is_live(
+                intent_obj["producer_pid"],
+                intent_obj["producer_starttime"],
+            )
+        except EvidenceError:
+            intent_valid = False
+    if result_exists:
+        try:
+            raw, _digest = read_authority_snapshot(RESULT_PATH, "existing-result")
+            validate_result(parse_canonical_json_object(raw, "existing-result"))
+            result_valid = True
+        except EvidenceError:
+            result_valid = False
+    state = classify_reconciliation(
+        intent_present=intent_exists,
+        result_present=result_exists,
+        intent_valid=intent_valid,
+        result_valid=result_valid,
+        live_attempt=live_attempt,
+    )
+    if state == "RESULT_TERMINAL":
+        raise EvidenceError("E_PILOT_BUILD_PREEXISTING", "result already exists")
+    if state == "INTENT_LIVE":
+        raise EvidenceError("E_PILOT_BUILD_PREEXISTING", "original attempt is still live")
+    if state == "RESULT_WITHOUT_INTENT" or state == "INVALID_DURABLE":
+        raise EvidenceError("E_PILOT_BUILD_PREEXISTING", "durable objects are inconsistent")
+    if state == "INTENT_ONLY_ORPHAN":
+        environment = intent_obj["environment_snapshot"]
+        jobs = [
+            make_pre_process_infra_job(JOB_SPECS[0], "ORPHANED_INTENT_NO_PROCESS"),
+            make_not_started_job(JOB_SPECS[1]),
+            make_not_started_job(JOB_SPECS[2]),
+        ]
+        return _write_terminal_result(
+            intent_sha256=_sha256_bytes(INTENT_PATH.read_bytes()),
+            environment=environment,
+            jobs=jobs,
+            predecessor=list(intent_obj["predecessor_sha256"]),
+            implementation_verdict_sha256=intent_obj["implementation_verdict_sha256"],
+            evidence=None,
+        )
     require_absent_path(FROZEN_BUILD_ROOT, "build-root")
     require_absent_path(FROZEN_HARNESS_ROOT, "harness-root")
     env = dict(os.environ)
@@ -2327,13 +3602,14 @@ def run_build_preflight(source_root: Path, build_root: Path) -> dict[str, Any]:
     env.update(DISCONNECTED_ENVIRONMENT)
     _require_authorization()
     _require_source_preparation_identities()
-    plan_digest, verdict_digest = _require_plan_and_implementation_verdicts()
+    plan_digest, verdict_digest, impl_digest = _require_plan_and_implementation_verdicts()
     require_frozen_source_tree(FROZEN_SOURCE_ROOT)
     environment = make_environment_snapshot()
     predecessor = sorted(
         [
             plan_digest,
             verdict_digest,
+            impl_digest,
             SOURCE_PREPARATION_RESULT_VERDICT_SHA256,
             SOURCE_MANIFEST_FILE_SHA256,
             SOURCE_PREPARATION_RESULT_FILE_SHA256,
@@ -2341,25 +3617,74 @@ def run_build_preflight(source_root: Path, build_root: Path) -> dict[str, Any]:
             environment["artifact_sha256"],
         ]
     )
-    intent = build_intent(environment, predecessor)
+    intent = build_intent(environment, predecessor, impl_digest)
     write_canonical_json(INTENT_PATH, intent, exclusive=True)
     intent_sha256 = _sha256_bytes(INTENT_PATH.read_bytes())
-    write_harness(FROZEN_HARNESS_ROOT, HARNESS_CMAKE_BYTES, HARNESS_CXX_BYTES)
-    os.mkdir(FROZEN_BUILD_ROOT)
-    jobs = run_three_jobs(
-        JOB_SPECS,
-        env=env,
-        log_root=FROZEN_BUILD_ROOT / "logs",
-        source_root=FROZEN_SOURCE_ROOT,
-    )
-    result = build_result(
+    outer_deadline = time.monotonic() + OUTER_TIMEOUT_SECONDS
+    jobs = [make_not_started_job(spec) for spec in JOB_SPECS]
+    evidence = None
+    try:
+        write_harness(FROZEN_HARNESS_ROOT, HARNESS_CMAKE_BYTES, HARNESS_CXX_BYTES)
+        os.mkdir(FROZEN_BUILD_ROOT)
+        jobs, evidence = run_three_jobs(
+            JOB_SPECS,
+            env=env,
+            log_root=FROZEN_BUILD_ROOT / "logs",
+            source_root=FROZEN_SOURCE_ROOT,
+            environment=environment,
+            outer_deadline=outer_deadline,
+            expected_smoke_sha256=None,
+            collect_evidence=collect_baseline_build_evidence,
+        )
+    except EvidenceError as exc:
+        detail = str(exc)
+        reason = "RESULT_PUBLICATION_FAILURE"
+        if "SOURCE_TREE" in detail or "SOURCE_TREE_DRIFT" in detail:
+            reason = "SOURCE_TREE_DRIFT"
+        elif "HARNESS" in detail:
+            reason = "HARNESS_PUBLICATION_FAILURE"
+        elif "LOG_PUBLICATION" in detail:
+            reason = "LOG_PUBLICATION_FAILURE"
+        elif "SYSTEM_BOOST" in detail:
+            reason = "SYSTEM_BOOST_FALLBACK"
+        while len(jobs) < 3:
+            jobs.append(make_not_started_job(JOB_SPECS[len(jobs)]))
+        if all(job["terminal_status"] == "NOT_STARTED" for job in jobs):
+            jobs = [
+                make_pre_process_infra_job(JOB_SPECS[0], reason),
+                make_not_started_job(JOB_SPECS[1]),
+                make_not_started_job(JOB_SPECS[2]),
+            ]
+        return _write_terminal_result(
+            intent_sha256=intent_sha256,
+            environment=environment,
+            jobs=jobs,
+            predecessor=sorted([intent_sha256, *predecessor]),
+            implementation_verdict_sha256=impl_digest,
+            evidence=evidence,
+        )
+    except Exception:
+        jobs = [
+            make_pre_process_infra_job(JOB_SPECS[0], "RESULT_PUBLICATION_FAILURE"),
+            make_not_started_job(JOB_SPECS[1]),
+            make_not_started_job(JOB_SPECS[2]),
+        ]
+        return _write_terminal_result(
+            intent_sha256=intent_sha256,
+            environment=environment,
+            jobs=jobs,
+            predecessor=sorted([intent_sha256, *predecessor]),
+            implementation_verdict_sha256=impl_digest,
+            evidence=None,
+        )
+    return _write_terminal_result(
         intent_sha256=intent_sha256,
         environment=environment,
         jobs=jobs,
         predecessor=sorted([intent_sha256, *predecessor]),
+        implementation_verdict_sha256=impl_digest,
+        evidence=evidence,
     )
-    write_canonical_json(RESULT_PATH, result, exclusive=True)
-    return result
 ```
 
 Replace `scripts/p3_v3/pilot.py` with this exact file:
