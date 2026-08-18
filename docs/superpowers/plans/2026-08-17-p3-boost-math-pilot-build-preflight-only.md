@@ -482,7 +482,7 @@ Result validator conservation:
 
 ## Crash, Timeout, and No-Retry Reconciliation
 
-Child processes start in an independent process group or session. Before `Popen`, production exclusive-creates `<job_id>.start.json` with `job_id`, `argv_sha256`, `created_at`, and `state=STARTING`. After `Popen` succeeds, it exclusive-creates the identity record with pid, pgid, starttime, and `argv_sha256`. Neither file is overwritten. Post-Popen catchable exceptions are normalized inside `execute_job` to a started `FAIL_INFRASTRUCTURE/POST_PROCESS` job. They are not re-raised as raw exceptions and must not be rewritten as `PRE_PROCESS` or `NOT_STARTED`. A job timeout kills the matching process group, then communicate/wait again. Partial stdout/stderr are preserved and hashed as the raw logs. Normal PASS does not call `killpg` when the process group has no remaining members. If the parent exits and the group still has members, the job is `PROCESS_GROUP_LEAK`. Cleanup never kills a reused PGID: pid, starttime, and identity must still match. The runner keeps an internal outer deadline of 7200 seconds. The future shell watchdog is `timeout 2h5m`, later than that deadline, so a terminal result can still be written.
+Child processes start in an independent process group or session. Before `Popen`, production exclusive-creates `<job_id>.start.json` with `job_id`, `argv_sha256`, `created_at`, and `state=STARTING`. After `Popen` succeeds, it exclusive-creates the identity record with pid, pgid, starttime, and `argv_sha256`. Neither file is overwritten. Post-Popen catchable exceptions are normalized inside `execute_job` to a started `FAIL_INFRASTRUCTURE/POST_PROCESS` job. They are not re-raised as raw exceptions and must not be rewritten as `PRE_PROCESS` or `NOT_STARTED`. A job timeout kills the matching process group, then communicate/wait again. Timeout and cleanup communicate() results are single cumulative snapshots. A later successful communicate() replaces the prior snapshot; a failed final collection keeps the prior snapshot. Snapshots are never concatenated. The chosen snapshot is written to the raw logs and hashed once. Normal PASS does not call `killpg` when the process group has no remaining members. If the parent exits and the group still has members, the job is `PROCESS_GROUP_LEAK`. Cleanup never kills a reused PGID: pid, starttime, and identity must still match. The runner keeps an internal outer deadline of 7200 seconds. The future shell watchdog is `timeout 2h5m`, later than that deadline, so a terminal result can still be written.
 
 After intent creation, every catchable exception normalizes to one terminal result. Production must not delete or overwrite intent, result, harness, or build root.
 
@@ -670,6 +670,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -739,6 +740,10 @@ REQUIRED_BUILD_PREFLIGHT_TESTS = [
     "test_start_marker_without_identity_is_unresolved",
     "test_orphan_requires_no_start_marker",
     "test_started_post_process_failure_count_conservation",
+    "test_timeout_retry_communicate_uses_final_cumulative_output_once",
+    "test_timeout_falls_back_to_partial_output_when_final_collection_fails",
+    "test_log_cleanup_does_not_duplicate_cumulative_stdio",
+    "test_process_group_leak_cleanup_does_not_duplicate_cumulative_stdio",
 ]
 
 
@@ -865,6 +870,10 @@ def test_required_build_preflight_names_are_frozen():
         "test_start_marker_without_identity_is_unresolved",
         "test_orphan_requires_no_start_marker",
         "test_started_post_process_failure_count_conservation",
+        "test_timeout_retry_communicate_uses_final_cumulative_output_once",
+        "test_timeout_falls_back_to_partial_output_when_final_collection_fails",
+        "test_log_cleanup_does_not_duplicate_cumulative_stdio",
+        "test_process_group_leak_cleanup_does_not_duplicate_cumulative_stdio",
     ]
 
 
@@ -2505,6 +2514,255 @@ def test_started_post_process_failure_count_conservation():
     assert result["not_started_count"] == 2
     assert result["terminal_status"] == "FAIL_INFRASTRUCTURE"
     assert result["failure_reason"] == "PROCESS_IDENTITY_PUBLICATION_FAILURE"
+
+
+def _patch_fake_child_identity(monkeypatch, pilot_build, pid=424242, group_live=False):
+    monkeypatch.setattr(pilot_build, "read_proc_starttime", lambda value: "99")
+    monkeypatch.setattr(os, "getpgid", lambda value: pid)
+    monkeypatch.setattr(os, "killpg", lambda pgid, sig: None)
+    monkeypatch.setattr(pilot_build, "process_group_has_members", lambda pgid: group_live)
+
+
+def test_timeout_retry_communicate_uses_final_cumulative_output_once(tmp_path, monkeypatch):
+    import p3_v3.pilot_build as pilot_build
+
+    expected_out = b"partial\ntail\n"
+    expected_err = b"error\nmore\n"
+    duplicated_out = b"partial\npartial\ntail\n"
+    duplicated_err = b"error\nerror\nmore\n"
+
+    class FakeProc:
+        pid = 424242
+        returncode = None
+        calls = 0
+
+        def communicate(self, timeout=None):
+            self.calls += 1
+            if self.calls == 1:
+                raise subprocess.TimeoutExpired(
+                    ["fake"],
+                    0.1,
+                    output=b"partial\n",
+                    stderr=b"error\n",
+                )
+            self.returncode = -9
+            return expected_out, expected_err
+
+        def poll(self):
+            return None if self.calls < 2 else -9
+
+        def wait(self, timeout=None):
+            self.returncode = -9
+            return -9
+
+    _patch_fake_child_identity(monkeypatch, pilot_build)
+    spec = {
+        "job_id": "CMAKE_CONFIGURE",
+        "job_kind": "CMAKE_CONFIGURE",
+        "dependency_job_ids": [],
+        "argv": ["fake-timeout"],
+        "timeout_seconds": 900,
+    }
+    result = pilot_build.execute_job(
+        spec,
+        env={"PATH": "/usr/bin"},
+        log_root=tmp_path / "logs",
+        popen=lambda *args, **kwargs: FakeProc(),
+        timeout_seconds=0.1,
+    )
+    raw_out = (tmp_path / "logs" / "CMAKE_CONFIGURE.stdout").read_bytes()
+    raw_err = (tmp_path / "logs" / "CMAKE_CONFIGURE.stderr").read_bytes()
+    assert result["terminal_status"] == "TIMEOUT"
+    assert result["failure_reason"] == "TIMEOUT"
+    assert result["process_started"] is True
+    assert result["process_group_terminated"] is True
+    assert raw_out == expected_out
+    assert raw_err == expected_err
+    assert raw_out != duplicated_out
+    assert raw_err != duplicated_err
+    assert result["stdout_sha256"] == _sha256_bytes(expected_out)
+    assert result["stderr_sha256"] == _sha256_bytes(expected_err)
+    assert result["stdout_bytes"] == len(expected_out)
+    assert result["stderr_bytes"] == len(expected_err)
+
+
+def test_timeout_falls_back_to_partial_output_when_final_collection_fails(
+    tmp_path, monkeypatch
+):
+    import p3_v3.pilot_build as pilot_build
+
+    partial_out = b"partial\n"
+    partial_err = b"error\n"
+
+    class FakeProc:
+        pid = 424242
+        returncode = None
+        calls = 0
+
+        def communicate(self, timeout=None):
+            self.calls += 1
+            raise subprocess.TimeoutExpired(
+                ["fake"],
+                0.1,
+                output=partial_out,
+                stderr=partial_err,
+            )
+
+        def poll(self):
+            return None
+
+        def wait(self, timeout=None):
+            return None
+
+    _patch_fake_child_identity(monkeypatch, pilot_build)
+    monkeypatch.setattr(
+        pilot_build,
+        "terminate_and_reap_process_group",
+        lambda *args, **kwargs: (None, None, False),
+    )
+    spec = {
+        "job_id": "CMAKE_CONFIGURE",
+        "job_kind": "CMAKE_CONFIGURE",
+        "dependency_job_ids": [],
+        "argv": ["fake-timeout-fallback"],
+        "timeout_seconds": 900,
+    }
+    result = pilot_build.execute_job(
+        spec,
+        env={"PATH": "/usr/bin"},
+        log_root=tmp_path / "logs",
+        popen=lambda *args, **kwargs: FakeProc(),
+        timeout_seconds=0.1,
+    )
+    raw_out = (tmp_path / "logs" / "CMAKE_CONFIGURE.stdout").read_bytes()
+    raw_err = (tmp_path / "logs" / "CMAKE_CONFIGURE.stderr").read_bytes()
+    assert result["terminal_status"] == "TIMEOUT"
+    assert result["failure_reason"] == "TIMEOUT"
+    assert raw_out == partial_out
+    assert raw_err == partial_err
+    assert raw_out != partial_out + partial_out
+    assert result["stdout_sha256"] == _sha256_bytes(partial_out)
+    assert result["stderr_sha256"] == _sha256_bytes(partial_err)
+    assert result["stdout_bytes"] == len(partial_out)
+    assert result["stderr_bytes"] == len(partial_err)
+
+
+def test_log_cleanup_does_not_duplicate_cumulative_stdio(tmp_path, monkeypatch):
+    from pathlib import Path as PathType
+
+    import p3_v3.pilot_build as pilot_build
+
+    expected_out = b"once\n"
+    expected_err = b"err-once\n"
+
+    class FakeProc:
+        pid = 424242
+        returncode = 0
+        calls = 0
+
+        def communicate(self, timeout=None):
+            self.calls += 1
+            return expected_out, expected_err
+
+        def poll(self):
+            return 0
+
+        def wait(self, timeout=None):
+            return 0
+
+    _patch_fake_child_identity(monkeypatch, pilot_build, group_live=False)
+    original = PathType.write_bytes
+    seen = {"n": 0}
+
+    def boom(self, data):
+        if self.name.endswith(".stdout") or self.name.endswith(".stderr"):
+            seen["n"] += 1
+            if seen["n"] == 1:
+                raise OSError("log publication failed")
+        return original(self, data)
+
+    monkeypatch.setattr(PathType, "write_bytes", boom)
+    spec = {
+        "job_id": "CMAKE_CONFIGURE",
+        "job_kind": "CMAKE_CONFIGURE",
+        "dependency_job_ids": [],
+        "argv": ["fake-log"],
+        "timeout_seconds": 900,
+    }
+    result = pilot_build.execute_job(
+        spec,
+        env={"PATH": "/usr/bin"},
+        log_root=tmp_path / "logs",
+        popen=lambda *args, **kwargs: FakeProc(),
+    )
+    raw_out = (tmp_path / "logs" / "CMAKE_CONFIGURE.stdout").read_bytes()
+    raw_err = (tmp_path / "logs" / "CMAKE_CONFIGURE.stderr").read_bytes()
+    assert result["terminal_status"] == "FAIL_INFRASTRUCTURE"
+    assert result["failure_reason"] == "LOG_PUBLICATION_FAILURE"
+    assert result["process_started"] is True
+    assert raw_out == expected_out
+    assert raw_err == expected_err
+    assert raw_out != expected_out + expected_out
+    assert result["stdout_sha256"] == _sha256_bytes(expected_out)
+    assert result["stderr_sha256"] == _sha256_bytes(expected_err)
+    assert result["stdout_bytes"] == len(expected_out)
+    assert result["stderr_bytes"] == len(expected_err)
+
+
+def test_process_group_leak_cleanup_does_not_duplicate_cumulative_stdio(
+    tmp_path, monkeypatch
+):
+    import p3_v3.pilot_build as pilot_build
+
+    first_out = b"parent-out\n"
+    first_err = b"parent-err\n"
+    final_out = b"parent-out\nchild-out\n"
+    final_err = b"parent-err\nchild-err\n"
+
+    class FakeProc:
+        pid = 424242
+        returncode = 0
+        calls = 0
+
+        def communicate(self, timeout=None):
+            self.calls += 1
+            if self.calls == 1:
+                return first_out, first_err
+            return final_out, final_err
+
+        def poll(self):
+            return 0
+
+        def wait(self, timeout=None):
+            return 0
+
+    _patch_fake_child_identity(monkeypatch, pilot_build, group_live=True)
+    spec = {
+        "job_id": "CMAKE_CONFIGURE",
+        "job_kind": "CMAKE_CONFIGURE",
+        "dependency_job_ids": [],
+        "argv": ["fake-leak"],
+        "timeout_seconds": 900,
+    }
+    result = pilot_build.execute_job(
+        spec,
+        env={"PATH": "/usr/bin"},
+        log_root=tmp_path / "logs",
+        popen=lambda *args, **kwargs: FakeProc(),
+    )
+    raw_out = (tmp_path / "logs" / "CMAKE_CONFIGURE.stdout").read_bytes()
+    raw_err = (tmp_path / "logs" / "CMAKE_CONFIGURE.stderr").read_bytes()
+    assert result["terminal_status"] == "FAIL_INFRASTRUCTURE"
+    assert result["failure_reason"] == "PROCESS_GROUP_LEAK"
+    assert result["process_started"] is True
+    assert result["process_group_terminated"] is True
+    assert raw_out == final_out
+    assert raw_err == final_err
+    assert raw_out != first_out + final_out
+    assert result["stdout_sha256"] == _sha256_bytes(final_out)
+    assert result["stderr_sha256"] == _sha256_bytes(final_err)
+    assert result["stdout_bytes"] == len(final_out)
+    assert result["stderr_bytes"] == len(final_err)
 ```
 
 Append these tests to `tests/p3_v3/test_pilot.py`:
@@ -3539,6 +3797,15 @@ def child_records_are_live(records: list[dict[str, Any]]) -> bool:
     return False
 
 
+def select_cumulative_output(
+    previous: bytes,
+    final_snapshot: bytes | None,
+) -> bytes:
+    if final_snapshot is None:
+        return previous
+    return final_snapshot
+
+
 def terminate_and_reap_process_group(
     pgid: int | None,
     proc: Any,
@@ -3546,11 +3813,11 @@ def terminate_and_reap_process_group(
     starttime: str | None = None,
     *,
     force: bool = True,
-) -> tuple[bytes, bytes, bool]:
-    extra_out = b""
-    extra_err = b""
+) -> tuple[bytes | None, bytes | None, bool]:
+    extra_out: bytes | None = None
+    extra_err: bytes | None = None
     if _is_controller_process_group(pgid, proc):
-        return extra_out, extra_err, False
+        return None, None, False
     still_running = False
     if proc is not None and hasattr(proc, "poll"):
         still_running = proc.poll() is None
@@ -3561,10 +3828,12 @@ def terminate_and_reap_process_group(
             pass
     if proc is not None:
         try:
-            extra_out, extra_err = proc.communicate(timeout=5)
-            extra_out = extra_out or b""
-            extra_err = extra_err or b""
+            received_out, received_err = proc.communicate(timeout=5)
+            extra_out = received_out if received_out is not None else b""
+            extra_err = received_err if received_err is not None else b""
         except Exception:
+            extra_out = None
+            extra_err = None
             try:
                 proc.wait(timeout=5)
             except Exception:
@@ -4296,8 +4565,8 @@ def execute_job(
         else:
             post_spawn_reason = "PROCESS_CONTROL_FAILURE"
     finally:
-        extra_out = b""
-        extra_err = b""
+        extra_out = None
+        extra_err = None
         leaked = False
         if force_group_cleanup:
             process_group_terminated = True
@@ -4313,8 +4582,8 @@ def execute_job(
             extra_out, extra_err, leaked = terminate_and_reap_process_group(
                 pgid, proc, pid, starttime, force=True
             )
-            stdout = (stdout or b"") + (extra_out or b"")
-            stderr = (stderr or b"") + (extra_err or b"")
+            stdout = select_cumulative_output(stdout or b"", extra_out)
+            stderr = select_cumulative_output(stderr or b"", extra_err)
             if leaked:
                 post_spawn_reason = "PROCESS_CONTROL_FAILURE"
     after = resource.getrusage(resource.RUSAGE_CHILDREN)
@@ -4329,8 +4598,8 @@ def execute_job(
         extra_out, extra_err, leaked = terminate_and_reap_process_group(
             pgid, proc, pid, starttime, force=True
         )
-        stdout = stdout + (extra_out or b"")
-        stderr = stderr + (extra_err or b"")
+        stdout = select_cumulative_output(stdout, extra_out)
+        stderr = select_cumulative_output(stderr, extra_err)
         try:
             (log_root / f"{spec['job_id']}.stdout").write_bytes(stdout)
             (log_root / f"{spec['job_id']}.stderr").write_bytes(stderr)
@@ -4349,8 +4618,8 @@ def execute_job(
             extra_out, extra_err, leaked = terminate_and_reap_process_group(
                 pgid, proc, pid, starttime, force=True
             )
-            stdout = (stdout or b"") + (extra_out or b"")
-            stderr = (stderr or b"") + (extra_err or b"")
+            stdout = select_cumulative_output(stdout, extra_out)
+            stderr = select_cumulative_output(stderr, extra_err)
             try:
                 (log_root / f"{spec['job_id']}.stdout").write_bytes(stdout)
                 (log_root / f"{spec['job_id']}.stderr").write_bytes(stderr)

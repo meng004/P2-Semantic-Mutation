@@ -1,18 +1,18 @@
-# Boost.Math PILOT_BUILD_PREFLIGHT_ONLY Plan Review Packet: P1BP1R3
+# Boost.Math PILOT_BUILD_PREFLIGHT_ONLY Plan Review Packet: P1BP1R4
 
-- Node name: `P1BP1R3_BOOST_MATH_PILOT_BUILD_PREFLIGHT_POST_SPAWN_TERMINAL_CLOSURE`
-- Packet title: Boost.Math PILOT build-preflight post-spawn terminal closure
+- Node name: `P1BP1R4_BOOST_MATH_PILOT_BUILD_PREFLIGHT_STDIO_SINGLE_SNAPSHOT_REPAIR`
+- Packet title: Boost.Math PILOT build-preflight stdio single-snapshot repair
 - Builder identity: Cursor VM
-- Starting commit: `0b3f20351d4e2ee5c908ddec697ed9da443f9cbd`
+- Starting commit: `cf1838a686518e99997ef525e0585dd2383ff7b5`
 - Ending commit: this node does not write an ending-commit token. The ending commit is the unique successor on `origin/main` that modifies only the two files listed below.
 - Plan path: `docs/superpowers/plans/2026-08-17-p3-boost-math-pilot-build-preflight-only.md`
-- Old plan SHA-256: `cddf7057908ef1cd169ac24a64710c2f8538cdc586a23331e1e39ce1e9275bf8`
-- Old plan bytes / LF / CR: 187690 / 4540 / 0
-- New plan SHA-256: `3e2566beb9f3aa8b0acd64f477a936eca517f6747672d0ece668a43d0a5fbdb4`
-- New plan bytes / LF / CR: 206992 / 5056 / 0
+- Old plan SHA-256: `3e2566beb9f3aa8b0acd64f477a936eca517f6747672d0ece668a43d0a5fbdb4`
+- Old plan bytes / LF / CR: 206992 / 5056 / 0
+- New plan SHA-256: `4906f3911d0ed0c0d53f0b3101fc718ad64c264d21e758a2d1ed7f8c33bd0b03`
+- New plan bytes / LF / CR: 216502 / 5325 / 0
 - Packet path: `docs/review_20260817/boost_math_pilot_build_preflight_plan_review_packet.md`
-- Old packet SHA-256: `a4ace60b3d2f50fc3ed2a5e1f6e13cd51f4a98a1bfde199d460783a45d49ce8a`
-- Old packet bytes / LF / CR: 10430 / 215 / 0
+- Old packet SHA-256: `c0ef7168e7d9a1f8ed73e186ec599e2683e4cda8ad69e381ebf88035ed0733b2`
+- Old packet bytes / LF / CR: 10341 / 218 / 0
 - Packet SHA-256, bytes, LF, and CR: this packet does not self-hash. Independent reviewers hash this file after clone. The node return records the post-write measurement.
 - Python fence count: 4
 - Requested reviewer: GPT-5.6 Sol High
@@ -29,8 +29,6 @@ The plan is not frozen.
 Future implementation has not started.
 Authorization was not created.
 Production build-preflight was not run.
-The complete 2026-08-15 pilot plan remains unfrozen.
-Mutant, MR, certification, and outcome objects were not touched.
 
 ## File change list
 
@@ -39,57 +37,39 @@ This node modifies only:
 1. `docs/superpowers/plans/2026-08-17-p3-boost-math-pilot-build-preflight-only.md`
 2. `docs/review_20260817/boost_math_pilot_build_preflight_plan_review_packet.md`
 
-No third file was created. No verdict, Authorization, intent, result, harness root, or build root was created.
+No third file was created.
 
 ## RED
 
-Command, run against committed `0b3f20351d4e2ee5c908ddec697ed9da443f9cbd` before either file was rewritten:
+Command, run against committed `cf1838a686518e99997ef525e0585dd2383ff7b5` before either file was rewritten:
 
 ```text
-python3 /tmp/p3-bp-r3-red_check.py \
-  docs/superpowers/plans/2026-08-17-p3-boost-math-pilot-build-preflight-only.md
+python3 /tmp/p1bp1r4_validate.py /tmp/p1bp1r4-old-plan.md
 ```
 
 Exit code: 1
 
 ```text
-RED against 0b3f2035 plan implementation fence
-RED_ITEM_COUNT 8
-RED 1_post_popen_identity_started_terminal :: reason=False
-RED 2_post_popen_log_started_terminal :: raise_log=True
-RED 3_timeout_preserves_partial_stdio :: zeroed=True exc_stdout=False
-RED 4_pre_spawn_start_marker :: marker=False before_popen=False
-RED 5_start_marker_blocks_orphan_terminal :: state=False
-RED 6_normal_pass_no_false_group_kill :: leak=False
-RED 7_post_popen_test_expects_terminal_job :: raises_os=True
-RED 8_timeout_test_verifies_partial_output :: sha=False bytes=False
-RED_FAILED 8
+CPYTHON_CONTROL
+timeout_partial=b'P3_PARTIAL\n'
+retry_cumulative=b'P3_PARTIAL\n'
+incorrect_concatenation=b'P3_PARTIAL\nP3_PARTIAL\n'
+correct_selection=b'P3_PARTIAL\n'
+timeout_partial == retry_cumulative -> True
+correct_selection == retry_cumulative -> True
+incorrect_concatenation != correct_selection -> True
+RED against cf1838a6 plan implementation fence
+RED_ITEM_COUNT 4
+RED timeout output is a cumulative snapshot :: exc.stdout saved=True runtime_partial=b'P3_PARTIAL\n'
+RED cleanup communicate returns cumulative output :: terminate_communicate=True retry=b'P3_PARTIAL\n'
+RED producer concatenates cumulative snapshots :: binop stdout,binop stderr,binop stdout,binop stderr,binop stdout,binop stderr,text:stdout = (stdout or b"") + (extra_out or b""),text:stderr = (stderr or b"") + (extra_err or b""),text:stdout = stdout + (extra_out or b""),text:stderr = stderr + (extra_err or b"")
+RED producer/test contract is inconsistent :: concat=True timeout_test_expects_single=True
+RED_FAILED 4
 ```
 
-`command -v rtk` exited 1. Subsequent commands were bare `git`, `python3`, `sha256sum`, and `wc`.
-
-Start-gate evidence:
-
-```text
-HEAD=0b3f20351d4e2ee5c908ddec697ed9da443f9cbd
-ORIGIN=0b3f20351d4e2ee5c908ddec697ed9da443f9cbd
-BRANCH=main
-branch.ab +0 -0
-diff_exit=0
-cached_exit=0
-untracked empty
-```
-
-Old file identities before rewrite:
-
-| File | SHA-256 | bytes | LF | CR |
-|---|---|---|---|---|
-| plan | `cddf7057908ef1cd169ac24a64710c2f8538cdc586a23331e1e39ce1e9275bf8` | 187690 | 4540 | 0 |
-| packet | `a4ace60b3d2f50fc3ed2a5e1f6e13cd51f4a98a1bfde199d460783a45d49ce8a` | 10430 | 215 | 0 |
+`command -v rtk` exited 1.
 
 ## Authority hash table
-
-Rechecked against the starting commit. All listed file hashes matched. No drift.
 
 | Object | SHA-256 | Status |
 |---|---|---|
@@ -106,90 +86,69 @@ Rechecked against the starting commit. All listed file hashes matched. No drift.
 | data/p3_v3/pilot/boost_math/source-preparation-result.json | `6a525ff074f5ab67f4a58af0a4f7f2264f3888757513a8fc80fb6760c8b577b9` | no drift |
 | docs/review_20260817/boost_math_pilot_source_preparation_result_sol_high_review.md | `43cedfd21621496f61feec1418b2ec4d9e02b51096c477b0d221067d1e1ed7f2` | no drift |
 | docs/superpowers/plans/2026-08-15-p3-boost-math-pilot-only.md | `1612a6ee81773c7db97625ae3497fab31b93ad70f2ecaefce2fdd845bda73cca` | no drift |
-| source-preparation reviewed commit | `44acee8882b004f50005cd39ca732bc6f09604fa` | no drift |
-| normalized/materialized tree | `93a62859d7fdd6b2068e494bbe6e3e27180b874cbd27055ac27f941e507a90d8` | no drift |
-| build descriptor | `68d2e0fd34b845bb0df22b29003f26259d5655d2ec80c18895ff36904db2d95d` | no drift |
 | Authorization bytes, memory only | `2265145a6b73a16e1ae06b3c5b12baa2a842ad7d700e60ed0de67393746cfb15` | no drift |
-
-Harness identities remain frozen:
-
-| Harness file | SHA-256 | bytes | LF | CR |
-|---|---|---|---|---|
-| `CMakeLists.txt` | `2bdbb40e8d6fbd488ddde7bda4b855047361bedc1e7c4c9a5e72bf971d602a8b` | 1084 | 33 | 0 |
-| `smoke.cpp` | `609c8990cef0cad5a1e448f11e8353dbc6c040e88778b72fac64ea6a6b4002ed` | 198 | 11 | 0 |
 
 ## Repair rounds
 
-1. The 0b3f2035 implementation fence failed the 8-item post-spawn terminal-closure RED. This node rewrote only the plan and this packet. Prior depfile, CMakeCache, compile_commands, toolchain binding, and `validate_attempt_pair` contracts are unchanged. The unique future Task, 2 Create + 2 Modify file map, three-job DAG, timeouts 900/3600/1800, internal 7200, watchdog `timeout 2h5m`, Authorization bytes, harness bytes, and claims ceiling are unchanged.
+1. The cf1838a6 fence saved `TimeoutExpired` output and then concatenated a later `communicate()` cumulative snapshot. CPython reproduces `b"P3_PARTIAL\n" + b"P3_PARTIAL\n"`. This node only changed the snapshot-selection contract. Prior R1-R3 contracts remain.
 
 ## Semantic GREEN
 
 ```text
+CPYTHON_CONTROL
+timeout_partial=b'P3_PARTIAL\n'
+retry_cumulative=b'P3_PARTIAL\n'
+incorrect_concatenation=b'P3_PARTIAL\nP3_PARTIAL\n'
+correct_selection=b'P3_PARTIAL\n'
+timeout_partial == retry_cumulative -> True
+correct_selection == retry_cumulative -> True
+incorrect_concatenation != correct_selection -> True
 GREEN against repaired plan implementation fence
-GREEN_R3_ITEM_COUNT 8
-PASS 1_post_popen_identity_started_terminal :: reason=True
-PASS 2_post_popen_log_started_terminal :: raise_log=True
-PASS 3_timeout_preserves_partial_stdio :: zeroed=False exc_stdout=True
-PASS 4_pre_spawn_start_marker :: marker=True before_popen=True
-PASS 5_start_marker_blocks_orphan_terminal :: state=True
-PASS 6_normal_pass_no_false_group_kill :: leak=True
-PASS 7_post_popen_test_expects_terminal_job :: raises_os=False
-PASS 8_timeout_test_verifies_partial_output :: sha=True bytes=True
-GREEN prior R2 contracts
-PASS R2_1_dependency_probe_reuses_compile_flags :: ok
-PASS R2_2_dependency_probe_frozen_include :: ok
-PASS R2_3_collector_end_to_end_test :: ok
-PASS R2_4_configure_binds_resolved_compiler :: ok
-PASS R2_5_compile_commands_cross_validated :: ok
-PASS R2_6_orphan_checks_child_process_groups :: ok
-PASS R2_7_post_spawn_finally_killpg_reap :: ok
-PASS R2_8_process_group_test_proves_descendant_gone :: ok
-PASS R2_9_outer_deadline_distinct_reason :: ok
-PASS R2_10_shell_watchdog_after_internal_deadline :: ok
-PASS R2_11_result_cross_binds_actual_intent :: ok
-PASS R2_12_result_terminal_requires_attempt_pair :: ok
-GREEN extra invariants including prior-round closures
-PASS ast_1 :: ok
-PASS ast_2 :: ok
-PASS ast_3 :: ok
-PASS ast_4 :: ok
-PASS exactly_one_task :: 1
-PASS task_title :: present
-PASS file_map :: 2+2
-PASS timeouts :: ok
-PASS watchdog :: present
-PASS auth :: present
-PASS claims :: blocked
-PASS no_todo :: clean
-PASS no_emdash :: clean
-PASS validate_attempt_pair :: present
-PASS collector :: present
-PASS no_minus_m :: absent
-PASS verify_reviewed :: present
-PASS impl_sha :: present
-PASS r3_required_tests :: all
+GREEN_ITEM_COUNT 18
+PASS four Python fences AST-valid :: 4
+PASS cumulative communicate semantics documented :: documented
+PASS final cumulative snapshot replaces prior snapshot :: replaces=True
+PASS unavailable final snapshot falls back to partial output :: fallback=True
+PASS no cumulative snapshot concatenation in execute_job :: none
+PASS timeout exact-output test :: present
+PASS timeout fallback test :: present
+PASS log cleanup no-duplication test :: present
+PASS leak cleanup no-duplication test :: present
+PASS stdout/stderr bytes and hashes share one snapshot :: shared
+PASS all R3 process contracts retained :: ok
+PASS prior R2 evidence contracts retained :: ok
+PASS exactly one future Task :: 1
+PASS file map remains 2 Create plus 2 Modify :: 2+2
+PASS claims remain blocked :: blocked
+PASS CPython timeout_partial == retry_cumulative :: b'P3_PARTIAL\n'
+PASS CPython correct_selection == retry_cumulative :: ok
+PASS CPython incorrect_concatenation != correct_selection :: 674fda9830f1
 GREEN_FAILED 0
 ```
 
-## Start marker / identity / cleanup / timeout-output / reconciliation line index
+## Line index
 
 | Symbol | Line |
 |---|---|
-| `write_job_start_marker` | 3463 |
-| `write_process_identity` | 3475 |
-| `classify_reconciliation` | 3308 |
-| `terminate_and_reap_process_group` | 3542 |
-| `execute_job` | 4233 |
-| `run_build_preflight` | 4735 |
+| `select_cumulative_output` | 3800 |
+| `terminate_and_reap_process_group` | 3809 |
+| `execute_job` | 4502 |
+| `exc.stdout` | 4559 |
+| `select_cumulative_output(` | 3800 |
+| `bytes | None` | 3802 |
+| timeout exact-output test name | 743 |
+| timeout fallback test name | 744 |
+| log no-duplication test name | 745 |
+| leak no-duplication test name | 746 |
+| existing descendant timeout test name | 714 |
+| timeout exact-output test def | 2526 |
+| timeout fallback test def | 2589 |
+| log no-duplication test def | 2650 |
+| leak no-duplication test def | 2712 |
+| existing descendant timeout test def | 1569 |
 | `INTENT_CHILD_STATE_UNRESOLVED` | 496 |
-| `PROCESS_IDENTITY_PUBLICATION_FAILURE` | 2089 |
-| `PROCESS_GROUP_LEAK` | 485 |
-| `PROCESS_CONTROL_FAILURE` | 2887 |
-| `start.json` | 485 |
-| `exc.stdout` | 4290 |
-| `timeout 2h5m` | 485 |
 | `validate_attempt_pair` | 536 |
-| `collect_baseline_build_evidence` | 722 |
+| `timeout 2h5m` | 485 |
 
 ## Current and requested states
 
@@ -198,17 +157,13 @@ GREEN_FAILED 0
 | source-preparation formal state | `PILOT_SOURCE_PREPARATION_PASS` |
 | build-preflight request status | `PILOT_BUILD_PREFLIGHT_PLAN_REVIEW_CANDIDATE` |
 | plan frozen | no |
-| future implementation started | no |
-| Authorization created | no |
-| production build-preflight run | no |
-| complete 2026-08-15 plan | unfrozen, not execution authority |
 | claims | blocked |
 | formal denominator membership | false |
 | rq4_supported | false |
 
 ## Not-independent-PASS declaration
 
-This packet is a review candidate only. It is not an independent Sol High PASS. It does not freeze the plan. It does not authorize capability implementation. It does not authorize production build-preflight. The reserved verdict paths remain absent:
+This packet is a review candidate only. It is not an independent Sol High PASS. It does not freeze the plan. It does not authorize capability implementation. It does not authorize production build-preflight.
 
 ```text
 docs/review_20260817/boost_math_pilot_build_preflight_plan_sol_high_review.md
