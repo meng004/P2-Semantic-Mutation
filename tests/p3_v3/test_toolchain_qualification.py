@@ -826,3 +826,70 @@ def test_binary_timeout_preserves_compiled_executable_evidence(tmp_path):
     assert result["jobs"][1]["terminal_status"] == "TIMEOUT"
     assert result["executable_regular"] is True
     assert "qualify" in {entry["path"] for entry in manifest["files"]}
+
+
+_CLI_FORBIDDEN = (
+    "--compiler",
+    "--root",
+    "--timeout",
+    "--source",
+    "--output",
+    "--retry",
+    "--cmake",
+    "--boost-root",
+    "--attempt-2",
+)
+
+
+def test_cli_parser_rejects_qualification_overrides():
+    import scripts.p3_v3.qualify_cxx_link as qualify_cli
+
+    parser = qualify_cli.build_parser()
+    for flag in _CLI_FORBIDDEN:
+        with pytest.raises(SystemExit):
+            parser.parse_args([flag])
+        with pytest.raises(SystemExit):
+            parser.parse_args([flag, "x"])
+
+
+def test_cli_binds_frozen_repo_root_and_environ(monkeypatch, capsys):
+    import scripts.p3_v3.qualify_cxx_link as qualify_cli
+
+    seen: dict[str, object] = {}
+
+    def fake_run(repo_root, qualification_root, env, **_kwargs):
+        seen["repo_root"] = repo_root
+        seen["qualification_root"] = qualification_root
+        seen["env"] = env
+        return {"terminal_status": "PASS"}
+
+    monkeypatch.setattr(qualify_cli, "run_qualification", fake_run)
+    assert qualify_cli.main([]) == 0
+    assert seen["repo_root"] == Path(qualify_cli.__file__).resolve().parents[2]
+    assert seen["qualification_root"] == q.FROZEN_ROOT
+    assert seen["env"] == dict(os.environ)
+    captured = capsys.readouterr()
+    assert captured.out == f"PASS {q.FROZEN_ROOT}\n"
+    assert captured.err == ""
+
+
+def test_cli_fail_exit_one_when_result_published(monkeypatch, capsys):
+    import scripts.p3_v3.qualify_cxx_link as qualify_cli
+
+    monkeypatch.setattr(
+        qualify_cli,
+        "run_qualification",
+        lambda *_args, **_kwargs: {"terminal_status": "FAIL"},
+    )
+    assert qualify_cli.main([]) == 1
+    assert capsys.readouterr().out == f"FAIL {q.FROZEN_ROOT}\n"
+
+
+def test_cli_pre_evidence_error_exits_two(monkeypatch):
+    import scripts.p3_v3.qualify_cxx_link as qualify_cli
+
+    def boom(*_args, **_kwargs):
+        raise EvidenceError("E_QUALIFICATION_PREEXISTING", "already exists")
+
+    monkeypatch.setattr(qualify_cli, "run_qualification", boom)
+    assert qualify_cli.main([]) == 2
