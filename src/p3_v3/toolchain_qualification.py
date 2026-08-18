@@ -6,8 +6,15 @@
 from __future__ import annotations
 
 import hashlib
+import os
+import platform
 import re
-from collections.abc import Mapping
+import shutil
+import signal
+import subprocess
+import time
+from collections.abc import Callable, Mapping
+from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -17,6 +24,7 @@ from p3_v3.artifacts import (
     safe_relative_path,
     validate_exact_object,
     validate_sha256,
+    write_canonical_json,
 )
 
 
@@ -665,3 +673,513 @@ def validate_attempt_pair(
     if validated_result["jobs"][1]["argv"] != validated_intent["binary_run_argv"]:
         raise EvidenceError("E_PAIR", "binary-run argv differs")
     return validated_intent, validated_result
+
+
+def _utc_now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _sha256_bytes(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def _write_exclusive_bytes(path: Path, data: bytes) -> None:
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+    fd = os.open(path, flags, 0o644)
+    try:
+        view = memoryview(data)
+        while view:
+            written = os.write(fd, view)
+            if written <= 0:
+                raise OSError("short write")
+            view = view[written:]
+    finally:
+        os.close(fd)
+
+
+def _git_text(repo_root: Path, args: list[str]) -> str:
+    env = dict(os.environ)
+    env["GIT_CONFIG_GLOBAL"] = "/dev/null"
+    env["GIT_CONFIG_NOSYSTEM"] = "1"
+    env["GIT_CONFIG_COUNT"] = "0"
+    completed = subprocess.run(
+        ["git", *args],
+        cwd=repo_root,
+        check=True,
+        capture_output=True,
+        env=env,
+    )
+    return completed.stdout.decode("utf-8")
+
+
+def _inspect_repository(repo_root: Path) -> dict[str, Any]:
+    commit = _git_text(repo_root, ["rev-parse", "HEAD"]).strip()
+    porcelain = _git_text(
+        repo_root,
+        ["status", "--porcelain=v1", "--untracked-files=all"],
+    )
+    version = _git_text(repo_root, ["--version"]).strip()
+    return {
+        "repository_commit": commit,
+        "repository_clean": porcelain == "",
+        "porcelain": porcelain,
+        "git_version": version,
+    }
+
+
+def _forbidden_environment(env: Mapping[str, str]) -> dict[str, str]:
+    snapshot: dict[str, str] = {}
+    for key in FORBIDDEN_ENV:
+        if key in env:
+            value = env[key]
+            if value != "":
+                raise EvidenceError(
+                    "E_FORBIDDEN_ENV",
+                    f"{key} must be empty or absent",
+                )
+            snapshot[key] = value
+    if "PATH" in env:
+        snapshot["PATH"] = env["PATH"]
+    return snapshot
+
+
+def _resolve_compiler(
+    which: Callable[[str], str | None],
+) -> tuple[str | None, str | None, bool | None, bool | None]:
+    resolved = which(REQUESTED_COMPILER)
+    if resolved is None or resolved == "":
+        return None, None, None, None
+    path = resolved if os.path.isabs(resolved) else str(Path(resolved).resolve())
+    real = os.path.realpath(path)
+    symlink = os.path.islink(path)
+    regular = os.path.isfile(real) and not os.path.islink(real)
+    if not regular:
+        return None, None, None, None
+    return path, real, True, symlink
+
+
+def _capture_host_snapshot(
+    inspection: Mapping[str, Any],
+    resolved: tuple[str | None, str | None, bool | None, bool | None],
+) -> dict[str, Any]:
+    uname = os.uname()
+    path, real, regular, symlink = resolved
+    return _self_hash(
+        {
+            "schema_version": HOST_SCHEMA,
+            "os_name": uname.sysname,
+            "os_release": uname.version,
+            "kernel_release": uname.release,
+            "machine": uname.machine,
+            "node_name": uname.nodename,
+            "python_version": platform.python_version(),
+            "git_version": inspection["git_version"],
+            "repository_commit": inspection["repository_commit"],
+            "repository_clean": True,
+            "requested_compiler": REQUESTED_COMPILER,
+            "resolved_compiler_path": path,
+            "resolved_compiler_realpath": real,
+            "resolved_path_regular": regular,
+            "resolved_path_symlink": symlink,
+        }
+    )
+
+
+def _not_started_job(
+    job_id: str,
+    argv: list[str] | None,
+    timeout: int,
+) -> dict[str, Any]:
+    return _self_hash(
+        {
+            "schema_version": PROCESS_SCHEMA,
+            "execution_class": EXECUTION_CLASS,
+            "claims": CLAIMS,
+            "process_role": "WORKLOAD",
+            "job_id": job_id,
+            "argv": argv,
+            "timeout_seconds": timeout,
+            "process_started": False,
+            "terminal_status": "NOT_STARTED",
+            "failure_reason": None,
+            "exit_code": None,
+            "started_at": None,
+            "ended_at": None,
+            "wall_seconds": None,
+            "process_group_terminated": None,
+            "stdout_sha256": None,
+            "stderr_sha256": None,
+            "stdout_bytes": None,
+            "stderr_bytes": None,
+        }
+    )
+
+
+def _select_output(previous: bytes, final: bytes | None) -> bytes:
+    if final is None:
+        return previous
+    return final
+
+
+def _terminate_group(proc: Any) -> None:
+    pid = getattr(proc, "pid", None)
+    if pid is None:
+        return
+    try:
+        os.killpg(os.getpgid(pid), signal.SIGKILL)
+    except (OSError, ProcessLookupError):
+        try:
+            proc.kill()
+        except (OSError, AttributeError):
+            pass
+
+
+def _run_process(
+    *,
+    argv: list[str],
+    timeout: int,
+    role: str,
+    job_id: str,
+    root: Path,
+    popen: Callable[..., Any],
+    env: Mapping[str, str],
+) -> dict[str, Any]:
+    started_at = _utc_now()
+    begin = time.monotonic()
+    stdout = b""
+    stderr = b""
+    timed_out = False
+    terminated = False
+    proc = popen(
+        argv,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        shell=False,
+        start_new_session=True,
+        env=dict(env),
+    )
+    try:
+        received = proc.communicate(timeout=timeout)
+        stdout = received[0] or b""
+        stderr = received[1] or b""
+        exit_code = proc.returncode
+    except subprocess.TimeoutExpired as exc:
+        timed_out = True
+        terminated = True
+        stdout = exc.stdout if exc.stdout is not None else stdout
+        stderr = exc.stderr if exc.stderr is not None else stderr
+        _terminate_group(proc)
+        final_out = None
+        final_err = None
+        try:
+            final = proc.communicate(timeout=1)
+            final_out = final[0]
+            final_err = final[1]
+        except Exception:
+            final_out = None
+            final_err = None
+        stdout = _select_output(stdout, final_out)
+        stderr = _select_output(stderr, final_err)
+        exit_code = None
+    ended_at = _utc_now()
+    wall = float(time.monotonic() - begin)
+    _write_exclusive_bytes(root / f"{job_id}.stdout", stdout)
+    _write_exclusive_bytes(root / f"{job_id}.stderr", stderr)
+    if timed_out:
+        status = "TIMEOUT"
+        reason = "TIMEOUT" if role == "METADATA" else "TIMEOUT"
+        if role == "METADATA":
+            reason = "TIMEOUT"
+    elif exit_code != 0:
+        status = "FAIL"
+        reason = "NONZERO_EXIT"
+    elif role == "WORKLOAD" and (len(stdout) > 0 or len(stderr) > 0):
+        status = "FAIL"
+        reason = "UNEXPECTED_OUTPUT"
+    else:
+        status = "PASS"
+        reason = None
+    return _self_hash(
+        {
+            "schema_version": PROCESS_SCHEMA,
+            "execution_class": EXECUTION_CLASS,
+            "claims": CLAIMS,
+            "process_role": role,
+            "job_id": job_id,
+            "argv": argv,
+            "timeout_seconds": timeout,
+            "process_started": True,
+            "terminal_status": status,
+            "failure_reason": reason,
+            "exit_code": exit_code,
+            "started_at": started_at,
+            "ended_at": ended_at,
+            "wall_seconds": wall,
+            "process_group_terminated": terminated,
+            "stdout_sha256": _sha256_bytes(stdout),
+            "stderr_sha256": _sha256_bytes(stderr),
+            "stdout_bytes": len(stdout),
+            "stderr_bytes": len(stderr),
+        }
+    )
+
+
+def _inspect_executable(path: Path) -> dict[str, Any] | None:
+    if path.is_symlink() or not path.is_file():
+        return None
+    data = path.read_bytes()
+    return {
+        "executable_sha256": _sha256_bytes(data),
+        "executable_bytes": len(data),
+        "executable_regular": True,
+        "executable_symlink": False,
+    }
+
+
+def _file_entry(path: Path, relative: str) -> dict[str, Any]:
+    data = path.read_bytes()
+    return {
+        "path": relative,
+        "sha256": _sha256_bytes(data),
+        "bytes": len(data),
+    }
+
+
+def _write_terminal_result_and_manifest(
+    *,
+    root: Path,
+    intent: dict[str, Any],
+    intent_sha256: str,
+    inspection: Mapping[str, Any],
+    host: dict[str, Any],
+    version: dict[str, Any] | None,
+    compile_job: dict[str, Any],
+    run_job: dict[str, Any],
+    executable: dict[str, Any] | None,
+    status: str,
+    reason: str | None,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    result = _self_hash(
+        {
+            "schema_version": RESULT_SCHEMA,
+            "execution_class": EXECUTION_CLASS,
+            "claims": CLAIMS,
+            "formal_denominator_membership": False,
+            "attempt_2_authorized": False,
+            "no_retry": True,
+            "intent_sha256": intent_sha256,
+            "repository_commit": inspection["repository_commit"],
+            "host_snapshot": host,
+            "host_snapshot_sha256": host["artifact_sha256"],
+            "spec_sha256": SPEC_SHA256,
+            "compiler_version": version,
+            "jobs": [compile_job, run_job],
+            "source_sha256": SOURCE_SHA256,
+            "executable_sha256": None
+            if executable is None
+            else executable["executable_sha256"],
+            "executable_bytes": None
+            if executable is None
+            else executable["executable_bytes"],
+            "executable_regular": None
+            if executable is None
+            else executable["executable_regular"],
+            "executable_symlink": None
+            if executable is None
+            else executable["executable_symlink"],
+            "terminal_status": status,
+            "failure_reason": reason,
+        }
+    )
+    result = validate_result(result)
+    write_canonical_json(root / "qualification-result.json", result, exclusive=True)
+    present = [
+        _file_entry(root / "qualification-intent.json", "qualification-intent.json"),
+        _file_entry(root / "qualification-result.json", "qualification-result.json"),
+        _file_entry(root / SOURCE_NAME, SOURCE_NAME),
+    ]
+    names = [
+        f"{JOB_METADATA}.stdout",
+        f"{JOB_METADATA}.stderr",
+        f"{JOB_COMPILE}.stdout",
+        f"{JOB_COMPILE}.stderr",
+        f"{JOB_RUN}.stdout",
+        f"{JOB_RUN}.stderr",
+    ]
+    if executable is not None:
+        names.append(EXECUTABLE_NAME)
+    for name in names:
+        path = root / name
+        if path.is_file() and not path.is_symlink():
+            present.append(_file_entry(path, name))
+    present.sort(key=lambda item: item["path"])
+    manifest = _self_hash(
+        {
+            "schema_version": MANIFEST_SCHEMA,
+            "execution_class": EXECUTION_CLASS,
+            "claims": CLAIMS,
+            "formal_denominator_membership": False,
+            "attempt_2_authorized": False,
+            "no_retry": True,
+            "intent_sha256": intent_sha256,
+            "result_sha256": _sha256_bytes(
+                (root / "qualification-result.json").read_bytes()
+            ),
+            "files": present,
+        }
+    )
+    manifest = validate_manifest(manifest)
+    write_canonical_json(
+        root / "qualification-manifest.json",
+        manifest,
+        exclusive=True,
+    )
+    validate_attempt_pair(intent, intent_sha256, result)
+    return result, manifest
+
+
+def run_qualification(
+    repo_root: Path,
+    qualification_root: Path,
+    env: Mapping[str, str],
+    *,
+    which: Callable[[str], str | None] = shutil.which,
+    popen: Callable[..., Any] = subprocess.Popen,
+) -> dict[str, Any]:
+    """Run or terminally close one qualification attempt."""
+
+    env_snapshot = _forbidden_environment(env)
+    if qualification_root.exists():
+        raise EvidenceError(
+            "E_QUALIFICATION_PREEXISTING",
+            f"qualification root already exists: {qualification_root}",
+        )
+    entry = _inspect_repository(repo_root)
+    if entry["repository_clean"] is not True:
+        raise EvidenceError("E_REPO_CLEAN", "repository must be clean at entry")
+    os.mkdir(qualification_root)
+    resolved = _resolve_compiler(which)
+    host = _capture_host_snapshot(entry, resolved)
+    _write_exclusive_bytes(qualification_root / SOURCE_NAME, SOURCE_BYTES)
+    compile_argv = None
+    run_argv = None
+    if resolved[0] is not None:
+        compile_argv = [
+            resolved[0],
+            "-std=c++14",
+            str(qualification_root / SOURCE_NAME),
+            "-o",
+            str(qualification_root / EXECUTABLE_NAME),
+        ]
+        run_argv = [str(qualification_root / EXECUTABLE_NAME)]
+    intent = _self_hash(
+        {
+            "schema_version": INTENT_SCHEMA,
+            "execution_class": EXECUTION_CLASS,
+            "claims": CLAIMS,
+            "formal_denominator_membership": False,
+            "attempt_2_authorized": False,
+            "no_retry": True,
+            "repository_commit": entry["repository_commit"],
+            "host_snapshot": host,
+            "host_snapshot_sha256": host["artifact_sha256"],
+            "spec_path": SPEC_PATH.as_posix(),
+            "spec_sha256": SPEC_SHA256,
+            "qualification_root": str(qualification_root),
+            "requested_compiler": REQUESTED_COMPILER,
+            "resolved_compiler_path": resolved[0],
+            "resolved_compiler_realpath": resolved[1],
+            "source_text": SOURCE_TEXT,
+            "source_sha256": SOURCE_SHA256,
+            "compile_link_argv": compile_argv,
+            "binary_run_argv": run_argv,
+            "compile_timeout_seconds": COMPILE_TIMEOUT_SECONDS,
+            "run_timeout_seconds": RUN_TIMEOUT_SECONDS,
+            "compiler_version_timeout_seconds": COMPILER_VERSION_TIMEOUT_SECONDS,
+            "relevant_environment": env_snapshot,
+        }
+    )
+    intent = validate_intent(intent)
+    intent_path = qualification_root / "qualification-intent.json"
+    write_canonical_json(intent_path, intent, exclusive=True)
+    intent_sha256 = _sha256_bytes(intent_path.read_bytes())
+    version = None
+    compile_job = _not_started_job(
+        JOB_COMPILE,
+        compile_argv,
+        COMPILE_TIMEOUT_SECONDS,
+    )
+    run_job = _not_started_job(JOB_RUN, run_argv, RUN_TIMEOUT_SECONDS)
+    executable = None
+    status = "FAIL"
+    reason = "MISSING_COMPILER"
+    if resolved[0] is not None:
+        version = _run_process(
+            argv=[resolved[0], "--version"],
+            timeout=COMPILER_VERSION_TIMEOUT_SECONDS,
+            role="METADATA",
+            job_id=JOB_METADATA,
+            root=qualification_root,
+            popen=popen,
+            env=env,
+        )
+        if version["terminal_status"] == "TIMEOUT":
+            reason = "METADATA_TIMEOUT"
+        elif version["terminal_status"] != "PASS":
+            reason = version["failure_reason"] or "NONZERO_EXIT"
+        else:
+            compile_job = _run_process(
+                argv=compile_argv,
+                timeout=COMPILE_TIMEOUT_SECONDS,
+                role="WORKLOAD",
+                job_id=JOB_COMPILE,
+                root=qualification_root,
+                popen=popen,
+                env=env,
+            )
+            executable = _inspect_executable(qualification_root / EXECUTABLE_NAME)
+            if compile_job["terminal_status"] != "PASS":
+                reason = compile_job["failure_reason"] or "NONZERO_EXIT"
+            elif executable is None:
+                reason = "INVALID_EXECUTABLE"
+            else:
+                run_job = _run_process(
+                    argv=run_argv,
+                    timeout=RUN_TIMEOUT_SECONDS,
+                    role="WORKLOAD",
+                    job_id=JOB_RUN,
+                    root=qualification_root,
+                    popen=popen,
+                    env=env,
+                )
+                if run_job["terminal_status"] != "PASS":
+                    reason = run_job["failure_reason"] or "NONZERO_EXIT"
+                else:
+                    status = "PASS"
+                    reason = None
+    final = _inspect_repository(repo_root)
+    if status == "PASS" and (
+        final != entry or final["repository_clean"] is not True
+    ):
+        status = "FAIL"
+        reason = "REPOSITORY_DRIFT"
+    elif status == "PASS" and (
+        final["repository_commit"] != entry["repository_commit"]
+        or final["porcelain"] != entry["porcelain"]
+    ):
+        status = "FAIL"
+        reason = "REPOSITORY_DRIFT"
+    result, _manifest = _write_terminal_result_and_manifest(
+        root=qualification_root,
+        intent=intent,
+        intent_sha256=intent_sha256,
+        inspection=entry,
+        host=host,
+        version=version,
+        compile_job=compile_job,
+        run_job=run_job,
+        executable=executable,
+        status=status,
+        reason=reason,
+    )
+    return result
