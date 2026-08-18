@@ -1,18 +1,18 @@
-# Boost.Math PILOT_BUILD_PREFLIGHT_ONLY Plan Review Packet: P1BP1R2
+# Boost.Math PILOT_BUILD_PREFLIGHT_ONLY Plan Review Packet: P1BP1R3
 
-- Node name: `P1BP1R2_BOOST_MATH_PILOT_BUILD_PREFLIGHT_PLAN_EXECUTABLE_EVIDENCE_REPAIR`
-- Packet title: Boost.Math PILOT build-preflight plan executable-evidence repair
+- Node name: `P1BP1R3_BOOST_MATH_PILOT_BUILD_PREFLIGHT_POST_SPAWN_TERMINAL_CLOSURE`
+- Packet title: Boost.Math PILOT build-preflight post-spawn terminal closure
 - Builder identity: Cursor VM
-- Starting commit: `e49f4e799cc9f4465b8cae6457eec37eed13edb0`
+- Starting commit: `0b3f20351d4e2ee5c908ddec697ed9da443f9cbd`
 - Ending commit: this node does not write an ending-commit token. The ending commit is the unique successor on `origin/main` that modifies only the two files listed below.
 - Plan path: `docs/superpowers/plans/2026-08-17-p3-boost-math-pilot-build-preflight-only.md`
-- Old plan SHA-256: `9812df0a5faf98da32eabef861a8e60c6f66799c4810a719af9591d8a05bc182`
-- Old plan bytes / LF / CR: 159208 / 3829 / 0
-- New plan SHA-256: `cddf7057908ef1cd169ac24a64710c2f8538cdc586a23331e1e39ce1e9275bf8`
-- New plan bytes / LF / CR: 187690 / 4540 / 0
+- Old plan SHA-256: `cddf7057908ef1cd169ac24a64710c2f8538cdc586a23331e1e39ce1e9275bf8`
+- Old plan bytes / LF / CR: 187690 / 4540 / 0
+- New plan SHA-256: `3e2566beb9f3aa8b0acd64f477a936eca517f6747672d0ece668a43d0a5fbdb4`
+- New plan bytes / LF / CR: 206992 / 5056 / 0
 - Packet path: `docs/review_20260817/boost_math_pilot_build_preflight_plan_review_packet.md`
-- Old packet SHA-256: `91f9da7f925a264d1aa014ab9bc1e07b7f6bfb363348c731602d78a328b03747`
-- Old packet bytes / LF / CR: 12540 / 249 / 0
+- Old packet SHA-256: `a4ace60b3d2f50fc3ed2a5e1f6e13cd51f4a98a1bfde199d460783a45d49ce8a`
+- Old packet bytes / LF / CR: 10430 / 215 / 0
 - Packet SHA-256, bytes, LF, and CR: this packet does not self-hash. Independent reviewers hash this file after clone. The node return records the post-write measurement.
 - Python fence count: 4
 - Requested reviewer: GPT-5.6 Sol High
@@ -43,31 +43,27 @@ No third file was created. No verdict, Authorization, intent, result, harness ro
 
 ## RED
 
-Command, run against committed `e49f4e799cc9f4465b8cae6457eec37eed13edb0` before either file was rewritten:
+Command, run against committed `0b3f20351d4e2ee5c908ddec697ed9da443f9cbd` before either file was rewritten:
 
 ```text
-python3 /tmp/p3-bp-r2-red_check.py \
+python3 /tmp/p3-bp-r3-red_check.py \
   docs/superpowers/plans/2026-08-17-p3-boost-math-pilot-build-preflight-only.md
 ```
 
 Exit code: 1
 
 ```text
-RED against e49f4e79 plan implementation fence
-RED_ITEM_COUNT 12
-RED 1_dependency_probe_reuses_compile_flags :: shlex=False minus_M=True run=True
-RED 2_dependency_probe_frozen_include :: prefix=False depfile=False
-RED 3_collector_end_to_end_test :: called=False
-RED 4_configure_binds_resolved_compiler :: bind=False
-RED 5_compile_commands_cross_validated :: cache_compiler=False realpath=False
-RED 6_orphan_checks_child_process_groups :: child_state=False producer=False attempt_only_pid=True
-RED 7_post_spawn_finally_killpg_reap :: finally=False killpg=True
-RED 8_process_group_test_proves_descendant_gone :: kill_poll=False lookup=False
-RED 9_outer_deadline_distinct_reason :: reason=False
-RED 10_shell_watchdog_after_internal_deadline :: watchdog=False inner7200=True
-RED 11_result_cross_binds_actual_intent :: pair=False
-RED 12_result_terminal_requires_attempt_pair :: run_pair=False classify_pair=False
-RED_FAILED 12
+RED against 0b3f2035 plan implementation fence
+RED_ITEM_COUNT 8
+RED 1_post_popen_identity_started_terminal :: reason=False
+RED 2_post_popen_log_started_terminal :: raise_log=True
+RED 3_timeout_preserves_partial_stdio :: zeroed=True exc_stdout=False
+RED 4_pre_spawn_start_marker :: marker=False before_popen=False
+RED 5_start_marker_blocks_orphan_terminal :: state=False
+RED 6_normal_pass_no_false_group_kill :: leak=False
+RED 7_post_popen_test_expects_terminal_job :: raises_os=True
+RED 8_timeout_test_verifies_partial_output :: sha=False bytes=False
+RED_FAILED 8
 ```
 
 `command -v rtk` exited 1. Subsequent commands were bare `git`, `python3`, `sha256sum`, and `wc`.
@@ -75,8 +71,8 @@ RED_FAILED 12
 Start-gate evidence:
 
 ```text
-HEAD=e49f4e799cc9f4465b8cae6457eec37eed13edb0
-ORIGIN=e49f4e799cc9f4465b8cae6457eec37eed13edb0
+HEAD=0b3f20351d4e2ee5c908ddec697ed9da443f9cbd
+ORIGIN=0b3f20351d4e2ee5c908ddec697ed9da443f9cbd
 BRANCH=main
 branch.ab +0 -0
 diff_exit=0
@@ -88,8 +84,8 @@ Old file identities before rewrite:
 
 | File | SHA-256 | bytes | LF | CR |
 |---|---|---|---|---|
-| plan | `9812df0a5faf98da32eabef861a8e60c6f66799c4810a719af9591d8a05bc182` | 159208 | 3829 | 0 |
-| packet | `91f9da7f925a264d1aa014ab9bc1e07b7f6bfb363348c731602d78a328b03747` | 12540 | 249 | 0 |
+| plan | `cddf7057908ef1cd169ac24a64710c2f8538cdc586a23331e1e39ce1e9275bf8` | 187690 | 4540 | 0 |
+| packet | `a4ace60b3d2f50fc3ed2a5e1f6e13cd51f4a98a1bfde199d460783a45d49ce8a` | 10430 | 215 | 0 |
 
 ## Authority hash table
 
@@ -124,27 +120,35 @@ Harness identities remain frozen:
 
 ## Repair rounds
 
-1. The e49f4e79 implementation fence failed the 12-item executable-evidence RED. This node rewrote only the plan and this packet. The unique future Task, 2 Create + 2 Modify file map, three-job DAG, timeouts 900/3600/1800, internal 7200, Authorization bytes, harness bytes, and claims ceiling are unchanged. Dependency evidence now reads the actual CMake depfile. Child process-group liveness is part of reconciliation. The future shell watchdog is `timeout 2h5m`.
+1. The 0b3f2035 implementation fence failed the 8-item post-spawn terminal-closure RED. This node rewrote only the plan and this packet. Prior depfile, CMakeCache, compile_commands, toolchain binding, and `validate_attempt_pair` contracts are unchanged. The unique future Task, 2 Create + 2 Modify file map, three-job DAG, timeouts 900/3600/1800, internal 7200, watchdog `timeout 2h5m`, Authorization bytes, harness bytes, and claims ceiling are unchanged.
 
 ## Semantic GREEN
 
 ```text
 GREEN against repaired plan implementation fence
-GREEN_ITEM_COUNT 12
-PASS 1_dependency_probe_reuses_compile_flags :: shlex=False minus_M=False run=False
-PASS 2_dependency_probe_frozen_include :: prefix=True depfile=False
-PASS 3_collector_end_to_end_test :: called=True
-PASS 4_configure_binds_resolved_compiler :: bind=True
-PASS 5_compile_commands_cross_validated :: cache_compiler=True realpath=True
-PASS 6_orphan_checks_child_process_groups :: child_state=True producer=True attempt_only_pid=True
-PASS 7_post_spawn_finally_killpg_reap :: finally=True killpg=True
-PASS 8_process_group_test_proves_descendant_gone :: kill_poll=True lookup=True
-PASS 9_outer_deadline_distinct_reason :: reason=True
-PASS 10_shell_watchdog_after_internal_deadline :: watchdog=True inner7200=True
-PASS 11_result_cross_binds_actual_intent :: pair=True
-PASS 12_result_terminal_requires_attempt_pair :: run_pair=True classify_pair=True
-GREEN_FAILED 0
-GREEN extra invariants
+GREEN_R3_ITEM_COUNT 8
+PASS 1_post_popen_identity_started_terminal :: reason=True
+PASS 2_post_popen_log_started_terminal :: raise_log=True
+PASS 3_timeout_preserves_partial_stdio :: zeroed=False exc_stdout=True
+PASS 4_pre_spawn_start_marker :: marker=True before_popen=True
+PASS 5_start_marker_blocks_orphan_terminal :: state=True
+PASS 6_normal_pass_no_false_group_kill :: leak=True
+PASS 7_post_popen_test_expects_terminal_job :: raises_os=False
+PASS 8_timeout_test_verifies_partial_output :: sha=True bytes=True
+GREEN prior R2 contracts
+PASS R2_1_dependency_probe_reuses_compile_flags :: ok
+PASS R2_2_dependency_probe_frozen_include :: ok
+PASS R2_3_collector_end_to_end_test :: ok
+PASS R2_4_configure_binds_resolved_compiler :: ok
+PASS R2_5_compile_commands_cross_validated :: ok
+PASS R2_6_orphan_checks_child_process_groups :: ok
+PASS R2_7_post_spawn_finally_killpg_reap :: ok
+PASS R2_8_process_group_test_proves_descendant_gone :: ok
+PASS R2_9_outer_deadline_distinct_reason :: ok
+PASS R2_10_shell_watchdog_after_internal_deadline :: ok
+PASS R2_11_result_cross_binds_actual_intent :: ok
+PASS R2_12_result_terminal_requires_attempt_pair :: ok
+GREEN extra invariants including prior-round closures
 PASS ast_1 :: ok
 PASS ast_2 :: ok
 PASS ast_3 :: ok
@@ -155,38 +159,37 @@ PASS file_map :: 2+2
 PASS timeouts :: ok
 PASS watchdog :: present
 PASS auth :: present
-PASS harness_cmake :: present
 PASS claims :: blocked
 PASS no_todo :: clean
 PASS no_emdash :: clean
-PASS no_minus_m_probe :: absent
-PASS collector_tested :: present
-PASS child_live :: present
-PASS pair :: present
-GREEN_EXTRA_FAILED 0
+PASS validate_attempt_pair :: present
+PASS collector :: present
+PASS no_minus_m :: absent
+PASS verify_reviewed :: present
+PASS impl_sha :: present
+PASS r3_required_tests :: all
+GREEN_FAILED 0
 ```
 
-## Dependency / toolchain / process-lifecycle / attempt-pair line index
+## Start marker / identity / cleanup / timeout-output / reconciliation line index
 
 | Symbol | Line |
 |---|---|
-| `collect_baseline_build_evidence` | 3726 |
-| `bind_configure_argv` | 3025 |
-| `smoke_compile_argv` | 3074 |
-| `write_process_identity` | 3103 |
-| `process_group_has_members` | 2941 |
-| `terminate_and_reap_process_group` | 3138 |
-| `classify_reconciliation` | 2956 |
-| `validate_attempt_pair` | 3564 |
-| `execute_job` | 3806 |
-| `run_build_preflight` | 4233 |
-| `OUTER_DEADLINE_EXHAUSTED` | 513 |
-| `INTENT_CHILD_LIVE` | 495 |
-| `compiler_depfile_sha256` | 1780 |
-| `smoke.cpp.o.d` | 517 |
+| `write_job_start_marker` | 3463 |
+| `write_process_identity` | 3475 |
+| `classify_reconciliation` | 3308 |
+| `terminate_and_reap_process_group` | 3542 |
+| `execute_job` | 4233 |
+| `run_build_preflight` | 4735 |
+| `INTENT_CHILD_STATE_UNRESOLVED` | 496 |
+| `PROCESS_IDENTITY_PUBLICATION_FAILURE` | 2089 |
+| `PROCESS_GROUP_LEAK` | 485 |
+| `PROCESS_CONTROL_FAILURE` | 2887 |
+| `start.json` | 485 |
+| `exc.stdout` | 4290 |
 | `timeout 2h5m` | 485 |
-| `start_new_session=True` | 400 |
-| `finally:` | 3851 |
+| `validate_attempt_pair` | 536 |
+| `collect_baseline_build_evidence` | 722 |
 
 ## Current and requested states
 

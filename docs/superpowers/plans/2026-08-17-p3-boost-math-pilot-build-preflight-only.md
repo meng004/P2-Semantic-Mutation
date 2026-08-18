@@ -482,21 +482,22 @@ Result validator conservation:
 
 ## Crash, Timeout, and No-Retry Reconciliation
 
-Child processes start in an independent process group or session. A job timeout sends `SIGKILL` to the process group and then waits and reaps. After `Popen` succeeds, every path is inside a `try`/`finally` that kills and reaps the process group. The runner keeps an internal outer deadline of 7200 seconds. The future shell watchdog is `timeout 2h5m`, later than that deadline, so a terminal result can still be written.
+Child processes start in an independent process group or session. Before `Popen`, production exclusive-creates `<job_id>.start.json` with `job_id`, `argv_sha256`, `created_at`, and `state=STARTING`. After `Popen` succeeds, it exclusive-creates the identity record with pid, pgid, starttime, and `argv_sha256`. Neither file is overwritten. Post-Popen catchable exceptions are normalized inside `execute_job` to a started `FAIL_INFRASTRUCTURE/POST_PROCESS` job. They are not re-raised as raw exceptions and must not be rewritten as `PRE_PROCESS` or `NOT_STARTED`. A job timeout kills the matching process group, then communicate/wait again. Partial stdout/stderr are preserved and hashed as the raw logs. Normal PASS does not call `killpg` when the process group has no remaining members. If the parent exits and the group still has members, the job is `PROCESS_GROUP_LEAK`. Cleanup never kills a reused PGID: pid, starttime, and identity must still match. The runner keeps an internal outer deadline of 7200 seconds. The future shell watchdog is `timeout 2h5m`, later than that deadline, so a terminal result can still be written.
 
 After intent creation, every catchable exception normalizes to one terminal result. Production must not delete or overwrite intent, result, harness, or build root.
 
 Reconciliation states are mutually exclusive and complete:
 
-| State | Intent | Result | Live producer | Live child | Pair | Action |
-|---|---|---|---|---|---|---|
-| `FRESH` | absent | absent | no | no | n/a | start one new attempt |
-| `INTENT_PRODUCER_LIVE` | valid | absent | yes | any | n/a | refuse; do not start another child |
-| `INTENT_CHILD_LIVE` | valid | absent | no | yes | n/a | refuse; do not orphan-terminalize; do not start another child |
-| `INTENT_ONLY_ORPHAN` | valid | absent | no | no | n/a | write `FAIL_INFRASTRUCTURE/ORPHANED_INTENT_NO_PROCESS`; start no child |
-| `RESULT_TERMINAL` | valid | valid | any | any | yes | refuse; do not rerun |
-| `RESULT_WITHOUT_INTENT` | absent | present | any | any | n/a | refuse |
-| `INVALID_DURABLE` | any other combination, including a mismatched intent/result pair |  |  |  |  | refuse |
+| State | Intent | Result | Live producer | Live child | Start marker | Pair | Action |
+|---|---|---|---|---|---|---|---|
+| `FRESH` | absent | absent | no | no | no | n/a | start one new attempt |
+| `INTENT_PRODUCER_LIVE` | valid | absent | yes | any | any | n/a | refuse; do not start another child |
+| `INTENT_CHILD_LIVE` | valid | absent | no | yes | any | n/a | refuse; do not orphan-terminalize; do not start another child |
+| `INTENT_CHILD_STATE_UNRESOLVED` | valid | absent | no | no or unknown | yes | n/a | refuse; do not write a result; do not start another child |
+| `INTENT_ONLY_ORPHAN` | valid | absent | no | no | no | n/a | write `FAIL_INFRASTRUCTURE/ORPHANED_INTENT_NO_PROCESS`; start no child |
+| `RESULT_TERMINAL` | valid | valid | any | any | any | yes | refuse; do not rerun |
+| `RESULT_WITHOUT_INTENT` | absent | present | any | any | any | n/a | refuse |
+| `INVALID_DURABLE` | any other combination, including a mismatched intent/result pair |  |  |  |  |  | refuse |
 
 Source drift after a child, harness publication failure, and log or result publication failure have explicit terminal reasons. They must not leave an intent that cannot be reviewed.
 
@@ -730,6 +731,14 @@ REQUIRED_BUILD_PREFLIGHT_TESTS = [
     "test_outer_deadline_exhausted_not_missing_dependency",
     "test_validate_attempt_pair_rejects_drift",
     "test_mismatched_intent_result_is_not_result_terminal",
+    "test_start_marker_exists_before_popen",
+    "test_identity_publication_returns_started_job",
+    "test_log_publication_returns_started_job",
+    "test_normal_pass_does_not_call_killpg",
+    "test_process_group_leak_is_detected_and_cleaned",
+    "test_start_marker_without_identity_is_unresolved",
+    "test_orphan_requires_no_start_marker",
+    "test_started_post_process_failure_count_conservation",
 ]
 
 
@@ -848,6 +857,14 @@ def test_required_build_preflight_names_are_frozen():
         "test_outer_deadline_exhausted_not_missing_dependency",
         "test_validate_attempt_pair_rejects_drift",
         "test_mismatched_intent_result_is_not_result_terminal",
+        "test_start_marker_exists_before_popen",
+        "test_identity_publication_returns_started_job",
+        "test_log_publication_returns_started_job",
+        "test_normal_pass_does_not_call_killpg",
+        "test_process_group_leak_is_detected_and_cleaned",
+        "test_start_marker_without_identity_is_unresolved",
+        "test_orphan_requires_no_start_marker",
+        "test_started_post_process_failure_count_conservation",
     ]
 
 
@@ -1145,6 +1162,9 @@ def test_no_shell_execution(tmp_path, monkeypatch):
 
         def kill(self):
             return None
+
+        def poll(self):
+            return self.returncode
 
     def fake_popen(argv, stdout=None, stderr=None, shell=None, env=None, start_new_session=None):
         seen["argv"] = argv
@@ -1542,6 +1562,8 @@ def test_process_group_timeout_terminates_descendants(tmp_path):
     import p3_v3.pilot_build as pilot_build
 
     marker = tmp_path / "desc.pid"
+    partial_out = b"P3_TIMEOUT_PARTIAL_STDOUT\n"
+    partial_err = b"P3_TIMEOUT_PARTIAL_STDERR\n"
     spec = {
         "job_id": "CMAKE_CONFIGURE",
         "job_kind": "CMAKE_CONFIGURE",
@@ -1551,6 +1573,10 @@ def test_process_group_timeout_terminates_descendants(tmp_path):
             "-c",
             (
                 "import pathlib, subprocess, sys, time\n"
+                "sys.stdout.buffer.write(b'P3_TIMEOUT_PARTIAL_STDOUT\\n')\n"
+                "sys.stdout.buffer.flush()\n"
+                "sys.stderr.buffer.write(b'P3_TIMEOUT_PARTIAL_STDERR\\n')\n"
+                "sys.stderr.buffer.flush()\n"
                 "child = subprocess.Popen(['sleep', '30'])\n"
                 "pathlib.Path(sys.argv[1]).write_text(str(child.pid), encoding='utf-8')\n"
                 "time.sleep(30)\n"
@@ -1559,15 +1585,24 @@ def test_process_group_timeout_terminates_descendants(tmp_path):
         ],
         "timeout_seconds": 900,
     }
+    log_root = tmp_path / "logs"
     result = pilot_build.execute_job(
         spec,
         env=dict(os.environ),
-        log_root=tmp_path / "logs",
-        timeout_seconds=0.2,
+        log_root=log_root,
+        timeout_seconds=0.4,
     )
     assert result["terminal_status"] == "TIMEOUT"
     assert result["process_group_terminated"] is True
     assert result["exit_code"] is None
+    raw_out = (log_root / "CMAKE_CONFIGURE.stdout").read_bytes()
+    raw_err = (log_root / "CMAKE_CONFIGURE.stderr").read_bytes()
+    assert raw_out == partial_out
+    assert raw_err == partial_err
+    assert result["stdout_sha256"] == _sha256_bytes(partial_out)
+    assert result["stderr_sha256"] == _sha256_bytes(partial_err)
+    assert result["stdout_bytes"] == len(partial_out)
+    assert result["stderr_bytes"] == len(partial_err)
     deadline = time.monotonic() + 3
     pid = int(marker.read_text(encoding="utf-8"))
     gone = False
@@ -2044,13 +2079,17 @@ def test_post_popen_exception_reaps_process_group(tmp_path, monkeypatch):
         raise OSError("identity publication failed")
 
     monkeypatch.setattr(pilot_build, "write_process_identity", boom)
-    with pytest.raises(OSError, match="identity publication failed"):
-        pilot_build.execute_job(
-            spec,
-            env=dict(os.environ),
-            log_root=tmp_path / "logs",
-            timeout_seconds=5,
-        )
+    result = pilot_build.execute_job(
+        spec,
+        env=dict(os.environ),
+        log_root=tmp_path / "logs",
+        timeout_seconds=5,
+    )
+    assert result["terminal_status"] == "FAIL_INFRASTRUCTURE"
+    assert result["failure_reason"] == "PROCESS_IDENTITY_PUBLICATION_FAILURE"
+    assert result["infrastructure_phase"] == "POST_PROCESS"
+    assert result["process_started"] is True
+    assert result["process_group_terminated"] is True
     deadline = time.monotonic() + 3
     pid = int(marker.read_text(encoding="utf-8"))
     gone = False
@@ -2165,6 +2204,307 @@ def test_mismatched_intent_result_is_not_result_terminal():
         )
         == "INVALID_DURABLE"
     )
+
+
+def test_start_marker_exists_before_popen(tmp_path):
+    import p3_v3.pilot_build as pilot_build
+
+    seen = {}
+
+    class FakeProc:
+        returncode = 0
+        pid = os.getpid()
+
+        def communicate(self, timeout=None):
+            return b"", b""
+
+        def poll(self):
+            return 0
+
+        def kill(self):
+            return None
+
+    def fake_popen(argv, stdout=None, stderr=None, shell=None, env=None, start_new_session=None):
+        seen["marker"] = (tmp_path / "logs" / "CMAKE_CONFIGURE.start.json").is_file()
+        return FakeProc()
+
+    spec = {
+        "job_id": "CMAKE_CONFIGURE",
+        "job_kind": "CMAKE_CONFIGURE",
+        "dependency_job_ids": [],
+        "argv": ["cmake", "-S", "harness", "-B", "build"],
+        "timeout_seconds": 900,
+    }
+    result = pilot_build.execute_job(
+        spec, env={"PATH": "/usr/bin"}, log_root=tmp_path / "logs", popen=fake_popen
+    )
+    assert seen["marker"] is True
+    assert result["terminal_status"] == "PASS"
+    assert (tmp_path / "logs" / "CMAKE_CONFIGURE.start.json").is_file()
+    assert (tmp_path / "logs" / "CMAKE_CONFIGURE.identity.json").is_file()
+
+
+def test_identity_publication_returns_started_job(tmp_path, monkeypatch):
+    test_post_popen_exception_reaps_process_group(tmp_path, monkeypatch)
+
+
+def test_log_publication_returns_started_job(tmp_path, monkeypatch):
+    import time
+    from pathlib import Path as PathType
+
+    import p3_v3.pilot_build as pilot_build
+
+    marker = tmp_path / "desc.pid"
+    spec = {
+        "job_id": "CMAKE_CONFIGURE",
+        "job_kind": "CMAKE_CONFIGURE",
+        "dependency_job_ids": [],
+        "argv": [
+            "python3",
+            "-c",
+            (
+                "import pathlib, subprocess, sys\n"
+                "child = subprocess.Popen(['sleep', '30'])\n"
+                "pathlib.Path(sys.argv[1]).write_text(str(child.pid), encoding='utf-8')\n"
+                "print('parent-exit')\n"
+            ),
+            str(marker),
+        ],
+        "timeout_seconds": 900,
+    }
+    original = PathType.write_bytes
+
+    def boom(self, data):
+        if self.name.endswith(".stdout") or self.name.endswith(".stderr"):
+            raise OSError("log publication failed")
+        return original(self, data)
+
+    monkeypatch.setattr(PathType, "write_bytes", boom)
+    result = pilot_build.execute_job(
+        spec,
+        env=dict(os.environ),
+        log_root=tmp_path / "logs",
+        timeout_seconds=5,
+    )
+    assert result["terminal_status"] == "FAIL_INFRASTRUCTURE"
+    assert result["failure_reason"] == "LOG_PUBLICATION_FAILURE"
+    assert result["infrastructure_phase"] == "POST_PROCESS"
+    assert result["process_started"] is True
+    deadline = time.monotonic() + 3
+    pid = int(marker.read_text(encoding="utf-8"))
+    gone = False
+    while time.monotonic() < deadline:
+        try:
+            os.kill(pid, 0)
+        except ProcessLookupError:
+            gone = True
+            break
+        time.sleep(0.05)
+    assert gone is True
+
+
+def test_normal_pass_does_not_call_killpg(tmp_path, monkeypatch):
+    import p3_v3.pilot_build as pilot_build
+
+    called = []
+    real = os.killpg
+
+    def wrapped(pgid, sig):
+        called.append((pgid, sig))
+        return real(pgid, sig)
+
+    monkeypatch.setattr(os, "killpg", wrapped)
+    spec = {
+        "job_id": "CMAKE_CONFIGURE",
+        "job_kind": "CMAKE_CONFIGURE",
+        "dependency_job_ids": [],
+        "argv": ["python3", "-c", "print('ok')"],
+        "timeout_seconds": 900,
+    }
+    result = pilot_build.execute_job(
+        spec,
+        env=dict(os.environ),
+        log_root=tmp_path / "logs",
+    )
+    assert result["terminal_status"] == "PASS"
+    assert result["process_group_terminated"] is False
+    assert called == []
+
+
+def test_process_group_leak_is_detected_and_cleaned(tmp_path):
+    import time
+    import p3_v3.pilot_build as pilot_build
+
+    marker = tmp_path / "desc.pid"
+    spec = {
+        "job_id": "CMAKE_CONFIGURE",
+        "job_kind": "CMAKE_CONFIGURE",
+        "dependency_job_ids": [],
+        "argv": [
+            "python3",
+            "-c",
+            (
+                "import pathlib, subprocess, sys\n"
+                "child = subprocess.Popen(['sleep', '30'])\n"
+                "pathlib.Path(sys.argv[1]).write_text(str(child.pid), encoding='utf-8')\n"
+                "print('parent-exit')\n"
+            ),
+            str(marker),
+        ],
+        "timeout_seconds": 900,
+    }
+    result = pilot_build.execute_job(
+        spec,
+        env=dict(os.environ),
+        log_root=tmp_path / "logs",
+    )
+    assert result["terminal_status"] == "FAIL_INFRASTRUCTURE"
+    assert result["failure_reason"] == "PROCESS_GROUP_LEAK"
+    assert result["infrastructure_phase"] == "POST_PROCESS"
+    assert result["process_started"] is True
+    assert result["process_group_terminated"] is True
+    deadline = time.monotonic() + 3
+    pid = int(marker.read_text(encoding="utf-8"))
+    gone = False
+    while time.monotonic() < deadline:
+        try:
+            os.kill(pid, 0)
+        except ProcessLookupError:
+            gone = True
+            break
+        time.sleep(0.05)
+    assert gone is True
+
+
+def test_start_marker_without_identity_is_unresolved(tmp_path, monkeypatch):
+    import p3_v3.pilot_build as pilot_build
+    from p3_v3.artifacts import write_canonical_json
+
+    assert (
+        pilot_build.classify_reconciliation(
+            intent_present=True,
+            result_present=False,
+            intent_valid=True,
+            result_valid=False,
+            producer_live=False,
+            child_live=False,
+            pair_valid=False,
+            start_marker_present=True,
+            identity_resolved=False,
+        )
+        == "INTENT_CHILD_STATE_UNRESOLVED"
+    )
+    env = _minimal_environment(pilot_build)
+    impl = "7" * 64
+    monkeypatch.setattr(pilot_build, "FROZEN_SOURCE_ROOT", tmp_path / "source")
+    monkeypatch.setattr(pilot_build, "FROZEN_BUILD_ROOT", tmp_path / "build")
+    monkeypatch.setattr(pilot_build, "FROZEN_HARNESS_ROOT", tmp_path / "harness")
+    intent = pilot_build.build_intent(env, sorted([impl]), impl)
+    intent_path = tmp_path / "intent.json"
+    result_path = tmp_path / "result.json"
+    write_canonical_json(intent_path, intent, exclusive=True)
+    logs = tmp_path / "build" / "logs"
+    logs.mkdir(parents=True)
+    write_canonical_json(
+        logs / "CMAKE_CONFIGURE.start.json",
+        {
+            "job_id": "CMAKE_CONFIGURE",
+            "argv_sha256": "a" * 64,
+            "created_at": "2026-08-18T00:00:00Z",
+            "state": "STARTING",
+        },
+        exclusive=True,
+    )
+    monkeypatch.setattr(pilot_build, "INTENT_PATH", intent_path)
+    monkeypatch.setattr(pilot_build, "RESULT_PATH", result_path)
+    monkeypatch.setattr(pilot_build, "attempt_is_live", lambda pid, starttime: False)
+    seen = []
+
+    def fake_popen(*args, **kwargs):
+        seen.append(args)
+        raise AssertionError("unresolved must not start a child")
+
+    monkeypatch.setattr(pilot_build.subprocess, "Popen", fake_popen)
+    with pytest.raises(EvidenceError, match="child start state is unresolved"):
+        pilot_build.run_build_preflight(tmp_path / "source", tmp_path / "build")
+    assert seen == []
+    assert not result_path.exists()
+    assert intent_path.is_file()
+
+
+def test_orphan_requires_no_start_marker():
+    import p3_v3.pilot_build as pilot_build
+
+    assert (
+        pilot_build.classify_reconciliation(
+            intent_present=True,
+            result_present=False,
+            intent_valid=True,
+            result_valid=False,
+            producer_live=False,
+            child_live=False,
+            pair_valid=False,
+            start_marker_present=False,
+            identity_resolved=True,
+        )
+        == "INTENT_ONLY_ORPHAN"
+    )
+    assert (
+        pilot_build.classify_reconciliation(
+            intent_present=True,
+            result_present=False,
+            intent_valid=True,
+            result_valid=False,
+            producer_live=False,
+            child_live=False,
+            pair_valid=False,
+            start_marker_present=True,
+            identity_resolved=False,
+        )
+        != "INTENT_ONLY_ORPHAN"
+    )
+
+
+def test_started_post_process_failure_count_conservation():
+    import p3_v3.pilot_build as pilot_build
+
+    env = _minimal_environment(pilot_build)
+    impl = "1" * 64
+    spec = {
+        "job_id": "CMAKE_CONFIGURE",
+        "job_kind": "CMAKE_CONFIGURE",
+        "dependency_job_ids": [],
+        "argv": ["cmake"],
+        "timeout_seconds": 900,
+    }
+    started = _started_job(
+        pilot_build,
+        spec,
+        terminal_status="FAIL_INFRASTRUCTURE",
+        failure_reason="PROCESS_IDENTITY_PUBLICATION_FAILURE",
+        infrastructure_phase="POST_PROCESS",
+        process_group_terminated=True,
+        exit_code=1,
+    )
+    jobs = [
+        started,
+        pilot_build.make_not_started_job(pilot_build.JOB_SPECS[1]),
+        pilot_build.make_not_started_job(pilot_build.JOB_SPECS[2]),
+    ]
+    result = pilot_build.build_result(
+        intent_sha256="5" * 64,
+        environment=env,
+        jobs=jobs,
+        predecessor=sorted(["5" * 64, impl]),
+        implementation_verdict_sha256=impl,
+        evidence=None,
+    )
+    assert result["planned_count"] == 3
+    assert result["terminal_count"] == 3
+    assert result["started_count"] == 1
+    assert result["not_started_count"] == 2
+    assert result["terminal_status"] == "FAIL_INFRASTRUCTURE"
+    assert result["failure_reason"] == "PROCESS_IDENTITY_PUBLICATION_FAILURE"
 ```
 
 Append these tests to `tests/p3_v3/test_pilot.py`:
@@ -2543,6 +2883,17 @@ INFRA_REASONS_POST_PROCESS = frozenset(
         "UNSUPPORTED_TOOLCHAIN",
         "SOURCE_TREE_DRIFT",
         "LOG_PUBLICATION_FAILURE",
+        "PROCESS_IDENTITY_PUBLICATION_FAILURE",
+        "PROCESS_CONTROL_FAILURE",
+        "PROCESS_GROUP_LEAK",
+    }
+)
+POST_SPAWN_CLEANUP_REASONS = frozenset(
+    {
+        "PROCESS_IDENTITY_PUBLICATION_FAILURE",
+        "LOG_PUBLICATION_FAILURE",
+        "PROCESS_CONTROL_FAILURE",
+        "PROCESS_GROUP_LEAK",
     }
 )
 RECONCILIATION_STATES = frozenset(
@@ -2550,6 +2901,7 @@ RECONCILIATION_STATES = frozenset(
         "FRESH",
         "INTENT_PRODUCER_LIVE",
         "INTENT_CHILD_LIVE",
+        "INTENT_CHILD_STATE_UNRESOLVED",
         "INTENT_ONLY_ORPHAN",
         "RESULT_TERMINAL",
         "RESULT_WITHOUT_INTENT",
@@ -2962,6 +3314,8 @@ def classify_reconciliation(
     producer_live: bool,
     child_live: bool,
     pair_valid: bool,
+    start_marker_present: bool = False,
+    identity_resolved: bool = True,
 ) -> str:
     if not intent_present and not result_present:
         return "FRESH"
@@ -2976,6 +3330,8 @@ def classify_reconciliation(
             return "INTENT_PRODUCER_LIVE"
         if child_live:
             return "INTENT_CHILD_LIVE"
+        if start_marker_present or not identity_resolved:
+            return "INTENT_CHILD_STATE_UNRESOLVED"
         return "INTENT_ONLY_ORPHAN"
     return "INVALID_DURABLE"
 
@@ -3100,18 +3456,36 @@ def ensure_safe_log_root(log_root: Path) -> Path:
     return log_root
 
 
+def argv_digest(argv: list[str]) -> str:
+    return _sha256_bytes("\0".join(argv).encode("utf-8"))
+
+
+def write_job_start_marker(log_root: Path, spec: dict[str, Any]) -> str:
+    digest = argv_digest(list(spec["argv"]))
+    payload = {
+        "job_id": spec["job_id"],
+        "argv_sha256": digest,
+        "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "state": "STARTING",
+    }
+    write_canonical_json(log_root / f"{spec['job_id']}.start.json", payload, exclusive=True)
+    return digest
+
+
 def write_process_identity(
     log_root: Path,
     spec: dict[str, Any],
     pid: int,
     pgid: int,
     starttime: str,
+    argv_sha256: str,
 ) -> None:
     payload = {
         "job_id": spec["job_id"],
         "pid": pid,
         "pgid": pgid,
         "starttime": starttime,
+        "argv_sha256": argv_sha256,
     }
     write_canonical_json(log_root / f"{spec['job_id']}.identity.json", payload, exclusive=True)
 
@@ -3126,6 +3500,36 @@ def load_process_identities(log_root: Path) -> list[dict[str, Any]]:
     return records
 
 
+def load_job_start_markers(log_root: Path) -> list[dict[str, Any]]:
+    if not log_root.is_dir():
+        return []
+    records = []
+    for path in sorted(log_root.glob("*.start.json")):
+        raw, _digest = read_authority_snapshot(path, "job-start-marker")
+        records.append(parse_canonical_json_object(raw, "job-start-marker"))
+    return records
+
+
+def _is_controller_process_group(pgid: int | None, proc: Any) -> bool:
+    if pgid is None or proc is None:
+        return False
+    try:
+        return pgid == os.getpgrp() and int(proc.pid) == os.getpid()
+    except (TypeError, ValueError, OSError):
+        return False
+
+
+def _pgid_still_matches_identity(
+    pgid: int | None, pid: int | None, starttime: str | None
+) -> bool:
+    if pgid is None or pid is None or starttime is None:
+        return False
+    path = Path(f"/proc/{pid}/stat")
+    if not path.is_file():
+        return True
+    return attempt_is_live(pid, starttime)
+
+
 def child_records_are_live(records: list[dict[str, Any]]) -> bool:
     for record in records:
         if attempt_is_live(int(record["pid"]), str(record["starttime"])):
@@ -3135,33 +3539,48 @@ def child_records_are_live(records: list[dict[str, Any]]) -> bool:
     return False
 
 
-def terminate_and_reap_process_group(pgid: int | None, proc: Any) -> None:
-    controller_pgid = os.getpgrp()
-    still_running = proc is not None and proc.poll() is None
-    own_group = pgid is not None and pgid == controller_pgid
-    if own_group and (proc is None or proc.pid == os.getpid()):
-        return
-    if still_running and pgid is not None:
+def terminate_and_reap_process_group(
+    pgid: int | None,
+    proc: Any,
+    pid: int | None = None,
+    starttime: str | None = None,
+    *,
+    force: bool = True,
+) -> tuple[bytes, bytes, bool]:
+    extra_out = b""
+    extra_err = b""
+    if _is_controller_process_group(pgid, proc):
+        return extra_out, extra_err, False
+    still_running = False
+    if proc is not None and hasattr(proc, "poll"):
+        still_running = proc.poll() is None
+    if force and still_running and pgid is not None and _pgid_still_matches_identity(pgid, pid, starttime):
         try:
             os.killpg(pgid, signal.SIGKILL)
         except ProcessLookupError:
             pass
     if proc is not None:
         try:
-            proc.communicate(timeout=5)
+            extra_out, extra_err = proc.communicate(timeout=5)
+            extra_out = extra_out or b""
+            extra_err = extra_err or b""
         except Exception:
             try:
                 proc.wait(timeout=5)
             except Exception:
                 pass
-    if pgid is not None and not own_group and process_group_has_members(pgid):
-        try:
-            os.killpg(pgid, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
-        deadline = time.monotonic() + 2
-        while time.monotonic() < deadline and process_group_has_members(pgid):
-            time.sleep(0.05)
+    leaked = False
+    if pgid is not None and _pgid_still_matches_identity(pgid, pid, starttime):
+        if process_group_has_members(pgid):
+            try:
+                os.killpg(pgid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            deadline = time.monotonic() + 2
+            while time.monotonic() < deadline and process_group_has_members(pgid):
+                time.sleep(0.05)
+        leaked = process_group_has_members(pgid)
+    return extra_out, extra_err, leaked
 
 
 
@@ -3368,6 +3787,14 @@ def validate_job_result(value: object) -> dict[str, Any]:
                 raise EvidenceError("E_PILOT_BUILD_JOB", "POST_PROCESS must start")
             if validated["failure_reason"] not in INFRA_REASONS_POST_PROCESS:
                 raise EvidenceError("E_PILOT_BUILD_JOB", "POST_PROCESS reason is not frozen")
+            if (
+                validated["failure_reason"] in POST_SPAWN_CLEANUP_REASONS
+                and validated["process_group_terminated"] is not True
+            ):
+                raise EvidenceError(
+                    "E_PILOT_BUILD_JOB",
+                    "post-spawn infrastructure failure must terminate the process group",
+                )
             _require_stdio(validated)
     elif status == "NOT_STARTED":
         if validated["process_started"] is not False:
@@ -3816,15 +4243,24 @@ def execute_job(
     if any(not isinstance(item, str) for item in argv):
         raise EvidenceError("E_PILOT_BUILD_ARGV", "argv items must be strings")
     ensure_safe_log_root(log_root)
+    argv_sha256 = write_job_start_marker(log_root, spec)
+    start_marker = log_root / f"{spec['job_id']}.start.json"
+    if not start_marker.is_file():
+        raise EvidenceError("E_PILOT_BUILD_START_MARKER", "STARTING start.json missing before Popen")
     started_at = time.time()
     effective_timeout = spec["timeout_seconds"] if timeout_seconds is None else timeout_seconds
     before = resource.getrusage(resource.RUSAGE_CHILDREN)
     proc = None
     pgid = None
+    pid = None
+    starttime = None
     stdout = b""
     stderr = b""
     timed_out = False
+    force_group_cleanup = False
     process_group_terminated = False
+    post_spawn_reason = None
+    identity_written = False
     try:
         proc = popen(
             argv,
@@ -3841,30 +4277,89 @@ def execute_job(
             pgid = os.getpgid(proc.pid)
         except ProcessLookupError:
             pgid = proc.pid
+        pid = proc.pid
         starttime = read_proc_starttime(proc.pid)
-        write_process_identity(log_root, spec, proc.pid, pgid, starttime)
-        stdout, stderr = proc.communicate(timeout=effective_timeout)
-    except subprocess.TimeoutExpired:
+        write_process_identity(log_root, spec, proc.pid, pgid, starttime, argv_sha256)
+        identity_written = True
+        received = proc.communicate(timeout=effective_timeout)
+        stdout = received[0] or b""
+        stderr = received[1] or b""
+    except subprocess.TimeoutExpired as exc:
         timed_out = True
-        process_group_terminated = True
-        stdout, stderr = b"", b""
+        force_group_cleanup = True
+        stdout = exc.stdout if exc.stdout is not None else stdout
+        stderr = exc.stderr if exc.stderr is not None else stderr
+    except Exception:
+        force_group_cleanup = True
+        if not identity_written:
+            post_spawn_reason = "PROCESS_IDENTITY_PUBLICATION_FAILURE"
+        else:
+            post_spawn_reason = "PROCESS_CONTROL_FAILURE"
     finally:
-        if pgid is not None:
-            try:
-                os.killpg(pgid, signal.SIGKILL)
-            except ProcessLookupError:
-                pass
-        terminate_and_reap_process_group(pgid, proc)
-        if timed_out:
+        extra_out = b""
+        extra_err = b""
+        leaked = False
+        if force_group_cleanup:
             process_group_terminated = True
+            if (
+                pgid is not None
+                and not _is_controller_process_group(pgid, proc)
+                and _pgid_still_matches_identity(pgid, pid, starttime)
+            ):
+                try:
+                    os.killpg(pgid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+            extra_out, extra_err, leaked = terminate_and_reap_process_group(
+                pgid, proc, pid, starttime, force=True
+            )
+            stdout = (stdout or b"") + (extra_out or b"")
+            stderr = (stderr or b"") + (extra_err or b"")
+            if leaked:
+                post_spawn_reason = "PROCESS_CONTROL_FAILURE"
     after = resource.getrusage(resource.RUSAGE_CHILDREN)
     stdout = stdout or b""
     stderr = stderr or b""
     try:
         (log_root / f"{spec['job_id']}.stdout").write_bytes(stdout)
         (log_root / f"{spec['job_id']}.stderr").write_bytes(stderr)
-    except OSError as exc:
-        raise EvidenceError("E_PILOT_BUILD_LOG", "LOG_PUBLICATION_FAILURE") from exc
+    except OSError:
+        post_spawn_reason = "LOG_PUBLICATION_FAILURE"
+        process_group_terminated = True
+        extra_out, extra_err, leaked = terminate_and_reap_process_group(
+            pgid, proc, pid, starttime, force=True
+        )
+        stdout = stdout + (extra_out or b"")
+        stderr = stderr + (extra_err or b"")
+        try:
+            (log_root / f"{spec['job_id']}.stdout").write_bytes(stdout)
+            (log_root / f"{spec['job_id']}.stderr").write_bytes(stderr)
+        except OSError:
+            pass
+    if not force_group_cleanup and post_spawn_reason is None:
+        if _is_controller_process_group(pgid, proc):
+            process_group_terminated = False
+        elif (
+            pgid is not None
+            and process_group_has_members(pgid)
+            and _pgid_still_matches_identity(pgid, pid, starttime)
+        ):
+            process_group_terminated = True
+            post_spawn_reason = "PROCESS_GROUP_LEAK"
+            extra_out, extra_err, leaked = terminate_and_reap_process_group(
+                pgid, proc, pid, starttime, force=True
+            )
+            stdout = (stdout or b"") + (extra_out or b"")
+            stderr = (stderr or b"") + (extra_err or b"")
+            try:
+                (log_root / f"{spec['job_id']}.stdout").write_bytes(stdout)
+                (log_root / f"{spec['job_id']}.stderr").write_bytes(stderr)
+            except OSError:
+                post_spawn_reason = "LOG_PUBLICATION_FAILURE"
+            if leaked:
+                post_spawn_reason = "PROCESS_GROUP_LEAK"
+        else:
+            process_group_terminated = False
     ended_at = time.time()
     detected = detect_network_or_boost(stdout, stderr, argv)
     exit_code = None if proc is None else proc.returncode
@@ -3872,11 +4367,18 @@ def execute_job(
         (after.ru_utime + after.ru_stime) - (before.ru_utime + before.ru_stime)
     )
     peak_rss_bytes = int(after.ru_maxrss) * 1024
-    if timed_out:
+    if post_spawn_reason is not None:
+        terminal_status = "FAIL_INFRASTRUCTURE"
+        failure_reason = post_spawn_reason
+        recorded_exit = None if timed_out else exit_code
+        infrastructure_phase = "POST_PROCESS"
+        process_group_terminated = True
+    elif timed_out:
         terminal_status = "TIMEOUT"
         failure_reason = "TIMEOUT"
         recorded_exit = None
         infrastructure_phase = None
+        process_group_terminated = True
     elif detected == "NETWORK_OR_DOWNLOAD_ATTEMPT":
         terminal_status = "FAIL_INFRASTRUCTURE"
         failure_reason = "NETWORK_OR_DOWNLOAD_ATTEMPT"
@@ -4243,6 +4745,8 @@ def run_build_preflight(source_root: Path, build_root: Path) -> dict[str, Any]:
     producer_live = False
     child_live = False
     pair_valid = False
+    start_marker_present = False
+    identity_resolved = True
     if intent_exists:
         try:
             raw, intent_digest = read_authority_snapshot(INTENT_PATH, "existing-intent")
@@ -4252,9 +4756,17 @@ def run_build_preflight(source_root: Path, build_root: Path) -> dict[str, Any]:
                 intent_obj["producer_pid"],
                 intent_obj["producer_starttime"],
             )
-            child_live = child_records_are_live(
-                load_process_identities(FROZEN_BUILD_ROOT / "logs")
-            )
+            log_root = FROZEN_BUILD_ROOT / "logs"
+            start_markers = load_job_start_markers(log_root)
+            identities = load_process_identities(log_root)
+            start_marker_present = bool(start_markers)
+            child_live = child_records_are_live(identities)
+            identity_by_job = {item.get("job_id"): item for item in identities}
+            identity_resolved = True
+            if start_markers:
+                identity_resolved = all(
+                    marker.get("job_id") in identity_by_job for marker in start_markers
+                )
         except EvidenceError:
             intent_valid = False
     if result_exists:
@@ -4278,11 +4790,15 @@ def run_build_preflight(source_root: Path, build_root: Path) -> dict[str, Any]:
         producer_live=producer_live,
         child_live=child_live,
         pair_valid=pair_valid,
+        start_marker_present=start_marker_present,
+        identity_resolved=identity_resolved,
     )
     if state == "RESULT_TERMINAL":
         raise EvidenceError("E_PILOT_BUILD_PREEXISTING", "result already exists")
     if state in {"INTENT_PRODUCER_LIVE", "INTENT_CHILD_LIVE"}:
         raise EvidenceError("E_PILOT_BUILD_PREEXISTING", "original attempt is still live")
+    if state == "INTENT_CHILD_STATE_UNRESOLVED":
+        raise EvidenceError("E_PILOT_BUILD_PREEXISTING", "child start state is unresolved")
     if state == "RESULT_WITHOUT_INTENT" or state == "INVALID_DURABLE":
         raise EvidenceError("E_PILOT_BUILD_PREEXISTING", "durable objects are inconsistent")
     if state == "INTENT_ONLY_ORPHAN":
