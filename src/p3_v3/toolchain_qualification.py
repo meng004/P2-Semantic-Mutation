@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import errno
 import hashlib
 import os
 import platform
@@ -383,6 +384,11 @@ def validate_process_evidence(value: object) -> dict[str, Any]:
             and (
                 process["stdout_bytes"] > 0 or process["stderr_bytes"] > 0
             )
+        ):
+            pass
+        elif (
+            reason == "PROCESS_WAIT_ERROR"
+            and process["process_group_terminated"] is True
         ):
             pass
         elif (
@@ -849,25 +855,37 @@ def _select_output(previous: bytes, final: bytes | None) -> bytes:
     return final
 
 
-def _terminate_group(proc: Any) -> None:
+def _expected_process_group_id(proc: Any) -> int | None:
     pid = getattr(proc, "pid", None)
-    if pid is None:
-        return
+    if type(pid) is not int:
+        return None
     try:
-        os.killpg(os.getpgid(pid), signal.SIGKILL)
-    except (OSError, ProcessLookupError):
-        try:
-            proc.kill()
-        except (OSError, AttributeError):
-            pass
+        return os.getpgid(pid)
+    except OSError:
+        return pid
 
 
-def _terminate_and_reap(
-    proc: Any,
-) -> tuple[bool, bytes | None, bytes | None]:
-    """Kill the process group and confirm the process was reaped."""
+def _signal_process_group(pgid: int) -> bool:
+    try:
+        os.killpg(pgid, signal.SIGKILL)
+        return True
+    except ProcessLookupError:
+        return True
+    except OSError as exc:
+        return exc.errno == errno.ESRCH
 
-    _terminate_group(proc)
+
+def _process_group_absent(pgid: int) -> bool:
+    try:
+        os.kill(pgid, 0)
+    except ProcessLookupError:
+        return True
+    except OSError as exc:
+        return exc.errno == errno.ESRCH
+    return False
+
+
+def _reap_leader(proc: Any) -> tuple[bool, bytes | None, bytes | None]:
     try:
         final = proc.communicate(timeout=1)
     except Exception:
@@ -877,6 +895,30 @@ def _terminate_and_reap(
         if poll is not None and poll() is None:
             return False, final[0], final[1]
     return True, final[0], final[1]
+
+
+def _terminate_and_reap(
+    proc: Any,
+    frozen_pgid: int | None,
+) -> tuple[bool, bytes | None, bytes | None]:
+    """Kill the frozen process group and confirm leader plus PGID cleanup."""
+
+    group_signaled = False
+    if frozen_pgid is not None:
+        group_signaled = _signal_process_group(frozen_pgid)
+    if not group_signaled:
+        try:
+            proc.kill()
+        except (OSError, AttributeError):
+            pass
+        _reaped, out, err = _reap_leader(proc)
+        return False, out, err
+    reaped, out, err = _reap_leader(proc)
+    if not reaped:
+        return False, out, err
+    if frozen_pgid is None or not _process_group_absent(frozen_pgid):
+        return False, out, err
+    return True, out, err
 
 
 def _run_process(
@@ -894,6 +936,7 @@ def _run_process(
     stdout = b""
     stderr = b""
     timed_out = False
+    wait_error = False
     terminated = False
     try:
         proc = popen(
@@ -912,6 +955,7 @@ def _run_process(
             role=role,
             reason="PROCESS_START_ERROR",
         )
+    frozen_pgid = _expected_process_group_id(proc)
     try:
         received = proc.communicate(timeout=timeout)
         stdout = received[0] or b""
@@ -921,16 +965,22 @@ def _run_process(
         timed_out = True
         stdout = exc.stdout if exc.stdout is not None else stdout
         stderr = exc.stderr if exc.stderr is not None else stderr
-        terminated, final_out, final_err = _terminate_and_reap(proc)
+        terminated, final_out, final_err = _terminate_and_reap(
+            proc,
+            frozen_pgid,
+        )
         stdout = _select_output(stdout, final_out)
         stderr = _select_output(stderr, final_err)
         exit_code = None
     except OSError:
-        timed_out = False
-        terminated = False
+        wait_error = True
+        terminated, final_out, final_err = _terminate_and_reap(
+            proc,
+            frozen_pgid,
+        )
+        stdout = _select_output(stdout, final_out)
+        stderr = _select_output(stderr, final_err)
         exit_code = None
-        stdout = stdout or b""
-        stderr = stderr or b""
     ended_at = _utc_now()
     wall = float(time.monotonic() - begin)
     _write_exclusive_bytes(root / f"{job_id}.stdout", stdout)
@@ -938,7 +988,10 @@ def _run_process(
     if timed_out and terminated:
         status = "TIMEOUT"
         reason = "TIMEOUT"
-    elif timed_out or exit_code is None:
+    elif wait_error and terminated:
+        status = "FAIL"
+        reason = "PROCESS_WAIT_ERROR"
+    elif timed_out or wait_error or exit_code is None:
         status = "FAIL"
         reason = "PROCESS_CLEANUP_FAILED"
         terminated = False
@@ -1112,7 +1165,12 @@ def run_qualification(
     if entry["repository_clean"] is not True:
         raise EvidenceError("E_REPO_CLEAN", "repository must be clean at entry")
     os.mkdir(qualification_root)
-    resolved = _resolve_compiler(which)
+    resolution_error = False
+    try:
+        resolved = _resolve_compiler(which)
+    except OSError:
+        resolved = (None, None, None, None)
+        resolution_error = True
     host = _capture_host_snapshot(entry, resolved)
     _write_exclusive_bytes(qualification_root / SOURCE_NAME, SOURCE_BYTES)
     compile_argv, run_argv = _workload_argv(
@@ -1159,7 +1217,9 @@ def run_qualification(
     run_job = _not_started_job(JOB_RUN, run_argv, RUN_TIMEOUT_SECONDS)
     executable = None
     status = "FAIL"
-    reason = "MISSING_COMPILER"
+    reason = (
+        "COMPILER_RESOLUTION_ERROR" if resolution_error else "MISSING_COMPILER"
+    )
     if resolved[0] is not None:
         version = _run_process(
             argv=[resolved[0], "--version"],
