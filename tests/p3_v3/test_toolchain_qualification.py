@@ -402,11 +402,13 @@ class _Proc:
         stderr: bytes = b"",
         returncode: int = 0,
         timed_out: bool = False,
+        cleanup_error: bool = False,
     ) -> None:
         self._stdout = stdout
         self._stderr = stderr
         self.returncode = returncode
         self._timed_out = timed_out
+        self._cleanup_error = cleanup_error
         self.pid = 2_000_000_000
         self._first = True
 
@@ -421,6 +423,8 @@ class _Proc:
                 output=self._stdout,
                 stderr=self._stderr,
             )
+        if self._cleanup_error:
+            raise OSError("synthetic reap failed")
         if self._timed_out:
             return None, None
         return self._stdout, self._stderr
@@ -434,10 +438,6 @@ class _Proc:
 
 def _unexpected_popen(*_args: object, **_kwargs: object) -> None:
     raise AssertionError("popen must not be called")
-
-
-def _read_canonical_json(path: Path) -> dict:
-    return read_canonical_json(path)
 
 
 def _run_synthetic_qualification(tmp_path: Path, **opts: object):
@@ -461,6 +461,8 @@ def _run_synthetic_qualification(tmp_path: Path, **opts: object):
         assert kwargs.get("stderr") is subprocess.PIPE
         calls.append(list(argv))
         if argv[-1:] == ["--version"] or argv[-1] == "--version":
+            if opts.get("metadata_popen_error"):
+                raise PermissionError("synthetic metadata popen denied")
             if opts.get("observe_metadata_fs"):
                 assert (root / "qualification-intent.json").is_file()
                 assert (root / "qualify.cpp").is_file()
@@ -471,6 +473,7 @@ def _run_synthetic_qualification(tmp_path: Path, **opts: object):
                     stdout=opts.get("compiler_version_stdout", b"clang\n"),
                     stderr=opts.get("compiler_version_stderr", b""),
                     timed_out=True,
+                    cleanup_error=bool(opts.get("cleanup_error")),
                 )
             return _Proc(
                 stdout=opts.get("compiler_version_stdout", b"clang\n"),
@@ -478,6 +481,8 @@ def _run_synthetic_qualification(tmp_path: Path, **opts: object):
                 returncode=int(opts.get("compiler_version_exit", 0)),
             )
         if "-std=c++14" in argv:
+            if opts.get("compile_popen_error"):
+                raise OSError("synthetic compile popen denied")
             if opts.get("create_regular_executable"):
                 out = root / "qualify"
                 out.write_bytes(b"ELF")
@@ -488,21 +493,34 @@ def _run_synthetic_qualification(tmp_path: Path, **opts: object):
                 (root / "qualify").symlink_to(target)
             if opts.get("create_nonregular_executable"):
                 (root / "qualify").mkdir()
-            if opts.get("mutate_repo_during_last_job") and opts.get(
-                "binary_unreached"
+            if opts.get("create_nonexecutable_executable"):
+                out = root / "qualify"
+                out.write_bytes(b"ELF")
+                out.chmod(0o644)
+            if opts.get("mutate_repo_during_compile") or (
+                opts.get("mutate_repo_during_last_job")
+                and opts.get("binary_unreached")
             ):
                 (repo / "drift.txt").write_text("x")
             if opts.get("compile_timeout"):
-                return _Proc(timed_out=True)
+                return _Proc(
+                    timed_out=True,
+                    cleanup_error=bool(opts.get("cleanup_error")),
+                )
             return _Proc(
                 stdout=opts.get("compile_stdout", b""),
                 stderr=opts.get("compile_stderr", b""),
                 returncode=int(opts.get("compile_exit", 0)),
             )
+        if opts.get("binary_popen_error"):
+            raise OSError("synthetic binary popen denied")
         if opts.get("mutate_repo_during_last_job"):
             (repo / "drift.txt").write_text("x")
         if opts.get("binary_timeout"):
-            return _Proc(timed_out=True)
+            return _Proc(
+                timed_out=True,
+                cleanup_error=bool(opts.get("cleanup_error")),
+            )
         return _Proc(
             stdout=opts.get("binary_stdout", b""),
             stderr=opts.get("binary_stderr", b""),
@@ -511,6 +529,8 @@ def _run_synthetic_qualification(tmp_path: Path, **opts: object):
 
     if "create_regular_executable" not in opts:
         opts["create_regular_executable"] = True
+    if opts.get("compiler_not_executable"):
+        compiler.chmod(0o644)
     result = q.run_qualification(
         repo_root=repo,
         qualification_root=root,
@@ -518,7 +538,7 @@ def _run_synthetic_qualification(tmp_path: Path, **opts: object):
         which=which,
         popen=popen,
     )
-    manifest = _read_canonical_json(root / "qualification-manifest.json")
+    manifest = read_canonical_json(root / "qualification-manifest.json")
     result["_calls"] = calls
     return result, manifest, root
 
@@ -556,7 +576,7 @@ def test_forbidden_env_fails_before_root_or_process(tmp_path, key):
 def test_empty_forbidden_env_is_bound_in_intent(tmp_path):
     env = {key: "" for key in q.FORBIDDEN_ENV}
     result, _manifest, root = _run_synthetic_qualification(tmp_path, env=env)
-    intent = _read_canonical_json(root / "qualification-intent.json")
+    intent = read_canonical_json(root / "qualification-intent.json")
     for key in q.FORBIDDEN_ENV:
         assert intent["relevant_environment"][key] == ""
     assert result["terminal_status"] == "PASS"
@@ -591,7 +611,7 @@ def test_missing_compiler_writes_terminal_evidence(tmp_path):
     assert result["failure_reason"] == "MISSING_COMPILER"
     assert result["compiler_version"] is None
     assert all(job["terminal_status"] == "NOT_STARTED" for job in result["jobs"])
-    intent = _read_canonical_json(root / "qualification-intent.json")
+    intent = read_canonical_json(root / "qualification-intent.json")
     assert intent["compile_link_argv"] is None
     assert result["_calls"] == []
     paths = {entry["path"] for entry in manifest["files"]}
@@ -603,8 +623,8 @@ def test_missing_compiler_writes_terminal_evidence(tmp_path):
 
 def test_runner_embeds_identical_captured_host_snapshot(tmp_path):
     result, manifest, root = _run_synthetic_qualification(tmp_path)
-    intent = _read_canonical_json(root / "qualification-intent.json")
-    published = _read_canonical_json(root / "qualification-result.json")
+    intent = read_canonical_json(root / "qualification-intent.json")
+    published = read_canonical_json(root / "qualification-result.json")
     assert published == {
         key: value for key, value in result.items() if key != "_calls"
     }
@@ -787,6 +807,22 @@ def test_pass_requires_matching_clean_repository_postcondition(tmp_path):
     assert "qualification-manifest.json" not in paths
 
 
+def test_compile_failure_still_reports_repository_drift(tmp_path):
+    result, _manifest, root = _run_synthetic_qualification(
+        tmp_path,
+        compile_exit=3,
+        create_regular_executable=True,
+        mutate_repo_during_compile=True,
+    )
+    assert result["jobs"][0]["terminal_status"] == "FAIL"
+    assert result["jobs"][0]["failure_reason"] == "NONZERO_EXIT"
+    assert result["jobs"][1]["terminal_status"] == "NOT_STARTED"
+    assert result["terminal_status"] == "FAIL"
+    assert result["failure_reason"] == "REPOSITORY_DRIFT"
+    assert (root / "qualification-result.json").is_file()
+    assert (root / "qualification-manifest.json").is_file()
+
+
 def test_repository_drift_fails_and_preserves_process_evidence(tmp_path):
     result, _manifest, root = _run_synthetic_qualification(
         tmp_path,
@@ -826,6 +862,185 @@ def test_binary_timeout_preserves_compiled_executable_evidence(tmp_path):
     assert result["jobs"][1]["terminal_status"] == "TIMEOUT"
     assert result["executable_regular"] is True
     assert "qualify" in {entry["path"] for entry in manifest["files"]}
+
+
+def test_not_started_process_start_error_is_allowed():
+    job = _compile("NOT_STARTED", failure_reason="PROCESS_START_ERROR")
+    validated = q.validate_process_evidence(job)
+    assert validated["process_started"] is False
+    assert validated["failure_reason"] == "PROCESS_START_ERROR"
+    assert validated["exit_code"] is None
+    assert validated["started_at"] is None
+
+
+def test_not_started_process_start_error_rejects_invented_state():
+    job = _compile(
+        "NOT_STARTED",
+        failure_reason="PROCESS_START_ERROR",
+        exit_code=1,
+    )
+    with pytest.raises(EvidenceError):
+        q.validate_process_evidence(job)
+
+
+def test_not_started_rejects_unknown_failure_reason():
+    job = _compile("NOT_STARTED", failure_reason="NONZERO_EXIT")
+    with pytest.raises(EvidenceError):
+        q.validate_process_evidence(job)
+
+
+def test_metadata_popen_error_closes_terminal_evidence(tmp_path):
+    result, manifest, root = _run_synthetic_qualification(
+        tmp_path,
+        metadata_popen_error=True,
+    )
+    version = result["compiler_version"]
+    assert version["process_started"] is False
+    assert version["terminal_status"] == "NOT_STARTED"
+    assert version["failure_reason"] == "PROCESS_START_ERROR"
+    assert all(job["terminal_status"] == "NOT_STARTED" for job in result["jobs"])
+    assert result["terminal_status"] == "FAIL"
+    assert result["failure_reason"] == "PROCESS_START_ERROR"
+    assert (root / "qualification-result.json").is_file()
+    assert (root / "qualification-manifest.json").is_file()
+    assert not (root / "METADATA_CXX_VERSION.stdout").exists()
+    assert not (root / "METADATA_CXX_VERSION.stderr").exists()
+    assert manifest["result_sha256"]
+
+
+def test_compile_popen_error_closes_terminal_evidence(tmp_path):
+    result, _manifest, root = _run_synthetic_qualification(
+        tmp_path,
+        compile_popen_error=True,
+    )
+    assert result["compiler_version"]["terminal_status"] == "PASS"
+    compile_job = result["jobs"][0]
+    assert compile_job["process_started"] is False
+    assert compile_job["terminal_status"] == "NOT_STARTED"
+    assert compile_job["failure_reason"] == "PROCESS_START_ERROR"
+    assert result["jobs"][1]["terminal_status"] == "NOT_STARTED"
+    assert result["terminal_status"] == "FAIL"
+    assert result["failure_reason"] == "PROCESS_START_ERROR"
+    assert (root / "qualification-result.json").is_file()
+    assert (root / "qualification-manifest.json").is_file()
+    assert not (root / "CXX_COMPILE_LINK.stdout").exists()
+    assert not (root / "CXX_COMPILE_LINK.stderr").exists()
+
+
+def test_binary_popen_error_keeps_executable_and_closes(tmp_path):
+    result, manifest, root = _run_synthetic_qualification(
+        tmp_path,
+        binary_popen_error=True,
+    )
+    assert result["compiler_version"]["terminal_status"] == "PASS"
+    assert result["jobs"][0]["terminal_status"] == "PASS"
+    run_job = result["jobs"][1]
+    assert run_job["process_started"] is False
+    assert run_job["terminal_status"] == "NOT_STARTED"
+    assert run_job["failure_reason"] == "PROCESS_START_ERROR"
+    assert result["terminal_status"] == "FAIL"
+    assert result["failure_reason"] == "PROCESS_START_ERROR"
+    assert result["executable_regular"] is True
+    assert result["executable_symlink"] is False
+    assert result["executable_sha256"] is not None
+    assert (root / "qualification-result.json").is_file()
+    assert (root / "qualification-manifest.json").is_file()
+    assert "qualify" in {entry["path"] for entry in manifest["files"]}
+    assert not (root / "QUALIFIED_BINARY_RUN.stdout").exists()
+    assert not (root / "QUALIFIED_BINARY_RUN.stderr").exists()
+
+
+def test_metadata_timeout_cleanup_failure_closes_evidence(tmp_path):
+    result, _manifest, root = _run_synthetic_qualification(
+        tmp_path,
+        compiler_version_timeout=True,
+        cleanup_error=True,
+        compiler_version_stdout=b"partial",
+    )
+    version = result["compiler_version"]
+    assert version["terminal_status"] == "FAIL"
+    assert version["failure_reason"] == "PROCESS_CLEANUP_FAILED"
+    assert version["process_started"] is True
+    assert version["process_group_terminated"] is False
+    assert version["stdout_bytes"] == len(b"partial")
+    assert all(job["terminal_status"] == "NOT_STARTED" for job in result["jobs"])
+    assert result["terminal_status"] == "FAIL"
+    assert result["failure_reason"] == "PROCESS_CLEANUP_FAILED"
+    assert (root / "qualification-result.json").is_file()
+    assert (root / "qualification-manifest.json").is_file()
+    assert (root / "METADATA_CXX_VERSION.stdout").read_bytes() == b"partial"
+    compiler = tmp_path / "toolchain" / "c++"
+    assert result["_calls"] == [[str(compiler), "--version"]]
+
+
+def test_nonexecutable_output_clears_grouped_evidence(tmp_path):
+    result, manifest, root = _run_synthetic_qualification(
+        tmp_path,
+        compile_exit=0,
+        create_regular_executable=False,
+        create_nonexecutable_executable=True,
+    )
+    assert result["jobs"][0]["terminal_status"] == "PASS"
+    assert result["jobs"][1]["terminal_status"] == "NOT_STARTED"
+    assert result["terminal_status"] == "FAIL"
+    assert result["failure_reason"] == "INVALID_EXECUTABLE"
+    assert result["executable_sha256"] is None
+    assert result["executable_bytes"] is None
+    assert result["executable_regular"] is None
+    assert result["executable_symlink"] is None
+    assert "qualify" not in {entry["path"] for entry in manifest["files"]}
+    assert (root / "qualify").is_file()
+    assert not os.access(root / "qualify", os.X_OK)
+
+
+def test_nonexecutable_compiler_is_unresolved(tmp_path):
+    result, _manifest, root = _run_synthetic_qualification(
+        tmp_path,
+        compiler_not_executable=True,
+    )
+    assert result["terminal_status"] == "FAIL"
+    assert result["failure_reason"] == "MISSING_COMPILER"
+    assert result["compiler_version"] is None
+    assert result["_calls"] == []
+    intent = read_canonical_json(root / "qualification-intent.json")
+    assert intent["resolved_compiler_path"] is None
+    assert intent["compile_link_argv"] is None
+
+
+def test_compile_timeout_cleanup_failure_closes_evidence(tmp_path):
+    result, manifest, root = _run_synthetic_qualification(
+        tmp_path,
+        compile_timeout=True,
+        cleanup_error=True,
+        create_regular_executable=True,
+    )
+    compile_job = result["jobs"][0]
+    assert result["compiler_version"]["terminal_status"] == "PASS"
+    assert compile_job["terminal_status"] == "FAIL"
+    assert compile_job["failure_reason"] == "PROCESS_CLEANUP_FAILED"
+    assert compile_job["process_started"] is True
+    assert compile_job["process_group_terminated"] is False
+    assert result["jobs"][1]["terminal_status"] == "NOT_STARTED"
+    assert result["terminal_status"] == "FAIL"
+    assert result["failure_reason"] == "PROCESS_CLEANUP_FAILED"
+    assert (root / "qualification-result.json").is_file()
+    assert (root / "qualification-manifest.json").is_file()
+    assert len(result["_calls"]) == 2
+    assert result["executable_regular"] is True
+    assert "qualify" in {entry["path"] for entry in manifest["files"]}
+
+
+def test_entry_git_inspect_error_is_evidence_error(tmp_path):
+    root = tmp_path / "qual"
+    with pytest.raises(EvidenceError, match="E_GIT"):
+        q.run_qualification(
+            repo_root=tmp_path,
+            qualification_root=root,
+            env={},
+            which=lambda _name: "/usr/bin/c++",
+            popen=_unexpected_popen,
+        )
+    assert not root.exists()
 
 
 _CLI_FORBIDDEN = (

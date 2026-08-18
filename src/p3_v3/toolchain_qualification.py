@@ -312,6 +312,12 @@ def _validate_not_started(process: Mapping[str, Any], context: str) -> None:
                 "E_PROCESS",
                 f"{context} NOT_STARTED invented {key}",
             )
+    reason = process["failure_reason"]
+    if reason not in {None, "PROCESS_START_ERROR"}:
+        raise EvidenceError(
+            "E_PROCESS",
+            f"{context} NOT_STARTED failure_reason is not allowed",
+        )
 
 
 def _validate_started_output(process: Mapping[str, Any], context: str) -> None:
@@ -379,6 +385,11 @@ def validate_process_evidence(value: object) -> dict[str, Any]:
             )
         ):
             pass
+        elif (
+            reason == "PROCESS_CLEANUP_FAILED"
+            and process["process_group_terminated"] is False
+        ):
+            pass
         else:
             raise EvidenceError("E_PROCESS", "FAIL terminal matrix is invalid")
     elif status == "TIMEOUT":
@@ -412,6 +423,22 @@ def validate_process_evidence(value: object) -> dict[str, Any]:
     return process
 
 
+def _workload_argv(
+    compiler_path: str | None,
+    root: str,
+) -> tuple[list[str] | None, list[str] | None]:
+    if compiler_path is None:
+        return None, None
+    compile_argv = [
+        compiler_path,
+        "-std=c++14",
+        f"{root}/{SOURCE_NAME}",
+        "-o",
+        f"{root}/{EXECUTABLE_NAME}",
+    ]
+    return compile_argv, [f"{root}/{EXECUTABLE_NAME}"]
+
+
 def _validate_compiler_binding(
     path: str | None,
     realpath: str | None,
@@ -432,14 +459,7 @@ def _validate_compiler_binding(
         raise EvidenceError("E_COMPILER", f"{context} resolved paths are coupled")
     _require_absolute(path, f"{context}.resolved_compiler_path")
     _require_absolute(realpath, f"{context}.resolved_compiler_realpath")
-    expected_compile = [
-        path,
-        "-std=c++14",
-        f"{root}/{SOURCE_NAME}",
-        "-o",
-        f"{root}/{EXECUTABLE_NAME}",
-    ]
-    expected_run = [f"{root}/{EXECUTABLE_NAME}"]
+    expected_compile, expected_run = _workload_argv(path, root)
     if compile_argv != expected_compile or run_argv != expected_run:
         raise EvidenceError("E_ARGV", f"{context} workload argv is frozen")
 
@@ -702,13 +722,16 @@ def _git_text(repo_root: Path, args: list[str]) -> str:
     env["GIT_CONFIG_GLOBAL"] = "/dev/null"
     env["GIT_CONFIG_NOSYSTEM"] = "1"
     env["GIT_CONFIG_COUNT"] = "0"
-    completed = subprocess.run(
-        ["git", *args],
-        cwd=repo_root,
-        check=True,
-        capture_output=True,
-        env=env,
-    )
+    try:
+        completed = subprocess.run(
+            ["git", *args],
+            cwd=repo_root,
+            check=True,
+            capture_output=True,
+            env=env,
+        )
+    except (OSError, subprocess.CalledProcessError) as exc:
+        raise EvidenceError("E_GIT", "repository inspection failed") from exc
     return completed.stdout.decode("utf-8")
 
 
@@ -755,6 +778,8 @@ def _resolve_compiler(
     regular = os.path.isfile(real) and not os.path.islink(real)
     if not regular:
         return None, None, None, None
+    if not os.access(path, os.X_OK) or not os.access(real, os.X_OK):
+        return None, None, None, None
     return path, real, True, symlink
 
 
@@ -789,19 +814,22 @@ def _not_started_job(
     job_id: str,
     argv: list[str] | None,
     timeout: int,
+    *,
+    role: str = "WORKLOAD",
+    reason: str | None = None,
 ) -> dict[str, Any]:
     return _self_hash(
         {
             "schema_version": PROCESS_SCHEMA,
             "execution_class": EXECUTION_CLASS,
             "claims": CLAIMS,
-            "process_role": "WORKLOAD",
+            "process_role": role,
             "job_id": job_id,
             "argv": argv,
             "timeout_seconds": timeout,
             "process_started": False,
             "terminal_status": "NOT_STARTED",
-            "failure_reason": None,
+            "failure_reason": reason,
             "exit_code": None,
             "started_at": None,
             "ended_at": None,
@@ -834,6 +862,23 @@ def _terminate_group(proc: Any) -> None:
             pass
 
 
+def _terminate_and_reap(
+    proc: Any,
+) -> tuple[bool, bytes | None, bytes | None]:
+    """Kill the process group and confirm the process was reaped."""
+
+    _terminate_group(proc)
+    try:
+        final = proc.communicate(timeout=1)
+    except Exception:
+        return False, None, None
+    if getattr(proc, "returncode", None) is None:
+        poll = getattr(proc, "poll", None)
+        if poll is not None and poll() is None:
+            return False, final[0], final[1]
+    return True, final[0], final[1]
+
+
 def _run_process(
     *,
     argv: list[str],
@@ -850,14 +895,23 @@ def _run_process(
     stderr = b""
     timed_out = False
     terminated = False
-    proc = popen(
-        argv,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        shell=False,
-        start_new_session=True,
-        env=dict(env),
-    )
+    try:
+        proc = popen(
+            argv,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            shell=False,
+            start_new_session=True,
+            env=dict(env),
+        )
+    except OSError:
+        return _not_started_job(
+            job_id,
+            argv,
+            timeout,
+            role=role,
+            reason="PROCESS_START_ERROR",
+        )
     try:
         received = proc.communicate(timeout=timeout)
         stdout = received[0] or b""
@@ -865,31 +919,29 @@ def _run_process(
         exit_code = proc.returncode
     except subprocess.TimeoutExpired as exc:
         timed_out = True
-        terminated = True
         stdout = exc.stdout if exc.stdout is not None else stdout
         stderr = exc.stderr if exc.stderr is not None else stderr
-        _terminate_group(proc)
-        final_out = None
-        final_err = None
-        try:
-            final = proc.communicate(timeout=1)
-            final_out = final[0]
-            final_err = final[1]
-        except Exception:
-            final_out = None
-            final_err = None
+        terminated, final_out, final_err = _terminate_and_reap(proc)
         stdout = _select_output(stdout, final_out)
         stderr = _select_output(stderr, final_err)
         exit_code = None
+    except OSError:
+        timed_out = False
+        terminated = False
+        exit_code = None
+        stdout = stdout or b""
+        stderr = stderr or b""
     ended_at = _utc_now()
     wall = float(time.monotonic() - begin)
     _write_exclusive_bytes(root / f"{job_id}.stdout", stdout)
     _write_exclusive_bytes(root / f"{job_id}.stderr", stderr)
-    if timed_out:
+    if timed_out and terminated:
         status = "TIMEOUT"
-        reason = "TIMEOUT" if role == "METADATA" else "TIMEOUT"
-        if role == "METADATA":
-            reason = "TIMEOUT"
+        reason = "TIMEOUT"
+    elif timed_out or exit_code is None:
+        status = "FAIL"
+        reason = "PROCESS_CLEANUP_FAILED"
+        terminated = False
     elif exit_code != 0:
         status = "FAIL"
         reason = "NONZERO_EXIT"
@@ -926,6 +978,8 @@ def _run_process(
 
 def _inspect_executable(path: Path) -> dict[str, Any] | None:
     if path.is_symlink() or not path.is_file():
+        return None
+    if not os.access(path, os.X_OK):
         return None
     data = path.read_bytes()
     return {
@@ -1061,17 +1115,10 @@ def run_qualification(
     resolved = _resolve_compiler(which)
     host = _capture_host_snapshot(entry, resolved)
     _write_exclusive_bytes(qualification_root / SOURCE_NAME, SOURCE_BYTES)
-    compile_argv = None
-    run_argv = None
-    if resolved[0] is not None:
-        compile_argv = [
-            resolved[0],
-            "-std=c++14",
-            str(qualification_root / SOURCE_NAME),
-            "-o",
-            str(qualification_root / EXECUTABLE_NAME),
-        ]
-        run_argv = [str(qualification_root / EXECUTABLE_NAME)]
+    compile_argv, run_argv = _workload_argv(
+        resolved[0],
+        str(qualification_root),
+    )
     intent = _self_hash(
         {
             "schema_version": INTENT_SCHEMA,
@@ -1157,18 +1204,15 @@ def run_qualification(
                 else:
                     status = "PASS"
                     reason = None
-    final = _inspect_repository(repo_root)
-    if status == "PASS" and (
-        final != entry or final["repository_clean"] is not True
-    ):
+    try:
+        final = _inspect_repository(repo_root)
+    except EvidenceError:
         status = "FAIL"
         reason = "REPOSITORY_DRIFT"
-    elif status == "PASS" and (
-        final["repository_commit"] != entry["repository_commit"]
-        or final["porcelain"] != entry["porcelain"]
-    ):
-        status = "FAIL"
-        reason = "REPOSITORY_DRIFT"
+    else:
+        if final != entry or final["repository_clean"] is not True:
+            status = "FAIL"
+            reason = "REPOSITORY_DRIFT"
     result, _manifest = _write_terminal_result_and_manifest(
         root=qualification_root,
         intent=intent,
