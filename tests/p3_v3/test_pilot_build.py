@@ -112,7 +112,6 @@ def _minimal_environment(pilot_build):
     return pilot_build.validate_environment_snapshot(pilot_build._self_hash(environment))
 
 
-
 def _synthetic_specs(tmp_path: Path, configure, build, smoke, timeouts=None):
     timeouts = timeouts or (900, 3600, 1800)
     return (
@@ -416,10 +415,10 @@ def test_configure_timeout(tmp_path):
 
     specs = _synthetic_specs(
         tmp_path,
-        ["python3", "-c", "import time; time.sleep(2)"],
+        ["python3", "-c", "import time; time.sleep(3)"],
         ["python3", "-c", "print('build')"],
         ["python3", "-c", "print('smoke')"],
-        timeouts=(0.2, 3600, 1800),
+        timeouts=(1, 3600, 1800),
     )
     results, _evidence = pilot_build.run_three_jobs(
         specs,
@@ -437,9 +436,9 @@ def test_build_timeout(tmp_path):
     specs = _synthetic_specs(
         tmp_path,
         ["python3", "-c", "print('configure')"],
-        ["python3", "-c", "import time; time.sleep(2)"],
+        ["python3", "-c", "import time; time.sleep(3)"],
         ["python3", "-c", "print('smoke')"],
-        timeouts=(900, 0.2, 1800),
+        timeouts=(900, 1, 1800),
     )
     results, _evidence = pilot_build.run_three_jobs(
         specs,
@@ -457,8 +456,8 @@ def test_smoke_timeout(tmp_path):
         tmp_path,
         ["python3", "-c", "print('configure')"],
         ["python3", "-c", "print('build')"],
-        ["python3", "-c", "import time; time.sleep(2)"],
-        timeouts=(900, 3600, 0.2),
+        ["python3", "-c", "import time; time.sleep(3)"],
+        timeouts=(900, 3600, 1),
     )
     results, _evidence = pilot_build.run_three_jobs(
         specs,
@@ -562,7 +561,10 @@ def test_no_system_boost_fallback():
     import p3_v3.pilot_build as pilot_build
 
     with pytest.raises(EvidenceError, match="SYSTEM_BOOST_FALLBACK"):
-        pilot_build.reject_system_boost_environment({"BOOST_ROOT": "/usr"})
+        # BOOST_ROOT is blocked only when the value names Boost/system Boost.
+        pilot_build.reject_system_boost_environment(
+            {"BOOST_ROOT": "/usr/include/boost"}
+        )
     reason = pilot_build.detect_network_or_boost(
         b"",
         b"-I/usr/include/boost",
@@ -617,6 +619,11 @@ def test_confirmatory_schema_leakage_rejection(tmp_path):
         }
         with pytest.raises(EvidenceError, match="E_PILOT_DENOMINATOR_LEAK"):
             verify_package(tmp_path, manifest)
+    import p3_v3.pilot_build as pilot_build
+
+    accepted = _minimal_environment(pilot_build)
+    assert accepted["execution_class"] == "PILOT_ONLY"
+    assert accepted["schema_version"].startswith("p3-pilot-")
 
 
 def test_claims_denominator_rq4_invariants():
@@ -894,8 +901,8 @@ def test_result_count_conservation_and_aggregate():
 
 
 def test_configure_build_dependency_blocking(tmp_path):
-    test_configure_failure_prevents_build_and_smoke(tmp_path)
-    test_build_failure_prevents_smoke(tmp_path)
+    test_configure_failure_prevents_build_and_smoke(tmp_path / "configure")
+    test_build_failure_prevents_smoke(tmp_path / "build")
 
 
 def test_process_group_timeout_terminates_descendants(tmp_path):
@@ -1196,7 +1203,6 @@ def test_smoke_refuses_executable_hash_drift(tmp_path):
     assert results[2]["terminal_status"] == "FAIL_INFRASTRUCTURE"
     assert results[2]["failure_reason"] == "MISSING_DEPENDENCY"
     assert results[2]["process_started"] is False
-
 
 
 def _synthetic_build_evidence_tree(
@@ -2095,3 +2101,154 @@ def test_process_group_leak_cleanup_does_not_duplicate_cumulative_stdio(
     assert result["stderr_sha256"] == _sha256_bytes(final_err)
     assert result["stdout_bytes"] == len(final_out)
     assert result["stderr_bytes"] == len(final_err)
+
+
+def test_verbose_child_does_not_false_timeout_when_pipe_exceeds_capacity(tmp_path):
+    import p3_v3.pilot_build as pilot_build
+
+    payload_out = b"O" * (1024 * 1024)
+    payload_err = b"E" * (1024 * 1024)
+    script = (
+        "import sys\n"
+        f"sys.stdout.buffer.write(b'O' * {len(payload_out)})\n"
+        "sys.stdout.buffer.flush()\n"
+        f"sys.stderr.buffer.write(b'E' * {len(payload_err)})\n"
+        "sys.stderr.buffer.flush()\n"
+    )
+    spec = {
+        "job_id": "CMAKE_CONFIGURE",
+        "job_kind": "CMAKE_CONFIGURE",
+        "dependency_job_ids": [],
+        "argv": ["python3", "-c", script],
+        "timeout_seconds": 5,
+    }
+    result = pilot_build.execute_job(
+        spec,
+        env=dict(os.environ),
+        log_root=tmp_path / "logs",
+    )
+    raw_out = (tmp_path / "logs" / "CMAKE_CONFIGURE.stdout").read_bytes()
+    raw_err = (tmp_path / "logs" / "CMAKE_CONFIGURE.stderr").read_bytes()
+    assert result["terminal_status"] == "PASS"
+    assert result["failure_reason"] is None
+    assert result["timeout_seconds"] == 5
+    assert isinstance(result["timeout_seconds"], int)
+    assert raw_out == payload_out
+    assert raw_err == payload_err
+    assert result["stdout_bytes"] == len(payload_out)
+    assert result["stderr_bytes"] == len(payload_err)
+    assert result["stdout_sha256"] == _sha256_bytes(payload_out)
+    assert result["stderr_sha256"] == _sha256_bytes(payload_err)
+
+
+def test_preexisting_canonical_start_marker_refuses_second_spawn(tmp_path):
+    from p3_v3.artifacts import write_canonical_json
+    import p3_v3.pilot_build as pilot_build
+
+    log_root = tmp_path / "logs"
+    log_root.mkdir()
+    marker = log_root / "CMAKE_CONFIGURE.start.json"
+    payload = {
+        "job_id": "CMAKE_CONFIGURE",
+        "argv_sha256": "0" * 64,
+        "created_at": "2026-08-18T00:00:00Z",
+        "state": "STARTING",
+    }
+    write_canonical_json(marker, payload, exclusive=True)
+    before = marker.read_bytes()
+    inode = marker.stat().st_ino
+    calls: list[object] = []
+
+    def fake_popen(*_args, **_kwargs):
+        calls.append(1)
+        raise AssertionError("Popen must not run")
+
+    spec = {
+        "job_id": "CMAKE_CONFIGURE",
+        "job_kind": "CMAKE_CONFIGURE",
+        "dependency_job_ids": [],
+        "argv": ["python3", "-c", "print('no-spawn')"],
+        "timeout_seconds": 900,
+    }
+    with pytest.raises(EvidenceError, match="E_EXISTS"):
+        pilot_build.execute_job(
+            spec,
+            env=dict(os.environ),
+            log_root=log_root,
+            popen=fake_popen,
+        )
+    assert calls == []
+    names = sorted(path.name for path in log_root.iterdir())
+    assert names == ["CMAKE_CONFIGURE.start.json"]
+    assert marker.read_bytes() == before
+    assert marker.stat().st_ino == inode
+
+
+def test_preexisting_canonical_identity_marker_refuses_alternate_record(tmp_path):
+    from p3_v3.artifacts import write_canonical_json
+    import p3_v3.pilot_build as pilot_build
+
+    log_root = tmp_path / "logs"
+    log_root.mkdir()
+    marker = log_root / "CMAKE_CONFIGURE.identity.json"
+    payload = {
+        "job_id": "CMAKE_CONFIGURE",
+        "pid": 1,
+        "pgid": 1,
+        "starttime": "1",
+        "argv_sha256": "0" * 64,
+    }
+    write_canonical_json(marker, payload, exclusive=True)
+    before = marker.read_bytes()
+    inode = marker.stat().st_ino
+    spec = {
+        "job_id": "CMAKE_CONFIGURE",
+        "job_kind": "CMAKE_CONFIGURE",
+        "dependency_job_ids": [],
+        "argv": ["python3", "-c", "print('identity')"],
+        "timeout_seconds": 900,
+    }
+    with pytest.raises(EvidenceError, match="E_EXISTS"):
+        pilot_build.write_process_identity(
+            log_root,
+            spec,
+            pid=424242,
+            pgid=424242,
+            starttime="99",
+            argv_sha256="a" * 64,
+        )
+    names = sorted(path.name for path in log_root.iterdir())
+    assert names == ["CMAKE_CONFIGURE.identity.json"]
+    assert marker.read_bytes() == before
+    assert marker.stat().st_ino == inode
+
+
+def test_job_result_rejects_fractional_timeout_seconds():
+    import p3_v3.pilot_build as pilot_build
+
+    payload = dict(pilot_build.make_not_started_job(pilot_build.JOB_SPECS[0]))
+    payload["timeout_seconds"] = 0.2
+    payload.pop("artifact_sha256", None)
+    hashed = pilot_build._self_hash(payload)
+    with pytest.raises(EvidenceError, match="E_SCHEMA_TYPE"):
+        pilot_build.validate_job_result(hashed)
+    assert hashed["timeout_seconds"] == 0.2
+
+
+def test_benign_include_environment_is_not_system_boost():
+    import p3_v3.pilot_build as pilot_build
+
+    pilot_build.reject_system_boost_environment(
+        {"CPATH": "/opt/project/include"}
+    )
+    pilot_build.reject_system_boost_environment(
+        {"CPLUS_INCLUDE_PATH": "/opt/project/include"}
+    )
+    with pytest.raises(EvidenceError, match="SYSTEM_BOOST_FALLBACK"):
+        pilot_build.reject_system_boost_environment(
+            {"CPATH": "/usr/include/boost"}
+        )
+    with pytest.raises(EvidenceError, match="SYSTEM_BOOST_FALLBACK"):
+        pilot_build.reject_system_boost_environment(
+            {"BOOST_ROOT": "/opt/boost"}
+        )

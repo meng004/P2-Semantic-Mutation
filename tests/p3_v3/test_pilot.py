@@ -294,6 +294,7 @@ def test_write_plan_hashes_the_validated_verdict_snapshot(tmp_path, monkeypatch)
         == validated_verdict_sha256
     )
 
+
 def test_build_preflight_cli_accepts_only_frozen_roots():
     import scripts.p3_v3.pilot as pilot_cli
 

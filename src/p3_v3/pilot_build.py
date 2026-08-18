@@ -26,7 +26,6 @@ from p3_v3.artifacts import (
     validate_sha256,
     write_canonical_json,
 )
-from p3_v3.pilot import reject_confirmatory_pilot
 from p3_v3.pilot_source import (
     capture_materialized_tree,
     validate_materialized_tree_with_phase1,
@@ -440,7 +439,7 @@ BUILD_PREFLIGHT_JOB_RESULT_EXACT = {
     "job_kind": str,
     "dependency_job_ids": list,
     "argv": list,
-    "timeout_seconds": (int, float),
+    "timeout_seconds": int,
     "process_started": bool,
     "process_group_terminated": (bool, type(None)),
     "infrastructure_phase": (str, type(None)),
@@ -597,7 +596,12 @@ def require_frozen_source_tree(source_root: Path) -> str:
 def reject_system_boost_environment(env: dict[str, str]) -> None:
     for key in FORBIDDEN_BOOST_ENV:
         value = env.get(key)
-        if value:
+        if not value:
+            continue
+        lowered = value.lower()
+        if "boost" in lowered or any(
+            marker in value for marker in SYSTEM_BOOST_MARKERS
+        ):
             raise EvidenceError(
                 "E_PILOT_SYSTEM_BOOST",
                 "SYSTEM_BOOST_FALLBACK",
@@ -716,7 +720,7 @@ def process_group_has_members(pgid: int) -> bool:
             continue
         rparen = stat_text.rfind(")")
         fields = stat_text[rparen + 2 :].split()
-        if len(fields) > 3 and str(pgid) in {fields[2], fields[3]}:
+        if len(fields) > 2 and fields[2] == str(pgid):
             return True
     return False
 
@@ -884,14 +888,11 @@ def write_job_start_marker(log_root: Path, spec: dict[str, Any]) -> str:
         "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "state": "STARTING",
     }
-    path = log_root / f"{spec['job_id']}.start.json"
-    try:
-        write_canonical_json(path, payload, exclusive=True)
-    except EvidenceError as exc:
-        if exc.code != "E_EXISTS":
-            raise
-        path = log_root / f"{spec['job_id']}.{digest[:16]}.{os.getpid()}.start.json"
-        write_canonical_json(path, payload, exclusive=True)
+    write_canonical_json(
+        log_root / f"{spec['job_id']}.start.json",
+        payload,
+        exclusive=True,
+    )
     return digest
 
 
@@ -910,14 +911,11 @@ def write_process_identity(
         "starttime": starttime,
         "argv_sha256": argv_sha256,
     }
-    path = log_root / f"{spec['job_id']}.identity.json"
-    try:
-        write_canonical_json(path, payload, exclusive=True)
-    except EvidenceError as exc:
-        if exc.code != "E_EXISTS":
-            raise
-        path = log_root / f"{spec['job_id']}.{argv_sha256[:16]}.{pid}.identity.json"
-        write_canonical_json(path, payload, exclusive=True)
+    write_canonical_json(
+        log_root / f"{spec['job_id']}.identity.json",
+        payload,
+        exclusive=True,
+    )
 
 
 def load_process_identities(log_root: Path) -> list[dict[str, Any]]:
@@ -986,14 +984,15 @@ def terminate_and_reap_process_group(
     *,
     force: bool = True,
 ) -> tuple[bytes | None, bytes | None, bool]:
-    extra_out: bytes | None = None
-    extra_err: bytes | None = None
+    final_stdout_snapshot: bytes | None = None
+    final_stderr_snapshot: bytes | None = None
     if _is_controller_process_group(pgid, proc):
         return None, None, False
     still_running = False
     if proc is not None and hasattr(proc, "poll"):
         still_running = proc.poll() is None
-    if force and still_running and pgid is not None and _pgid_still_matches_identity(pgid, pid, starttime):
+    identity_ok = _pgid_still_matches_identity(pgid, pid, starttime)
+    if force and still_running and pgid is not None and identity_ok:
         try:
             os.killpg(pgid, signal.SIGKILL)
         except ProcessLookupError:
@@ -1001,11 +1000,17 @@ def terminate_and_reap_process_group(
     if proc is not None:
         try:
             received_out, received_err = proc.communicate(timeout=5)
-            extra_out = received_out if received_out is not None else b""
-            extra_err = received_err if received_err is not None else b""
+            if received_out is not None:
+                final_stdout_snapshot = received_out
+            else:
+                final_stdout_snapshot = b""
+            if received_err is not None:
+                final_stderr_snapshot = received_err
+            else:
+                final_stderr_snapshot = b""
         except Exception:
-            extra_out = None
-            extra_err = None
+            final_stdout_snapshot = None
+            final_stderr_snapshot = None
             try:
                 proc.wait(timeout=5)
             except Exception:
@@ -1021,8 +1026,7 @@ def terminate_and_reap_process_group(
             while time.monotonic() < deadline and process_group_has_members(pgid):
                 time.sleep(0.05)
         leaked = process_group_has_members(pgid)
-    return extra_out, extra_err, leaked
-
+    return final_stdout_snapshot, final_stderr_snapshot, leaked
 
 
 def validate_implementation_verdict(
@@ -1083,6 +1087,9 @@ def verify_reviewed_production_bytes(verdict: dict[str, Any]) -> None:
 
 
 def validate_environment_snapshot(value: object) -> dict[str, Any]:
+    # Pilot producer accepts p3-pilot / PILOT_ONLY objects. Do not call
+    # reject_confirmatory_pilot here: that helper is the confirmatory
+    # consumer gate and would reject this node's legal inputs.
     validated = validate_exact_object(
         value,
         BUILD_PREFLIGHT_ENVIRONMENT_EXACT,
@@ -1242,7 +1249,10 @@ def validate_job_result(value: object) -> dict[str, Any]:
         if validated["failure_reason"] != "DEPENDENCY_NOT_STARTED":
             raise EvidenceError("E_PILOT_BUILD_JOB", "NOT_STARTED reason differs")
         if validated["infrastructure_phase"] is not None:
-            raise EvidenceError("E_PILOT_BUILD_JOB", "NOT_STARTED must not set infrastructure_phase")
+            raise EvidenceError(
+                "E_PILOT_BUILD_JOB",
+                "NOT_STARTED must not set infrastructure_phase",
+            )
         if validated["started_at"] is not None or validated["ended_at"] is not None:
             raise EvidenceError("E_PILOT_BUILD_JOB", "NOT_STARTED must not have timestamps")
         _require_no_process_evidence(validated)
@@ -1377,7 +1387,9 @@ def validate_result(value: object) -> dict[str, Any]:
         if job["timeout_seconds"] != spec["timeout_seconds"]:
             raise EvidenceError("E_PILOT_BUILD_RESULT", "job timeout differs")
     if jobs[0]["terminal_status"] != "PASS":
-        if jobs[1]["terminal_status"] != "NOT_STARTED" or jobs[2]["terminal_status"] != "NOT_STARTED":
+        first_blocked = jobs[1]["terminal_status"] != "NOT_STARTED"
+        second_blocked = jobs[2]["terminal_status"] != "NOT_STARTED"
+        if first_blocked or second_blocked:
             raise EvidenceError("E_PILOT_BUILD_RESULT", "configure failure must block dependents")
     elif jobs[1]["terminal_status"] != "PASS":
         if jobs[2]["terminal_status"] != "NOT_STARTED":
@@ -1686,7 +1698,10 @@ def execute_job(
     argv_sha256 = write_job_start_marker(log_root, spec)
     start_marker = log_root / f"{spec['job_id']}.start.json"
     if not start_marker.is_file():
-        raise EvidenceError("E_PILOT_BUILD_START_MARKER", "STARTING start.json missing before Popen")
+        raise EvidenceError(
+            "E_PILOT_BUILD_START_MARKER",
+            "STARTING start.json missing before Popen",
+        )
     started_at = time.time()
     effective_timeout = spec["timeout_seconds"] if timeout_seconds is None else timeout_seconds
     before = resource.getrusage(resource.RUSAGE_CHILDREN)
@@ -1721,20 +1736,27 @@ def execute_job(
         starttime = read_proc_starttime(proc.pid)
         write_process_identity(log_root, spec, proc.pid, pgid, starttime, argv_sha256)
         identity_written = True
+        # communicate() is the only waiter so PIPE-backed children cannot
+        # fill the buffer and deadlock. Slices let a parent-exit with live
+        # descendants become PROCESS_GROUP_LEAK instead of a false TIMEOUT.
         if isinstance(proc, subprocess.Popen):
-            try:
-                proc.wait(timeout=effective_timeout)
-            except subprocess.TimeoutExpired:
-                timed_out = True
-                force_group_cleanup = True
-            try:
-                drain_timeout = 0.05 if timed_out else 1.0
-                received = proc.communicate(timeout=drain_timeout)
-                stdout = received[0] or b""
-                stderr = received[1] or b""
-            except subprocess.TimeoutExpired as exc:
-                stdout = exc.stdout if exc.stdout is not None else stdout
-                stderr = exc.stderr if exc.stderr is not None else stderr
+            deadline = time.monotonic() + float(effective_timeout)
+            while True:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    timed_out = True
+                    force_group_cleanup = True
+                    break
+                try:
+                    received = proc.communicate(timeout=min(0.2, remaining))
+                    stdout = received[0] or b""
+                    stderr = received[1] or b""
+                    break
+                except subprocess.TimeoutExpired as exc:
+                    stdout = exc.stdout if exc.stdout is not None else stdout
+                    stderr = exc.stderr if exc.stderr is not None else stderr
+                    if proc.poll() is not None:
+                        break
         else:
             received = proc.communicate(timeout=effective_timeout)
             stdout = received[0] or b""
@@ -1751,8 +1773,8 @@ def execute_job(
         else:
             post_spawn_reason = "PROCESS_CONTROL_FAILURE"
     finally:
-        extra_out = None
-        extra_err = None
+        final_stdout_snapshot = None
+        final_stderr_snapshot = None
         leaked = False
         if force_group_cleanup:
             process_group_terminated = True
@@ -1765,11 +1787,15 @@ def execute_job(
                     os.killpg(pgid, signal.SIGKILL)
                 except ProcessLookupError:
                     pass
-            extra_out, extra_err, leaked = terminate_and_reap_process_group(
+            (
+                final_stdout_snapshot,
+                final_stderr_snapshot,
+                leaked,
+            ) = terminate_and_reap_process_group(
                 pgid, proc, pid, starttime, force=True
             )
-            stdout = select_cumulative_output(stdout or b"", extra_out)
-            stderr = select_cumulative_output(stderr or b"", extra_err)
+            stdout = select_cumulative_output(stdout or b"", final_stdout_snapshot)
+            stderr = select_cumulative_output(stderr or b"", final_stderr_snapshot)
             if leaked:
                 post_spawn_reason = "PROCESS_CONTROL_FAILURE"
     after = resource.getrusage(resource.RUSAGE_CHILDREN)
@@ -1781,11 +1807,15 @@ def execute_job(
     except OSError:
         post_spawn_reason = "LOG_PUBLICATION_FAILURE"
         process_group_terminated = True
-        extra_out, extra_err, leaked = terminate_and_reap_process_group(
+        (
+            final_stdout_snapshot,
+            final_stderr_snapshot,
+            leaked,
+        ) = terminate_and_reap_process_group(
             pgid, proc, pid, starttime, force=True
         )
-        stdout = select_cumulative_output(stdout, extra_out)
-        stderr = select_cumulative_output(stderr, extra_err)
+        stdout = select_cumulative_output(stdout, final_stdout_snapshot)
+        stderr = select_cumulative_output(stderr, final_stderr_snapshot)
         try:
             (log_root / f"{spec['job_id']}.stdout").write_bytes(stdout)
             (log_root / f"{spec['job_id']}.stderr").write_bytes(stderr)
@@ -1801,11 +1831,15 @@ def execute_job(
         ):
             process_group_terminated = True
             post_spawn_reason = "PROCESS_GROUP_LEAK"
-            extra_out, extra_err, leaked = terminate_and_reap_process_group(
+            (
+                final_stdout_snapshot,
+                final_stderr_snapshot,
+                leaked,
+            ) = terminate_and_reap_process_group(
                 pgid, proc, pid, starttime, force=True
             )
-            stdout = select_cumulative_output(stdout, extra_out)
-            stderr = select_cumulative_output(stderr, extra_err)
+            stdout = select_cumulative_output(stdout, final_stdout_snapshot)
+            stderr = select_cumulative_output(stderr, final_stderr_snapshot)
             try:
                 (log_root / f"{spec['job_id']}.stdout").write_bytes(stdout)
                 (log_root / f"{spec['job_id']}.stderr").write_bytes(stderr)
