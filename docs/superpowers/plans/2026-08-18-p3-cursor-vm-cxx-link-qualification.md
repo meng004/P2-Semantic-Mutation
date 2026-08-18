@@ -34,6 +34,9 @@ resolution and process adapters.
   `/tmp/p3-cxx-link-qualification`.
 - Frozen source bytes are exactly `b"int main(){return 0;}\n"`.
 - Compile-link timeout is 60 seconds; binary-run timeout is 10 seconds.
+- The single compiler-version metadata invocation has a fixed timeout of
+  10 seconds. Timeout writes terminal evidence and prevents both workload
+  jobs.
 - Exactly one compiler-version metadata invocation and at most two workload
   jobs are permitted.
 - Use argv lists, `shell=False`, binary stdout/stderr, and
@@ -112,6 +115,12 @@ All other seams are module-private.
   - `validate_process_evidence(value: object) -> dict[str, Any]`
   - `validate_result(value: object) -> dict[str, Any]`
   - `validate_manifest(value: object) -> dict[str, Any]`
+  - `validate_host_snapshot(value: object) -> dict[str, Any]`
+  - `validate_attempt_pair(
+    intent: object,
+    intent_file_sha256: str,
+    result: object,
+) -> tuple[dict[str, Any], dict[str, Any]]`
   - private `_self_hash(payload: dict[str, Any]) -> dict[str, Any]`
 
 - [ ] **Step 1: Add constants and failing exact-schema tests**
@@ -134,6 +143,7 @@ EXECUTABLE_NAME = "qualify"
 SOURCE_BYTES = b"int main(){return 0;}\n"
 COMPILE_TIMEOUT_SECONDS = 60
 RUN_TIMEOUT_SECONDS = 10
+COMPILER_VERSION_TIMEOUT_SECONDS = 10
 FORBIDDEN_ENV = (
     "CXX",
     "CC",
@@ -156,6 +166,7 @@ def test_frozen_constants_are_exact():
     assert q.FROZEN_ROOT == Path("/tmp/p3-cxx-link-qualification")
     assert q.COMPILE_TIMEOUT_SECONDS == 60
     assert q.RUN_TIMEOUT_SECONDS == 10
+    assert q.COMPILER_VERSION_TIMEOUT_SECONDS == 10
     assert q.SPEC_SHA256 == (
         "ff438a10da0e762667fe358fb32082e2338f39f28c16620d5a15d8890e8dd8d5"
     )
@@ -183,6 +194,7 @@ INTENT_SCHEMA = "p3-cxx-link-qualification-intent-v1"
 PROCESS_SCHEMA = "p3-cxx-link-qualification-process-v1"
 RESULT_SCHEMA = "p3-cxx-link-qualification-result-v1"
 MANIFEST_SCHEMA = "p3-cxx-link-qualification-manifest-v1"
+HOST_SCHEMA = "p3-cxx-link-qualification-host-v1"
 ```
 
 Intent exact fields:
@@ -195,6 +207,8 @@ formal_denominator_membership
 attempt_2_authorized
 no_retry
 repository_commit
+host_snapshot
+host_snapshot_sha256
 spec_path
 spec_sha256
 qualification_root
@@ -207,9 +221,13 @@ compile_link_argv
 binary_run_argv
 compile_timeout_seconds
 run_timeout_seconds
+compiler_version_timeout_seconds
 relevant_environment
 artifact_sha256
 ```
+
+`compiler_version_timeout_seconds` must be exactly `10`. Compiler-version
+process evidence `timeout_seconds` must also equal `10`.
 
 `resolved_compiler_path`, `resolved_compiler_realpath`,
 `compile_link_argv`, and `binary_run_argv` are null together when compiler
@@ -261,6 +279,8 @@ attempt_2_authorized
 no_retry
 intent_sha256
 repository_commit
+host_snapshot
+host_snapshot_sha256
 spec_sha256
 compiler_version
 jobs
@@ -277,8 +297,61 @@ artifact_sha256
 `compiler_version` is a process-evidence object or null. `jobs` contains
 exactly `CXX_COMPILE_LINK` and `QUALIFIED_BINARY_RUN` in that order. PASS
 requires both workload jobs PASS, a regular non-symlink executable, and its
-hash/size. Any other terminal state requires unavailable executable evidence
-to be null.
+hash/size.
+
+Executable evidence is present whenever `CXX_COMPILE_LINK` produced a valid
+regular, non-symlink executable, even if `QUALIFIED_BINARY_RUN` later times
+out or exits nonzero.
+
+Executable evidence is null only when compile-link did not PASS or when no
+valid regular, non-symlink executable was produced.
+
+Aggregate PASS still requires both workload jobs PASS. Preserving executable
+evidence after a binary-run failure does not upgrade the aggregate status.
+
+Host snapshot exact fields:
+
+```text
+schema_version
+os_name
+os_release
+kernel_release
+machine
+node_name
+python_version
+git_version
+repository_commit
+repository_clean
+requested_compiler
+resolved_compiler_path
+resolved_compiler_realpath
+resolved_path_regular
+resolved_path_symlink
+artifact_sha256
+```
+
+The host snapshot is a canonical self-hashed object.
+
+`repository_clean` must be true. `requested_compiler` must equal `c++`.
+`repository_commit` must be 40 lowercase hexadecimal characters and equal the
+top-level intent/result repository commit.
+
+If compiler resolution succeeds:
+
+- `resolved_compiler_path` and `resolved_compiler_realpath` are absolute;
+- `resolved_path_regular` is true for the realpath target;
+- `resolved_path_symlink` records whether the path returned by executable
+  resolution is a symlink.
+
+If compiler resolution fails, both resolved paths and both identity booleans
+are null.
+
+Intent and result embed the same complete host snapshot object and require
+`host_snapshot.artifact_sha256 == host_snapshot_sha256`.
+
+`validate_attempt_pair` must check host snapshot, hash, repository commit,
+spec hash, timeouts, source hash, argv, and intent file hash are completely
+consistent.
 
 Manifest exact fields:
 
@@ -323,6 +396,32 @@ def test_manifest_excludes_itself_and_is_self_hashed():
 
 Also test unresolved compiler intent uses four null fields and cannot contain
 invented workload argv.
+
+Cover host snapshot binding:
+
+```python
+def test_intent_and_result_bind_same_host_snapshot():
+    host = _valid_host_snapshot()
+    intent = _valid_intent(host_snapshot=host)
+    result = _valid_result(
+        host_snapshot=host,
+        host_snapshot_sha256=host["artifact_sha256"],
+    )
+    assert q.validate_intent(intent)["host_snapshot"] == host
+    assert q.validate_result(result)["host_snapshot"] == host
+```
+
+Also test:
+
+- forged OS/kernel/compiler identity is rejected;
+- host snapshot hash mismatch is rejected;
+- intent/result host snapshot mismatch is rejected by attempt-pair
+  validation;
+- unresolved compiler must use four null identity fields.
+
+`validate_attempt_pair` must check host snapshot, hash, repository commit,
+spec hash, timeouts, source hash, argv, and intent file hash are completely
+consistent.
 
 - [ ] **Step 5: Run GREEN**
 
@@ -476,6 +575,32 @@ Tests must prove:
 Generic nonzero remains `NONZERO_EXIT`; no Boost.Math failure classification
 is introduced here.
 
+Add metadata-timeout closure:
+
+```python
+def test_compiler_version_timeout_blocks_workloads_and_closes_evidence(
+    tmp_path,
+):
+    result, manifest = _run_synthetic_qualification(
+        tmp_path,
+        compiler_version_timeout=True,
+    )
+    assert result["compiler_version"]["terminal_status"] == "TIMEOUT"
+    assert result["compiler_version"]["timeout_seconds"] == 10
+    assert all(job["terminal_status"] == "NOT_STARTED" for job in result["jobs"])
+    assert result["terminal_status"] == "FAIL"
+    assert result["failure_reason"] == "METADATA_TIMEOUT"
+    assert manifest["result_sha256"]
+```
+
+Compiler-version metadata must:
+
+- be invoked exactly once;
+- kill and reap the process group after timeout;
+- leave both workload jobs unstarted;
+- still exclusive-create result and manifest;
+- persist metadata stdout/stderr under the cumulative snapshot rule.
+
 - [ ] **Step 7: Implement PASS and manifest closure**
 
 A synthetic PASS adapter must create a regular executable at the frozen output
@@ -497,6 +622,29 @@ Manifest inventory must:
   workload log pairs;
 - bind exact file hashes and byte counts;
 - omit files for unstarted jobs.
+
+Task 2 must prove binary failure preserves compiled executable evidence:
+
+```python
+def test_binary_failure_preserves_compiled_executable_evidence(tmp_path):
+    result, manifest = _run_synthetic_qualification(
+        tmp_path,
+        compile_exit=0,
+        create_regular_executable=True,
+        binary_exit=7,
+    )
+    assert result["terminal_status"] == "FAIL"
+    assert result["failure_reason"] == "NONZERO_EXIT"
+    assert result["jobs"][0]["terminal_status"] == "PASS"
+    assert result["jobs"][1]["terminal_status"] == "FAIL"
+    assert result["executable_sha256"] is not None
+    assert result["executable_bytes"] is not None
+    assert result["executable_regular"] is True
+    assert result["executable_symlink"] is False
+    assert "qualify" in {entry["path"] for entry in manifest["files"]}
+```
+
+Also test that binary timeout likewise preserves executable evidence.
 
 - [ ] **Step 8: Run Task 2 GREEN**
 
