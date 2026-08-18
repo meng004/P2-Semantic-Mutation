@@ -52,6 +52,18 @@ resolution and process adapters.
   `attempt_2_authorized=false` are invariant.
 - Qualification implementation PASS does not authorize qualification
   execution or build-preflight attempt-2.
+- `CXX_COMPILE_LINK` and `QUALIFIED_BINARY_RUN` PASS only when the job
+  exits 0 and both stdout and stderr are zero bytes. Nonempty workload
+  output is `UNEXPECTED_OUTPUT` and terminal FAIL.
+- After the last process that may start ends, and before the terminal
+  result is written, re-inspect HEAD plus tracked, staged, and untracked
+  state. PASS requires the entry and final repository snapshots to be
+  identical and clean. Drift is `REPOSITORY_DRIFT`.
+- This plan-archive/repair node does not run qualification and therefore
+  returns no logs. A later authorized real qualification must return
+  canonical intent, result, and manifest plus lossless Base64 and readable
+  text for every raw stdout/stderr file. That return protocol does not
+  authorize execution here.
 
 ---
 
@@ -60,8 +72,9 @@ resolution and process adapters.
 - `src/p3_v3/toolchain_qualification.py`
   - constants and exact schemas
   - intent/result/manifest validators and constructors
-  - environment and repository preconditions
+  - environment and repository entry/postcondition inspection
   - compiler path resolution
+  - private one-shot host-snapshot capture
   - metadata/workload process execution and cleanup
   - one-shot orchestration through `run_qualification`
 - `scripts/p3_v3/qualify_cxx_link.py`
@@ -264,9 +277,18 @@ Allowed `process_role`: `METADATA` or `WORKLOAD`.
 Allowed terminal matrices:
 
 - `PASS`: started, exit 0, hashes/counts/timestamps present.
-- `FAIL`: started, nonzero exit, `NONZERO_EXIT`.
+  WORKLOAD PASS additionally requires `stdout_bytes == 0` and
+  `stderr_bytes == 0`. METADATA PASS may include nonempty stdout/stderr.
+- `FAIL`: started, nonzero exit, `NONZERO_EXIT`; or started WORKLOAD exit
+  0 with nonempty stdout or stderr, `UNEXPECTED_OUTPUT`.
 - `TIMEOUT`: started, null exit, `TIMEOUT`, process group terminated.
 - `NOT_STARTED`: not started and no process/output/time evidence.
+
+Compiler-version metadata may produce output. `CXX_COMPILE_LINK` and
+`QUALIFIED_BINARY_RUN` cannot PASS when either stream has a nonzero byte
+count. Nonempty compile-link output leaves `QUALIFIED_BINARY_RUN`
+`NOT_STARTED`. Raw stdout/stderr are still written in full and, when
+present, listed in the manifest.
 
 Result exact fields:
 
@@ -306,8 +328,10 @@ out or exits nonzero.
 Executable evidence is null only when compile-link did not PASS or when no
 valid regular, non-symlink executable was produced.
 
-Aggregate PASS still requires both workload jobs PASS. Preserving executable
-evidence after a binary-run failure does not upgrade the aggregate status.
+Aggregate PASS still requires both workload jobs PASS, zero workload
+stdout/stderr, a matching clean repository postcondition, a regular
+non-symlink executable, and its hash/size. Preserving executable evidence
+after a binary-run failure does not upgrade the aggregate status.
 
 Host snapshot exact fields:
 
@@ -348,6 +372,20 @@ are null.
 
 Intent and result embed the same complete host snapshot object and require
 `host_snapshot.artifact_sha256 == host_snapshot_sha256`.
+
+`validate_host_snapshot` authenticates schema, types, null coupling,
+`requested_compiler == "c++"`, `repository_clean is True`, a 40-character
+lowercase hexadecimal `repository_commit`, and a canonical self-hash. It
+must not compare archived OS, kernel, machine, node, Python, or Git fields
+against the reviewer's current host.
+
+Tamper semantics:
+
+- mutate any host-snapshot field and leave `artifact_sha256` unchanged:
+  `validate_host_snapshot` rejects the object;
+- recompute a valid self-hash after mutation, then embed a snapshot that
+  differs between intent and result: `validate_attempt_pair` rejects the
+  pair.
 
 `validate_attempt_pair` must check host snapshot, hash, repository commit,
 spec hash, timeouts, source hash, argv, and intent file hash are completely
@@ -413,10 +451,11 @@ def test_intent_and_result_bind_same_host_snapshot():
 
 Also test:
 
-- forged OS/kernel/compiler identity is rejected;
+- a mutated host snapshot that is not re-self-hashed is rejected by
+  `validate_host_snapshot`;
+- a re-self-hashed host snapshot that differs between intent and result
+  is rejected by `validate_attempt_pair`;
 - host snapshot hash mismatch is rejected;
-- intent/result host snapshot mismatch is rejected by attempt-pair
-  validation;
 - unresolved compiler must use four null identity fields.
 
 `validate_attempt_pair` must check host snapshot, hash, repository commit,
@@ -454,6 +493,8 @@ git commit -m "feat(p3-v3): define C++ qualification evidence"
 - Consumes Task 1 validators and constructors.
 - Produces:
   - `run_qualification(...) -> dict[str, Any]`
+  - private `_inspect_repository(...) -> dict[str, Any]`
+  - private `_capture_host_snapshot(...) -> dict[str, Any]`
   - private `_run_process(...) -> dict[str, Any]`
   - private `_write_terminal_result_and_manifest(...) -> dict[str, Any]`
 
@@ -510,14 +551,17 @@ The orchestrator order is:
 
 ```text
 validate repository clean state and forbidden environment
+record the entry repository snapshot
 exclusive-create qualification root
 resolve c++ using injected which/filesystem operations
+capture the host snapshot once
 write exact qualify.cpp
 exclusive-create qualification-intent.json
 run compiler-version metadata probe once
 run compile-link once if metadata PASS
 validate generated executable
 run binary once if compile-link PASS
+re-inspect the repository
 exclusive-create qualification-result.json
 exclusive-create qualification-manifest.json last
 return validated result
@@ -528,6 +572,38 @@ overwrite operations on existing evidence.
 
 Repository inspection may use read-only Git metadata commands but must not
 change Git configuration or the worktree.
+
+Private `_inspect_repository` records `repository_commit`,
+`repository_clean`, and the exact tracked, staged, and untracked porcelain.
+The entry snapshot is taken before root creation. The final snapshot is
+taken after the last process that may start has ended and before the
+terminal result is exclusive-created. PASS requires both snapshots to be
+identical and clean. Drift yields terminal FAIL / `REPOSITORY_DRIFT`,
+preserves already-written process evidence, and still exclusive-creates
+result and manifest.
+
+Private `_capture_host_snapshot` runs once after compiler filesystem
+resolution and before exclusive-create of `qualification-intent.json`.
+Field sources:
+
+- `os_name`: `os.uname().sysname`
+- `os_release`: `os.uname().version`
+- `kernel_release`: `os.uname().release`
+- `machine`: `os.uname().machine`
+- `node_name`: `os.uname().nodename`
+- `python_version`: `platform.python_version()`
+- `git_version`: stdout of the same read-only Git inspection channel used
+  for commit and clean-state probes, not a qualification workload job
+- `repository_commit` / `repository_clean`: `_inspect_repository`
+- `requested_compiler`: exactly `c++`
+- resolved path, realpath, regular-file, and symlink identity: controller
+  filesystem APIs after `which("c++")`, without executing the compiler
+
+The captured object is self-hashed once and embedded identically in intent
+and result, including `host_snapshot_sha256`. Synthetic runner tests must
+read the published `qualification-intent.json` and
+`qualification-result.json` and assert that binding. Validators must not
+re-query the current machine to accept or reject those archived fields.
 
 - [ ] **Step 4: Implement unresolved compiler terminal evidence**
 
@@ -542,6 +618,29 @@ When `which("c++")` returns null:
 - call `popen` zero times.
 
 Add a test validating the canonical files and manifest inventory.
+
+Synthetic runner tests initialize a temporary Git repository at
+`repo_root` so entry and postcondition inspection can run without touching
+the project worktree. They must not use the production qualification root.
+The helper `_run_synthetic_qualification` returns
+`(result, manifest, root)`.
+
+A synthetic PASS or FAIL runner test must read the published intent and
+result files and prove:
+
+```python
+def test_runner_embeds_identical_captured_host_snapshot(tmp_path):
+    result, manifest, root = _run_synthetic_qualification(tmp_path)
+    intent = _read_canonical_json(root / "qualification-intent.json")
+    published = _read_canonical_json(root / "qualification-result.json")
+    assert published == result
+    assert intent["host_snapshot"] == published["host_snapshot"]
+    assert intent["host_snapshot_sha256"] == published["host_snapshot_sha256"]
+    assert (
+        intent["host_snapshot"]["artifact_sha256"]
+        == intent["host_snapshot_sha256"]
+    )
+```
 
 - [ ] **Step 5: Implement `_run_process` with cumulative output semantics**
 
@@ -567,8 +666,12 @@ Tests must prove:
 - compiler-version failure → both workload jobs `NOT_STARTED`;
 - compile-link failure → binary run `NOT_STARTED`;
 - compile timeout → binary run `NOT_STARTED`;
+- nonempty compile-link stdout or stderr → `UNEXPECTED_OUTPUT` and
+  binary run `NOT_STARTED`;
 - missing or symlink output executable → binary run `NOT_STARTED`;
 - binary nonzero → terminal FAIL;
+- nonempty binary stdout or stderr → `UNEXPECTED_OUTPUT` and terminal
+  FAIL;
 - no blocked job receives forged stdout/stderr, timestamps, exit code, or
   process-started state.
 
@@ -581,7 +684,7 @@ Add metadata-timeout closure:
 def test_compiler_version_timeout_blocks_workloads_and_closes_evidence(
     tmp_path,
 ):
-    result, manifest = _run_synthetic_qualification(
+    result, manifest, root = _run_synthetic_qualification(
         tmp_path,
         compiler_version_timeout=True,
     )
@@ -599,12 +702,41 @@ Compiler-version metadata must:
 - kill and reap the process group after timeout;
 - leave both workload jobs unstarted;
 - still exclusive-create result and manifest;
-- persist metadata stdout/stderr under the cumulative snapshot rule.
+- persist metadata stdout/stderr under the cumulative snapshot rule;
+- allow nonempty metadata output without treating it as
+  `UNEXPECTED_OUTPUT`.
+
+Cover unexpected workload output as four independent cases:
+
+```python
+def test_compile_stdout_is_unexpected_output_and_blocks_binary(tmp_path):
+    result, manifest, root = _run_synthetic_qualification(
+        tmp_path,
+        compile_exit=0,
+        compile_stdout=b"warning\n",
+        create_regular_executable=True,
+    )
+    assert result["jobs"][0]["terminal_status"] == "FAIL"
+    assert result["jobs"][0]["failure_reason"] == "UNEXPECTED_OUTPUT"
+    assert result["jobs"][1]["terminal_status"] == "NOT_STARTED"
+    assert result["terminal_status"] == "FAIL"
+    assert result["failure_reason"] == "UNEXPECTED_OUTPUT"
+    assert (root / "CXX_COMPILE_LINK.stdout").read_bytes() == b"warning\n"
+    assert "CXX_COMPILE_LINK.stdout" in {
+        entry["path"] for entry in manifest["files"]
+    }
+```
+
+Also test compile stderr, binary stdout, and binary stderr independently.
+Binary unexpected output may preserve executable evidence because
+compile-link PASS already occurred. Compile unexpected output leaves
+executable evidence null because compile-link did not PASS. Raw logs for
+the started job remain on disk and in the manifest.
 
 - [ ] **Step 7: Implement PASS and manifest closure**
 
 A synthetic PASS adapter must create a regular executable at the frozen output
-path during the compile-link call. Assert:
+path during the compile-link call and must not write to `repo_root`. Assert:
 
 ```python
 assert result["terminal_status"] == "PASS"
@@ -612,6 +744,38 @@ assert result["failure_reason"] is None
 assert result["formal_denominator_membership"] is False
 assert result["attempt_2_authorized"] is False
 assert result["claims"] == "blocked"
+assert result["jobs"][0]["stdout_bytes"] == 0
+assert result["jobs"][0]["stderr_bytes"] == 0
+assert result["jobs"][1]["stdout_bytes"] == 0
+assert result["jobs"][1]["stderr_bytes"] == 0
+```
+
+PASS also requires the entry and final repository snapshots to be identical
+and clean. Add:
+
+```python
+def test_pass_requires_matching_clean_repository_postcondition(tmp_path):
+    result, manifest, root = _run_synthetic_qualification(tmp_path)
+    assert result["terminal_status"] == "PASS"
+    assert result["host_snapshot"]["repository_clean"] is True
+```
+
+A synthetic drift adapter writes one untracked file under `repo_root`
+during the last started process. After that process ends, the runner
+re-inspects the repository and must close as follows:
+
+```python
+def test_repository_drift_fails_and_preserves_process_evidence(tmp_path):
+    result, manifest, root = _run_synthetic_qualification(
+        tmp_path,
+        mutate_repo_during_last_job=True,
+    )
+    assert result["terminal_status"] == "FAIL"
+    assert result["failure_reason"] == "REPOSITORY_DRIFT"
+    assert result["jobs"][0]["terminal_status"] == "PASS"
+    assert result["jobs"][1]["terminal_status"] == "PASS"
+    assert (root / "qualification-result.json").is_file()
+    assert (root / "qualification-manifest.json").is_file()
 ```
 
 Manifest inventory must:
@@ -627,7 +791,7 @@ Task 2 must prove binary failure preserves compiled executable evidence:
 
 ```python
 def test_binary_failure_preserves_compiled_executable_evidence(tmp_path):
-    result, manifest = _run_synthetic_qualification(
+    result, manifest, root = _run_synthetic_qualification(
         tmp_path,
         compile_exit=0,
         create_regular_executable=True,
@@ -818,3 +982,18 @@ normally, fetch, and report:
 Stop after implementation handoff. Do not run
 `scripts/p3_v3/qualify_cxx_link.py`. Sol review and separate user authorization
 are required before any real compiler qualification.
+
+## Evidence-Return Boundary
+
+This implementation-plan node does not run qualification. There are no
+qualification logs, Base64 transcripts, or evidence files to return.
+
+`QUALIFICATION_AUTHORIZED=false` and `ATTEMPT_2_AUTHORIZED=false` remain
+in force. Completing this plan repair does not authorize implementation
+execution, compiler invocation, or attempt-2.
+
+A later, separately authorized real qualification must return the
+canonical intent, result, and manifest, plus lossless Base64 and readable
+text for every raw stdout/stderr file, exactly as the approved
+specification requires. That return protocol is not an execution
+authorization for this node.
