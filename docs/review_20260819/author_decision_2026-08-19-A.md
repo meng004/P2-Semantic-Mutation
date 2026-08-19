@@ -53,14 +53,17 @@ the extracted tree / matching archive **on the executor VM**.
   in-repo as `scripts/p3_v3/run_p2c_process_row.py` on PR #25. Condition
   (1) (extracted tree / matching archive on the **executor** VM) is still
   absent. Packet 004 booked honest `E_SOURCE_TREE_ABSENT`; it did not spawn.
-- **Do not re-issue 004** on a repeated verbal READY. Next unblock string
-  (to 评审模型): `P2C_EXTRACTED_TREE_PRESENT_ON_EXECUTOR_VM=yes`. Reviewer
-  must still confirm the tree on executor evidence before a spawn-retry
-  packet. The string does not license download or cmake.
+- **After author string `P2C_EXTRACTED_TREE_PRESENT_ON_EXECUTOR_VM=yes`:**
+  received and **refused**. Independent check on this reviewer VM:
+  `extracted/` absent, `archives/` absent, no matching `.tar`. This run
+  has no linked environment snapshot. Record:
+  `docs/review_20260819/author_string_2026-08-19-tree-present-refused.md`.
+  **No packet 005.** Repeating the same string is not new evidence.
+- **Next acceptance** requires disk evidence (see the refusal record),
+  not another verbal token.
 - **Cursor VM while waiting:** `docs/review_20260819/cursor_vm_instruction_wait_p2c_hold.md`
 - C2 is **not** due: four named slices closed their packets; not a
   REJECT/REVISE loop.
-- No packet 005 from 004 C1.
 
 ## §10.1
 

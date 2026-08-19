@@ -1,6 +1,6 @@
-# Cursor VM instruction — WAIT (author A; post-004)
+# Cursor VM instruction — WAIT (author A; tree-present string refused)
 
-Issued after C1 `docs/review_20260819/2026-08-19-004_review.md`.
+Issued after `docs/review_20260819/author_string_2026-08-19-tree-present-refused.md`.
 This is the only authorized Cursor VM input until the reviewer issues a
 new `EXECUTION_PACKET`.
 
@@ -8,10 +8,10 @@ Paste the wrapper plus the `CURSOR_VM_INSTRUCTION` block into a new
 Cursor VM. The VM must HARD STOP after confirming WAIT. It must not
 invent P2-C remainder, P2-D, cmake, a P12 download, or packet 005.
 
-The exact unblocking string is sent to the **评审模型**, not acted on
-by this VM. Packet 004 already booked the process-argv row as
-`E_SOURCE_TREE_ABSENT`. Repeating the old READY string is not a new
-science packet.
+The verbal token `P2C_EXTRACTED_TREE_PRESENT_ON_EXECUTOR_VM=yes` was
+already sent to the 评审模型 and refused (no tree on disk). This WAIT
+VM must not act on that string. Packet 004 already booked the
+process-argv row as `E_SOURCE_TREE_ABSENT`.
 
 ---
 
@@ -28,13 +28,13 @@ science packet.
 ```text
 CURSOR_VM_INSTRUCTION
 PHASE=WAIT_P2C_REMAINDER_AND_P2D
-STATUS=AUTHOR_A_HOLD
+STATUS=AUTHOR_STRING_REFUSED_NO_TREE
 TOKEN=none
 PARENT=none
 HEAD=none
 REF=origin/cursor/phase2-c0-p2a-packet-a558
-AUTHORITY=docs/review_20260819/author_decision_2026-08-19-A.md
-AUTHORITY_COMMIT=e9cdbf32
+AUTHORITY=docs/review_20260819/author_string_2026-08-19-tree-present-refused.md
+AUTHORITY_COMMIT=pending-this-commit
 BRANCH=none
 WORKTREE=none
 ALLOWED_FILES=none
@@ -50,9 +50,10 @@ EDITS=none
 COMMIT_SUBJECT=none
 TOPOLOGY=none
 REPORT_FIELDS=phase,status,commands_executed,files_changed,waiting_for,hard_stop
-WAITING_FOR_EXACT_STRING=P2C_EXTRACTED_TREE_PRESENT_ON_EXECUTOR_VM=yes
-WAITING_STRING_MEANING=author asserts to the 评审模型 that an extracted tree or hash-matching local archive for subject 1f67b3f3 is actually present on a future executor VM. The 评审模型 must still confirm that tree on executor evidence before issuing a spawn-retry of the existing ltest process-argv seam. This WAIT VM must not interpret that string as a license to start work, download P12, or cmake.
-UNTIL_THEN_FORBIDDEN=P2-C remainder; P2-D L_t/U_t; booking remaining frozen rows as missing-only terminals (rejected option B); cmake; P12 download; claim upgrade; packet 005; re-issue 004 without a tree
+WAITING_FOR_EXACT_STRING=none
+WAITING_FOR=disk evidence on reviewer VM or named executor: extracted/1f67b3f3... directory OR archives/1f67b3f3....tar sha256=c7c3d38533c01a7366d2511497082af5f30f510d0f95db822d98441a06a1898c
+WAITING_STRING_MEANING=the token P2C_EXTRACTED_TREE_PRESENT_ON_EXECUTOR_VM=yes was received and refused on 2026-08-19. Repeating it is not new evidence. This WAIT VM must not start work, download P12, or cmake.
+UNTIL_THEN_FORBIDDEN=P2-C remainder; P2-D L_t/U_t; booking remaining frozen rows as missing-only terminals (rejected option B); cmake; P12 download; claim upgrade; packet 005; re-issue 004 without a tree; treat verbal yes as a tree
 HARD_STOP=yes
 MUST_NOT_ISSUE_NEXT_GATE=yes
 ```
