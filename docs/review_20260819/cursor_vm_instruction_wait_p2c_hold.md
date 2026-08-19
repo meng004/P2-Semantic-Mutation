@@ -1,17 +1,10 @@
-# Cursor VM instruction — WAIT (author A; tree-present string refused)
+# Cursor VM instruction — WAIT (SUPERSEDED)
 
-Issued after `docs/review_20260819/author_string_2026-08-19-tree-present-refused.md`.
-This is the only authorized Cursor VM input until the reviewer issues a
-new `EXECUTION_PACKET`.
+**Superseded** by `docs/review_20260819/cursor_vm_instruction_2026-08-19-005.md`
+(author one-archive + cmake exception). Do not paste this WAIT block into
+a new VM. The authorized next input is packet 005.
 
-Paste the wrapper plus the `CURSOR_VM_INSTRUCTION` block into a new
-Cursor VM. The VM must HARD STOP after confirming WAIT. It must not
-invent P2-C remainder, P2-D, cmake, a P12 download, or packet 005.
-
-The verbal token `P2C_EXTRACTED_TREE_PRESENT_ON_EXECUTOR_VM=yes` was
-already sent to the 评审模型 and refused (no tree on disk). This WAIT
-VM must not act on that string. Packet 004 already booked the
-process-argv row as `E_SOURCE_TREE_ABSENT`.
+Historical WAIT text below is **void**. Do not execute it.
 
 ---
 

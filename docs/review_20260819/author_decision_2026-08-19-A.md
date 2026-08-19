@@ -35,7 +35,7 @@ is ledger thickening and would not feed `L_t`/`U_t`.
 
 | Target | Status |
 |---|---|
-| Real `ltest` spawn (tree + binary on executor VM) | **blocked** until (1) |
+| Real `ltest` spawn (one-archive fetch + cmake `--target ltest`) | **packet 005 issued** |
 | P2-C remainder (other frozen rows) | **blocked** until (1); do not book as missing-only copies |
 | P2-D (`L_t`/`U_t` / primary technique) | **blocked** (no usable traces) |
 | P2-E / P2-F | later |
@@ -43,27 +43,20 @@ is ledger thickening and would not feed `L_t`/`U_t`.
 | Claims | `blocked` |
 
 Condition (2) after packet 004: process-argv seam exists in-repo
-(`scripts/p3_v3/run_p2c_process_row.py`, PR #25). Condition (1) remains
-the extracted tree / matching archive **on the executor VM**.
+(`scripts/p3_v3/run_p2c_process_row.py`, PR #25). Condition (1) for this
+pinned subject is now authorized as packet 005 (one archive + cmake
+`--target ltest` + that tree's build deps). Other rows stay blocked.
 
 ## Process state
 
 - **After 003:** author string `P2C_TREE_AND_PROCESS_ARGV_SEAM_READY=yes` licensed packet 004.
-- **After 004 C1:** `WAIT` again. Condition (2) (process-argv seam) is now
-  in-repo as `scripts/p3_v3/run_p2c_process_row.py` on PR #25. Condition
-  (1) (extracted tree / matching archive on the **executor** VM) is still
-  absent. Packet 004 booked honest `E_SOURCE_TREE_ABSENT`; it did not spawn.
-- **After author string `P2C_EXTRACTED_TREE_PRESENT_ON_EXECUTOR_VM=yes`:**
-  received and **refused**. Independent check on this reviewer VM:
-  `extracted/` absent, `archives/` absent, no matching `.tar`. This run
-  has no linked environment snapshot. Record:
-  `docs/review_20260819/author_string_2026-08-19-tree-present-refused.md`.
-  **No packet 005.** Repeating the same string is not new evidence.
-- **Next acceptance** requires disk evidence (see the refusal record),
-  not another verbal token.
-- **Cursor VM while waiting:** `docs/review_20260819/cursor_vm_instruction_wait_p2c_hold.md`
-- C2 is **not** due: four named slices closed their packets; not a
-  REJECT/REVISE loop.
+- **After 004 C1:** `WAIT` (no tree). Packet 004 booked `E_SOURCE_TREE_ABSENT`.
+- **After `P2C_EXTRACTED_TREE_PRESENT_ON_EXECUTOR_VM=yes`:** refused (no disk tree). Record `author_string_2026-08-19-tree-present-refused.md`.
+- **After author exception (one archive + cmake/deps for this subject):**
+  `docs/review_20260819/author_authorization_2026-08-19-one-archive-cmake.md`.
+  Packet **005** issued. WAIT VM instruction is superseded.
+- **Cursor VM now:** `docs/review_20260819/cursor_vm_instruction_2026-08-19-005.md`
+- C2 is **not** due.
 
 ## §10.1
 
