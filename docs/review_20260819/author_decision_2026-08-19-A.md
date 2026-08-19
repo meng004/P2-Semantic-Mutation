@@ -41,11 +41,10 @@ is ledger thickening and would not feed `L_t`/`U_t`.
 
 ## Process state
 
-- **Verdict:** `WAIT`
-- **Cursor VM instruction:** `docs/review_20260819/cursor_vm_instruction_wait_p2c_hold.md`
-- **No** `execution_packet_2026-08-19-004`
-- Unblocking string (sent to 评审模型, not to this WAIT VM):
-  `P2C_TREE_AND_PROCESS_ARGV_SEAM_READY=yes`
+- **Verdict:** `WAIT` closed by author string `P2C_TREE_AND_PROCESS_ARGV_SEAM_READY=yes` (2026-08-19, to 评审模型).
+- **Follow-on packet:** `docs/review_20260819/execution_packet_2026-08-19-004.md`
+- **Cursor VM instruction:** `docs/review_20260819/cursor_vm_instruction_2026-08-19-004.md`
+- Reviewer VM at 004 issue time still had no `extracted/` or `archives/`. The string licenses the executor to use a tree if present; it does not license download or cmake.
 - C2 is **not** due: this is an author-signed hold after three named
   slices closed; not a REJECT/REVISE loop.
 
