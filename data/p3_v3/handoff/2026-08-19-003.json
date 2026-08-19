@@ -1,0 +1,54 @@
+{
+  "author_authorization": "授权 P2-C 包",
+  "baseline_commit": "4444061dde0159a5edd62753fe3cef2d881a308c",
+  "branch": "cursor/p2c-one-row-profiling-58d6",
+  "closed_scientific_target": "P2-C one-row intent/result is booked as MISSING_WITH_REASON E_SOURCE_TREE_ABSENT; this is not Phase 2 closed and is not 20-row profiling executed.",
+  "commands": [
+    {
+      "command": "PYTHONPATH=src python3 scripts/p3_v3/run_p2c_one_row.py --root . --workload data/p3_v3/phase1_frames/out/profiling-workload-1f67b3f303a09aa91413a2b5451d156cdcd76d425833bdd12669a7d1e140ca72.json --behavior-id 72e1a3e8e8dc8bf0e6c0bd3ad9634299dcc910686c46ce4794021f5ca2eae6db --jobs-root data/p3_v3/phase2_profiling/jobs --job-id p2c-20260819-003 --terminal-output data/p3_v3/phase2_profiling/row-terminal.json",
+      "env": {
+        "PYTHONPATH": "src",
+        "cwd": "/workspace",
+        "os": "Linux 6.12.94+ x86_64 glibc 2.39",
+        "pytest": "9.1.1",
+        "python": "CPython 3.12.3",
+        "python_executable": "/usr/bin/python3"
+      },
+      "exit_code": 0,
+      "result": "MISSING_WITH_REASON E_SOURCE_TREE_ABSENT"
+    },
+    {
+      "command": "PYTHONPATH=src python3 -m pytest tests/p3_v3/test_phase2_p2c_one_row.py -q",
+      "env": {
+        "PYTHONPATH": "src",
+        "cwd": "/workspace",
+        "os": "Linux 6.12.94+ x86_64 glibc 2.39",
+        "pytest": "9.1.1",
+        "python": "CPython 3.12.3",
+        "python_executable": "/usr/bin/python3"
+      },
+      "exit_code": 0,
+      "result": "5 passed"
+    }
+  ],
+  "correction_verdict": "CLOSE_AND_ADVANCE",
+  "failures_exclusions_retries": "none",
+  "handoff_commit_semantics": "head_commit is the evidence commit that contains the one-row script, exclusive intent/result, row terminal, and packet test. This handoff file is the direct child of that commit and cannot embed its own SHA.",
+  "head_commit": "5059bfee916c32a3e2ed6e1b611139d095998f14",
+  "input_sha256": {
+    "data/p3_v3/phase1_frames/out/profiling-workload-1f67b3f303a09aa91413a2b5451d156cdcd76d425833bdd12669a7d1e140ca72.json": "db46368cc3a8e78ffeceb60c38d46cd903ac49ddc779757ee94f1350bd15382d",
+    "data/p3_v3/phase1_frames/receipts.json": "8eeccfe4d1aebb09e6ee9ad2fadb82ac5b8697c40f602592faa6b3878692a440",
+    "data/p3_v3/protocol/protocol.json": "240d8270d41802c9d5b86f30564eadd1a86fd9ed09de2c7e947d17c1a4d78519"
+  },
+  "output_sha256": {
+    "data/p3_v3/phase2_profiling/jobs/p2c-20260819-003/1/intent.json": "e446e9f0a7f2a1ce7dd64486a5388fdc286098e01412640933ea72280b0e3da7",
+    "data/p3_v3/phase2_profiling/jobs/p2c-20260819-003/1/result.json": "3de4e656d7d4c10530caa321669e97da934692d2d93264f5718484d7732a4139",
+    "data/p3_v3/phase2_profiling/row-terminal.json": "fb11297a0f4c4f4c71981042f974aeed893671c8b78ad9e5ec9f6c071ee21f4f",
+    "data/p3_v3/phase2_profiling/row-terminal.json#artifact_sha256": "a2e4c06b8c6d037dfbcc3087249c003726497fce6a452f551513f93293a46c89",
+    "scripts/p3_v3/run_p2c_one_row.py": "186e321f2c6350ee8110be3c5e83949ea11c74186d3922f248eed91b2de8c689",
+    "tests/p3_v3/test_phase2_p2c_one_row.py": "b4813d713b02894b95b71f08c72e82c44deb19f100b51c0b3c8284b33c7fece0"
+  },
+  "packet_id": "2026-08-19-003",
+  "scientific_target": "P2-C",
+  "unresolved": []
+}
