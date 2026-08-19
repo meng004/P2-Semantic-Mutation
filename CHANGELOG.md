@@ -12,10 +12,12 @@ release stream.
 ## [Unreleased]
 
 ### Added
-- `docs/task-instructions/2026-08-19-dual-agent-init.md`: Cursor VM
-  executes; review model owns review, process control, and mandatory
-  course-correction so Phase 2 work cannot drift back into
-  infrastructure spirals.
+- `docs/task-instructions/2026-08-19-review-model-init.md`: paste-ready
+  review-model init for B-POCKETFFT-001 adapter materialization
+  correction (Standards+Spec gates, course-correction, WAIT/Correction
+  packets). Cursor VM only executes reviewer-issued instructions.
+- `docs/task-instructions/2026-08-19-dual-agent-init.md`: thin dual-role
+  index pointing at the review-model init; no generic Phase 2 diversion.
 - `archive/` directory: historical snapshots of v1-v8 manuscripts,
   cover letters, build scripts, process summaries, and v2 figures.
 - `PROJECT_STRUCTURE.md`: file-by-file walkthrough of every top-level
