@@ -1,0 +1,80 @@
+{
+  "baseline_commit": "4444061dde0159a5edd62753fe3cef2d881a308c",
+  "branch": "cursor/p2b-pilot-only-terminals-58d6",
+  "closed_scientific_target": "P2-B synthetic PILOT_ONLY subject left PASS+FAIL preflight terminals; this is not Phase 2 closed.",
+  "commands": [
+    {
+      "command": "python3 scripts/p3_v3/evidence.py validate-protocol --protocol data/p3_v3/protocol/protocol.json",
+      "env": {
+        "PYTHONPATH": null,
+        "cwd": "/workspace",
+        "os": "Linux 6.12.94+ x86_64 glibc 2.39",
+        "pytest": "9.1.1",
+        "python": "CPython 3.12.3",
+        "python_executable": "/usr/bin/python3"
+      },
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONPATH=src python3 scripts/p3_v3/evidence.py run-preflight --root . --spec data/p3_v3/phase2_pilot_only/preflight-spec-pass.json --output data/p3_v3/phase2_pilot_only/preflight-result-pass.json",
+      "env": {
+        "PYTHONPATH": "src",
+        "cwd": "/workspace",
+        "os": "Linux 6.12.94+ x86_64 glibc 2.39",
+        "pytest": "9.1.1",
+        "python": "CPython 3.12.3",
+        "python_executable": "/usr/bin/python3"
+      },
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONPATH=src python3 scripts/p3_v3/evidence.py run-preflight --root . --spec data/p3_v3/phase2_pilot_only/preflight-spec-fail.json --output data/p3_v3/phase2_pilot_only/preflight-result-fail.json",
+      "env": {
+        "PYTHONPATH": "src",
+        "cwd": "/workspace",
+        "os": "Linux 6.12.94+ x86_64 glibc 2.39",
+        "pytest": "9.1.1",
+        "python": "CPython 3.12.3",
+        "python_executable": "/usr/bin/python3"
+      },
+      "exit_code": 0,
+      "result": "CLI exit 0; receipt status=FAIL failure_code=E_PREFLIGHT_SMOKE"
+    },
+    {
+      "command": "PYTHONPATH=src python3 -m pytest tests/p3_v3/test_phase2_p2b_pilot_terminals.py -q",
+      "env": {
+        "PYTHONPATH": "src",
+        "cwd": "/workspace",
+        "os": "Linux 6.12.94+ x86_64 glibc 2.39",
+        "pytest": "9.1.1",
+        "python": "CPython 3.12.3",
+        "python_executable": "/usr/bin/python3"
+      },
+      "exit_code": 0,
+      "result": "6 passed"
+    }
+  ],
+  "correction_verdict": "CLOSE_AND_ADVANCE",
+  "failures_exclusions_retries": "none",
+  "handoff_commit_semantics": "head_commit is the evidence commit that contains the synthetic subject, two exclusive run-preflight receipts, terminals catalog, and packet test. This handoff file is the direct child of that commit and cannot embed its own SHA.",
+  "head_commit": "6571f937d90132d628fb9aa3053fb7a2e5ebde65",
+  "input_sha256": {
+    "data/p3_v3/phase2_pilot_only/preflight-spec-fail.json": "b9d43d736582ac49d05bf722be577f1ae92456ce32669f041dc5cdacee6fdb91",
+    "data/p3_v3/phase2_pilot_only/preflight-spec-pass.json": "99aefff1cb2ffcc49a03ae164c9d396320e8873509f81859757c4e3aac8ec51d",
+    "data/p3_v3/phase2_pilot_only/synthetic-subject.json": "52b11d7be265b1a4e039dae8159445b2c1d97a0f87630ab0da29e4ee85f3dfc6",
+    "data/p3_v3/protocol/environment_lock.json": "7706b4ce272d09df13c5212b04ec0f2519932f4225d5eac0d052d3225c7ff35f",
+    "data/p3_v3/protocol/protocol.json": "240d8270d41802c9d5b86f30564eadd1a86fd9ed09de2c7e947d17c1a4d78519"
+  },
+  "output_sha256": {
+    "data/p3_v3/phase2_pilot_only/preflight-result-fail.json": "d7c882affed2266fada7a2fd25a0193eddad2e877df0790075eab98983fcccce",
+    "data/p3_v3/phase2_pilot_only/preflight-result-fail.json#artifact_sha256": "fd3ffa8c1779c14398a9ca78c37997fb64a489229d82148ad0489d0d665a9892",
+    "data/p3_v3/phase2_pilot_only/preflight-result-pass.json": "d766bcf1d8565da888426a09ff910e29e208628b41df4364f82d441607efd14a",
+    "data/p3_v3/phase2_pilot_only/preflight-result-pass.json#artifact_sha256": "495f6d7a9b1737a4cb5852e1aa3effafd354be15db7fe8ff1b8b4e02432dc572",
+    "data/p3_v3/phase2_pilot_only/terminals.json": "298b9dfa376fa29465687816962a62eecfa8b463abf2b34479de14ac67f77d4b",
+    "data/p3_v3/phase2_pilot_only/terminals.json#artifact_sha256": "d7452756089f0990534bc926b1d82885069d1dde054d792b321632c89503d86b",
+    "tests/p3_v3/test_phase2_p2b_pilot_terminals.py": "c58812743f4b395231c16a7119da6fb6b0f485af099f595506b34015147a1b85"
+  },
+  "packet_id": "2026-08-19-002",
+  "scientific_target": "P2-B",
+  "unresolved": []
+}
