@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import errno
+import inspect
 import os
 import signal
 import subprocess
+from dataclasses import FrozenInstanceError, fields
 from pathlib import Path
 
 import pytest
@@ -1583,3 +1585,105 @@ def test_cli_pre_evidence_error_exits_two(monkeypatch):
 
     monkeypatch.setattr(qualify_cli, "run_qualification", boom)
     assert qualify_cli.main([]) == 2
+
+
+def test_compiler_identity_is_frozen_four_field_type():
+    names = [item.name for item in fields(q.CompilerIdentity)]
+    assert names == ["path", "realpath", "regular", "symlink"]
+    identity = q.CompilerIdentity("/a", "/b", True, False)
+    with pytest.raises((FrozenInstanceError, AttributeError)):
+        identity.path = "/c"
+
+
+def test_compiler_identity_unresolved_is_four_none():
+    identity = q.CompilerIdentity.unresolved()
+    assert identity.path is None
+    assert identity.realpath is None
+    assert identity.regular is None
+    assert identity.symlink is None
+    assert identity.classification() == "UNRESOLVED"
+
+
+def test_resolve_compiler_returns_compiler_identity(tmp_path):
+    compiler = tmp_path / "c++"
+    compiler.write_bytes(b"x")
+    compiler.chmod(0o755)
+
+    def which(name: str) -> str | None:
+        assert name == q.REQUESTED_COMPILER
+        return str(compiler)
+
+    identity = q._resolve_compiler(which)
+    assert type(identity) is q.CompilerIdentity
+    assert not isinstance(identity, tuple)
+    assert identity.path == str(compiler)
+    assert identity.regular is True
+    assert identity.classification() == "RESOLVED"
+
+
+def test_resolve_compiler_missing_returns_unresolved():
+    identity = q._resolve_compiler(lambda _name: None)
+    assert type(identity) is q.CompilerIdentity
+    assert identity == q.CompilerIdentity.unresolved()
+
+
+def test_validate_host_snapshot_uses_compiler_identity_seam():
+    source = inspect.getsource(q.validate_host_snapshot)
+    assert "CompilerIdentity(" in source
+    assert "classification(" in source
+    assert "validate_exact_object" in source
+    assert "_HOST_TYPES" in source
+    assert source.index("validate_exact_object") < source.index(
+        "CompilerIdentity("
+    )
+    assert "_resolved_null_set" not in source
+    assert "_resolved_success_set" not in source
+    assert hasattr(q, "CompilerIdentity")
+    assert not hasattr(q, "_resolved_null_set")
+    assert not hasattr(q, "_resolved_success_set")
+
+
+def test_partial_null_compiler_identity_is_rejected():
+    host = _host(resolved_path_regular=None)
+    with pytest.raises(EvidenceError, match="E_COMPILER_IDENTITY"):
+        q.validate_host_snapshot(host)
+
+
+def test_wrong_compiler_path_type_is_rejected():
+    host = _host(resolved_compiler_path=1)
+    with pytest.raises(EvidenceError, match="E_SCHEMA_TYPE"):
+        q.validate_host_snapshot(host)
+
+
+def test_wrong_compiler_realpath_type_is_rejected():
+    host = _host(resolved_compiler_realpath=1)
+    with pytest.raises(EvidenceError, match="E_SCHEMA_TYPE"):
+        q.validate_host_snapshot(host)
+
+
+def test_wrong_compiler_bool_types_are_rejected():
+    with pytest.raises(EvidenceError, match="E_SCHEMA_TYPE"):
+        q.validate_host_snapshot(_host(resolved_path_regular="yes"))
+    with pytest.raises(EvidenceError, match="E_SCHEMA_TYPE"):
+        q.validate_host_snapshot(_host(resolved_path_symlink="no"))
+
+
+def test_host_and_intent_keep_flat_requested_compiler(tmp_path):
+    result, _manifest, root = _run_synthetic_qualification(tmp_path)
+    intent = read_canonical_json(root / "qualification-intent.json")
+    host = intent["host_snapshot"]
+    assert "compiler_identity" not in intent
+    assert "compiler_identity" not in host
+    assert intent["requested_compiler"] == q.REQUESTED_COMPILER
+    assert host["requested_compiler"] == q.REQUESTED_COMPILER
+    assert host["resolved_compiler_path"] == intent["resolved_compiler_path"]
+    assert host["resolved_compiler_realpath"] == (
+        intent["resolved_compiler_realpath"]
+    )
+    assert set(host) >= {
+        "requested_compiler",
+        "resolved_compiler_path",
+        "resolved_compiler_realpath",
+        "resolved_path_regular",
+        "resolved_path_symlink",
+    }

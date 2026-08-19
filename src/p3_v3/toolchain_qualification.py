@@ -15,9 +15,10 @@ import signal
 import subprocess
 import time
 from collections.abc import Callable, Mapping
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
-from typing import Any
+from typing import Any, Literal
 
 from p3_v3.artifacts import (
     EvidenceError,
@@ -27,6 +28,35 @@ from p3_v3.artifacts import (
     validate_sha256,
     write_canonical_json,
 )
+
+
+@dataclass(frozen=True)
+class CompilerIdentity:
+    path: str | None
+    realpath: str | None
+    regular: bool | None
+    symlink: bool | None
+
+    @classmethod
+    def unresolved(cls) -> "CompilerIdentity":
+        return cls(None, None, None, None)
+
+    def classification(self) -> Literal["RESOLVED", "UNRESOLVED", "INVALID"]:
+        if (
+            self.path is None
+            and self.realpath is None
+            and self.regular is None
+            and self.symlink is None
+        ):
+            return "UNRESOLVED"
+        if (
+            type(self.path) is str
+            and type(self.realpath) is str
+            and self.regular is True
+            and type(self.symlink) is bool
+        ):
+            return "RESOLVED"
+        return "INVALID"
 
 
 EXECUTION_CLASS = "PILOT_TOOLCHAIN_QUALIFICATION_ONLY"
@@ -236,30 +266,6 @@ def _require_string_list(value: list[Any] | None, context: str) -> None:
         raise EvidenceError("E_ARGV", f"{context} items must be strings")
 
 
-def _resolved_null_set(
-    path: str | None,
-    realpath: str | None,
-    regular: bool | None,
-    symlink: bool | None,
-) -> bool:
-    fields = (path, realpath, regular, symlink)
-    return all(item is None for item in fields)
-
-
-def _resolved_success_set(
-    path: str | None,
-    realpath: str | None,
-    regular: bool | None,
-    symlink: bool | None,
-) -> bool:
-    return (
-        type(path) is str
-        and type(realpath) is str
-        and regular is True
-        and type(symlink) is bool
-    )
-
-
 def validate_host_snapshot(value: object) -> dict[str, Any]:
     snapshot = validate_exact_object(value, _HOST_TYPES, "host_snapshot")
     if snapshot["schema_version"] != HOST_SCHEMA:
@@ -275,15 +281,21 @@ def validate_host_snapshot(value: object) -> dict[str, Any]:
             "E_COMPILER",
             "host_snapshot.requested_compiler must equal c++",
         )
-    path = snapshot["resolved_compiler_path"]
-    realpath = snapshot["resolved_compiler_realpath"]
-    regular = snapshot["resolved_path_regular"]
-    symlink = snapshot["resolved_path_symlink"]
-    if _resolved_null_set(path, realpath, regular, symlink):
+    identity = CompilerIdentity(
+        path=snapshot["resolved_compiler_path"],
+        realpath=snapshot["resolved_compiler_realpath"],
+        regular=snapshot["resolved_path_regular"],
+        symlink=snapshot["resolved_path_symlink"],
+    )
+    kind = identity.classification()
+    if kind == "UNRESOLVED":
         pass
-    elif _resolved_success_set(path, realpath, regular, symlink):
-        _require_absolute(path, "host_snapshot.resolved_compiler_path")
-        _require_absolute(realpath, "host_snapshot.resolved_compiler_realpath")
+    elif kind == "RESOLVED":
+        _require_absolute(identity.path, "host_snapshot.resolved_compiler_path")
+        _require_absolute(
+            identity.realpath,
+            "host_snapshot.resolved_compiler_realpath",
+        )
     else:
         raise EvidenceError(
             "E_COMPILER_IDENTITY",
@@ -774,27 +786,29 @@ def _forbidden_environment(env: Mapping[str, str]) -> dict[str, str]:
 
 def _resolve_compiler(
     which: Callable[[str], str | None],
-) -> tuple[str | None, str | None, bool | None, bool | None]:
+) -> CompilerIdentity:
     resolved = which(REQUESTED_COMPILER)
     if resolved is None or resolved == "":
-        return None, None, None, None
-    path = resolved if os.path.isabs(resolved) else str(Path(resolved).resolve())
+        return CompilerIdentity.unresolved()
+    if os.path.isabs(resolved):
+        path = resolved
+    else:
+        path = str(Path(resolved).resolve())
     real = os.path.realpath(path)
     symlink = os.path.islink(path)
     regular = os.path.isfile(real) and not os.path.islink(real)
     if not regular:
-        return None, None, None, None
+        return CompilerIdentity.unresolved()
     if not os.access(path, os.X_OK) or not os.access(real, os.X_OK):
-        return None, None, None, None
-    return path, real, True, symlink
+        return CompilerIdentity.unresolved()
+    return CompilerIdentity(path, real, True, symlink)
 
 
 def _capture_host_snapshot(
     inspection: Mapping[str, Any],
-    resolved: tuple[str | None, str | None, bool | None, bool | None],
+    identity: CompilerIdentity,
 ) -> dict[str, Any]:
     uname = os.uname()
-    path, real, regular, symlink = resolved
     return _self_hash(
         {
             "schema_version": HOST_SCHEMA,
@@ -808,10 +822,10 @@ def _capture_host_snapshot(
             "repository_commit": inspection["repository_commit"],
             "repository_clean": True,
             "requested_compiler": REQUESTED_COMPILER,
-            "resolved_compiler_path": path,
-            "resolved_compiler_realpath": real,
-            "resolved_path_regular": regular,
-            "resolved_path_symlink": symlink,
+            "resolved_compiler_path": identity.path,
+            "resolved_compiler_realpath": identity.realpath,
+            "resolved_path_regular": identity.regular,
+            "resolved_path_symlink": identity.symlink,
         }
     )
 
@@ -1167,14 +1181,14 @@ def run_qualification(
     os.mkdir(qualification_root)
     resolution_error = False
     try:
-        resolved = _resolve_compiler(which)
+        identity = _resolve_compiler(which)
     except OSError:
-        resolved = (None, None, None, None)
+        identity = CompilerIdentity.unresolved()
         resolution_error = True
-    host = _capture_host_snapshot(entry, resolved)
+    host = _capture_host_snapshot(entry, identity)
     _write_exclusive_bytes(qualification_root / SOURCE_NAME, SOURCE_BYTES)
     compile_argv, run_argv = _workload_argv(
-        resolved[0],
+        identity.path,
         str(qualification_root),
     )
     intent = _self_hash(
@@ -1192,8 +1206,8 @@ def run_qualification(
             "spec_sha256": SPEC_SHA256,
             "qualification_root": str(qualification_root),
             "requested_compiler": REQUESTED_COMPILER,
-            "resolved_compiler_path": resolved[0],
-            "resolved_compiler_realpath": resolved[1],
+            "resolved_compiler_path": identity.path,
+            "resolved_compiler_realpath": identity.realpath,
             "source_text": SOURCE_TEXT,
             "source_sha256": SOURCE_SHA256,
             "compile_link_argv": compile_argv,
@@ -1220,9 +1234,9 @@ def run_qualification(
     reason = (
         "COMPILER_RESOLUTION_ERROR" if resolution_error else "MISSING_COMPILER"
     )
-    if resolved[0] is not None:
+    if identity.path is not None:
         version = _run_process(
-            argv=[resolved[0], "--version"],
+            argv=[identity.path, "--version"],
             timeout=COMPILER_VERSION_TIMEOUT_SECONDS,
             role="METADATA",
             job_id=JOB_METADATA,
