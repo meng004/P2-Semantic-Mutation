@@ -12,12 +12,13 @@ release stream.
 ## [Unreleased]
 
 ### Added
-- `docs/task-instructions/2026-08-19-review-model-init.md`: paste-ready
-  review-model init for B-POCKETFFT-001 adapter materialization
-  correction (Standards+Spec gates, course-correction, WAIT/Correction
-  packets). Cursor VM only executes reviewer-issued instructions.
+- `docs/task-instructions/2026-08-19-review-model-init.md`: P12-style
+  paste-ready review-model init specialized to the P3 paper / Phase 2
+  evidence line (Standards+Spec, course-correction, WAIT/Correction
+  packets). First work is independent dual-review of the unreviewed
+  P2-A receipt head, not pocketfft materialization.
 - `docs/task-instructions/2026-08-19-dual-agent-init.md`: thin dual-role
-  index pointing at the review-model init; no generic Phase 2 diversion.
+  index pointing at that P3 review-model init.
 - `archive/` directory: historical snapshots of v1-v8 manuscripts,
   cover letters, build scripts, process summaries, and v2 figures.
 - `PROJECT_STRUCTURE.md`: file-by-file walkthrough of every top-level
