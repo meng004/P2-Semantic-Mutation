@@ -1,0 +1,54 @@
+{
+  "author_authorization": "P2C_TREE_AND_PROCESS_ARGV_SEAM_READY=yes",
+  "baseline_commit": "4444061dde0159a5edd62753fe3cef2d881a308c",
+  "branch": "cursor/p2c-process-row-profiling-58d6",
+  "closed_scientific_target": "P2-C frozen selection-set index-1 process-argv row is booked; this is not Phase 2 closed, not 20 rows, and not P2-D.",
+  "commands": [
+    {
+      "command": "PYTHONPATH=src python3 scripts/p3_v3/run_p2c_process_row.py --root . --workload data/p3_v3/phase1_frames/out/profiling-workload-1f67b3f303a09aa91413a2b5451d156cdcd76d425833bdd12669a7d1e140ca72.json --behavior-id 13b2cddc5341afe2883cad777028d5c534d68c254ae0635792fb43b497e72a45 --jobs-root data/p3_v3/phase2_profiling/jobs --job-id p2c-20260819-004 --terminal-output data/p3_v3/phase2_profiling/process-row-terminal.json",
+      "env": {
+        "PYTHONPATH": "src",
+        "cwd": "/workspace",
+        "os": "Linux 6.12.94+ x86_64 glibc 2.39",
+        "pytest": "9.1.1",
+        "python": "CPython 3.12.3",
+        "python_executable": "/usr/bin/python3"
+      },
+      "exit_code": 0,
+      "result": "MISSING_WITH_REASON E_SOURCE_TREE_ABSENT"
+    },
+    {
+      "command": "PYTHONPATH=src python3 -m pytest tests/p3_v3/test_phase2_p2c_process_row.py -q",
+      "env": {
+        "PYTHONPATH": "src",
+        "cwd": "/workspace",
+        "os": "Linux 6.12.94+ x86_64 glibc 2.39",
+        "pytest": "9.1.1",
+        "python": "CPython 3.12.3",
+        "python_executable": "/usr/bin/python3"
+      },
+      "exit_code": 0,
+      "result": "5 passed"
+    }
+  ],
+  "correction_verdict": "CLOSE_AND_ADVANCE",
+  "failures_exclusions_retries": "none",
+  "handoff_commit_semantics": "head_commit is the evidence commit that contains the process-row script, exclusive intent/result, process-row terminal, and packet test. This handoff file is the direct child of that commit and cannot embed its own SHA.",
+  "head_commit": "51c246f5652d89606883f06c23b2758d9f95abe0",
+  "input_sha256": {
+    "data/p3_v3/phase1_frames/out/profiling-workload-1f67b3f303a09aa91413a2b5451d156cdcd76d425833bdd12669a7d1e140ca72.json": "db46368cc3a8e78ffeceb60c38d46cd903ac49ddc779757ee94f1350bd15382d",
+    "data/p3_v3/phase1_frames/receipts.json": "8eeccfe4d1aebb09e6ee9ad2fadb82ac5b8697c40f602592faa6b3878692a440",
+    "data/p3_v3/protocol/protocol.json": "240d8270d41802c9d5b86f30564eadd1a86fd9ed09de2c7e947d17c1a4d78519"
+  },
+  "output_sha256": {
+    "data/p3_v3/phase2_profiling/jobs/p2c-20260819-004/1/intent.json": "a2f658b5b9c2418215685aa04b028f9e145c5f3589143013f9f77b8017c1efd1",
+    "data/p3_v3/phase2_profiling/jobs/p2c-20260819-004/1/result.json": "4cec2e70ba6e7c831c44ea782635d5f783756aad12a7db3d65536e2462efef6d",
+    "data/p3_v3/phase2_profiling/process-row-terminal.json": "909fd8a6f75ae3143d70cc8d2a27f5b1b682a52ef97bdc0ca06759466f4d86e2",
+    "data/p3_v3/phase2_profiling/process-row-terminal.json#artifact_sha256": "a1eac4d5fc926e2db08d289e13a4599e3d36fb054a97b1e09c67c54c5b1c0e14",
+    "scripts/p3_v3/run_p2c_process_row.py": "b9bc7007fa374478a7e05a73e7d0e39da8f46e77542aaba3ef21f7c930058b8a",
+    "tests/p3_v3/test_phase2_p2c_process_row.py": "c52116cf24b6f3ab69f4a1c9e29a82d61f8841185cd94e12358e7ea358c986cc"
+  },
+  "packet_id": "2026-08-19-004",
+  "scientific_target": "P2-C",
+  "unresolved": []
+}
