@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 import errno
+import inspect
 import os
 import signal
 import subprocess
+from collections.abc import Mapping
+from dataclasses import FrozenInstanceError, dataclass, field, fields
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -447,15 +451,59 @@ def _unexpected_popen(*_args: object, **_kwargs: object) -> None:
     raise AssertionError("popen must not be called")
 
 
-def _run_synthetic_qualification(tmp_path: Path, **opts: object):
+@dataclass(frozen=True)
+class QualificationScenario:
+    env: Mapping[str, str] = field(default_factory=dict)
+    missing_compiler: bool = False
+    compiler_not_executable: bool = False
+    metadata_popen_error: bool = False
+    observe_metadata_fs: bool = False
+    metadata_wait_error: bool = False
+    compiler_version_timeout: bool = False
+    compiler_version_exit: int = 0
+    compiler_version_stdout: bytes | None = None
+    compiler_version_stderr: bytes = b""
+    cleanup_error: bool = False
+    compile_popen_error: bool = False
+    create_regular_executable: bool = True
+    create_symlink_executable: bool = False
+    create_nonregular_executable: bool = False
+    create_nonexecutable_executable: bool = False
+    mutate_repo_during_compile: bool = False
+    mutate_repo_during_last_job: bool = False
+    binary_unreached: bool = False
+    compile_wait_error: bool = False
+    compile_timeout: bool = False
+    compile_exit: int = 0
+    compile_stdout: bytes = b""
+    compile_stderr: bytes = b""
+    binary_popen_error: bool = False
+    binary_timeout: bool = False
+    binary_exit: int = 0
+    binary_stdout: bytes = b""
+    binary_stderr: bytes = b""
+
+
+def _run_synthetic_qualification(
+    tmp_path: Path,
+    scenario: QualificationScenario | None = None,
+) -> tuple[dict[str, Any], dict[str, Any], Path]:
+    if scenario is None:
+        scenario = QualificationScenario()
     repo = _init_repo(tmp_path)
     root = tmp_path / "qual"
     compiler = _make_compiler(tmp_path)
     calls: list[list[str]] = []
-    env = dict(opts.get("env") or {})
+    env = dict(scenario.env)
+    if scenario.compiler_version_stdout is not None:
+        version_stdout = scenario.compiler_version_stdout
+    elif scenario.metadata_wait_error:
+        version_stdout = b"partial"
+    else:
+        version_stdout = b"clang\n"
 
     def which(name: str) -> str | None:
-        if opts.get("missing_compiler"):
+        if scenario.missing_compiler:
             return None
         if name == "c++":
             return str(compiler)
@@ -468,89 +516,87 @@ def _run_synthetic_qualification(tmp_path: Path, **opts: object):
         assert kwargs.get("stderr") is subprocess.PIPE
         calls.append(list(argv))
         if argv[-1:] == ["--version"] or argv[-1] == "--version":
-            if opts.get("metadata_popen_error"):
+            if scenario.metadata_popen_error:
                 raise PermissionError("synthetic metadata popen denied")
-            if opts.get("observe_metadata_fs"):
+            if scenario.observe_metadata_fs:
                 assert (root / "qualification-intent.json").is_file()
                 assert (root / "qualify.cpp").is_file()
                 assert not (root / "qualification-result.json").exists()
                 assert not (root / "qualification-manifest.json").exists()
-            if opts.get("metadata_wait_error"):
+            if scenario.metadata_wait_error:
                 return _Proc(
-                    stdout=opts.get("compiler_version_stdout", b"partial"),
-                    stderr=opts.get("compiler_version_stderr", b""),
+                    stdout=version_stdout,
+                    stderr=scenario.compiler_version_stderr,
                     wait_error=True,
-                    cleanup_error=bool(opts.get("cleanup_error")),
+                    cleanup_error=scenario.cleanup_error,
                 )
-            if opts.get("compiler_version_timeout"):
+            if scenario.compiler_version_timeout:
                 return _Proc(
-                    stdout=opts.get("compiler_version_stdout", b"clang\n"),
-                    stderr=opts.get("compiler_version_stderr", b""),
+                    stdout=version_stdout,
+                    stderr=scenario.compiler_version_stderr,
                     timed_out=True,
-                    cleanup_error=bool(opts.get("cleanup_error")),
+                    cleanup_error=scenario.cleanup_error,
                 )
             return _Proc(
-                stdout=opts.get("compiler_version_stdout", b"clang\n"),
-                stderr=opts.get("compiler_version_stderr", b""),
-                returncode=int(opts.get("compiler_version_exit", 0)),
+                stdout=version_stdout,
+                stderr=scenario.compiler_version_stderr,
+                returncode=scenario.compiler_version_exit,
             )
         if "-std=c++14" in argv:
-            if opts.get("compile_popen_error"):
+            if scenario.compile_popen_error:
                 raise OSError("synthetic compile popen denied")
-            if opts.get("create_regular_executable"):
+            if scenario.create_regular_executable:
                 out = root / "qualify"
                 out.write_bytes(b"ELF")
                 out.chmod(0o755)
-            if opts.get("create_symlink_executable"):
+            if scenario.create_symlink_executable:
                 target = root / "qualify.target"
                 target.write_bytes(b"ELF")
                 (root / "qualify").symlink_to(target)
-            if opts.get("create_nonregular_executable"):
+            if scenario.create_nonregular_executable:
                 (root / "qualify").mkdir()
-            if opts.get("create_nonexecutable_executable"):
+            if scenario.create_nonexecutable_executable:
                 out = root / "qualify"
                 out.write_bytes(b"ELF")
                 out.chmod(0o644)
-            if opts.get("mutate_repo_during_compile") or (
-                opts.get("mutate_repo_during_last_job")
-                and opts.get("binary_unreached")
+            if scenario.mutate_repo_during_compile or (
+                scenario.mutate_repo_during_last_job
+                and scenario.binary_unreached
             ):
                 (repo / "drift.txt").write_text("x")
-            if opts.get("compile_wait_error"):
+            if scenario.compile_wait_error:
                 return _Proc(
-                    stdout=opts.get("compile_stdout", b""),
-                    stderr=opts.get("compile_stderr", b""),
+                    stdout=scenario.compile_stdout,
+                    stderr=scenario.compile_stderr,
                     wait_error=True,
-                    cleanup_error=bool(opts.get("cleanup_error")),
+                    cleanup_error=scenario.cleanup_error,
                 )
-            if opts.get("compile_timeout"):
+            if scenario.compile_timeout:
                 return _Proc(
                     timed_out=True,
-                    cleanup_error=bool(opts.get("cleanup_error")),
+                    cleanup_error=scenario.cleanup_error,
                 )
             return _Proc(
-                stdout=opts.get("compile_stdout", b""),
-                stderr=opts.get("compile_stderr", b""),
-                returncode=int(opts.get("compile_exit", 0)),
+                stdout=scenario.compile_stdout,
+                stderr=scenario.compile_stderr,
+                returncode=scenario.compile_exit,
             )
-        if opts.get("binary_popen_error"):
+        if scenario.binary_popen_error:
             raise OSError("synthetic binary popen denied")
-        if opts.get("mutate_repo_during_last_job"):
+        if scenario.mutate_repo_during_last_job:
             (repo / "drift.txt").write_text("x")
-        if opts.get("binary_timeout"):
+        if scenario.binary_timeout:
             return _Proc(
                 timed_out=True,
-                cleanup_error=bool(opts.get("cleanup_error")),
+                cleanup_error=scenario.cleanup_error,
             )
         return _Proc(
-            stdout=opts.get("binary_stdout", b""),
-            stderr=opts.get("binary_stderr", b""),
-            returncode=int(opts.get("binary_exit", 0)),
+            stdout=scenario.binary_stdout,
+            stderr=scenario.binary_stderr,
+            returncode=scenario.binary_exit,
         )
 
-    if "create_regular_executable" not in opts:
-        opts["create_regular_executable"] = True
-    if opts.get("compiler_not_executable"):
+    if scenario.compiler_not_executable:
         compiler.chmod(0o644)
     result = q.run_qualification(
         repo_root=repo,
@@ -596,7 +642,10 @@ def test_forbidden_env_fails_before_root_or_process(tmp_path, key):
 
 def test_empty_forbidden_env_is_bound_in_intent(tmp_path):
     env = {key: "" for key in q.FORBIDDEN_ENV}
-    result, _manifest, root = _run_synthetic_qualification(tmp_path, env=env)
+    result, _manifest, root = _run_synthetic_qualification(
+        tmp_path,
+        QualificationScenario(env=env),
+    )
     intent = read_canonical_json(root / "qualification-intent.json")
     for key in q.FORBIDDEN_ENV:
         assert intent["relevant_environment"][key] == ""
@@ -606,7 +655,9 @@ def test_empty_forbidden_env_is_bound_in_intent(tmp_path):
 def test_successful_call_order_and_metadata_fs(tmp_path):
     result, _manifest, root = _run_synthetic_qualification(
         tmp_path,
-        observe_metadata_fs=True,
+        QualificationScenario(
+            observe_metadata_fs=True,
+        ),
     )
     compiler = tmp_path / "toolchain" / "c++"
     assert result["_calls"] == [
@@ -626,7 +677,9 @@ def test_successful_call_order_and_metadata_fs(tmp_path):
 def test_missing_compiler_writes_terminal_evidence(tmp_path):
     result, manifest, root = _run_synthetic_qualification(
         tmp_path,
-        missing_compiler=True,
+        QualificationScenario(
+            missing_compiler=True,
+        ),
     )
     assert result["terminal_status"] == "FAIL"
     assert result["failure_reason"] == "MISSING_COMPILER"
@@ -663,7 +716,9 @@ def test_compiler_version_timeout_blocks_workloads_and_closes_evidence(
 ):
     result, manifest, root = _run_synthetic_qualification(
         tmp_path,
-        compiler_version_timeout=True,
+        QualificationScenario(
+            compiler_version_timeout=True,
+        ),
     )
     assert result["compiler_version"]["terminal_status"] == "TIMEOUT"
     assert result["compiler_version"]["timeout_seconds"] == 10
@@ -677,7 +732,9 @@ def test_compiler_version_timeout_blocks_workloads_and_closes_evidence(
 def test_compiler_version_nonzero_blocks_workloads(tmp_path):
     result, _manifest, _root = _run_synthetic_qualification(
         tmp_path,
-        compiler_version_exit=2,
+        QualificationScenario(
+            compiler_version_exit=2,
+        ),
     )
     assert result["compiler_version"]["terminal_status"] == "FAIL"
     assert all(job["terminal_status"] == "NOT_STARTED" for job in result["jobs"])
@@ -687,9 +744,11 @@ def test_compiler_version_nonzero_blocks_workloads(tmp_path):
 def test_compile_stdout_is_unexpected_output_and_blocks_binary(tmp_path):
     result, manifest, root = _run_synthetic_qualification(
         tmp_path,
-        compile_exit=0,
-        compile_stdout=b"warning\n",
-        create_regular_executable=True,
+        QualificationScenario(
+            compile_exit=0,
+            compile_stdout=b"warning\n",
+            create_regular_executable=True,
+        ),
     )
     assert result["jobs"][0]["terminal_status"] == "FAIL"
     assert result["jobs"][0]["failure_reason"] == "UNEXPECTED_OUTPUT"
@@ -709,8 +768,10 @@ def test_compile_stdout_is_unexpected_output_and_blocks_binary(tmp_path):
 def test_compile_stderr_is_unexpected_output_and_blocks_binary(tmp_path):
     result, manifest, _root = _run_synthetic_qualification(
         tmp_path,
-        compile_stderr=b"note\n",
-        create_regular_executable=True,
+        QualificationScenario(
+            compile_stderr=b"note\n",
+            create_regular_executable=True,
+        ),
     )
     assert result["jobs"][0]["failure_reason"] == "UNEXPECTED_OUTPUT"
     assert result["jobs"][1]["terminal_status"] == "NOT_STARTED"
@@ -721,7 +782,9 @@ def test_compile_stderr_is_unexpected_output_and_blocks_binary(tmp_path):
 def test_binary_stdout_is_unexpected_output(tmp_path):
     result, manifest, _root = _run_synthetic_qualification(
         tmp_path,
-        binary_stdout=b"hi\n",
+        QualificationScenario(
+            binary_stdout=b"hi\n",
+        ),
     )
     assert result["jobs"][0]["terminal_status"] == "PASS"
     assert result["jobs"][1]["failure_reason"] == "UNEXPECTED_OUTPUT"
@@ -733,7 +796,9 @@ def test_binary_stdout_is_unexpected_output(tmp_path):
 def test_binary_stderr_is_unexpected_output(tmp_path):
     result, _manifest, _root = _run_synthetic_qualification(
         tmp_path,
-        binary_stderr=b"err\n",
+        QualificationScenario(
+            binary_stderr=b"err\n",
+        ),
     )
     assert result["jobs"][1]["failure_reason"] == "UNEXPECTED_OUTPUT"
     assert result["executable_regular"] is True
@@ -742,9 +807,11 @@ def test_binary_stderr_is_unexpected_output(tmp_path):
 def test_missing_or_symlink_executable_clears_grouped_evidence(tmp_path):
     result, manifest, _root = _run_synthetic_qualification(
         tmp_path,
-        compile_exit=0,
-        create_regular_executable=False,
-        create_symlink_executable=True,
+        QualificationScenario(
+            compile_exit=0,
+            create_regular_executable=False,
+            create_symlink_executable=True,
+        ),
     )
     assert result["jobs"][1]["terminal_status"] == "NOT_STARTED"
     assert result["executable_sha256"] is None
@@ -757,7 +824,9 @@ def test_missing_or_symlink_executable_clears_grouped_evidence(tmp_path):
 def test_missing_executable_clears_grouped_evidence(tmp_path):
     result, manifest, _root = _run_synthetic_qualification(
         tmp_path,
-        create_regular_executable=False,
+        QualificationScenario(
+            create_regular_executable=False,
+        ),
     )
     assert result["jobs"][1]["terminal_status"] == "NOT_STARTED"
     assert result["executable_sha256"] is None
@@ -767,8 +836,10 @@ def test_missing_executable_clears_grouped_evidence(tmp_path):
 def test_nonregular_executable_clears_grouped_evidence(tmp_path):
     result, manifest, _root = _run_synthetic_qualification(
         tmp_path,
-        create_regular_executable=False,
-        create_nonregular_executable=True,
+        QualificationScenario(
+            create_regular_executable=False,
+            create_nonregular_executable=True,
+        ),
     )
     assert result["jobs"][1]["terminal_status"] == "NOT_STARTED"
     assert result["executable_sha256"] is None
@@ -778,8 +849,10 @@ def test_nonregular_executable_clears_grouped_evidence(tmp_path):
 def test_compile_nonzero_keeps_valid_executable_evidence(tmp_path):
     result, manifest, _root = _run_synthetic_qualification(
         tmp_path,
-        compile_exit=3,
-        create_regular_executable=True,
+        QualificationScenario(
+            compile_exit=3,
+            create_regular_executable=True,
+        ),
     )
     assert result["jobs"][0]["terminal_status"] == "FAIL"
     assert result["jobs"][0]["failure_reason"] == "NONZERO_EXIT"
@@ -791,8 +864,10 @@ def test_compile_nonzero_keeps_valid_executable_evidence(tmp_path):
 def test_compile_timeout_keeps_valid_executable_evidence(tmp_path):
     result, manifest, _root = _run_synthetic_qualification(
         tmp_path,
-        compile_timeout=True,
-        create_regular_executable=True,
+        QualificationScenario(
+            compile_timeout=True,
+            create_regular_executable=True,
+        ),
     )
     assert result["jobs"][0]["terminal_status"] == "TIMEOUT"
     assert result["jobs"][1]["terminal_status"] == "NOT_STARTED"
@@ -803,8 +878,10 @@ def test_compile_timeout_keeps_valid_executable_evidence(tmp_path):
 def test_timeout_uses_final_null_fallback(tmp_path):
     result, _manifest, _root = _run_synthetic_qualification(
         tmp_path,
-        compiler_version_timeout=True,
-        compiler_version_stdout=b"partial",
+        QualificationScenario(
+            compiler_version_timeout=True,
+            compiler_version_stdout=b"partial",
+        ),
     )
     version = result["compiler_version"]
     assert version["terminal_status"] == "TIMEOUT"
@@ -831,9 +908,11 @@ def test_pass_requires_matching_clean_repository_postcondition(tmp_path):
 def test_compile_failure_still_reports_repository_drift(tmp_path):
     result, _manifest, root = _run_synthetic_qualification(
         tmp_path,
-        compile_exit=3,
-        create_regular_executable=True,
-        mutate_repo_during_compile=True,
+        QualificationScenario(
+            compile_exit=3,
+            create_regular_executable=True,
+            mutate_repo_during_compile=True,
+        ),
     )
     assert result["jobs"][0]["terminal_status"] == "FAIL"
     assert result["jobs"][0]["failure_reason"] == "NONZERO_EXIT"
@@ -847,7 +926,9 @@ def test_compile_failure_still_reports_repository_drift(tmp_path):
 def test_repository_drift_fails_and_preserves_process_evidence(tmp_path):
     result, _manifest, root = _run_synthetic_qualification(
         tmp_path,
-        mutate_repo_during_last_job=True,
+        QualificationScenario(
+            mutate_repo_during_last_job=True,
+        ),
     )
     assert result["terminal_status"] == "FAIL"
     assert result["failure_reason"] == "REPOSITORY_DRIFT"
@@ -860,9 +941,11 @@ def test_repository_drift_fails_and_preserves_process_evidence(tmp_path):
 def test_binary_failure_preserves_compiled_executable_evidence(tmp_path):
     result, manifest, _root = _run_synthetic_qualification(
         tmp_path,
-        compile_exit=0,
-        create_regular_executable=True,
-        binary_exit=7,
+        QualificationScenario(
+            compile_exit=0,
+            create_regular_executable=True,
+            binary_exit=7,
+        ),
     )
     assert result["terminal_status"] == "FAIL"
     assert result["failure_reason"] == "NONZERO_EXIT"
@@ -878,7 +961,9 @@ def test_binary_failure_preserves_compiled_executable_evidence(tmp_path):
 def test_binary_timeout_preserves_compiled_executable_evidence(tmp_path):
     result, manifest, _root = _run_synthetic_qualification(
         tmp_path,
-        binary_timeout=True,
+        QualificationScenario(
+            binary_timeout=True,
+        ),
     )
     assert result["jobs"][1]["terminal_status"] == "TIMEOUT"
     assert result["executable_regular"] is True
@@ -964,7 +1049,9 @@ def test_not_started_rejects_unknown_failure_reason():
 def test_metadata_popen_error_closes_terminal_evidence(tmp_path):
     result, manifest, root = _run_synthetic_qualification(
         tmp_path,
-        metadata_popen_error=True,
+        QualificationScenario(
+            metadata_popen_error=True,
+        ),
     )
     version = result["compiler_version"]
     assert version["process_started"] is False
@@ -983,7 +1070,9 @@ def test_metadata_popen_error_closes_terminal_evidence(tmp_path):
 def test_compile_popen_error_closes_terminal_evidence(tmp_path):
     result, _manifest, root = _run_synthetic_qualification(
         tmp_path,
-        compile_popen_error=True,
+        QualificationScenario(
+            compile_popen_error=True,
+        ),
     )
     assert result["compiler_version"]["terminal_status"] == "PASS"
     compile_job = result["jobs"][0]
@@ -1002,7 +1091,9 @@ def test_compile_popen_error_closes_terminal_evidence(tmp_path):
 def test_binary_popen_error_keeps_executable_and_closes(tmp_path):
     result, manifest, root = _run_synthetic_qualification(
         tmp_path,
-        binary_popen_error=True,
+        QualificationScenario(
+            binary_popen_error=True,
+        ),
     )
     assert result["compiler_version"]["terminal_status"] == "PASS"
     assert result["jobs"][0]["terminal_status"] == "PASS"
@@ -1022,40 +1113,7 @@ def test_binary_popen_error_keeps_executable_and_closes(tmp_path):
     assert not (root / "QUALIFIED_BINARY_RUN.stderr").exists()
 
 
-def _patch_group_signals(
-    monkeypatch: pytest.MonkeyPatch,
-    *,
-    killpg_error: BaseException | None = None,
-    probe_error: BaseException | None = None,
-) -> list[tuple[object, ...]]:
-    recorded: list[tuple[object, ...]] = []
-
-    def fake_getpgid(pid: int) -> int:
-        recorded.append(("getpgid", pid))
-        return pid
-
-    def fake_killpg(pgid: int, sig: int) -> None:
-        recorded.append(("killpg", pgid, sig))
-        if sig == signal.SIGKILL:
-            if killpg_error is not None:
-                raise killpg_error
-            return
-        if sig == 0:
-            if probe_error is not None:
-                raise probe_error
-            return
-        raise AssertionError(f"unexpected killpg signal: {sig}")
-
-    def fake_kill(pid: int, sig: int) -> None:
-        recorded.append(("kill", pid, sig))
-
-    monkeypatch.setattr(q.os, "getpgid", fake_getpgid)
-    monkeypatch.setattr(q.os, "killpg", fake_killpg)
-    monkeypatch.setattr(q.os, "kill", fake_kill)
-    return recorded
-
-
-def _patch_group_probe(
+def _patch_process_group(
     monkeypatch: pytest.MonkeyPatch,
     *,
     terminate_error: BaseException | None = None,
@@ -1079,10 +1137,8 @@ def _patch_group_probe(
             return
         raise AssertionError(f"unexpected killpg signal: {sig}")
 
-    def fake_kill(pid: int, sig: int) -> None:
-        recorded.append(("kill", pid, sig))
-        if sig == 0:
-            raise ProcessLookupError("leader pid is gone")
+    def fake_kill(*_args: object) -> None:
+        raise AssertionError("os.kill must not probe process groups")
 
     monkeypatch.setattr(q.os, "getpgid", fake_getpgid)
     monkeypatch.setattr(q.os, "killpg", fake_killpg)
@@ -1142,10 +1198,12 @@ def test_process_group_absent_esrch_is_absent(monkeypatch):
 
 
 def test_timeout_fails_when_killpg_zero_probe_succeeds(tmp_path, monkeypatch):
-    recorded = _patch_group_probe(monkeypatch)
+    recorded = _patch_process_group(monkeypatch)
     result, _manifest, root = _run_synthetic_qualification(
         tmp_path,
-        compiler_version_timeout=True,
+        QualificationScenario(
+            compiler_version_timeout=True,
+        ),
     )
     version = result["compiler_version"]
     assert version["terminal_status"] == "FAIL"
@@ -1158,10 +1216,12 @@ def test_timeout_fails_when_killpg_zero_probe_succeeds(tmp_path, monkeypatch):
 
 
 def test_wait_error_fails_when_killpg_zero_probe_succeeds(tmp_path, monkeypatch):
-    recorded = _patch_group_probe(monkeypatch)
+    recorded = _patch_process_group(monkeypatch)
     result, _manifest, root = _run_synthetic_qualification(
         tmp_path,
-        metadata_wait_error=True,
+        QualificationScenario(
+            metadata_wait_error=True,
+        ),
     )
     version = result["compiler_version"]
     assert version["terminal_status"] == "FAIL"
@@ -1173,13 +1233,15 @@ def test_wait_error_fails_when_killpg_zero_probe_succeeds(tmp_path, monkeypatch)
 
 
 def test_timeout_fails_when_killpg_zero_probe_is_permission(tmp_path, monkeypatch):
-    recorded = _patch_group_probe(
+    recorded = _patch_process_group(
         monkeypatch,
         probe_error=PermissionError("denied"),
     )
     result, _manifest, _root = _run_synthetic_qualification(
         tmp_path,
-        compiler_version_timeout=True,
+        QualificationScenario(
+            compiler_version_timeout=True,
+        ),
     )
     version = result["compiler_version"]
     assert version["terminal_status"] == "FAIL"
@@ -1193,13 +1255,15 @@ def test_timeout_cleanup_succeeds_when_leader_reaped_and_pgid_absent(
     tmp_path,
     monkeypatch,
 ):
-    recorded = _patch_group_signals(
+    recorded = _patch_process_group(
         monkeypatch,
         probe_error=ProcessLookupError("gone"),
     )
     result, _manifest, _root = _run_synthetic_qualification(
         tmp_path,
-        compiler_version_timeout=True,
+        QualificationScenario(
+            compiler_version_timeout=True,
+        ),
     )
     version = result["compiler_version"]
     assert version["terminal_status"] == "TIMEOUT"
@@ -1216,10 +1280,12 @@ def test_timeout_cleanup_succeeds_when_leader_reaped_and_pgid_absent(
 
 
 def test_timeout_cleanup_fails_when_pgid_still_exists(tmp_path, monkeypatch):
-    recorded = _patch_group_signals(monkeypatch)
+    recorded = _patch_process_group(monkeypatch)
     result, _manifest, root = _run_synthetic_qualification(
         tmp_path,
-        compiler_version_timeout=True,
+        QualificationScenario(
+            compiler_version_timeout=True,
+        ),
     )
     version = result["compiler_version"]
     assert version["terminal_status"] == "FAIL"
@@ -1239,14 +1305,16 @@ def test_timeout_cleanup_fails_when_killpg_fails_and_only_leader_killed(
     tmp_path,
     monkeypatch,
 ):
-    recorded = _patch_group_signals(
+    recorded = _patch_process_group(
         monkeypatch,
-        killpg_error=PermissionError("denied"),
+        terminate_error=PermissionError("denied"),
         probe_error=ProcessLookupError("gone"),
     )
     result, _manifest, root = _run_synthetic_qualification(
         tmp_path,
-        compiler_version_timeout=True,
+        QualificationScenario(
+            compiler_version_timeout=True,
+        ),
     )
     version = result["compiler_version"]
     assert version["terminal_status"] == "FAIL"
@@ -1263,9 +1331,11 @@ def test_timeout_cleanup_fails_when_killpg_fails_and_only_leader_killed(
 def test_metadata_timeout_cleanup_failure_closes_evidence(tmp_path):
     result, _manifest, root = _run_synthetic_qualification(
         tmp_path,
-        compiler_version_timeout=True,
-        cleanup_error=True,
-        compiler_version_stdout=b"partial",
+        QualificationScenario(
+            compiler_version_timeout=True,
+            cleanup_error=True,
+            compiler_version_stdout=b"partial",
+        ),
     )
     version = result["compiler_version"]
     assert version["terminal_status"] == "FAIL"
@@ -1286,9 +1356,11 @@ def test_metadata_timeout_cleanup_failure_closes_evidence(tmp_path):
 def test_nonexecutable_output_clears_grouped_evidence(tmp_path):
     result, manifest, root = _run_synthetic_qualification(
         tmp_path,
-        compile_exit=0,
-        create_regular_executable=False,
-        create_nonexecutable_executable=True,
+        QualificationScenario(
+            compile_exit=0,
+            create_regular_executable=False,
+            create_nonexecutable_executable=True,
+        ),
     )
     assert result["jobs"][0]["terminal_status"] == "PASS"
     assert result["jobs"][1]["terminal_status"] == "NOT_STARTED"
@@ -1306,7 +1378,9 @@ def test_nonexecutable_output_clears_grouped_evidence(tmp_path):
 def test_nonexecutable_compiler_is_unresolved(tmp_path):
     result, _manifest, root = _run_synthetic_qualification(
         tmp_path,
-        compiler_not_executable=True,
+        QualificationScenario(
+            compiler_not_executable=True,
+        ),
     )
     assert result["terminal_status"] == "FAIL"
     assert result["failure_reason"] == "MISSING_COMPILER"
@@ -1320,9 +1394,11 @@ def test_nonexecutable_compiler_is_unresolved(tmp_path):
 def test_compile_timeout_cleanup_failure_closes_evidence(tmp_path):
     result, manifest, root = _run_synthetic_qualification(
         tmp_path,
-        compile_timeout=True,
-        cleanup_error=True,
-        create_regular_executable=True,
+        QualificationScenario(
+            compile_timeout=True,
+            cleanup_error=True,
+            create_regular_executable=True,
+        ),
     )
     compile_job = result["jobs"][0]
     assert result["compiler_version"]["terminal_status"] == "PASS"
@@ -1341,13 +1417,15 @@ def test_compile_timeout_cleanup_failure_closes_evidence(tmp_path):
 
 
 def test_metadata_wait_error_cleans_up_and_closes(tmp_path, monkeypatch):
-    recorded = _patch_group_signals(
+    recorded = _patch_process_group(
         monkeypatch,
         probe_error=ProcessLookupError("gone"),
     )
     result, _manifest, root = _run_synthetic_qualification(
         tmp_path,
-        metadata_wait_error=True,
+        QualificationScenario(
+            metadata_wait_error=True,
+        ),
     )
     version = result["compiler_version"]
     assert version["process_started"] is True
@@ -1371,8 +1449,10 @@ def test_metadata_wait_error_cleans_up_and_closes(tmp_path, monkeypatch):
 def test_metadata_wait_error_cleanup_failure_closes(tmp_path):
     result, _manifest, root = _run_synthetic_qualification(
         tmp_path,
-        metadata_wait_error=True,
-        cleanup_error=True,
+        QualificationScenario(
+            metadata_wait_error=True,
+            cleanup_error=True,
+        ),
     )
     version = result["compiler_version"]
     assert version["terminal_status"] == "FAIL"
@@ -1387,14 +1467,16 @@ def test_metadata_wait_error_cleanup_failure_closes(tmp_path):
 
 
 def test_compile_wait_error_cleans_up_and_closes(tmp_path, monkeypatch):
-    _patch_group_signals(
+    _patch_process_group(
         monkeypatch,
         probe_error=ProcessLookupError("gone"),
     )
     result, manifest, root = _run_synthetic_qualification(
         tmp_path,
-        compile_wait_error=True,
-        create_regular_executable=True,
+        QualificationScenario(
+            compile_wait_error=True,
+            create_regular_executable=True,
+        ),
     )
     compile_job = result["jobs"][0]
     assert result["compiler_version"]["terminal_status"] == "PASS"
@@ -1414,9 +1496,11 @@ def test_compile_wait_error_cleans_up_and_closes(tmp_path, monkeypatch):
 def test_compile_wait_error_cleanup_failure_closes(tmp_path):
     result, _manifest, root = _run_synthetic_qualification(
         tmp_path,
-        compile_wait_error=True,
-        cleanup_error=True,
-        create_regular_executable=True,
+        QualificationScenario(
+            compile_wait_error=True,
+            cleanup_error=True,
+            create_regular_executable=True,
+        ),
     )
     compile_job = result["jobs"][0]
     assert compile_job["failure_reason"] == "PROCESS_CLEANUP_FAILED"
@@ -1583,3 +1667,219 @@ def test_cli_pre_evidence_error_exits_two(monkeypatch):
 
     monkeypatch.setattr(qualify_cli, "run_qualification", boom)
     assert qualify_cli.main([]) == 2
+
+
+def test_compiler_identity_is_frozen_four_field_type():
+    names = [item.name for item in fields(q.CompilerIdentity)]
+    assert names == ["path", "realpath", "regular", "symlink"]
+    identity = q.CompilerIdentity("/a", "/b", True, False)
+    with pytest.raises((FrozenInstanceError, AttributeError)):
+        identity.path = "/c"
+
+
+def test_compiler_identity_unresolved_is_four_none():
+    identity = q.CompilerIdentity.unresolved()
+    assert identity.path is None
+    assert identity.realpath is None
+    assert identity.regular is None
+    assert identity.symlink is None
+    assert identity.classification() == "UNRESOLVED"
+
+
+def test_resolve_compiler_returns_compiler_identity(tmp_path):
+    compiler = tmp_path / "c++"
+    compiler.write_bytes(b"x")
+    compiler.chmod(0o755)
+
+    def which(name: str) -> str | None:
+        assert name == q.REQUESTED_COMPILER
+        return str(compiler)
+
+    identity = q._resolve_compiler(which)
+    assert type(identity) is q.CompilerIdentity
+    assert not isinstance(identity, tuple)
+    assert identity.path == str(compiler)
+    assert identity.regular is True
+    assert identity.classification() == "RESOLVED"
+
+
+def test_resolve_compiler_missing_returns_unresolved():
+    identity = q._resolve_compiler(lambda _name: None)
+    assert type(identity) is q.CompilerIdentity
+    assert identity == q.CompilerIdentity.unresolved()
+
+
+def test_validate_host_snapshot_uses_compiler_identity_seam():
+    source = inspect.getsource(q.validate_host_snapshot)
+    assert "CompilerIdentity(" in source
+    assert "classification(" in source
+    assert "validate_exact_object" in source
+    assert "_HOST_TYPES" in source
+    assert source.index("validate_exact_object") < source.index(
+        "CompilerIdentity("
+    )
+    assert "_resolved_null_set" not in source
+    assert "_resolved_success_set" not in source
+    assert hasattr(q, "CompilerIdentity")
+    assert not hasattr(q, "_resolved_null_set")
+    assert not hasattr(q, "_resolved_success_set")
+
+
+def test_partial_null_compiler_identity_is_rejected():
+    host = _host(resolved_path_regular=None)
+    with pytest.raises(EvidenceError, match="E_COMPILER_IDENTITY"):
+        q.validate_host_snapshot(host)
+
+
+def test_wrong_compiler_path_type_is_rejected():
+    host = _host(resolved_compiler_path=1)
+    with pytest.raises(EvidenceError, match="E_SCHEMA_TYPE"):
+        q.validate_host_snapshot(host)
+
+
+def test_wrong_compiler_realpath_type_is_rejected():
+    host = _host(resolved_compiler_realpath=1)
+    with pytest.raises(EvidenceError, match="E_SCHEMA_TYPE"):
+        q.validate_host_snapshot(host)
+
+
+def test_wrong_compiler_bool_types_are_rejected():
+    with pytest.raises(EvidenceError, match="E_SCHEMA_TYPE"):
+        q.validate_host_snapshot(_host(resolved_path_regular="yes"))
+    with pytest.raises(EvidenceError, match="E_SCHEMA_TYPE"):
+        q.validate_host_snapshot(_host(resolved_path_symlink="no"))
+
+
+def test_host_and_intent_keep_flat_requested_compiler(tmp_path):
+    result, _manifest, root = _run_synthetic_qualification(tmp_path)
+    intent = read_canonical_json(root / "qualification-intent.json")
+    host = intent["host_snapshot"]
+    assert "compiler_identity" not in intent
+    assert "compiler_identity" not in host
+    assert intent["requested_compiler"] == q.REQUESTED_COMPILER
+    assert host["requested_compiler"] == q.REQUESTED_COMPILER
+    assert host["resolved_compiler_path"] == intent["resolved_compiler_path"]
+    assert host["resolved_compiler_realpath"] == (
+        intent["resolved_compiler_realpath"]
+    )
+    assert set(host) >= {
+        "requested_compiler",
+        "resolved_compiler_path",
+        "resolved_compiler_realpath",
+        "resolved_path_regular",
+        "resolved_path_symlink",
+    }
+
+
+def test_qualification_scenario_is_frozen():
+    names = [item.name for item in fields(QualificationScenario)]
+    assert "env" in names
+    assert "create_regular_executable" in names
+    scenario = QualificationScenario()
+    with pytest.raises((FrozenInstanceError, AttributeError)):
+        scenario.missing_compiler = True
+
+
+def test_qualification_scenario_rejects_unknown_field():
+    with pytest.raises(TypeError):
+        QualificationScenario(unknown_flag=True)
+
+
+def test_default_qualification_scenario_stays_synthetic_pass(tmp_path):
+    result, _manifest, root = _run_synthetic_qualification(tmp_path)
+    assert result["terminal_status"] == "PASS"
+    qualify = root / "qualify"
+    assert qualify.is_file()
+    assert os.access(qualify, os.X_OK)
+
+
+def test_synthetic_helper_rejects_legacy_keyword_flags(tmp_path):
+    with pytest.raises(TypeError):
+        _run_synthetic_qualification(tmp_path, missing_compiler=True)
+
+
+def test_synthetic_helper_has_no_var_keyword():
+    kinds = {
+        item.kind
+        for item in inspect.signature(
+            _run_synthetic_qualification
+        ).parameters.values()
+    }
+    assert inspect.Parameter.VAR_KEYWORD not in kinds
+
+
+def test_synthetic_helper_source_has_no_opts_bag():
+    source = inspect.getsource(_run_synthetic_qualification)
+    assert "opts.get" not in source
+    assert "**opts" not in source
+
+
+def test_patch_process_group_exists_and_old_helpers_do_not():
+    assert hasattr(q, "_process_group_absent")
+    source = Path("tests/p3_v3/test_toolchain_qualification.py").read_text()
+    assert "def _patch_process_group(" in source
+    assert ("def _patch_group_" + "signals(") not in source
+    assert ("def _patch_group_" + "probe(") not in source
+
+
+def test_patch_process_group_signature_has_no_pid_probe_parameter():
+    params = inspect.signature(_patch_process_group).parameters
+    assert set(params) == {
+        "monkeypatch",
+        "terminate_error",
+        "probe_error",
+    }
+
+
+def test_patch_process_group_uses_separate_killpg_errors(monkeypatch):
+    recorded = _patch_process_group(
+        monkeypatch,
+        terminate_error=PermissionError("term"),
+        probe_error=OSError(errno.ESRCH, "gone"),
+    )
+    with pytest.raises(PermissionError, match="term"):
+        q.os.killpg(7, signal.SIGKILL)
+    with pytest.raises(OSError) as exc_info:
+        q.os.killpg(7, 0)
+    assert exc_info.value.errno == errno.ESRCH
+    q.os.getpgid(9)
+    assert ("getpgid", 9) in recorded
+    with pytest.raises(AssertionError):
+        q.os.killpg(7, signal.SIGTERM)
+
+
+def test_patch_process_group_rejects_os_kill(monkeypatch):
+    _patch_process_group(monkeypatch)
+    with pytest.raises(AssertionError):
+        q.os.kill(2_000_000_000, 0)
+    with pytest.raises(AssertionError):
+        q.os.kill(2_000_000_000, signal.SIGKILL)
+
+
+def test_timeout_group_present_is_cleanup_failed(tmp_path, monkeypatch):
+    recorded = _patch_process_group(monkeypatch)
+    result, _manifest, _root = _run_synthetic_qualification(
+        tmp_path,
+        QualificationScenario(compiler_version_timeout=True),
+    )
+    version = result["compiler_version"]
+    assert version["terminal_status"] == "FAIL"
+    assert version["failure_reason"] == "PROCESS_CLEANUP_FAILED"
+    assert version["process_group_terminated"] is False
+    assert ("killpg", 2_000_000_000, signal.SIGKILL) in recorded
+    assert ("killpg", 2_000_000_000, 0) in recorded
+    assert not any(item[0] == "kill" for item in recorded)
+
+
+def test_wait_error_group_present_is_cleanup_failed(tmp_path, monkeypatch):
+    recorded = _patch_process_group(monkeypatch)
+    result, _manifest, _root = _run_synthetic_qualification(
+        tmp_path,
+        QualificationScenario(metadata_wait_error=True),
+    )
+    version = result["compiler_version"]
+    assert version["terminal_status"] == "FAIL"
+    assert version["failure_reason"] == "PROCESS_CLEANUP_FAILED"
+    assert version["process_group_terminated"] is False
+    assert ("killpg", 2_000_000_000, 0) in recorded
+    assert not any(item[0] == "kill" for item in recorded)
