@@ -27,26 +27,39 @@ is ledger thickening and would not feed `L_t`/`U_t`.
 |---|---|
 | P2-A minimum (1/35 `PREFLIGHT_ONLY`) | closed (`PASS_WITH_DISCLOSURE`) |
 | P2-B minimum (synthetic `PILOT_ONLY` PASS+FAIL) | closed (`PASS_WITH_DISCLOSURE`) |
-| P2-C minimum (one row, `E_SOURCE_TREE_ABSENT`) | closed (`PASS_WITH_DISCLOSURE`) |
+| P2-C header row (`72e1a3e8…`, packet 003) | closed (`PASS_WITH_DISCLOSURE`, `E_SOURCE_TREE_ABSENT`) |
+| P2-C process-argv row (`13b2cddc…` / `["ltest"]`, packet 004) | closed (`PASS_WITH_DISCLOSURE`, `E_SOURCE_TREE_ABSENT`; C1 `docs/review_20260819/2026-08-19-004_review.md`) |
 
 ## What stays open / blocked
 
 | Target | Status |
 |---|---|
-| P2-C remainder (19 rows + this header without a process argv) | **blocked** until (1)+(2) |
+| Real `ltest` spawn (tree + binary on executor VM) | **blocked** until (1) |
+| P2-C remainder (other frozen rows) | **blocked** until (1); do not book as missing-only copies |
 | P2-D (`L_t`/`U_t` / primary technique) | **blocked** (no usable traces) |
 | P2-E / P2-F | later |
 | Phase 2 as a whole | open |
 | Claims | `blocked` |
 
+Condition (2) after packet 004: process-argv seam exists in-repo
+(`scripts/p3_v3/run_p2c_process_row.py`, PR #25). Condition (1) remains
+the extracted tree / matching archive **on the executor VM**.
+
 ## Process state
 
-- **Verdict:** `WAIT` closed by author string `P2C_TREE_AND_PROCESS_ARGV_SEAM_READY=yes` (2026-08-19, to 评审模型).
-- **Follow-on packet:** `docs/review_20260819/execution_packet_2026-08-19-004.md`
-- **Cursor VM instruction:** `docs/review_20260819/cursor_vm_instruction_2026-08-19-004.md`
-- Reviewer VM at 004 issue time still had no `extracted/` or `archives/`. The string licenses the executor to use a tree if present; it does not license download or cmake.
-- C2 is **not** due: this is an author-signed hold after three named
-  slices closed; not a REJECT/REVISE loop.
+- **After 003:** author string `P2C_TREE_AND_PROCESS_ARGV_SEAM_READY=yes` licensed packet 004.
+- **After 004 C1:** `WAIT` again. Condition (2) (process-argv seam) is now
+  in-repo as `scripts/p3_v3/run_p2c_process_row.py` on PR #25. Condition
+  (1) (extracted tree / matching archive on the **executor** VM) is still
+  absent. Packet 004 booked honest `E_SOURCE_TREE_ABSENT`; it did not spawn.
+- **Do not re-issue 004** on a repeated verbal READY. Next unblock string
+  (to 评审模型): `P2C_EXTRACTED_TREE_PRESENT_ON_EXECUTOR_VM=yes`. Reviewer
+  must still confirm the tree on executor evidence before a spawn-retry
+  packet. The string does not license download or cmake.
+- **Cursor VM while waiting:** `docs/review_20260819/cursor_vm_instruction_wait_p2c_hold.md`
+- C2 is **not** due: four named slices closed their packets; not a
+  REJECT/REVISE loop.
+- No packet 005 from 004 C1.
 
 ## §10.1
 
