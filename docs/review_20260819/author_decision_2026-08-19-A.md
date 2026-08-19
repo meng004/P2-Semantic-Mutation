@@ -42,10 +42,10 @@ is ledger thickening and would not feed `L_t`/`U_t`.
 ## Process state
 
 - **Verdict:** `WAIT`
+- **Cursor VM instruction:** `docs/review_20260819/cursor_vm_instruction_wait_p2c_hold.md`
 - **No** `execution_packet_2026-08-19-004`
-- Cursor VM: keep WAIT. Do not start P2-D. Do not profile a second row.
-  Do not download P12. Do not cmake. Do not merge #22 / #23 / #24 from
-  this review branch.
+- Unblocking string (sent to 评审模型, not to this WAIT VM):
+  `P2C_TREE_AND_PROCESS_ARGV_SEAM_READY=yes`
 - C2 is **not** due: this is an author-signed hold after three named
   slices closed; not a REJECT/REVISE loop.
 
