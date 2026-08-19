@@ -5,6 +5,7 @@
 - Author reply (verbatim intent): `ESCALATE_AUTHOR：选择A`
 - Recorded: 2026-08-19
 - Reviewer commit parent: `4b4734a1`
+- Post-004 C1 commit: `e9cdbf32`
 
 ## Decision
 
