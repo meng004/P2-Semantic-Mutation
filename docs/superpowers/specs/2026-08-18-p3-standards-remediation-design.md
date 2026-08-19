@@ -1,9 +1,9 @@
 # P3 Standards Remediation Design
 
-**Status:** Semantic repair archived; implementation is not authorized
-**Node:** `P1BP1I2Q3R1_CURSOR_VM_P3_STANDARDS_REMEDIATION_DESIGN_SEMANTIC_REPAIR`
-**Parent archive:** `P1BP1I2Q3_CURSOR_VM_P3_STANDARDS_REMEDIATION_DESIGN_ARCHIVE`
-**Parent commit:** `8b17c82988b0a8b752e7f0c031ac8b2dd61658dd`
+**Status:** Spec/plan consistency repair; implementation is not authorized
+**Node:** `P1BP1I2Q4R1_CURSOR_VM_P3_STANDARDS_REMEDIATION_SPEC_PLAN_CONSISTENCY_REPAIR`
+**Parent archive:** `P1BP1I2Q4_CURSOR_VM_P3_STANDARDS_REMEDIATION_PLAN_ARCHIVE`
+**Parent commit:** `8c31e223090697faaf7a2c0375e0e9ec35018337`
 **Type:** `GOVERNANCE_ONLY`
 **Baseline:** `origin/main` `4444061dde0159a5edd62753fe3cef2d881a308c`
 **Claims:** blocked
@@ -11,10 +11,10 @@
 **Attempt-2 authorized:** false
 
 This document archives the approved five-part standards remediation after
-the semantic repair. It is not an implementation plan, Authorization, or
-implementation verdict. Writing or merging this file does not authorize
-code, documentation edits beyond this file, real qualification, or claim
-upgrades.
+the semantic repair and the later validator-classification repair. It is
+not an implementation plan, Authorization, or implementation verdict.
+Writing or merging this file does not authorize code, other
+documentation edits, real qualification, or claim upgrades.
 
 ## Purpose
 
@@ -357,15 +357,22 @@ resolved:
   E_COMPILER_IDENTITY
 ```
 
+Those coupling rules apply only after exact-type checks pass.
+
 `validate_host_snapshot()` still checks
 `requested_compiler == REQUESTED_COMPILER` on the external object.
 That check is not moved onto the dataclass.
 
-External runtime types remain fail-closed. The validator must still
-inspect the incoming values. Dataclass annotations do not skip
-`type(...) is` checks. Partial-null groups, a non-string path, a
-non-bool symlink, or `regular is not True` on a resolved object
-still raise `E_COMPILER_IDENTITY`.
+External runtime types remain fail-closed. `validate_host_snapshot()`
+must keep calling `validate_exact_object(..., _HOST_TYPES, ...)`
+first. A primitive with the wrong exact type raises `E_SCHEMA_TYPE`
+there, before `CompilerIdentity` is constructed. Type-correct but
+illegally coupled fields, such as a partial-null group or
+`regular is not True` among otherwise resolved strings, raise
+`E_COMPILER_IDENTITY` after that construction. Dataclass annotations
+do not skip later `type(...) is` checks on a constructed identity.
+Do not relax `_HOST_TYPES` or change that validation order to force
+`E_COMPILER_IDENTITY` onto a type error.
 
 `validate_intent()` keeps comparing its flat path fields to the
 validated host snapshot. It does not gain a nested identity object.
@@ -384,8 +391,9 @@ New tests must prove:
    `CompilerIdentity`.
 6. `_resolved_null_set` and `_resolved_success_set` no longer exist
    as four-parameter helpers.
-7. Partial nulls and wrong bool or string types still produce
-   `E_COMPILER_IDENTITY`.
+7. Partial-null and other type-correct illegal coupling still
+   produce `E_COMPILER_IDENTITY`. Wrong exact primitive types
+   still produce `E_SCHEMA_TYPE`.
 8. Validators reject a host snapshot that adds an unknown compiler
    key or nests identity under a new name.
 9. Host and intent canonical evidence fields stay flat and
@@ -666,7 +674,7 @@ exists. Do not create, delete, or reuse
 On the files actually edited in that later node:
 
 - ruff check must pass;
-- `python3 -m py_compile` must pass;
+- `/usr/bin/python3 -m py_compile` must pass;
 - no line longer than 100 characters;
 - `git diff --check` must pass;
 - staged paths must be a subset of the Future Implementation Scope
@@ -699,13 +707,12 @@ allowed in tests.
 
 ### 5.5 Governance stop
 
-After this specification is committed and pushed, work stops for
-Sol review of the repaired file. The next authorized step is
-review of this specification. Writing an implementation plan,
-invoking an implementation skill, or editing any allowed
-implementation file is forbidden until the user approves the
-written specification and issues a separate implementation
-authorization.
+After this specification and the matching implementation plan are
+committed and pushed, work stops for Sol review of the consistency
+repair. Implementation remains unauthorized. Invoking an
+implementation skill or editing any allowed implementation file is
+forbidden until the user issues a separate implementation
+authorization that freezes the actual entry SHA.
 
 ## Non-Goals
 
@@ -724,7 +731,7 @@ This design does not:
 
 ## Self-Review Record
 
-Completed during this semantic repair, before commit:
+Completed during this consistency repair, before commit:
 
 - Incomplete-marker scan: none found.
 - Four-field `CompilerIdentity` definition present; `path`,
@@ -733,6 +740,8 @@ Completed during this semantic repair, before commit:
   evidence keys, not on the dataclass.
 - Validator identity seam and deletion of the four-parameter
   coupling helpers are required.
+- Validator error split: wrong exact type is `E_SCHEMA_TYPE`;
+  type-correct illegal coupling is `E_COMPILER_IDENTITY`.
 - Unified helper raises `AssertionError` on any `os.kill` call
   and has no PID-probe parameter.
 - Schema contradiction versus the frozen qualification spec: none.
@@ -747,7 +756,8 @@ Completed during this semantic repair, before commit:
 
 ## Approval And Stop
 
-The five-part design was approved before archival. This file is
-the repaired archival record. Sol review of this repaired
-specification is still required before any implementation plan or
-code. Design archival is not implementation authorization.
+The five-part design remains approved except for the withdrawn
+wrong-type classification. This file is the repaired archival
+record. Sol review of this repaired specification and plan is
+required before any implementation. This consistency repair is not
+implementation authorization.

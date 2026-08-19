@@ -5,6 +5,8 @@
 > superpowers:executing-plans to implement this plan task-by-task.
 > Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Status:** Spec/plan consistency repair; implementation is not authorized
+
 **Goal:** Reposition the repository as P3 and remove the four reviewed
 standards defects without changing qualification evidence or execution
 semantics.
@@ -23,12 +25,15 @@ JSON evidence, Markdown.
 - Specification path:
   `docs/superpowers/specs/2026-08-18-p3-standards-remediation-design.md`
 - Specification SHA-256:
-  `641e673a0c82c38f864d8602e06c0ce21f58f0fcb3b8dc4425d444db909c7d6e`
+  `f0cb5e4803237e5653834e2efd3f1ed3ce0b2af74c4965de4cbd4887b4d13a13`
 - Implementation baseline is `origin/main`
   `4444061dde0159a5edd62753fe3cef2d881a308c`.
 - Plan branch is `cursor/p3-standards-remediation-c46c`. Do not rebase,
-  amend, or rewrite `316ddfd05cac999389d6be5c1de4e3074d9f6e3c` or
-  earlier commits.
+  amend, or rewrite published commits on this branch. Do not treat this
+  plan's parent commit as the implementation entry SHA.
+  Implementation authorization freezes that SHA separately.
+  `git merge-base HEAD origin/main` must remain
+  `4444061dde0159a5edd62753fe3cef2d881a308c`.
 - The only writable implementation files are:
   `README.md`,
   `CONTRIBUTING.md`,
@@ -120,19 +125,31 @@ git rev-parse origin/main
 git status --porcelain
 git rev-list --left-right --count \
   HEAD...origin/cursor/p3-standards-remediation-c46c
+git merge-base HEAD origin/main
 ```
 
-Expected:
+Expected branch line:
 
 ```text
 cursor/p3-standards-remediation-c46c
-316ddfd05cac999389d6be5c1de4e3074d9f6e3c
-316ddfd05cac999389d6be5c1de4e3074d9f6e3c
-4444061dde0159a5edd62753fe3cef2d881a308c
-0	0
 ```
 
-Porcelain must be empty. If any value differs, stop.
+The two SHA lines from `git rev-parse HEAD` and
+`git rev-parse origin/cursor/p3-standards-remediation-c46c` must
+be identical. This plan does not name that SHA. Implementation
+authorization freezes the actual entry SHA separately. If an
+authorization record exists and HEAD does not equal that frozen
+SHA, stop.
+
+The `origin/main` line and the merge-base line must both be:
+
+```text
+4444061dde0159a5edd62753fe3cef2d881a308c
+```
+
+The count line must be `0	0`. Porcelain must be empty. If the
+branch name, remote-tip equality, merge-base, or cleanliness
+differs, stop.
 
 - [ ] **Step 2: Confirm production root is absent**
 
@@ -189,13 +206,15 @@ sha256sum \
 Expected specification and frozen qualification hashes:
 
 ```text
-641e673a0c82c38f864d8602e06c0ce21f58f0fcb3b8dc4425d444db909c7d6e
+f0cb5e4803237e5653834e2efd3f1ed3ce0b2af74c4965de4cbd4887b4d13a13
 ff438a10da0e762667fe358fb32082e2338f39f28c16620d5a15d8890e8dd8d5
 9661ecb73043bb58adc9b6bad025b9051548602e74677643cb7866f4204e2901
 ```
 
-Record the four implementation-file digests and the CLI digest.
-This Task does not commit.
+The fourth digest is this plan. It must equal the plan SHA-256
+frozen by the implementation authorization record. This file does
+not embed its own digest. Record the four implementation-file
+digests and the CLI digest. This Task does not commit.
 
 ---
 
@@ -247,8 +266,12 @@ INVALID:
   every other combination
 ```
 
-Do not add a four-parameter coupling helper. Classification lives
-only on `CompilerIdentity.classification`.
+Host validation still calls `validate_exact_object()` with
+`_HOST_TYPES` first. A wrong exact primitive type is
+`E_SCHEMA_TYPE`. Type-correct illegal coupling is
+`E_COMPILER_IDENTITY`. Do not add a four-parameter coupling
+helper. Classification lives only on
+`CompilerIdentity.classification`.
 
 - [ ] **Step 1: Add the Task 2 imports to the test module**
 
@@ -311,6 +334,11 @@ def test_validate_host_snapshot_uses_compiler_identity_seam():
     source = inspect.getsource(q.validate_host_snapshot)
     assert "CompilerIdentity(" in source
     assert "classification(" in source
+    assert "validate_exact_object" in source
+    assert "_HOST_TYPES" in source
+    assert source.index("validate_exact_object") < source.index(
+        "CompilerIdentity("
+    )
     assert "_resolved_null_set" not in source
     assert "_resolved_success_set" not in source
     assert hasattr(q, "CompilerIdentity")
@@ -326,20 +354,20 @@ def test_partial_null_compiler_identity_is_rejected():
 
 def test_wrong_compiler_path_type_is_rejected():
     host = _host(resolved_compiler_path=1)
-    with pytest.raises(EvidenceError, match="E_COMPILER_IDENTITY"):
+    with pytest.raises(EvidenceError, match="E_SCHEMA_TYPE"):
         q.validate_host_snapshot(host)
 
 
 def test_wrong_compiler_realpath_type_is_rejected():
     host = _host(resolved_compiler_realpath=1)
-    with pytest.raises(EvidenceError, match="E_COMPILER_IDENTITY"):
+    with pytest.raises(EvidenceError, match="E_SCHEMA_TYPE"):
         q.validate_host_snapshot(host)
 
 
 def test_wrong_compiler_bool_types_are_rejected():
-    with pytest.raises(EvidenceError, match="E_COMPILER_IDENTITY"):
+    with pytest.raises(EvidenceError, match="E_SCHEMA_TYPE"):
         q.validate_host_snapshot(_host(resolved_path_regular="yes"))
-    with pytest.raises(EvidenceError, match="E_COMPILER_IDENTITY"):
+    with pytest.raises(EvidenceError, match="E_SCHEMA_TYPE"):
         q.validate_host_snapshot(_host(resolved_path_symlink="no"))
 
 
@@ -384,11 +412,14 @@ TQ=tests/p3_v3/test_toolchain_qualification.py
   $TQ::test_host_and_intent_keep_flat_requested_compiler
 ```
 
-Expected: nonzero exit. Failures must be `CompilerIdentity` missing,
-`_resolve_compiler` still returning a tuple, or
-`_resolved_null_set` / `_resolved_success_set` still present. If the
-suite is green, the tests are wrong; fix the tests, not production
-code.
+Expected: nonzero exit from the new identity and resolver tests.
+The three wrong-type tests may already pass; they lock
+`E_SCHEMA_TYPE` from `validate_exact_object()` before identity
+construction. Do not change them to `E_COMPILER_IDENTITY` to
+create a red result. `test_partial_null_compiler_identity_is_rejected`
+may already pass on the current coupling helper. If every listed
+test is green, the new identity tests are wrong; fix those tests,
+not production code.
 
 - [ ] **Step 4: Implement CompilerIdentity and the validator seam**
 
@@ -457,6 +488,12 @@ Replace the four-primitive block in `validate_host_snapshot` with:
             "host_snapshot resolved identity fields are not coupled",
         )
 ```
+
+Keep `validate_exact_object(value, _HOST_TYPES, "host_snapshot")`
+as the first statement. Do not relax `_HOST_TYPES`. Do not move
+identity construction before that call. Wrong exact types must
+remain `E_SCHEMA_TYPE`. Type-correct illegal coupling remains
+`E_COMPILER_IDENTITY`.
 
 Keep the existing
 `snapshot["requested_compiler"] != REQUESTED_COMPILER` check on the
@@ -536,7 +573,24 @@ In the intent object, set:
             "resolved_compiler_realpath": identity.realpath,
 ```
 
-Do not keep `resolved[0]` or `resolved[1]`. Do not change
+Replace the compiler-version probe and every later tuple index:
+
+```python
+    if identity.path is not None:
+        version = _run_process(
+            argv=[identity.path, "--version"],
+            timeout=COMPILER_VERSION_TIMEOUT_SECONDS,
+            role="METADATA",
+            job_id=JOB_METADATA,
+            root=qualification_root,
+            popen=popen,
+            env=env,
+        )
+```
+
+The production file must contain none of `resolved[0]` or
+`resolved[1]`. Do not keep a parallel tuple named `resolved` in
+`run_qualification`. Do not change
 `INTENT_SCHEMA`, `HOST_SCHEMA`, `RESULT_SCHEMA`, `MANIFEST_SCHEMA`,
 `PROCESS_SCHEMA`, `SPEC_PATH`, `SPEC_SHA256`, or failure reasons.
 
@@ -560,10 +614,16 @@ TQ=tests/p3_v3/test_toolchain_qualification.py
   $TQ::test_host_and_intent_keep_flat_requested_compiler
 /usr/bin/python3 -m pytest -q --tb=short \
   tests/p3_v3/test_toolchain_qualification.py
+if grep -n -e 'resolved\[0\]' -e 'resolved\[1\]' \
+  src/p3_v3/toolchain_qualification.py; then
+  echo FORBIDDEN_RESOLVED_INDEX
+  exit 1
+fi
+echo NO_RESOLVED_INDEX
 ```
 
-Expected: target tests pass; full qualification file passes. Do not
-upgrade any FAIL reason to PASS.
+Expected: target tests pass; full qualification file passes;
+`NO_RESOLVED_INDEX`. Do not upgrade any FAIL reason to PASS.
 
 - [ ] **Step 6: Commit only the two allowed files**
 
@@ -1801,7 +1861,7 @@ old "small P2 fixes only" welcome table.
 - [ ] **Step 3: Scan the new documents**
 
 ```bash
-python3 - <<'PY'
+/usr/bin/python3 - <<'PY'
 from pathlib import Path
 files = [Path("README.md"), Path("CONTRIBUTING.md")]
 needles = [
@@ -1920,7 +1980,7 @@ Expected: exit 0 and no new `__pycache__` under the repository.
 - [ ] **Step 5: Check line width on the four implementation files**
 
 ```bash
-python3 - <<'PY'
+/usr/bin/python3 - <<'PY'
 from pathlib import Path
 files = [
     Path("README.md"),
@@ -1985,8 +2045,11 @@ Expected:
 ```text
 ff438a10da0e762667fe358fb32082e2338f39f28c16620d5a15d8890e8dd8d5
 9661ecb73043bb58adc9b6bad025b9051548602e74677643cb7866f4204e2901
-641e673a0c82c38f864d8602e06c0ce21f58f0fcb3b8dc4425d444db909c7d6e
+f0cb5e4803237e5653834e2efd3f1ed3ce0b2af74c4965de4cbd4887b4d13a13
 ```
+
+This plan's digest must still equal the authorization-frozen
+value recorded before Task 2 started.
 
 - [ ] **Step 9: Confirm production root still absent**
 
@@ -2016,7 +2079,7 @@ Expected: empty output.
 - [ ] **Step 12: Confirm schema constants and spec bindings**
 
 ```bash
-python3 - <<'PY'
+/usr/bin/python3 - <<'PY'
 from pathlib import Path
 text = Path("src/p3_v3/toolchain_qualification.py").read_text()
 required = [
@@ -2031,6 +2094,9 @@ required = [
 for item in required:
     if item not in text:
         raise SystemExit("missing " + item)
+for item in ("resolved[0]", "resolved[1]"):
+    if item in text:
+        raise SystemExit("forbidden " + item)
 print("SCHEMA_BINDINGS_OK")
 PY
 ```
@@ -2075,6 +2141,8 @@ review.
 | P3 public identity and P2 read-only layer | Task 5 |
 | Four-field `CompilerIdentity` and projection | Task 2 |
 | Validator identity seam; delete four-parameter helpers | Task 2 |
+| Wrong exact type is `E_SCHEMA_TYPE`; coupling is `E_COMPILER_IDENTITY` | Task 2 |
+| Dynamic entry: HEAD equals origin branch tip; merge-base frozen | Task 1 |
 | `QualificationScenario` closed field set | Task 3 |
 | Unified `_patch_process_group`; no PID probe | Task 4 |
 | RED to GREEN, directed regression, static checks | Tasks 1-6 |
