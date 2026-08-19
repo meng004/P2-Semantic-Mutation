@@ -1,0 +1,69 @@
+# Author decision 2026-08-19 — ESCALATE_AUTHOR = A
+
+- Reviewer: 评审模型（流程总控）；本会话不改生产代码
+- Trigger: C1 on `docs/review_20260819/2026-08-19-003_review.md`
+- Author reply (verbatim intent): `ESCALATE_AUTHOR：选择A`
+- Recorded: 2026-08-19
+- Reviewer commit parent: `4b4734a1`
+
+## Decision
+
+**(A)** P2-C remainder and P2-D stay **blocked** until both exist
+**outside** this dual-agent loop:
+
+1. an extracted tree (or hash-matching local archive) for a pinned
+   `EXECUTABLE` subject; and
+2. a process-argv execution seam that can produce a usable profiling
+   trace without inventing cmake / P12-download / a new profiler
+   framework inside this loop.
+
+**(B)** is rejected: booking the remaining frozen rows as the same
+honest-missing terminals, while cmake and download remain forbidden,
+is ledger thickening and would not feed `L_t`/`U_t`.
+
+## What stays closed
+
+| Slice | Status |
+|---|---|
+| P2-A minimum (1/35 `PREFLIGHT_ONLY`) | closed (`PASS_WITH_DISCLOSURE`) |
+| P2-B minimum (synthetic `PILOT_ONLY` PASS+FAIL) | closed (`PASS_WITH_DISCLOSURE`) |
+| P2-C minimum (one row, `E_SOURCE_TREE_ABSENT`) | closed (`PASS_WITH_DISCLOSURE`) |
+
+## What stays open / blocked
+
+| Target | Status |
+|---|---|
+| P2-C remainder (19 rows + this header without a process argv) | **blocked** until (1)+(2) |
+| P2-D (`L_t`/`U_t` / primary technique) | **blocked** (no usable traces) |
+| P2-E / P2-F | later |
+| Phase 2 as a whole | open |
+| Claims | `blocked` |
+
+## Process state
+
+- **Verdict:** `WAIT`
+- **No** `execution_packet_2026-08-19-004`
+- Cursor VM: keep WAIT. Do not start P2-D. Do not profile a second row.
+  Do not download P12. Do not cmake. Do not merge #22 / #23 / #24 from
+  this review branch.
+- C2 is **not** due: this is an author-signed hold after three named
+  slices closed; not a REJECT/REVISE loop.
+
+## §10.1
+
+| 处置 | 分类 |
+|---|---|
+| 接受 (A)，拒绝 (B) | 效度修复：保护推断，不把空 trace 台账伪装成 P2-C/P2-D 进度 |
+| 不另开下载/cmake 包 | 反基础设施复发 |
+
+主张收缩清单：空。P2-C 余量与 P2-D 仍在菜单上，只是停在循环外前置条件。
+
+## Reviewer 2 视角的最严苛审稿意见
+
+- [方法论] 无 process-argv 执行缝则不能算技术区间。HOLD 正确。
+- [外部效度] 未用 1 行缺失外推。
+- [统计选择] 未授权只登记易关的缺失行。
+- [基准] 未重新打开 cmake / Boost.Math。
+- [霍桑] 未改 Phase 1 选择集。
+
+Reviewer 2 视角扫描通过——5 类维度均无 publication blocker。
