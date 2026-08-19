@@ -12,6 +12,10 @@ release stream.
 ## [Unreleased]
 
 ### Added
+- `docs/task-instructions/2026-08-19-dual-agent-init.md`: Cursor VM
+  executes; review model owns review, process control, and mandatory
+  course-correction so Phase 2 work cannot drift back into
+  infrastructure spirals.
 - `archive/` directory: historical snapshots of v1-v8 manuscripts,
   cover letters, build scripts, process summaries, and v2 figures.
 - `PROJECT_STRUCTURE.md`: file-by-file walkthrough of every top-level
