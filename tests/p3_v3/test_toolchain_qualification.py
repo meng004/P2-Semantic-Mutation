@@ -1113,40 +1113,7 @@ def test_binary_popen_error_keeps_executable_and_closes(tmp_path):
     assert not (root / "QUALIFIED_BINARY_RUN.stderr").exists()
 
 
-def _patch_group_signals(
-    monkeypatch: pytest.MonkeyPatch,
-    *,
-    killpg_error: BaseException | None = None,
-    probe_error: BaseException | None = None,
-) -> list[tuple[object, ...]]:
-    recorded: list[tuple[object, ...]] = []
-
-    def fake_getpgid(pid: int) -> int:
-        recorded.append(("getpgid", pid))
-        return pid
-
-    def fake_killpg(pgid: int, sig: int) -> None:
-        recorded.append(("killpg", pgid, sig))
-        if sig == signal.SIGKILL:
-            if killpg_error is not None:
-                raise killpg_error
-            return
-        if sig == 0:
-            if probe_error is not None:
-                raise probe_error
-            return
-        raise AssertionError(f"unexpected killpg signal: {sig}")
-
-    def fake_kill(pid: int, sig: int) -> None:
-        recorded.append(("kill", pid, sig))
-
-    monkeypatch.setattr(q.os, "getpgid", fake_getpgid)
-    monkeypatch.setattr(q.os, "killpg", fake_killpg)
-    monkeypatch.setattr(q.os, "kill", fake_kill)
-    return recorded
-
-
-def _patch_group_probe(
+def _patch_process_group(
     monkeypatch: pytest.MonkeyPatch,
     *,
     terminate_error: BaseException | None = None,
@@ -1170,10 +1137,8 @@ def _patch_group_probe(
             return
         raise AssertionError(f"unexpected killpg signal: {sig}")
 
-    def fake_kill(pid: int, sig: int) -> None:
-        recorded.append(("kill", pid, sig))
-        if sig == 0:
-            raise ProcessLookupError("leader pid is gone")
+    def fake_kill(*_args: object) -> None:
+        raise AssertionError("os.kill must not probe process groups")
 
     monkeypatch.setattr(q.os, "getpgid", fake_getpgid)
     monkeypatch.setattr(q.os, "killpg", fake_killpg)
@@ -1233,7 +1198,7 @@ def test_process_group_absent_esrch_is_absent(monkeypatch):
 
 
 def test_timeout_fails_when_killpg_zero_probe_succeeds(tmp_path, monkeypatch):
-    recorded = _patch_group_probe(monkeypatch)
+    recorded = _patch_process_group(monkeypatch)
     result, _manifest, root = _run_synthetic_qualification(
         tmp_path,
         QualificationScenario(
@@ -1251,7 +1216,7 @@ def test_timeout_fails_when_killpg_zero_probe_succeeds(tmp_path, monkeypatch):
 
 
 def test_wait_error_fails_when_killpg_zero_probe_succeeds(tmp_path, monkeypatch):
-    recorded = _patch_group_probe(monkeypatch)
+    recorded = _patch_process_group(monkeypatch)
     result, _manifest, root = _run_synthetic_qualification(
         tmp_path,
         QualificationScenario(
@@ -1268,7 +1233,7 @@ def test_wait_error_fails_when_killpg_zero_probe_succeeds(tmp_path, monkeypatch)
 
 
 def test_timeout_fails_when_killpg_zero_probe_is_permission(tmp_path, monkeypatch):
-    recorded = _patch_group_probe(
+    recorded = _patch_process_group(
         monkeypatch,
         probe_error=PermissionError("denied"),
     )
@@ -1290,7 +1255,7 @@ def test_timeout_cleanup_succeeds_when_leader_reaped_and_pgid_absent(
     tmp_path,
     monkeypatch,
 ):
-    recorded = _patch_group_signals(
+    recorded = _patch_process_group(
         monkeypatch,
         probe_error=ProcessLookupError("gone"),
     )
@@ -1315,7 +1280,7 @@ def test_timeout_cleanup_succeeds_when_leader_reaped_and_pgid_absent(
 
 
 def test_timeout_cleanup_fails_when_pgid_still_exists(tmp_path, monkeypatch):
-    recorded = _patch_group_signals(monkeypatch)
+    recorded = _patch_process_group(monkeypatch)
     result, _manifest, root = _run_synthetic_qualification(
         tmp_path,
         QualificationScenario(
@@ -1340,9 +1305,9 @@ def test_timeout_cleanup_fails_when_killpg_fails_and_only_leader_killed(
     tmp_path,
     monkeypatch,
 ):
-    recorded = _patch_group_signals(
+    recorded = _patch_process_group(
         monkeypatch,
-        killpg_error=PermissionError("denied"),
+        terminate_error=PermissionError("denied"),
         probe_error=ProcessLookupError("gone"),
     )
     result, _manifest, root = _run_synthetic_qualification(
@@ -1452,7 +1417,7 @@ def test_compile_timeout_cleanup_failure_closes_evidence(tmp_path):
 
 
 def test_metadata_wait_error_cleans_up_and_closes(tmp_path, monkeypatch):
-    recorded = _patch_group_signals(
+    recorded = _patch_process_group(
         monkeypatch,
         probe_error=ProcessLookupError("gone"),
     )
@@ -1502,7 +1467,7 @@ def test_metadata_wait_error_cleanup_failure_closes(tmp_path):
 
 
 def test_compile_wait_error_cleans_up_and_closes(tmp_path, monkeypatch):
-    _patch_group_signals(
+    _patch_process_group(
         monkeypatch,
         probe_error=ProcessLookupError("gone"),
     )
@@ -1847,3 +1812,74 @@ def test_synthetic_helper_source_has_no_opts_bag():
     source = inspect.getsource(_run_synthetic_qualification)
     assert "opts.get" not in source
     assert "**opts" not in source
+
+
+def test_patch_process_group_exists_and_old_helpers_do_not():
+    assert hasattr(q, "_process_group_absent")
+    source = Path("tests/p3_v3/test_toolchain_qualification.py").read_text()
+    assert "def _patch_process_group(" in source
+    assert ("def _patch_group_" + "signals(") not in source
+    assert ("def _patch_group_" + "probe(") not in source
+
+
+def test_patch_process_group_signature_has_no_pid_probe_parameter():
+    params = inspect.signature(_patch_process_group).parameters
+    assert set(params) == {
+        "monkeypatch",
+        "terminate_error",
+        "probe_error",
+    }
+
+
+def test_patch_process_group_uses_separate_killpg_errors(monkeypatch):
+    recorded = _patch_process_group(
+        monkeypatch,
+        terminate_error=PermissionError("term"),
+        probe_error=OSError(errno.ESRCH, "gone"),
+    )
+    with pytest.raises(PermissionError, match="term"):
+        q.os.killpg(7, signal.SIGKILL)
+    with pytest.raises(OSError) as exc_info:
+        q.os.killpg(7, 0)
+    assert exc_info.value.errno == errno.ESRCH
+    q.os.getpgid(9)
+    assert ("getpgid", 9) in recorded
+    with pytest.raises(AssertionError):
+        q.os.killpg(7, signal.SIGTERM)
+
+
+def test_patch_process_group_rejects_os_kill(monkeypatch):
+    _patch_process_group(monkeypatch)
+    with pytest.raises(AssertionError):
+        q.os.kill(2_000_000_000, 0)
+    with pytest.raises(AssertionError):
+        q.os.kill(2_000_000_000, signal.SIGKILL)
+
+
+def test_timeout_group_present_is_cleanup_failed(tmp_path, monkeypatch):
+    recorded = _patch_process_group(monkeypatch)
+    result, _manifest, _root = _run_synthetic_qualification(
+        tmp_path,
+        QualificationScenario(compiler_version_timeout=True),
+    )
+    version = result["compiler_version"]
+    assert version["terminal_status"] == "FAIL"
+    assert version["failure_reason"] == "PROCESS_CLEANUP_FAILED"
+    assert version["process_group_terminated"] is False
+    assert ("killpg", 2_000_000_000, signal.SIGKILL) in recorded
+    assert ("killpg", 2_000_000_000, 0) in recorded
+    assert not any(item[0] == "kill" for item in recorded)
+
+
+def test_wait_error_group_present_is_cleanup_failed(tmp_path, monkeypatch):
+    recorded = _patch_process_group(monkeypatch)
+    result, _manifest, _root = _run_synthetic_qualification(
+        tmp_path,
+        QualificationScenario(metadata_wait_error=True),
+    )
+    version = result["compiler_version"]
+    assert version["terminal_status"] == "FAIL"
+    assert version["failure_reason"] == "PROCESS_CLEANUP_FAILED"
+    assert version["process_group_terminated"] is False
+    assert ("killpg", 2_000_000_000, 0) in recorded
+    assert not any(item[0] == "kill" for item in recorded)
