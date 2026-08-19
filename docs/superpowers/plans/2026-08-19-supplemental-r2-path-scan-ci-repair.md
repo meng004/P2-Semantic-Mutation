@@ -1,8 +1,9 @@
 # Supplemental R2 Path-Scan CI Repair Implementation Plan
 
-> **For agentic workers:** After a later node grants implementation,
-> use superpowers:executing-plans task-by-task. This archival node
-> forbids starting any Task. Do not edit production or test code here.
+> **For agentic workers:** Use executing-plans only after Sol sets
+> IMPLEMENTATION_EXECUTABLE to true on this hardened plan. The user
+> record `IMPLEMENTATION_AUTHORIZED=true` is already on file. This
+> node still forbids starting production or test edits.
 
 **Goal:** Stop the supplemental R2 forbidden-path gate from failing a
 legal synthetic fixture because unrelated repository paths contain
@@ -51,8 +52,13 @@ existing `scripts/external_slice` checkers and miner.
 - Keep this repair pull request draft. Do not merge. Do not copy
   commits from `cursor/p3-standards-remediation-c46c`.
 - Claims stay blocked. Formal denominator membership stays false.
-- `IMPLEMENTATION_AUTHORIZED=false` at archival. A later user node
-  must grant implementation after Sol Spec + Standards review.
+- Archiving this plan does not authorize implementation.
+- The user record `IMPLEMENTATION_AUTHORIZED=true` is already on
+  file. Do not ask the user to re-grant that same production
+  implementation.
+- `IMPLEMENTATION_EXECUTABLE` stays false until Sol records a
+  fresh Spec + Standards PASS on this hardening commit. Only
+  then may any Task edit the four implementation files.
 - `MERGE_AUTHORIZED=false`.
 
 ---
@@ -119,7 +125,7 @@ They must stay.
 
 ---
 
-### Task 1: Confirm Repair Entry And Withheld Authorization
+### Task 1: Confirm Repair Entry And Executable Authorization
 
 **Files:**
 - Read only: this plan, the design spec, `origin/main`
@@ -129,32 +135,64 @@ They must stay.
   `76c46bb0d0cb51dd6380cebed9f02764a8a2acfb773a6937dd9312625ca8be22`
 - Produces: a written entry record. No code edits.
 
-- [ ] **Step 1: Refuse to start without a later grant**
+Frozen invariant values:
 
-Stop if the current user node has not granted implementation after
-Sol Spec + Standards review. Archival of this plan is not a grant.
-`IMPLEMENTATION_AUTHORIZED=false` until that later node.
+```text
+branch: cursor/supplemental-r2-path-scan-ci-repair-c46c
+origin/main: 4444061dde0159a5edd62753fe3cef2d881a308c
+merge-base: 4444061dde0159a5edd62753fe3cef2d881a308c
+pre-hardening parent: ed03fc47702e6eac977ae260e1de59c97db1ee3e
+```
 
-- [ ] **Step 2: Confirm the independent repair branch**
+`IMPLEMENTATION_ENTRY` is the exact SHA Sol names when setting
+`IMPLEMENTATION_EXECUTABLE` to true after PASS on the hardening
+commit that lands these gates. If Sol names no SHA, record the
+origin repair tip at that moment before any edit. Branch name
+and merge-base alone are not enough. An unknown later commit is
+a stop even on this branch. After this hardening exists, do not
+start from `ed03fc47702e6eac977ae260e1de59c97db1ee3e`.
+
+- [ ] **Step 1: Refuse unless implementation is executable**
+
+Archiving this plan is not a grant. The user record
+`IMPLEMENTATION_AUTHORIZED=true` is already on file; do not ask
+for a second production-implementation grant. Stop unless Sol
+has set `IMPLEMENTATION_EXECUTABLE` to true on the hardening
+commit. `IMPLEMENTATION_EXECUTABLE` is false until that PASS.
+
+- [ ] **Step 2: Freeze and verify the exact implementation entry**
+
+Do not start from PR 16. Do not cherry-pick PR 16 commits.
+Do not reset, rebase, amend, or force-push to hide a mismatch.
+If any value differs, stop.
 
 ```bash
 git fetch origin
 git rev-parse --abbrev-ref HEAD
+git rev-parse HEAD
+git rev-parse origin/cursor/supplemental-r2-path-scan-ci-repair-c46c
 git rev-parse origin/main
 git merge-base HEAD origin/main
+git rev-list --left-right --count \
+  HEAD...origin/cursor/supplemental-r2-path-scan-ci-repair-c46c
 git status --porcelain
 ```
 
-Expected:
+Required results, compared one by one:
 
 ```text
-cursor/supplemental-r2-path-scan-ci-repair-c46c
-4444061dde0159a5edd62753fe3cef2d881a308c
-4444061dde0159a5edd62753fe3cef2d881a308c
+branch = cursor/supplemental-r2-path-scan-ci-repair-c46c
+HEAD = IMPLEMENTATION_ENTRY
+origin repair tip = IMPLEMENTATION_ENTRY
+origin/main = 4444061dde0159a5edd62753fe3cef2d881a308c
+merge-base = 4444061dde0159a5edd62753fe3cef2d881a308c
+ahead/behind = 0	0
+porcelain = empty
 ```
 
-Working tree clean except the four allowed files after later edits.
-Do not start from PR 16. Do not cherry-pick PR 16 commits.
+The working tree must be completely clean before any edit.
+Task 6, not this step, is where the four implementation files
+may later appear as uncommitted paths.
 
 - [ ] **Step 3: Confirm the design digest**
 
@@ -494,25 +532,32 @@ Do not run readiness or canonical freeze.
 
 **Files:** only the four allowed implementation files
 
-- [ ] **Step 1: Whitespace and scope**
+Working-tree checks see uncommitted, staged, and untracked paths.
+`origin/main...HEAD` sees only already-committed history. The two
+are not substitutes. Run the working-tree checks first.
+
+- [ ] **Step 1: Working-tree scope before commit**
 
 ```bash
-git diff --check origin/main...HEAD
-git diff --name-only origin/main...HEAD
+git status --porcelain
+git diff --check
+git diff --name-only
+git diff --cached --name-only
+git ls-files --others --exclude-standard
 ```
 
-Allowed names after this later implementation:
+During implementation, the only paths that may appear in porcelain,
+unstaged diff, staged diff, or untracked lists are:
 
 ```text
-docs/superpowers/specs/2026-08-19-supplemental-r2-path-scan-ci-repair-design.md
-docs/superpowers/plans/2026-08-19-supplemental-r2-path-scan-ci-repair.md
 scripts/external_slice/check_supplemental_r2_admission.py
 scripts/external_slice/check_supplemental_r2_handoff_hashes.py
 scripts/external_slice/mine_supplemental_r2.py
 tests/external_slice/test_check_supplemental_r2_admission.py
 ```
 
-Any other path is a stop.
+Any other modified, staged, or untracked path is a stop. Do not
+commit until this set is exact.
 
 - [ ] **Step 2: Independent commit on the repair branch**
 
@@ -528,29 +573,75 @@ git commit -m "fix(external-slice): scope supplemental R2 path scan"
 Do not amend, squash, or rebase already-pushed commits.
 Do not commit PR 16 files.
 
-- [ ] **Step 3: Push and keep the repair pull request draft**
+- [ ] **Step 3: Committed-history scope after commit, before push**
+
+These commands inspect published-plus-new commits. They cannot
+replace Step 1.
+
+```bash
+git diff --check origin/main...HEAD
+git diff --name-only origin/main...HEAD
+git show --name-only --format= HEAD
+git rev-list --left-right --count \
+  HEAD...origin/cursor/supplemental-r2-path-scan-ci-repair-c46c
+```
+
+Required committed set versus `origin/main` (exactly these six):
+
+```text
+docs/superpowers/specs/2026-08-19-supplemental-r2-path-scan-ci-repair-design.md
+docs/superpowers/plans/2026-08-19-supplemental-r2-path-scan-ci-repair.md
+scripts/external_slice/check_supplemental_r2_admission.py
+scripts/external_slice/check_supplemental_r2_handoff_hashes.py
+scripts/external_slice/mine_supplemental_r2.py
+tests/external_slice/test_check_supplemental_r2_admission.py
+```
+
+The newest implementation commit (`git show --name-only HEAD`)
+may contain only the three scripts and the one test file. The
+two archive documents must already be on the branch; they must
+not appear in that implementation commit.
+
+Push-time ahead/behind versus
+`origin/cursor/supplemental-r2-path-scan-ci-repair-c46c` must be
+`1	0`. Any other count is a stop.
+
+- [ ] **Step 4: Push and keep the repair pull request draft**
 
 ```bash
 git push -u origin cursor/supplemental-r2-path-scan-ci-repair-c46c
 ```
 
-Leave the repair pull request OPEN and draft for Sol review.
-Do not mark it ready. Do not merge. Do not edit PR 16.
+Do not mark PR 17 ready. Do not merge. Do not edit PR 16.
+Do not change the PR 17 title, body, labels, or draft state.
 
-- [ ] **Step 4: Confirm PR 16 is untouched**
+- [ ] **Step 5: Confirm remote sync and both pull requests**
 
 ```bash
+git rev-parse HEAD
+git rev-parse origin/cursor/supplemental-r2-path-scan-ci-repair-c46c
+git rev-list --left-right --count \
+  HEAD...origin/cursor/supplemental-r2-path-scan-ci-repair-c46c
+gh pr view 17 \
+  --repo meng004/P3-Semantic-Mutation \
+  --json state,isDraft,headRefName,headRefOid,baseRefName
 gh pr view 16 \
   --repo meng004/P3-Semantic-Mutation \
   --json state,isDraft,headRefOid
 ```
 
-Expected:
+Required after push:
 
 ```text
-state=OPEN
-isDraft=false
-headRefOid=081bb6176d25d47f9bd58ee688c12dadae06fa68
+HEAD = origin repair tip = new implementation HEAD
+ahead/behind = 0	0
+PR 17 state=OPEN
+PR 17 isDraft=true
+PR 17 baseRefName=main
+PR 17 headRefOid = new HEAD
+PR 16 state=OPEN
+PR 16 isDraft=false
+PR 16 headRefOid=081bb6176d25d47f9bd58ee688c12dadae06fa68
 ```
 
 ---
@@ -566,23 +657,30 @@ This plan does not:
 - rewrite supplemental R2 data, handoff, or freeze results
 - run readiness, canonical freeze, retrieval, or GitHub mining
 - attribute the failure to pull request 16
-- grant implementation, merge, attempt-2, or claim upgrades
+- treat plan archival as an executable implementation grant
 - adopt choice B or add a production helper file
 
 ## Governance Stop
 
-This file is a future-work archive. Writing it does not authorize
-implementation. After Sol Spec + Standards review, a later user
-node must still grant implementation before any Task starts.
+Archiving this plan does not authorize implementation. The user
+record `IMPLEMENTATION_AUTHORIZED=true` is already on file. Do
+not ask the user to re-grant that same production implementation.
+`IMPLEMENTATION_EXECUTABLE` stays false until Sol records a
+fresh Spec + Standards PASS on this hardening commit. Only then
+may implementation Tasks start.
 
-The repair pull request stays draft. Pull request 16 stays OPEN and
-ready. Merge stays unauthorized.
+The repair pull request stays draft. Pull request 16 stays OPEN
+and ready. Merge stays unauthorized.
 
 ## Self-Review Record
 
 - Spec coverage: coupling removal, fail-closed list, choice A,
   four-file write set, RED-before-GREEN, Actions pytest gate,
   no SSOT / mining / freeze, PR 16 isolation.
+- Entry now freezes HEAD, origin tip, ahead/behind, origin/main,
+  merge-base, and empty porcelain.
+- Commit flow now separates working-tree scope from committed
+  `origin/main...HEAD` scope, then checks PR 17 draft sync.
 - Incomplete-marker scan: clean.
-- Authorization strings remain false at archival.
-- Execution is not offered from this archival node.
+- `IMPLEMENTATION_EXECUTABLE` remains false in this node.
+- Execution is not offered from this hardening node.
