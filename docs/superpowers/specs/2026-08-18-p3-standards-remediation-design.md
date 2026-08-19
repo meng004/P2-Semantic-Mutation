@@ -1,17 +1,20 @@
 # P3 Standards Remediation Design
 
-**Status:** Approved design archived; implementation is not authorized
-**Node:** `P1BP1I2Q3_CURSOR_VM_P3_STANDARDS_REMEDIATION_DESIGN_ARCHIVE`
+**Status:** Semantic repair archived; implementation is not authorized
+**Node:** `P1BP1I2Q3R1_CURSOR_VM_P3_STANDARDS_REMEDIATION_DESIGN_SEMANTIC_REPAIR`
+**Parent archive:** `P1BP1I2Q3_CURSOR_VM_P3_STANDARDS_REMEDIATION_DESIGN_ARCHIVE`
+**Parent commit:** `8b17c82988b0a8b752e7f0c031ac8b2dd61658dd`
 **Type:** `GOVERNANCE_ONLY`
 **Baseline:** `origin/main` `4444061dde0159a5edd62753fe3cef2d881a308c`
 **Claims:** blocked
 **Formal denominator membership:** false
 **Attempt-2 authorized:** false
 
-This document archives the approved five-part standards remediation. It is
-not an implementation plan, Authorization, or implementation verdict. Writing
-or merging this file does not authorize code, documentation edits beyond this
-file, real qualification, or claim upgrades.
+This document archives the approved five-part standards remediation after
+the semantic repair. It is not an implementation plan, Authorization, or
+implementation verdict. Writing or merging this file does not authorize
+code, documentation edits beyond this file, real qualification, or claim
+upgrades.
 
 ## Purpose
 
@@ -23,12 +26,13 @@ remediation is a standards cleanup:
 
 1. Reposition the repository as P3, with P2 retained as a read-only
    historical reproduction layer.
-2. Introduce a frozen `CompilerIdentity` dataclass without changing
-   external evidence schema or canonical bytes.
+2. Introduce a four-field frozen `CompilerIdentity` dataclass.
+   External evidence schema and canonical bytes stay unchanged.
+   Validators use the same identity seam.
 3. Introduce a frozen `QualificationScenario` dataclass that fully
    replaces `**opts`.
-4. Merge the two process-group patch helpers and forbid a PID-probe
-   regression.
+4. Merge the two process-group patch helpers. The unified helper
+   raises `AssertionError` on any `os.kill` call.
 5. Bind RED to GREEN, directed regression, static checks, and a real
    execution exclusion zone.
 
@@ -96,7 +100,7 @@ design.
 The remediation may establish only that the repository entry documents
 describe P3 as the active project, that compiler identity and synthetic
 scenarios are named frozen types, and that process-group tests share one
-helper that cannot certify cleanup with `os.kill(pgid, 0)`.
+helper that raises `AssertionError` on any `os.kill` call.
 
 It does not establish toolchain readiness, Boost.Math build readiness,
 attempt-2 authorization, formal denominator membership, RQ support, or
@@ -216,10 +220,12 @@ read-only P2 file, the change is out of scope and must be dropped.
 
 ### 2.1 Current defect
 
-`_resolve_compiler` returns an anonymous four-tuple. Host snapshot and
-intent construction unpack that tuple by position. Reviewers cannot
-name the object, and a later field insertion can silently shift
-evidence keys.
+`_resolve_compiler` returns an anonymous four-tuple. Host snapshot,
+intent construction, and `validate_host_snapshot` then pass those
+four primitives through `_resolved_null_set` and
+`_resolved_success_set`. The same data clump is copied by position.
+A later field insertion can silently shift both construction and
+validation.
 
 ### 2.2 Approved type
 
@@ -228,15 +234,17 @@ Add a frozen dataclass in `src/p3_v3/toolchain_qualification.py`:
 ```python
 @dataclass(frozen=True)
 class CompilerIdentity:
-    requested_compiler: str
-    resolved_compiler_path: str | None
-    resolved_compiler_realpath: str | None
-    resolved_path_regular: bool | None
-    resolved_path_symlink: bool | None
+    path: str | None
+    realpath: str | None
+    regular: bool | None
+    symlink: bool | None
 ```
 
-Field names match the current host-snapshot keys. No additional
-evidence field is introduced. In particular, execute-permission is
+The requested compiler name is not stored on this type. That name
+stays the frozen constant `REQUESTED_COMPILER` and is written only
+onto the existing flat evidence keys during projection.
+
+No additional evidence field is introduced. Execute-permission is
 already folded into the unresolved-null rule and must not become a
 new JSON key.
 
@@ -247,54 +255,49 @@ intent, host snapshot, result, or manifest.
 
 ### 2.3 Construction rules
 
-`_resolve_compiler` returns `CompilerIdentity`.
+`_resolve_compiler()` returns `CompilerIdentity`.
 
 Resolved success:
 
-- `requested_compiler` is the frozen name `c++`;
-- `resolved_compiler_path` is the absolute resolved path;
-- `resolved_compiler_realpath` is `os.path.realpath` of that path;
-- `resolved_path_regular` is `True`;
-- `resolved_path_symlink` is whether the resolved path itself is a
-  symlink.
+- `path` is the absolute resolved path;
+- `realpath` is `os.path.realpath` of that path;
+- `regular` is `True`;
+- `symlink` is whether the resolved path itself is a symlink.
 
 Unresolved or non-executable compiler, including the current
-`OSError` resolver-close path:
+`OSError` resolver-close path, is four `None` values.
 
-- `requested_compiler` remains `c++`;
-- the other four fields are `None`.
+`CompilerIdentity.unresolved()`, if present, may generate only those
+four `None` values. It must not write files, call `which`, or store
+`REQUESTED_COMPILER` on the dataclass.
 
-A convenience constructor such as `CompilerIdentity.unresolved()` is
-allowed if and only if it produces exactly that five-field object.
-It must not write files or call `which`.
+`_capture_host_snapshot()` and intent construction read fields
+through named attributes. They must not keep a parallel tuple
+interface or use positional indexes. `_workload_argv()` receives
+only `identity.path` or `None`.
 
-`_capture_host_snapshot` and intent construction read attributes by
-name. They must not keep a parallel tuple API. `_workload_argv`
-continues to receive the resolved path string or `None`.
+### 2.4 External projection and canonical bytes
 
-### 2.4 External schema and canonical bytes
+The dataclass is never written into evidence. Projection stays:
 
-The external evidence schema is unchanged.
+```text
+host_snapshot.requested_compiler = REQUESTED_COMPILER
+host_snapshot.resolved_compiler_path = identity.path
+host_snapshot.resolved_compiler_realpath = identity.realpath
+host_snapshot.resolved_path_regular = identity.regular
+host_snapshot.resolved_path_symlink = identity.symlink
 
-Host snapshot keeps:
+intent.requested_compiler = REQUESTED_COMPILER
+intent.resolved_compiler_path = identity.path
+intent.resolved_compiler_realpath = identity.realpath
+```
 
-- `requested_compiler`
-- `resolved_compiler_path`
-- `resolved_compiler_realpath`
-- `resolved_path_regular`
-- `resolved_path_symlink`
+No evidence key may be added, deleted, or renamed. Result and
+manifest gain no compiler object. The existing host snapshot remains
+nested as it is today.
 
-Intent keeps:
-
-- `requested_compiler`
-- `resolved_compiler_path`
-- `resolved_compiler_realpath`
-
-Result and manifest gain no compiler object. The existing host
-snapshot remains nested as it is today.
-
-Projection into JSON must emit the same keys, types, null grouping,
-and key order rules already enforced by `validate_host_snapshot` and
+Projection must emit the same keys, types, null grouping, and key
+order rules already enforced by `validate_host_snapshot` and
 `validate_intent`. Canonical JSON remains sorted keys, compact
 separators, one terminal LF, and `artifact_sha256` over the object
 without that field.
@@ -306,6 +309,7 @@ proved by:
 - existing validators still accepting constructed objects;
 - existing tests that read compiler keys continuing without rename;
 - no nested `compiler_identity` key;
+- host and intent compiler fields remaining flat;
 - no change to `INTENT_SCHEMA`, `HOST_SCHEMA`, `RESULT_SCHEMA`,
   `MANIFEST_SCHEMA`, or `PROCESS_SCHEMA` strings.
 
@@ -315,17 +319,77 @@ PASS. A FAIL reason that is `MISSING_COMPILER`,
 `REPOSITORY_DRIFT` today must keep that reason. The dataclass must
 not upgrade any FAIL to PASS.
 
-### 2.5 Tests required for part 2
+### 2.5 Validator identity seam
+
+`validate_host_snapshot()` must use the same `CompilerIdentity`
+seam. It must not keep passing four primitives through a coupling
+helper.
+
+Required design:
+
+1. The validator reads the four existing host fields and constructs
+   one `CompilerIdentity`.
+2. Resolved and unresolved coupling is decided on that type, or in
+   a function that accepts only one `CompilerIdentity`.
+3. Delete the current four-parameter interfaces:
+
+```python
+_resolved_null_set(path, realpath, regular, symlink)
+_resolved_success_set(path, realpath, regular, symlink)
+```
+
+   Replace them with a single classification interface that accepts
+   only one identity, or fold the classification into the type.
+
+Invariants:
+
+```text
+unresolved:
+  path, realpath, regular, symlink 全部为 None
+
+resolved:
+  type(path) is str
+  type(realpath) is str
+  regular is True
+  type(symlink) is bool
+
+其他组合:
+  E_COMPILER_IDENTITY
+```
+
+`validate_host_snapshot()` still checks
+`requested_compiler == REQUESTED_COMPILER` on the external object.
+That check is not moved onto the dataclass.
+
+External runtime types remain fail-closed. The validator must still
+inspect the incoming values. Dataclass annotations do not skip
+`type(...) is` checks. Partial-null groups, a non-string path, a
+non-bool symlink, or `regular is not True` on a resolved object
+still raise `E_COMPILER_IDENTITY`.
+
+`validate_intent()` keeps comparing its flat path fields to the
+validated host snapshot. It does not gain a nested identity object.
+
+### 2.6 Tests required for part 2
 
 New tests must prove:
 
-1. `CompilerIdentity` is frozen.
-2. `_resolve_compiler` returns `CompilerIdentity`, not a tuple.
-3. A missing or non-executable compiler yields the unresolved
-   four-null identity with `requested_compiler == "c++"`.
-4. Host snapshot and intent still expose the flat keys listed above.
-5. Validators reject a host snapshot that adds an unknown compiler
+1. `CompilerIdentity` is frozen and has exactly the four fields
+   `path`, `realpath`, `regular`, and `symlink`.
+2. `_resolve_compiler()` returns `CompilerIdentity`, not a tuple.
+3. A missing or non-executable compiler yields four `None` values.
+4. Host snapshot and intent still expose the flat keys in 2.4.
+   `requested_compiler` on those objects equals `REQUESTED_COMPILER`.
+5. `validate_host_snapshot()` constructs and uses
+   `CompilerIdentity`.
+6. `_resolved_null_set` and `_resolved_success_set` no longer exist
+   as four-parameter helpers.
+7. Partial nulls and wrong bool or string types still produce
+   `E_COMPILER_IDENTITY`.
+8. Validators reject a host snapshot that adds an unknown compiler
    key or nests identity under a new name.
+9. Host and intent canonical evidence fields stay flat and
+   unchanged.
 
 ## Part 3. Frozen `QualificationScenario`
 
@@ -450,21 +514,15 @@ reason.
 
 The test module defines `_patch_group_signals` and
 `_patch_group_probe`. Both record `getpgid` and `killpg`, and both
-distinguish `SIGKILL` from signal `0`. They differ only in the
-`os.kill` fallback:
-
-- `_patch_group_signals` records `os.kill` and does not raise;
-- `_patch_group_probe` raises `ProcessLookupError` on
-  `os.kill(pid, 0)` so a leader-reaped, group-still-present case
-  can be shown.
-
-Two helpers invite a regression to `os.kill(pgid, 0)` as the
-group-absence probe.
+distinguish `SIGKILL` from signal `0`. They still patch `os.kill`.
+One helper records that call. The other raises
+`ProcessLookupError` from it. Either path treats a PID signal as a
+stand-in for group absence and invites that probe to return.
 
 ### 4.2 Approved helper
 
-Delete both helpers. Replace them with one helper in the same test
-module:
+Delete both helpers. Do not keep those names as aliases. Replace
+them with one helper in the same test module:
 
 ```python
 def _patch_process_group(
@@ -472,38 +530,42 @@ def _patch_process_group(
     *,
     terminate_error: BaseException | None = None,
     probe_error: BaseException | None = None,
-    leader_pid_absent: bool = False,
 ) -> list[tuple[object, ...]]:
 ```
+
+The helper must not take any parameter that allows, mocks, or
+conditionally accepts a PID absence probe.
 
 Behavior:
 
 - `getpgid(pid)` records `("getpgid", pid)` and returns `pid`;
 - `killpg(pgid, SIGKILL)` records `("killpg", pgid, SIGKILL)` and
-  raises `terminate_error` when that argument is not `None`;
-- `killpg(pgid, 0)` records `("killpg", pgid, 0)` and raises
-  `probe_error` when that argument is not `None`;
+  uses only `terminate_error`;
+- `killpg(pgid, 0)` records `("killpg", pgid, 0)` and uses only
+  `probe_error`;
 - any other `killpg` signal raises `AssertionError`;
-- `os.kill(pid, sig)` records `("kill", pid, sig)`;
-- if `leader_pid_absent` is true and `sig == 0`, `os.kill` raises
-  `ProcessLookupError("leader pid is gone")`.
+- any `os.kill(...)` call raises `AssertionError` immediately.
 
 `terminate_error` applies only to `SIGKILL`. `probe_error` applies
 only to `killpg(..., 0)`. The two exception arguments must not be
 consulted for the other phase. This keeps termination and probing
 from sharing one exception by accident.
 
+`ProcessLookupError` and `ESRCH` may be applied only through
+`probe_error` on `killpg(pgid, 0)`.
+
+Timeout and waiter scenes where the leader is reaped but the group
+still exists are expressed by synthetic `_reap_leader` success plus
+a normal return from `killpg(pgid, 0)`. They are not expressed by
+patching `os.kill`.
+
 Call-site mapping:
 
-- former `_patch_group_signals(..., killpg_error=E)` becomes
-  `_patch_process_group(..., terminate_error=E)`;
-- former `_patch_group_probe(...)` becomes
-  `_patch_process_group(..., leader_pid_absent=True)`;
-- former `_patch_group_probe(..., probe_error=E)` becomes
-  `_patch_process_group(leader_pid_absent=True, probe_error=E)`.
-
-After the merge, the names `_patch_group_signals` and
-`_patch_group_probe` must not remain as aliases.
+```text
+killpg_error=E       -> terminate_error=E
+probe_error=E        -> probe_error=E
+无错误参数           -> group probe 正常返回，表示 group 仍存在
+```
 
 ### 4.3 Production probe rule
 
@@ -524,13 +586,13 @@ absent. A normal return, `PermissionError`, `EPERM`, `EINVAL`, or
 any other `OSError` returns `False` and cannot certify cleanup.
 
 Cleanup certification is unchanged: the leader must be reaped and
-the frozen process group must be confirmed absent. Leader
-`os.kill` remains a best-effort fallback only. It must not prove
-group absence.
+the frozen process group must be confirmed absent. Production
+`_terminate_and_reap` may still call `proc.kill()` as a best-effort
+leader fallback after `killpg` failure. That fallback is not a
+group-absence probe and cannot certify cleanup.
 
-The remediation must not replace `os.killpg(pgid, 0)` with
-`os.kill(pgid, 0)`, `os.kill(pid, 0)`, `/proc` reads, or
-`pidfd` checks.
+The remediation must not replace `os.killpg(pgid, 0)` with an
+`os.kill` probe, `/proc` reads, or `pidfd` checks.
 
 ### 4.4 Tests required for part 4
 
@@ -539,18 +601,23 @@ still prove:
 
 1. `_process_group_absent` calls `os.killpg(pgid, 0)` and does not
    call `os.kill`.
-2. When the leader is gone and `killpg(pgid, 0)` succeeds, timeout
-   is `FAIL` / `PROCESS_CLEANUP_FAILED` /
-   `process_group_terminated=false`.
+2. When `_reap_leader` reports the leader reaped and
+   `killpg(pgid, 0)` returns normally, timeout is `FAIL` /
+   `PROCESS_CLEANUP_FAILED` / `process_group_terminated=false`.
 3. The same scene under waiter `OSError` yields the same triple.
 4. `PermissionError`, `EPERM`, other `OSError`, and a successful
    probe return do not certify cleanup.
-5. Recorded calls include `("killpg", pgid, 0)` and do not include
-   `("kill", pgid, 0)` as the absence probe.
+   `ProcessLookupError` and `ESRCH` reach the probe only through
+   `probe_error`.
+5. Recorded calls include `("killpg", pgid, SIGKILL)` and
+   `("killpg", pgid, 0)` as required by the scene, and never a
+   recorded `os.kill`.
 6. The test module defines exactly one process-group patch helper.
+7. Every test that uses the shared helper turns RED immediately
+   if any PID probe appears.
 
 A test that imported the old helper names must be updated. Adding a
-third helper that wraps `os.kill` as a group probe is forbidden.
+third helper that wraps `os.kill` is forbidden.
 
 ## Part 5. Verification Contract And Exclusion Zone
 
@@ -605,8 +672,8 @@ On the files actually edited in that later node:
 - staged paths must be a subset of the Future Implementation Scope
   set.
 
-This archival node runs `git diff --check` on the specification
-alone.
+This semantic-repair node runs `git diff --check` on the
+specification alone.
 
 ### 5.4 Real execution exclusion zone
 
@@ -633,7 +700,7 @@ allowed in tests.
 ### 5.5 Governance stop
 
 After this specification is committed and pushed, work stops for
-user review of the archived file. The next authorized step is
+Sol review of the repaired file. The next authorized step is
 review of this specification. Writing an implementation plan,
 invoking an implementation skill, or editing any allowed
 implementation file is forbidden until the user approves the
@@ -657,9 +724,17 @@ This design does not:
 
 ## Self-Review Record
 
-Completed during archival, before commit:
+Completed during this semantic repair, before commit:
 
 - Incomplete-marker scan: none found.
+- Four-field `CompilerIdentity` definition present; `path`,
+  `realpath`, `regular`, and `symlink` only.
+- `requested_compiler` stays on `REQUESTED_COMPILER` and flat
+  evidence keys, not on the dataclass.
+- Validator identity seam and deletion of the four-parameter
+  coupling helpers are required.
+- Unified helper raises `AssertionError` on any `os.kill` call
+  and has no PID-probe parameter.
 - Schema contradiction versus the frozen qualification spec: none.
   External keys and schema strings stay unchanged.
 - Test-permission contradiction: none. Synthetic tests stay
@@ -672,7 +747,7 @@ Completed during archival, before commit:
 
 ## Approval And Stop
 
-The five-part design was approved before this archival node. This
-file is the archival record. User review of this file is still
-required before any implementation plan or code. Design archival
-is not implementation authorization.
+The five-part design was approved before archival. This file is
+the repaired archival record. Sol review of this repaired
+specification is still required before any implementation plan or
+code. Design archival is not implementation authorization.
