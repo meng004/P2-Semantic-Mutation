@@ -144,13 +144,23 @@ merge-base: 4444061dde0159a5edd62753fe3cef2d881a308c
 pre-hardening parent: ed03fc47702e6eac977ae260e1de59c97db1ee3e
 ```
 
-`IMPLEMENTATION_ENTRY` is the exact SHA Sol names when setting
-`IMPLEMENTATION_EXECUTABLE` to true after PASS on the hardening
-commit that lands these gates. If Sol names no SHA, record the
-origin repair tip at that moment before any edit. Branch name
-and merge-base alone are not enough. An unknown later commit is
-a stop even on this branch. After this hardening exists, do not
-start from `ed03fc47702e6eac977ae260e1de59c97db1ee3e`.
+`IMPLEMENTATION_ENTRY` must be the full 40-character commit SHA
+that Sol writes in the implementation instruction after a Spec +
+Standards PASS on the revised plan. If that instruction omits
+`IMPLEMENTATION_ENTRY`, stop. Do not derive it from the current
+origin tip, branch name, merge-base, PR head, or clock time.
+
+Local HEAD and the origin repair tip must both equal that exact
+Sol-named SHA. An unknown later commit is a stop even on this
+branch with a correct merge-base. Branch name and merge-base
+alone are not enough.
+
+`503931c70d549411078a941c866a9701c3062f8d` is only the R2
+document-hardening entry for this amendment. After the new
+commit exists, it is not a production implementation entry.
+Sol will freeze the production implementation entry only after
+PASS on that new commit. Do not start from
+`ed03fc47702e6eac977ae260e1de59c97db1ee3e`.
 
 - [ ] **Step 1: Refuse unless implementation is executable**
 
